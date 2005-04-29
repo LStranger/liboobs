@@ -1,4 +1,8 @@
 2005-04-29  Carlos Garnacho Parro  <carlosg@gnome.org>
 
+	* configure.in: bumped system-tools-backends dependency to 1.9.x
+
+2005-04-29  Carlos Garnacho Parro  <carlosg@gnome.org>
+
 	* Initial version
 

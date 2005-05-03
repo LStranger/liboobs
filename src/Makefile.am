@@ -11,7 +11,9 @@ oobsinclude_HEADERS= 	\
 	oobs-shareslist.h	\
 	oobs-share.h		\
 	oobs-share-smb.h	\
-	oobs-share-nfs.h
+	oobs-share-nfs.h	\
+	oobs-shellslist.h	\
+	oobs-shell.h
 
 liboobs_1_la_SOURCES = \
 	oobs-session.h		oobs-session.c		\
@@ -20,6 +22,8 @@ liboobs_1_la_SOURCES = \
 	oobs-shareslist.h	oobs-shareslist.c	\
 	oobs-share.h		oobs-share.c		\
 	oobs-share-smb.h	oobs-share-smb.c	\
-	oobs-share-nfs.h	oobs-share-nfs.c
+	oobs-share-nfs.h	oobs-share-nfs.c	\
+	oobs-shellslist.h	oobs-shellslist.c	\
+	oobs-shell.h		oobs-shell.c
 
 liboobs_1_la_LIBADD= $(OOBS_LIBS)

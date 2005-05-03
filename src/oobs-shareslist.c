@@ -153,7 +153,6 @@ oobs_shares_list_update (OobsObject *object, gpointer data)
   OobsList         *list;
   OobsListIter      list_iter;
   OobsShare        *share;
-  gboolean          valid;
 
   list = OOBS_LIST (object);
 
@@ -163,7 +162,6 @@ oobs_shares_list_update (OobsObject *object, gpointer data)
   /* start recursing through the response array */
   dbus_message_iter_init    (reply, &iter);
   dbus_message_iter_recurse (&iter, &array_iter);
-  valid = dbus_message_iter_has_next (&array_iter);
 
   while (dbus_message_iter_get_arg_type (&array_iter) == DBUS_TYPE_ARRAY)
     {
@@ -173,7 +171,7 @@ oobs_shares_list_update (OobsObject *object, gpointer data)
       oobs_list_set    (list, &list_iter, G_OBJECT (share));
       g_object_unref   (share);
 
-      valid = dbus_message_iter_next (&array_iter);
+      dbus_message_iter_next (&array_iter);
     }
 }
 

@@ -1,3 +1,11 @@
+2005-05-04  Carlos Garnacho Parro  <carlosg@gnome.org>
+
+	* autogen.sh: changed PKG_NAME
+	* .cvsignore, src/.cvsignore: added
+	* src/oobs-shellslist.[ch], oobs-shell.[ch]: added
+	* src/Makefile.am: add them too
+	* src/oobs-shareslist.c: removed an unused variable
+
 2005-04-29  Carlos Garnacho Parro  <carlosg@gnome.org>
 
 	* README: Added some info about the project

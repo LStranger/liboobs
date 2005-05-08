@@ -18,35 +18,35 @@
  * Authors: Carlos Garnacho Parro  <carlosg@gnome.org>
  */
 
-#ifndef __OOBS_SHELL_H__
-#define __OOBS_SHELL_H__
+#ifndef __OOBS_USER_H__
+#define __OOBS_USER_H__
 
 G_BEGIN_DECLS
 
 #include "oobs-object.h"
 
-#define OOBS_TYPE_SHELL         (oobs_shell_get_type())
-#define OOBS_SHELL(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_SHELL, OobsShell))
-#define OOBS_SHELL_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c),    OOBS_TYPE_SHELL, OobsShellClass))
-#define OOBS_IS_SHELL(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), OOBS_TYPE_SHELL))
-#define OOBS_IS_SHELL_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c),    OOBS_TYPE_SHELL))
-#define OOBS_SHELL_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o),  OOBS_TYPE_SHELL, OobsShellClass))
+#define OOBS_TYPE_USER         (oobs_user_get_type())
+#define OOBS_USER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_USER, OobsUser))
+#define OOBS_USER_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c),    OOBS_TYPE_USER, OobsUserClass))
+#define OOBS_IS_USER(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), OOBS_TYPE_USER))
+#define OOBS_IS_USER_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c),    OOBS_TYPE_USER))
+#define OOBS_USER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o),  OOBS_TYPE_USER, OobsUserClass))
 
-typedef struct _OobsShell        OobsShell;
-typedef struct _OobsShellClass   OobsShellClass;
+typedef struct _OobsUser        OobsUser;
+typedef struct _OobsUserClass   OobsUserClass;
 	
-struct _OobsShell {
+struct _OobsUser {
   GObject parent;
 };
 
-struct _OobsShellClass {
+struct _OobsUserClass {
   GObjectClass parent_class;
 };
 
-GType oobs_shell_get_type (void);
+GType oobs_user_get_type (void);
 
-OobsShell* oobs_shell_new (const gchar *path);
+OobsUser* oobs_user_new (void);
 
 G_END_DECLS
 
-#endif /* __OOBS_SHELL_H__ */
+#endif /* __OOBS_USER_H__ */

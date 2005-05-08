@@ -111,7 +111,7 @@ oobs_shares_list_get_content_type (OobsList *list)
 }
 
 static OobsShare*
-create_share_from_dbus_reply (OobsObject       *object,
+create_share_from_dbus_reply (OobsObject      *object,
 			      DBusMessage     *reply,
 			      DBusMessageIter  iter)
 {

@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 2 -*- */
+/* -*- Mode: C; c-file-style: "gnu"; tab-width: 8 -*- */
 /* Copyright (C) 2005 Carlos Garnacho
  *
  * This program is free software; you can redistribute it and/or modify
@@ -53,7 +53,7 @@ enum {
   PROP_FLAGS
 };
 
-static gpointer parent_class;
+G_DEFINE_TYPE (OobsShareSmb, oobs_share_smb, OOBS_TYPE_SHARE_SMB);
 
 GType
 oobs_share_smb_flags_get_type (void)
@@ -77,39 +77,12 @@ oobs_share_smb_flags_get_type (void)
   return type;
 }
 
-GType
-oobs_share_smb_get_type (void)
-{
-  static GType type = 0;
-
-  if (!type)
-    {
-      static const GTypeInfo share_smb_info =
-	{
-	  sizeof (OobsShareSmbClass),
-	  NULL,		/* base_init */
-	  NULL,		/* base_finalize */
-	  (GClassInitFunc) oobs_share_smb_class_init,
-	  NULL,		/* class_finalize */
-	  NULL,		/* class_data */
-	  sizeof (OobsShareSmb),
-	  0,		/* n_preallocs */
-	  (GInstanceInitFunc) oobs_share_smb_init,
-	};
-
-      type = g_type_register_static (OOBS_TYPE_SHARE, "OobsShareSmb",
-				     &share_smb_info, 0);
-    }
-
-  return type;
-}
-
 static void
 oobs_share_smb_class_init (OobsShareSmbClass *class)
 {
   GObjectClass  *object_class = G_OBJECT_CLASS (class);
 
-  parent_class = g_type_class_peek_parent (class);
+  oobs_share_smb_parent_class = g_type_class_peek_parent (class);
 
   object_class->set_property = oobs_share_smb_set_property;
   object_class->get_property = oobs_share_smb_get_property;
@@ -171,8 +144,8 @@ oobs_share_smb_finalize (GObject *object)
       g_free (priv->comment);
     }
 
-  if (G_OBJECT_CLASS (parent_class)->finalize)
-    (* G_OBJECT_CLASS (parent_class)->finalize) (object);
+  if (G_OBJECT_CLASS (oobs_share_smb_parent_class)->finalize)
+    (* G_OBJECT_CLASS (oobs_share_smb_parent_class)->finalize) (object);
 }
 
 static void

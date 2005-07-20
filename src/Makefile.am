@@ -15,7 +15,9 @@ oobsinclude_HEADERS= 	\
 	oobs-shellslist.h	\
 	oobs-shell.h		\
 	oobs-userslist.h	\
-	oobs-user.h
+	oobs-user.h		\
+	oobs-groupslist.h	\
+	oobs-group.h
 
 liboobs_1_la_SOURCES = \
 	oobs-session.h		oobs-session.c		\
@@ -28,6 +30,8 @@ liboobs_1_la_SOURCES = \
 	oobs-shellslist.h	oobs-shellslist.c	\
 	oobs-shell.h		oobs-shell.c		\
 	oobs-userslist.h	oobs-userslist.c	\
-	oobs-user.h		oobs-user.c
+	oobs-user.h		oobs-user.c		\
+	oobs-groupslist.h	oobs-groupslist.c	\
+	oobs-group.h		oobs-group.c
 
 liboobs_1_la_LIBADD= $(OOBS_LIBS)

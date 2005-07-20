@@ -1,4 +1,4 @@
-x/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 2 -*- */
+/* -*- Mode: C; c-file-style: "gnu"; tab-width: 8 -*- */
 /* Copyright (C) 2005 Carlos Garnacho
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,34 +40,7 @@ static void oobs_shares_list_commit     (OobsObject   *object,
 					 gpointer     data);
 static GType oobs_shares_list_get_content_type (OobsList *list);
 
-static gpointer parent_class;
-
-GType
-oobs_shares_list_get_type (void)
-{
-  static GType type = 0;
-
-  if (!type)
-    {
-      static const GTypeInfo type_info =
-	{
-	  sizeof (OobsSharesListClass),
-	  NULL,		/* base_init */
-	  NULL,		/* base_finalize */
-	  (GClassInitFunc) oobs_shares_list_class_init,
-	  NULL,		/* class_finalize */
-	  NULL,		/* class_data */
-	  sizeof (OobsSharesList),
-	  0,		/* n_preallocs */
-	  (GInstanceInitFunc) oobs_shares_list_init,
-	};
-
-      type = g_type_register_static (OOBS_TYPE_LIST, "OobsSharesList",
-				     &type_info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (OobsSharesList, oobs_shares_list, OOBS_TYPE_SHARES_LIST);
 
 static void
 oobs_shares_list_class_init (OobsSharesListClass *class)
@@ -76,7 +49,7 @@ oobs_shares_list_class_init (OobsSharesListClass *class)
   OobsObjectClass *oobs_object_class = OOBS_OBJECT_CLASS (class);
   OobsListClass *oobs_list_class = OOBS_LIST_CLASS (class);
 
-  parent_class = g_type_class_peek_parent (class);
+  oobs_shares_list_parent_class = g_type_class_peek_parent (class);
 
   object_class->finalize    = oobs_shares_list_finalize;
   oobs_object_class->commit = oobs_shares_list_commit;
@@ -100,8 +73,8 @@ oobs_shares_list_finalize (GObject *object)
 
   shares_list = OOBS_SHARES_LIST (object);
 
-  if (G_OBJECT_CLASS (parent_class)->finalize)
-    (* G_OBJECT_CLASS (parent_class)->finalize) (object);
+  if (G_OBJECT_CLASS (oobs_shares_list_parent_class)->finalize)
+    (* G_OBJECT_CLASS (oobs_shares_list_parent_class)->finalize) (object);
 }
 
 static GType

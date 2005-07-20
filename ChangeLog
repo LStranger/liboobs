@@ -1,3 +1,12 @@
+2005-07-20  Carlos Garnacho Parro  <carlosg@gnome.org>
+
+	* *.[ch]: change emacs file style
+	* *.c: use G_DEFINE_TYPE instead of defining *_get_type()
+	* oobs-list.[ch]: slight API change in oobs_list_get()
+	* oobs-shellslist.c: fix a compile warning
+	* oobs-userslist.c: fix a compile warning
+	* oobs-user.c: move the "nobody" UID and GID to a define
+
 2005-05-08  Carlos Garnacho Parro  <carlosg@gnome.org>
 
 	* src/oobs-userslist.[ch]: added, represents an users list

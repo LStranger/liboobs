@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 2 -*- */
+/* -*- Mode: C; c-file-style: "gnu"; tab-width: 8 -*- */
 /* Copyright (C) 2005 Carlos Garnacho
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,34 +38,7 @@ static void oobs_users_list_commit     (OobsObject   *object,
 					gpointer     data);
 static GType oobs_users_list_get_content_type (OobsList *list);
 
-static gpointer parent_class;
-
-GType
-oobs_users_list_get_type (void)
-{
-  static GType type = 0;
-
-  if (!type)
-    {
-      static const GTypeInfo type_info =
-	{
-	  sizeof (OobsUsersListClass),
-	  NULL,		/* base_init */
-	  NULL,		/* base_finalize */
-	  (GClassInitFunc) oobs_users_list_class_init,
-	  NULL,		/* class_finalize */
-	  NULL,		/* class_data */
-	  sizeof (OobsUsersList),
-	  0,		/* n_preallocs */
-	  (GInstanceInitFunc) oobs_users_list_init,
-	};
-
-      type = g_type_register_static (OOBS_TYPE_LIST, "OobsUsersList",
-				     &type_info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (OobsUsersList, oobs_users_list, OOBS_TYPE_USERS_LIST);
 
 static void
 oobs_users_list_class_init (OobsUsersListClass *class)
@@ -74,7 +47,7 @@ oobs_users_list_class_init (OobsUsersListClass *class)
   OobsObjectClass *oobs_object_class = OOBS_OBJECT_CLASS (class);
   OobsListClass *oobs_list_class = OOBS_LIST_CLASS (class);
 
-  parent_class = g_type_class_peek_parent (class);
+  oobs_users_list_parent_class = g_type_class_peek_parent (class);
 
   object_class->finalize    = oobs_users_list_finalize;
   oobs_object_class->commit = oobs_users_list_commit;
@@ -98,8 +71,8 @@ oobs_users_list_finalize (GObject *object)
 
   users_list = OOBS_USERS_LIST (object);
 
-  if (G_OBJECT_CLASS (parent_class)->finalize)
-    (* G_OBJECT_CLASS (parent_class)->finalize) (object);
+  if (G_OBJECT_CLASS (oobs_users_list_parent_class)->finalize)
+    (* G_OBJECT_CLASS (oobs_users_list_parent_class)->finalize) (object);
 }
 
 static GType
@@ -113,7 +86,7 @@ create_user_from_dbus_reply (OobsObject      *object,
 			     DBusMessage     *reply,
 			     DBusMessageIter  struct_iter)
 {
-  DBusMessageIter iter, array_iter;
+  DBusMessageIter iter;
   int    id, uid, gid;
   gchar *login, *passwd, *home, *shell;
 
@@ -164,7 +137,7 @@ oobs_users_list_update (OobsObject *object, gpointer data)
 
   list = OOBS_LIST (object);
 
-  /* First of all, free the previous shares list */
+  /* First of all, free the previous list */
   oobs_list_clear (list);
 
   dbus_message_iter_init (reply, &iter);
@@ -172,7 +145,7 @@ oobs_users_list_update (OobsObject *object, gpointer data)
 
   while (dbus_message_iter_get_arg_type (&elem_iter) == DBUS_TYPE_STRUCT)
     {
-      user = create_user_from_dbus_reply (object, reply, elem_iter);
+      user = G_OBJECT (create_user_from_dbus_reply (object, reply, elem_iter));
 
       oobs_list_append (list, &list_iter);
       oobs_list_set    (list, &list_iter, G_OBJECT (user));

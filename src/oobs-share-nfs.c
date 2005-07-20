@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 2 -*- */
+/* -*- Mode: C; c-file-style: "gnu"; tab-width: 8 -*- */
 /* Copyright (C) 2005 Carlos Garnacho
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,41 +34,14 @@ static void oobs_share_nfs_class_init (OobsShareNfsClass *class);
 static void oobs_share_nfs_init       (OobsShareNfs      *share);
 static void oobs_share_nfs_finalize   (GObject          *object);
 
-static gpointer parent_class;
-
-GType
-oobs_share_nfs_get_type (void)
-{
-  static GType type = 0;
-
-  if (!type)
-    {
-      static const GTypeInfo share_nfs_info =
-	{
-	  sizeof (OobsShareNfsClass),
-	  NULL,		/* base_init */
-	  NULL,		/* base_finalize */
-	  (GClassInitFunc) oobs_share_nfs_class_init,
-	  NULL,		/* class_finalize */
-	  NULL,		/* class_data */
-	  sizeof (OobsShareNfs),
-	  0,		/* n_preallocs */
-	  (GInstanceInitFunc) oobs_share_nfs_init,
-	};
-
-      type = g_type_register_static (OOBS_TYPE_SHARE, "OobsShareNfs",
-				     &share_nfs_info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (OobsShareNfs, oobs_share_nfs, OOBS_TYPE_SHARE_NFS);
 
 static void
 oobs_share_nfs_class_init (OobsShareNfsClass *class)
 {
   GObjectClass  *object_class = G_OBJECT_CLASS (class);
 
-  parent_class = g_type_class_peek_parent (class);
+  oobs_share_nfs_parent_class = g_type_class_peek_parent (class);
 
   object_class->set_property = NULL;
   object_class->get_property = NULL;
@@ -103,8 +76,8 @@ oobs_share_nfs_finalize (GObject *object)
   if (priv)
     oobs_share_nfs_clear_acl (share);
 
-  if (G_OBJECT_CLASS (parent_class)->finalize)
-    (* G_OBJECT_CLASS (parent_class)->finalize) (object);
+  if (G_OBJECT_CLASS (oobs_share_nfs_parent_class)->finalize)
+    (* G_OBJECT_CLASS (oobs_share_nfs_parent_class)->finalize) (object);
 }
 
 OobsShare*

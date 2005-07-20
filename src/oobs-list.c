@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 2 -*- */
+/* -*- Mode: C; c-file-style: "gnu"; tab-width: 8 -*- */
 /* Copyright (C) 2005 Carlos Garnacho
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,41 +38,14 @@ static void oobs_list_class_init (OobsListClass *class);
 static void oobs_list_init       (OobsList      *list);
 static void oobs_list_finalize   (GObject      *object);
 
-static gpointer parent_class;
-
-GType
-oobs_list_get_type (void)
-{
-  static GType type = 0;
-
-  if (!type)
-    {
-      static const GTypeInfo type_info =
-	{
-	  sizeof (OobsListClass),
-	  NULL,		/* base_init */
-	  NULL,		/* base_finalize */
-	  (GClassInitFunc) oobs_list_class_init,
-	  NULL,		/* class_finalize */
-	  NULL,		/* class_data */
-	  sizeof (OobsList),
-	  0,		/* n_preallocs */
-	  (GInstanceInitFunc) oobs_list_init,
-	};
-
-      type = g_type_register_static (OOBS_TYPE_OBJECT, "OobsList",
-				     &type_info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (OobsList, oobs_list, OOBS_TYPE_LIST);
 
 static void
 oobs_list_class_init (OobsListClass *class)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (class);
 
-  parent_class = g_type_class_peek_parent (class);
+  oobs_list_parent_class = g_type_class_peek_parent (class);
 
   class->get_content_type = NULL;
   object_class->finalize = oobs_list_finalize;
@@ -120,8 +93,8 @@ oobs_list_finalize (GObject *object)
   if (priv)
     free_list (list);
 
-  if (G_OBJECT_CLASS (parent_class)->finalize)
-    (* G_OBJECT_CLASS (parent_class)->finalize) (object);
+  if (G_OBJECT_CLASS (oobs_list_parent_class)->finalize)
+    (* G_OBJECT_CLASS (oobs_list_parent_class)->finalize) (object);
 }
 
 static gboolean
@@ -326,28 +299,27 @@ oobs_list_insert_before (OobsList     *list,
   iter->data  = node;
 }
 
-void
+GObject*
 oobs_list_get (OobsList      *list,
-	       OobsListIter  *iter,
-	       GObject     **data)
+	       OobsListIter  *iter)
 {
   OobsListPrivate *priv;
   GList *node;
 
-  g_return_if_fail (list != NULL);
-  g_return_if_fail (iter != NULL);
-  g_return_if_fail (iter->data != NULL);
-  g_return_if_fail (OOBS_IS_LIST (list));
+  g_return_val_if_fail (list != NULL, NULL);
+  g_return_val_if_fail (iter != NULL, NULL);
+  g_return_val_if_fail (iter->data != NULL, NULL);
+  g_return_val_if_fail (OOBS_IS_LIST (list), NULL);
 
   node = iter->data;
   priv = OOBS_LIST_GET_PRIVATE (list);
 
-  g_return_if_fail (node->data != NULL);
+  g_return_val_if_fail (node->data != NULL, NULL);
 
   if (!check_iter (priv, iter))
-    return;
+    return NULL;
 
-  *data = g_object_ref (node->data);
+  return g_object_ref (node->data);
 }
 
 static gboolean

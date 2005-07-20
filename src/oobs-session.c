@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 2 -*- */
+/* -*- Mode: C; c-file-style: "gnu"; tab-width: 8 -*- */
 /* Copyright (C) 2005 Carlos Garnacho
  *
  * This program is free software; you can redistribute it and/or modify
@@ -56,41 +56,14 @@ enum
   PROP_COMMIT_ON_EXIT
 };
 
-static gpointer parent_class;
-
-GType
-oobs_session_get_type (void)
-{
-  static GType type = 0;
-
-  if (!type)
-    {
-      static const GTypeInfo type_info =
-	{
-	  sizeof (OobsSessionClass),
-	  NULL,		/* base_init */
-	  NULL,		/* base_finalize */
-	  (GClassInitFunc) oobs_session_class_init,
-	  NULL,		/* class_finalize */
-	  NULL,		/* class_data */
-	  sizeof (OobsSession),
-	  0,		/* n_preallocs */
-	  (GInstanceInitFunc) oobs_session_init,
-	};
-
-      type = g_type_register_static (G_TYPE_OBJECT, "OobsSession",
-				     &type_info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (OobsSession, oobs_session, OOBS_TYPE_SESSION);
 
 static void
 oobs_session_class_init (OobsSessionClass *class)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (class);
 
-  parent_class = g_type_class_peek_parent (class);
+  oobs_session_parent_class = g_type_class_peek_parent (class);
 
   object_class->set_property = oobs_session_set_property;
   object_class->get_property = oobs_session_get_property;
@@ -174,8 +147,8 @@ oobs_session_finalize (GObject *object)
       */
     }
 
-  if (G_OBJECT_CLASS (parent_class)->finalize)
-    (* G_OBJECT_CLASS (parent_class)->finalize) (object);
+  if (G_OBJECT_CLASS (oobs_session_parent_class)->finalize)
+    (* G_OBJECT_CLASS (oobs_session_parent_class)->finalize) (object);
 }
 
 static void

@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 2 -*- */
+/* -*- Mode: C; c-file-style: "gnu"; tab-width: 8 -*- */
 /* Copyright (C) 2005 Carlos Garnacho
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,34 +38,7 @@ static void oobs_shells_list_commit     (OobsObject   *object,
 					 gpointer     data);
 static GType oobs_shells_list_get_content_type (OobsList *list);
 
-static gpointer parent_class;
-
-GType
-oobs_shells_list_get_type (void)
-{
-  static GType type = 0;
-
-  if (!type)
-    {
-      static const GTypeInfo type_info =
-	{
-	  sizeof (OobsShellsListClass),
-	  NULL,		/* base_init */
-	  NULL,		/* base_finalize */
-	  (GClassInitFunc) oobs_shells_list_class_init,
-	  NULL,		/* class_finalize */
-	  NULL,		/* class_data */
-	  sizeof (OobsShellsList),
-	  0,		/* n_preallocs */
-	  (GInstanceInitFunc) oobs_shells_list_init,
-	};
-
-      type = g_type_register_static (OOBS_TYPE_LIST, "OobsShellsList",
-				     &type_info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (OobsShellsList, oobs_shells_list, OOBS_TYPE_SHELLS_LIST);
 
 static void
 oobs_shells_list_class_init (OobsShellsListClass *class)
@@ -74,7 +47,7 @@ oobs_shells_list_class_init (OobsShellsListClass *class)
   OobsObjectClass *oobs_object_class = OOBS_OBJECT_CLASS (class);
   OobsListClass *oobs_list_class = OOBS_LIST_CLASS (class);
 
-  parent_class = g_type_class_peek_parent (class);
+  oobs_shells_list_parent_class = g_type_class_peek_parent (class);
 
   object_class->finalize    = oobs_shells_list_finalize;
   oobs_object_class->commit = oobs_shells_list_commit;
@@ -98,8 +71,8 @@ oobs_shells_list_finalize (GObject *object)
 
   shells_list = OOBS_SHELLS_LIST (object);
 
-  if (G_OBJECT_CLASS (parent_class)->finalize)
-    (* G_OBJECT_CLASS (parent_class)->finalize) (object);
+  if (G_OBJECT_CLASS (oobs_shells_list_parent_class)->finalize)
+    (* G_OBJECT_CLASS (oobs_shells_list_parent_class)->finalize) (object);
 }
 
 static GType
@@ -111,12 +84,12 @@ oobs_shells_list_get_content_type (OobsList *list)
 static void
 oobs_shells_list_update (OobsObject *object, gpointer data)
 {
-  DBusMessage      *reply = (DBusMessage *) data;
-  DBusMessageIter   iter, array_iter;
-  OobsObject       *sh;
-  OobsList         *list;
-  OobsListIter      list_iter;
-  char             *shell;
+  DBusMessage     *reply = (DBusMessage *) data;
+  DBusMessageIter  iter, array_iter;
+  GObject         *sh;
+  OobsList        *list;
+  OobsListIter     list_iter;
+  char            *shell;
 
   list = OOBS_LIST (object);
 
@@ -130,7 +103,7 @@ oobs_shells_list_update (OobsObject *object, gpointer data)
   while (dbus_message_iter_get_arg_type (&array_iter) == DBUS_TYPE_STRING)
     {
       dbus_message_iter_get_basic (&array_iter, &shell);
-      sh = oobs_shell_new (shell);
+      sh = G_OBJECT (oobs_shell_new (shell));
 
       oobs_list_append (list, &list_iter);
       oobs_list_set    (list, &list_iter, G_OBJECT (sh));

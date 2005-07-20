@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 2 -*- */
+/* -*- Mode: C; c-file-style: "gnu"; tab-width: 8 -*- */
 /* Copyright (C) 2005 Carlos Garnacho
  *
  * This program is free software; you can redistribute it and/or modify
@@ -72,7 +72,7 @@ void       oobs_list_prepend        (OobsList *list, OobsListIter *iter);
 void       oobs_list_insert_after   (OobsList *list, OobsListIter *anchor, OobsListIter *iter);
 void       oobs_list_insert_before  (OobsList *list, OobsListIter *anchor, OobsListIter *iter);
 
-void       oobs_list_get            (OobsList *list, OobsListIter *iter, GObject **data);
+GObject*   oobs_list_get            (OobsList *list, OobsListIter *iter);
 void       oobs_list_set            (OobsList *list, OobsListIter *iter, GObject  *data);
 
 void       oobs_list_clear          (OobsList *list);

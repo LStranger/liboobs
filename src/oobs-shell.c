@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 2 -*- */
+/* -*- Mode: C; c-file-style: "gnu"; tab-width: 8 -*- */
 /* Copyright (C) 2005 Carlos Garnacho
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,48 +41,20 @@ static void oobs_shell_get_property (GObject      *object,
 				     guint         prop_id,
 				     GValue       *value,
 				     GParamSpec   *pspec);
-static gpointer parent_class;
-
 enum
 {
   PROP_0,
   PROP_PATH,
 };
 
-
-GType
-oobs_shell_get_type (void)
-{
-  static GType type = 0;
-
-  if (!type)
-    {
-      static const GTypeInfo info =
-	{
-	  sizeof (OobsShellClass),
-	  NULL,		/* base_init */
-	  NULL,		/* base_finalize */
-	  (GClassInitFunc) oobs_shell_class_init,
-	  NULL,		/* class_finalize */
-	  NULL,		/* class_data */
-	  sizeof (OobsShell),
-	  0,		/* n_preallocs */
-	  (GInstanceInitFunc) oobs_shell_init,
-	};
-
-      type = g_type_register_static (G_TYPE_OBJECT, "OobsShell",
-				     &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (OobsShell, oobs_shell, OOBS_TYPE_SHELL);
 
 static void
 oobs_shell_class_init (OobsShellClass *class)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (class);
 
-  parent_class = g_type_class_peek_parent (class);
+  oobs_shell_parent_class = g_type_class_peek_parent (class);
 
   object_class->set_property = oobs_shell_set_property;
   object_class->get_property = oobs_shell_get_property;
@@ -169,8 +141,8 @@ oobs_shell_finalize (GObject *object)
   if (priv)
     g_free (priv->path);
 
-  if (G_OBJECT_CLASS (parent_class)->finalize)
-    (* G_OBJECT_CLASS (parent_class)->finalize) (object);
+  if (G_OBJECT_CLASS (oobs_shell_parent_class)->finalize)
+    (* G_OBJECT_CLASS (oobs_shell_parent_class)->finalize) (object);
 }
 
 OobsShell*

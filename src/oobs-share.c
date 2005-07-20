@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 2 -*- */
+/* -*- Mode: C; c-file-style: "gnu"; tab-width: 8 -*- */
 /* Copyright (C) 2005 Carlos Garnacho
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,41 +47,14 @@ enum
   PROP_PATH
 };
 
-static gpointer parent_class;
-
-GType
-oobs_share_get_type (void)
-{
-  static GType type = 0;
-
-  if (!type)
-    {
-      static const GTypeInfo type_info =
-	{
-	  sizeof (OobsShareClass),
-	  NULL,		/* base_init */
-	  NULL,		/* base_finalize */
-	  (GClassInitFunc) oobs_share_class_init,
-	  NULL,		/* class_finalize */
-	  NULL,		/* class_data */
-	  sizeof (OobsShare),
-	  0,		/* n_preallocs */
-	  (GInstanceInitFunc) oobs_share_init,
-	};
-
-      type = g_type_register_static (G_TYPE_OBJECT, "OobsShare",
-				     &type_info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (OobsShare, oobs_share, OOBS_TYPE_SHARE);
 
 static void
 oobs_share_class_init (OobsShareClass *class)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (class);
 
-  parent_class = g_type_class_peek_parent (class);
+  oobs_share_parent_class = g_type_class_peek_parent (class);
 
   object_class->set_property = oobs_share_set_property;
   object_class->get_property = oobs_share_get_property;
@@ -122,8 +95,8 @@ oobs_share_finalize (GObject *object)
   if (priv)
     g_free (priv->path);
 
-  if (G_OBJECT_CLASS (parent_class)->finalize)
-    (* G_OBJECT_CLASS (parent_class)->finalize) (object);
+  if (G_OBJECT_CLASS (oobs_share_parent_class)->finalize)
+    (* G_OBJECT_CLASS (oobs_share_parent_class)->finalize) (object);
 }
 
 static void

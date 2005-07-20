@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 2 -*- */
+/* -*- Mode: C; c-file-style: "gnu"; tab-width: 8 -*- */
 /* Copyright (C) 2005 Carlos Garnacho
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,6 +22,8 @@
 #include "oobs-user.h"
 
 #define OOBS_USER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_USER, OobsUserPrivate))
+#define DEFAULT_UID 65534
+#define DEFAULT_GID 65534
 
 typedef struct _OobsUserPrivate OobsUserPrivate;
 
@@ -55,8 +57,6 @@ static void oobs_user_get_property (GObject      *object,
 				    guint         prop_id,
 				    GValue       *value,
 				    GParamSpec   *pspec);
-static gpointer parent_class;
-
 enum
 {
   PROP_0,
@@ -73,40 +73,14 @@ enum
   PROP_OTHER_DATA
 };
 
-
-GType
-oobs_user_get_type (void)
-{
-  static GType type = 0;
-
-  if (!type)
-    {
-      static const GTypeInfo info =
-	{
-	  sizeof (OobsUserClass),
-	  NULL,		/* base_init */
-	  NULL,		/* base_finalize */
-	  (GClassInitFunc) oobs_user_class_init,
-	  NULL,		/* class_finalize */
-	  NULL,		/* class_data */
-	  sizeof (OobsUser),
-	  0,		/* n_preallocs */
-	  (GInstanceInitFunc) oobs_user_init,
-	};
-
-      type = g_type_register_static (G_TYPE_OBJECT, "OobsUser",
-				     &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (OobsUser, oobs_user, OOBS_TYPE_USER);
 
 static void
 oobs_user_class_init (OobsUserClass *class)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (class);
 
-  parent_class = g_type_class_peek_parent (class);
+  oobs_user_parent_class = g_type_class_peek_parent (class);
 
   object_class->set_property = oobs_user_set_property;
   object_class->get_property = oobs_user_get_property;
@@ -131,14 +105,14 @@ oobs_user_class_init (OobsUserClass *class)
 				   g_param_spec_int ("uid",
 						     "UID",
 						     "UID for the user",
-						     0, 65534, 65534,
+						     0, DEFAULT_UID, DEFAULT_UID,
 						     G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
 				   PROP_GID,
 				   g_param_spec_int ("gid",
 						     "GID",
 						     "Main group GID for the user",
-						     0, 65534, 65534,
+						     0, DEFAULT_GID, DEFAULT_GID,
 						     G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
 				   PROP_HOMEDIR,
@@ -349,8 +323,8 @@ oobs_user_finalize (GObject *object)
       g_free (priv->other_data);
     }
 
-  if (G_OBJECT_CLASS (parent_class)->finalize)
-    (* G_OBJECT_CLASS (parent_class)->finalize) (object);
+  if (G_OBJECT_CLASS (oobs_user_parent_class)->finalize)
+    (* G_OBJECT_CLASS (oobs_user_parent_class)->finalize) (object);
 }
 
 OobsUser*

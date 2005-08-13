@@ -23,6 +23,7 @@
 
 G_BEGIN_DECLS
 
+#include <sys/types.h>
 #include "oobs-object.h"
 
 #define OOBS_TYPE_GROUP         (oobs_group_get_type())
@@ -51,9 +52,10 @@ G_CONST_RETURN gchar* oobs_group_get_name (OobsGroup *group);
 void       oobs_group_set_name (OobsGroup *group, const gchar *name);
 
 void       oobs_group_set_password (OobsGroup *group, const gchar *password);
+void       oobs_group_set_crypted_password (OobsGroup *group, const gchar *crypted_password);
 
-gint       oobs_group_get_gid      (OobsGroup *group);
-void       oobs_group_set_gid      (OobsGroup *group, gint gid);
+gid_t      oobs_group_get_gid      (OobsGroup *group);
+void       oobs_group_set_gid      (OobsGroup *group, gid_t gid);
 
 
 G_END_DECLS

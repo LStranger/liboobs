@@ -23,6 +23,7 @@
 
 G_BEGIN_DECLS
 
+#include <sys/types.h>
 #include "oobs-object.h"
 
 #define OOBS_TYPE_USER         (oobs_user_get_type())
@@ -45,7 +46,40 @@ struct _OobsUserClass {
 
 GType oobs_user_get_type (void);
 
-OobsUser* oobs_user_new (void);
+OobsUser* oobs_user_new (const gchar *name);
+
+void  oobs_user_set_login_name (OobsUser *user, const gchar *login);
+
+void  oobs_user_set_password (OobsUser *user, const gchar *password);
+void  oobs_user_set_crypted_password (OobsUser *user, const gchar *crypted_password);
+
+uid_t oobs_user_get_uid (OobsUser *user);
+void  oobs_user_set_uid (OobsUser *user, uid_t uid);
+
+gid_t oobs_user_get_gid (OobsUser *user);
+void  oobs_user_set_gid (OobsUser *user, gid_t gid);
+
+G_CONST_RETURN gchar* oobs_user_get_home_directory (OobsUser *user);
+void oobs_user_set_home_directory (OobsUser *user, const gchar *home_directory);
+
+G_CONST_RETURN gchar* oobs_user_get_shell (OobsUser *user);
+void oobs_user_set_shell (OobsUser *user, const gchar *shell);
+
+G_CONST_RETURN gchar* oobs_user_get_full_name (OobsUser *user);
+void oobs_user_set_full_name (OobsUser *user, const gchar *full_name);
+
+G_CONST_RETURN gchar* oobs_user_get_room_number (OobsUser *user);
+void oobs_user_set_room_number (OobsUser *user, const gchar *room_number);
+
+G_CONST_RETURN gchar* oobs_user_get_work_phone_number (OobsUser *user);
+void oobs_user_set_work_phone_number (OobsUser *user, const gchar *phone_number);
+
+G_CONST_RETURN gchar* oobs_user_get_home_phone_number (OobsUser *user);
+void oobs_user_set_home_phone_number (OobsUser *user, const gchar *phone_number);
+
+G_CONST_RETURN gchar* oobs_user_get_other_data (OobsUser *user);
+void oobs_user_set_other_data (OobsUser *user, const gchar *data);
+
 
 G_END_DECLS
 

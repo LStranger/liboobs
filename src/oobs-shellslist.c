@@ -47,8 +47,6 @@ oobs_shells_list_class_init (OobsShellsListClass *class)
   OobsObjectClass *oobs_object_class = OOBS_OBJECT_CLASS (class);
   OobsListClass *oobs_list_class = OOBS_LIST_CLASS (class);
 
-  oobs_shells_list_parent_class = g_type_class_peek_parent (class);
-
   object_class->finalize    = oobs_shells_list_finalize;
   oobs_object_class->commit = oobs_shells_list_commit;
   oobs_object_class->update = oobs_shells_list_update;

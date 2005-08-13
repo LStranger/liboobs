@@ -24,10 +24,6 @@
 G_BEGIN_DECLS
 
 #include <glib-object.h>
-#include "oobs-object.h"
-#include "oobs-list.h"
-#include "oobs-session.h"
-#include "oobs-share.h"
 
 #define OOBS_TYPE_LIST         (oobs_list_get_type ())
 #define OOBS_LIST(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_LIST, OobsList))
@@ -42,15 +38,12 @@ typedef struct _OobsListIter  OobsListIter;
 
 struct _OobsList
 {
-  OobsObject parent;
+  GObject parent;
 };
 
 struct _OobsListClass
 {
-  OobsObjectClass parent_class;
-
-  /* virtual methods */
-  GType (*get_content_type) (OobsList *list);
+  GObjectClass parent_class;
 };
 
 struct _OobsListIter
@@ -68,12 +61,11 @@ gboolean   oobs_list_remove         (OobsList *list, OobsListIter *iter);
 
 void       oobs_list_append         (OobsList *list, OobsListIter *iter);
 void       oobs_list_prepend        (OobsList *list, OobsListIter *iter);
-//void       oobs_list_insert         (OobsList *list, OobsListIter *iter);
 void       oobs_list_insert_after   (OobsList *list, OobsListIter *anchor, OobsListIter *iter);
 void       oobs_list_insert_before  (OobsList *list, OobsListIter *anchor, OobsListIter *iter);
 
 GObject*   oobs_list_get            (OobsList *list, OobsListIter *iter);
-void       oobs_list_set            (OobsList *list, OobsListIter *iter, GObject  *data);
+void       oobs_list_set            (OobsList *list, OobsListIter *iter, gpointer data);
 
 void       oobs_list_clear          (OobsList *list);
 

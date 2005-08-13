@@ -56,14 +56,12 @@ enum
   PROP_COMMIT_ON_EXIT
 };
 
-G_DEFINE_TYPE (OobsSession, oobs_session, OOBS_TYPE_SESSION);
+G_DEFINE_TYPE (OobsSession, oobs_session, G_TYPE_OBJECT);
 
 static void
 oobs_session_class_init (OobsSessionClass *class)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (class);
-
-  oobs_session_parent_class = g_type_class_peek_parent (class);
 
   object_class->set_property = oobs_session_set_property;
   object_class->get_property = oobs_session_get_property;
@@ -198,7 +196,12 @@ oobs_session_get_property (GObject      *object,
 OobsSession*
 oobs_session_new (void)
 {
-  return OOBS_SESSION (g_object_new (OOBS_TYPE_SESSION, NULL));
+  static OobsSession *session = NULL;
+
+  if (!session)
+    session = g_object_new (OOBS_TYPE_SESSION, NULL);
+
+  return session;
 }
 
 void

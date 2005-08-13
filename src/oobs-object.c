@@ -66,14 +66,12 @@ enum
 
 static guint object_signals [LAST_SIGNAL] = { 0 };
 
-G_DEFINE_TYPE (OobsObject, oobs_object, OOBS_TYPE_OBJECT);
+G_DEFINE_TYPE (OobsObject, oobs_object, G_TYPE_OBJECT);
 
 static void
 oobs_object_class_init (OobsObjectClass *class)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (class);
-
-  oobs_object_parent_class = g_type_class_peek_parent (class);
 
   object_class->get_property = oobs_object_get_property;
   object_class->set_property = oobs_object_set_property;

@@ -1,3 +1,33 @@
+2005-08-13  Carlos Garnacho Parro  <carlosg@gnome.org>
+
+	* src/md5-crypt.c, md5.[ch]: added to support MD5 crypt
+	* src/oobs-defines.h: private header for adding internal defines
+	* src/oobs-groupsconfig.[ch]: added. Object for handing groups 
+	configuration
+	* src/oobs-list.[ch]: now it's an independent list, inheriting for
+	GObject, it's done because a single OobsObject might contain several
+	lists
+	* src/oobs-list-private.h: added. Private header for holding
+	OobsList constructor, this won't be made public, as API users
+	shouldn't create/destroy it, just use what the OobsObjects provide
+	* src/oobs-ntpconfig.[ch]: added. Object to represent NTP servers
+	configuration
+	* src/oobs-ntpserver.[ch]: added. Object to represent a NTP server 
+	to which the computer connects
+	* src/oobs-shellsconfig.[ch]: added. Object to represent Shells
+	configuration
+	* src/oobs-usersconfig.[ch]: added. object to handle users
+	configuration
+	* src/oobs.h: one header to include them all
+	* src/oobs-group.c: added "crypted-password" property, complete API
+	* src/oobs-object.c, oobs-session.c, oobs-share-nfs.c, 
+	oobs-share-smb.c, oobs-share.c, oobs-shareslist.c, oobs-shell.c,
+	oobs-shellslist.c,: code fixes and other improvements
+	* src/oobs-shell.[ch]: complete API
+	* src/oobs-user.[ch]: ditto
+	* configure.in: add checks for libcrypt
+	* src/Makefile.am: add all these files
+
 2005-07-20  Carlos Garnacho Parro  <carlosg@gnome.org>
 
 	* *.[ch]: change emacs file style

@@ -47,14 +47,12 @@ enum
   PROP_PATH
 };
 
-G_DEFINE_TYPE (OobsShare, oobs_share, OOBS_TYPE_SHARE);
+G_DEFINE_TYPE (OobsShare, oobs_share, G_TYPE_OBJECT);
 
 static void
 oobs_share_class_init (OobsShareClass *class)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (class);
-
-  oobs_share_parent_class = g_type_class_peek_parent (class);
 
   object_class->set_property = oobs_share_set_property;
   object_class->get_property = oobs_share_get_property;

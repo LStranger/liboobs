@@ -47,14 +47,12 @@ enum
   PROP_PATH,
 };
 
-G_DEFINE_TYPE (OobsShell, oobs_shell, OOBS_TYPE_SHELL);
+G_DEFINE_TYPE (OobsShell, oobs_shell, G_TYPE_OBJECT);
 
 static void
 oobs_shell_class_init (OobsShellClass *class)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (class);
-
-  oobs_shell_parent_class = g_type_class_peek_parent (class);
 
   object_class->set_property = oobs_shell_set_property;
   object_class->get_property = oobs_shell_get_property;
@@ -151,4 +149,17 @@ oobs_shell_new (const gchar *path)
   return g_object_new (OOBS_TYPE_SHELL,
 		       "path", path,
 		       NULL);
+}
+
+G_CONST_RETURN gchar*
+oobs_shell_get_path (OobsShell *shell)
+{
+  OobsShellPrivate *priv;
+
+  g_return_val_if_fail (shell != NULL, NULL);
+  g_return_val_if_fail (OOBS_IS_SHELL (shell), NULL);
+
+  priv = OOBS_SHELL_GET_PRIVATE (shell);
+
+  return priv->path;
 }

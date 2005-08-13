@@ -1,10 +1,11 @@
 INCLUDES= -Wall $(OOBS_CFLAGS)
 
-oobsincludedir=$(includedir)/liboobs-1.0/
+oobsincludedir=$(includedir)/liboobs-1.0/oobs/
 
 lib_LTLIBRARIES= liboobs-1.la
 
 oobsinclude_HEADERS= 	\
+	oobs.h			\
 	oobs-session.h		\
 	oobs-object.h		\
 	oobs-list.h		\
@@ -12,26 +13,35 @@ oobsinclude_HEADERS= 	\
 	oobs-share.h		\
 	oobs-share-smb.h	\
 	oobs-share-nfs.h	\
-	oobs-shellslist.h	\
+	oobs-shellsconfig.h	\
 	oobs-shell.h		\
-	oobs-userslist.h	\
+	oobs-usersconfig.h	\
 	oobs-user.h		\
-	oobs-groupslist.h	\
-	oobs-group.h
+	oobs-groupsconfig.h	\
+	oobs-group.h		\
+	oobs-ntpconfig.h	\
+	oobs-ntpserver.h
 
 liboobs_1_la_SOURCES = \
+	md5-crypt.c	\
+	md5.h			md5.c			\
 	oobs-session.h		oobs-session.c		\
 	oobs-object.h		oobs-object.c		\
 	oobs-list.h		oobs-list.c		\
-	oobs-shareslist.h	oobs-shareslist.c	\
-	oobs-share.h		oobs-share.c		\
-	oobs-share-smb.h	oobs-share-smb.c	\
-	oobs-share-nfs.h	oobs-share-nfs.c	\
-	oobs-shellslist.h	oobs-shellslist.c	\
 	oobs-shell.h		oobs-shell.c		\
-	oobs-userslist.h	oobs-userslist.c	\
+	oobs-shellsconfig.h	oobs-shellsconfig.c	\
 	oobs-user.h		oobs-user.c		\
-	oobs-groupslist.h	oobs-groupslist.c	\
-	oobs-group.h		oobs-group.c
+	oobs-usersconfig.h	oobs-usersconfig.c	\
+	oobs-group.h		oobs-group.c		\
+	oobs-groupsconfig.h	oobs-groupsconfig.c	\
+	oobs-ntpserver.h	oobs-ntpserver.c	\
+	oobs-ntpconfig.h	oobs-ntpconfig.c
+
+
+#	oobs-shareslist.h	oobs-shareslist.c	\
+#	oobs-share.h		oobs-share.c		\
+#	oobs-share-smb.h	oobs-share-smb.c	\
+#	oobs-share-nfs.h	oobs-share-nfs.c	\
 
 liboobs_1_la_LIBADD= $(OOBS_LIBS)
+

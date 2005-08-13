@@ -40,7 +40,7 @@ static void oobs_shares_list_commit     (OobsObject   *object,
 					 gpointer     data);
 static GType oobs_shares_list_get_content_type (OobsList *list);
 
-G_DEFINE_TYPE (OobsSharesList, oobs_shares_list, OOBS_TYPE_SHARES_LIST);
+G_DEFINE_TYPE (OobsSharesList, oobs_shares_list, OOBS_TYPE_LIST);
 
 static void
 oobs_shares_list_class_init (OobsSharesListClass *class)
@@ -48,8 +48,6 @@ oobs_shares_list_class_init (OobsSharesListClass *class)
   GObjectClass *object_class = G_OBJECT_CLASS (class);
   OobsObjectClass *oobs_object_class = OOBS_OBJECT_CLASS (class);
   OobsListClass *oobs_list_class = OOBS_LIST_CLASS (class);
-
-  oobs_shares_list_parent_class = g_type_class_peek_parent (class);
 
   object_class->finalize    = oobs_shares_list_finalize;
   oobs_object_class->commit = oobs_shares_list_commit;

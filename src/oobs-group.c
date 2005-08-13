@@ -20,9 +20,9 @@
 
 #include <glib-object.h>
 #include "oobs-group.h"
+#include "oobs-defines.h"
 
 #define OOBS_GROUP_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_GROUP, OobsGroupPrivate))
-#define DEFAULT_GID 65534
 
 typedef struct _OobsGroupPrivate OobsGroupPrivate;
 
@@ -30,7 +30,7 @@ struct _OobsGroupPrivate {
   gint   key;
   gchar *groupname;
   gchar *password;
-  gint   gid;
+  gid_t  gid;
 };
 
 static void oobs_group_class_init (OobsGroupClass *class);
@@ -49,17 +49,16 @@ enum {
   PROP_0,
   PROP_GROUPNAME,
   PROP_PASSWORD,
+  PROP_CRYPTED_PASSWORD,
   PROP_GID,
 };
 
-G_DEFINE_TYPE (OobsGroup, oobs_group, OOBS_TYPE_GROUP);
+G_DEFINE_TYPE (OobsGroup, oobs_group, G_TYPE_OBJECT);
 
 static void
 oobs_group_class_init (OobsGroupClass *class)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (class);
-
-  oobs_group_parent_class = g_type_class_peek_parent (class);
 
   object_class->set_property = oobs_group_set_property;
   object_class->get_property = oobs_group_get_property;
@@ -80,11 +79,18 @@ oobs_group_class_init (OobsGroupClass *class)
 							NULL,
 							G_PARAM_WRITABLE));
   g_object_class_install_property (object_class,
+				   PROP_PASSWORD,
+				   g_param_spec_string ("crypted-password",
+							"Crypted password",
+							"Crypted password for the group",
+							NULL,
+							G_PARAM_WRITABLE));
+  g_object_class_install_property (object_class,
 				   PROP_GID,
 				   g_param_spec_int ("gid",
 						     "GID",
 						     "Main group GID for the group",
-						     0, DEFAULT_GID, DEFAULT_GID,
+						     0, OOBS_MAX_GID, OOBS_MAX_GID,
 						     G_PARAM_READWRITE));
   g_type_class_add_private (object_class,
 			    sizeof (OobsGroupPrivate));
@@ -123,6 +129,10 @@ oobs_group_set_property (GObject      *object,
       priv->groupname = g_value_dup_string (value);
       break;
     case PROP_PASSWORD:
+      g_free (priv->password);
+      priv->password = g_value_dup_string (value);
+      break;
+    case PROP_CRYPTED_PASSWORD:
       g_free (priv->password);
       priv->password = g_value_dup_string (value);
       break;
@@ -205,7 +215,7 @@ oobs_group_set_name (OobsGroup *group, const gchar *name)
   g_return_if_fail (OOBS_IS_GROUP (group));
   g_return_if_fail (name != NULL);
 
-  /* FIXME: should check name length? */
+  /* FIXME: should check name length */
 
   g_object_set (G_OBJECT (group), "name", name, NULL);
 }
@@ -219,13 +229,13 @@ oobs_group_set_password (OobsGroup *group, const gchar *password)
   g_object_set (G_OBJECT (group), "password", password, NULL);
 }
 
-gint
+gid_t
 oobs_group_get_gid (OobsGroup *group)
 {
   OobsGroupPrivate *priv;
 
-  g_return_val_if_fail (group != NULL, DEFAULT_GID);
-  g_return_val_if_fail (OOBS_IS_GROUP (group), DEFAULT_GID);
+  g_return_val_if_fail (group != NULL, OOBS_MAX_GID);
+  g_return_val_if_fail (OOBS_IS_GROUP (group), OOBS_MAX_GID);
 
   priv = OOBS_GROUP_GET_PRIVATE (group);
 
@@ -233,7 +243,7 @@ oobs_group_get_gid (OobsGroup *group)
 }
 
 void
-oobs_group_set_gid (OobsGroup *group, gint gid)
+oobs_group_set_gid (OobsGroup *group, gid_t gid)
 {
   g_return_if_fail (group != NULL);
   g_return_if_fail (OOBS_IS_GROUP (group));

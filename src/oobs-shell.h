@@ -43,9 +43,11 @@ struct _OobsShellClass {
   GObjectClass parent_class;
 };
 
-GType oobs_shell_get_type (void);
+GType                  oobs_shell_get_type   (void);
 
-OobsShell* oobs_shell_new (const gchar *path);
+OobsShell*             oobs_shell_new        (const gchar *path);
+G_CONST_RETURN gchar*  oobs_shell_get_path   (OobsShell *shell);
+
 
 G_END_DECLS
 

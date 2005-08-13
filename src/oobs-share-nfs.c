@@ -34,14 +34,12 @@ static void oobs_share_nfs_class_init (OobsShareNfsClass *class);
 static void oobs_share_nfs_init       (OobsShareNfs      *share);
 static void oobs_share_nfs_finalize   (GObject          *object);
 
-G_DEFINE_TYPE (OobsShareNfs, oobs_share_nfs, OOBS_TYPE_SHARE_NFS);
+G_DEFINE_TYPE (OobsShareNfs, oobs_share_nfs, OOBS_TYPE_SHARE);
 
 static void
 oobs_share_nfs_class_init (OobsShareNfsClass *class)
 {
   GObjectClass  *object_class = G_OBJECT_CLASS (class);
-
-  oobs_share_nfs_parent_class = g_type_class_peek_parent (class);
 
   object_class->set_property = NULL;
   object_class->get_property = NULL;

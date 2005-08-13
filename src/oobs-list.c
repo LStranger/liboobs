@@ -32,24 +32,40 @@ struct _OobsListPrivate
 {
   GList *list;
   guint  stamp;
+
+  GType  contained_type;
 };
 
 static void oobs_list_class_init (OobsListClass *class);
 static void oobs_list_init       (OobsList      *list);
 static void oobs_list_finalize   (GObject      *object);
 
-G_DEFINE_TYPE (OobsList, oobs_list, OOBS_TYPE_LIST);
+static void oobs_list_set_property (GObject      *object,
+				    guint         prop_id,
+				    const GValue *value,
+				    GParamSpec   *pspec);
+enum
+{
+  PROP_0,
+  PROP_CONTAINED_TYPE
+};
+
+G_DEFINE_TYPE (OobsList, oobs_list, G_TYPE_OBJECT);
 
 static void
 oobs_list_class_init (OobsListClass *class)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (class);
 
-  oobs_list_parent_class = g_type_class_peek_parent (class);
-
-  class->get_content_type = NULL;
   object_class->finalize = oobs_list_finalize;
+  object_class->set_property = oobs_list_set_property;
 
+  g_object_class_install_property (object_class,
+				   PROP_CONTAINED_TYPE,
+				   g_param_spec_pointer ("contained-type",
+							 "Contained type",
+							 "GType contained in the list",
+							 G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
   g_type_class_add_private (object_class,
 			    sizeof (OobsListPrivate));
 }
@@ -67,19 +83,6 @@ oobs_list_init (OobsList *object)
 }
 
 static void
-free_list (OobsList *list)
-{
-  OobsListPrivate *priv;
-
-  g_return_if_fail (OOBS_IS_LIST (list));
-  priv = OOBS_LIST_GET_PRIVATE (list);
-
-  g_list_foreach (priv->list, (GFunc) g_object_unref, NULL);
-  g_list_free    (priv->list);
-  priv->list = NULL;
-}
-
-static void
 oobs_list_finalize (GObject *object)
 {
   OobsList *list;
@@ -90,11 +93,38 @@ oobs_list_finalize (GObject *object)
   list = OOBS_LIST (object);
   priv = OOBS_LIST_GET_PRIVATE (list);
 
-  if (priv)
-    free_list (list);
+  if (priv && priv->list)
+    oobs_list_clear (list);
 
   if (G_OBJECT_CLASS (oobs_list_parent_class)->finalize)
     (* G_OBJECT_CLASS (oobs_list_parent_class)->finalize) (object);
+}
+
+static void
+oobs_list_set_property (GObject      *object,
+			guint         prop_id,
+			const GValue *value,
+			GParamSpec   *pspec)
+{
+  OobsList *list;
+  OobsListPrivate *priv;
+  GType *type;
+
+  g_return_if_fail (OOBS_IS_LIST (object));
+
+  list = OOBS_LIST (object);
+  priv = OOBS_LIST_GET_PRIVATE (list);
+
+  switch (prop_id)
+    {
+    case PROP_CONTAINED_TYPE:
+      type = g_value_get_pointer (value);
+      priv->contained_type = *type;
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
 }
 
 static gboolean
@@ -102,7 +132,7 @@ check_iter (OobsListPrivate *priv, OobsListIter *iter)
 {
   if (priv->stamp != iter->stamp)
     {
-      g_warning ("OobsList stamp and OobsListIter stamp differ");
+      g_critical ("OobsList stamp and OobsListIter stamp differ");
       return FALSE;
     }
 
@@ -110,6 +140,14 @@ check_iter (OobsListPrivate *priv, OobsListIter *iter)
     return FALSE;
 
   return TRUE;
+}
+
+GObject*
+_oobs_list_new (const GType contained_type)
+{
+  return g_object_new (OOBS_TYPE_LIST,
+		       "contained-type", &contained_type,
+		       NULL);
 }
 
 gboolean
@@ -326,19 +364,13 @@ static gboolean
 check_types (OobsList *list,
 	     GObject *data)
 {
-  GType object_type;
+  OobsListPrivate *priv;
 
-  if (!OOBS_LIST_GET_CLASS (list)->get_content_type)
+  priv = OOBS_LIST_GET_PRIVATE (list);
+  
+  if (!G_TYPE_CHECK_INSTANCE_TYPE (data, priv->contained_type))
     {
-      g_critical ("List does not implement get_content_type ()");
-      return FALSE;
-    }
-
-  object_type = OOBS_LIST_GET_CLASS (list)->get_content_type (list);
-
-  if (!G_TYPE_CHECK_INSTANCE_TYPE (data, object_type))
-    {
-      g_warning ("Trying to store a different object type in the list");
+      g_critical ("Trying to store a different object type in the list");
       return FALSE;
     }
 
@@ -348,15 +380,15 @@ check_types (OobsList *list,
 void
 oobs_list_set (OobsList     *list,
 	       OobsListIter *iter,
-	       GObject     *data)
+	       gpointer      data)
 {
   OobsListPrivate *priv;
   GList *node;
 
   g_return_if_fail (list != NULL);
   g_return_if_fail (iter != NULL);
-  g_return_if_fail (iter->data != NULL);
   g_return_if_fail (OOBS_IS_LIST (list));
+  g_return_if_fail (G_IS_OBJECT (data));
 
   node = iter->data;
   priv = OOBS_LIST_GET_PRIVATE (list);
@@ -373,13 +405,6 @@ oobs_list_set (OobsList     *list,
 }
 
 void
-unref_data (GObject *object, gpointer data)
-{
-  g_return_if_fail (object != NULL);
-  g_object_unref (object);
-}
-
-void
 oobs_list_clear (OobsList *list)
 {
   OobsListPrivate *priv;
@@ -391,7 +416,7 @@ oobs_list_clear (OobsList *list)
 
   if (priv->list)
     {
-      g_list_foreach (priv->list, (GFunc) unref_data, NULL);
+      g_list_foreach (priv->list, (GFunc) g_object_unref, NULL);
       g_list_free    (priv->list);
       priv->list = NULL;
     }

@@ -1,5 +1,9 @@
 2005-08-13  Carlos Garnacho Parro  <carlosg@gnome.org>
 
+	* src/oobs*.[ch]: Silly copy & paste, s/GPL/LGPL/g in licenses
+
+2005-08-13  Carlos Garnacho Parro  <carlosg@gnome.org>
+
 	* src/oobs-groupslist.[ch], oobs-shellslist.[ch], oobs-userslist.[ch]:
 	deprecated, to the attic with you!
 

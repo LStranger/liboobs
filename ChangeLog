@@ -1,5 +1,10 @@
 2005-08-13  Carlos Garnacho Parro  <carlosg@gnome.org>
 
+	* src/oobs-groupslist.[ch], oobs-shellslist.[ch], oobs-userslist.[ch]:
+	deprecated, to the attic with you!
+
+2005-08-13  Carlos Garnacho Parro  <carlosg@gnome.org>
+
 	* src/md5-crypt.c, md5.[ch]: added to support MD5 crypt
 	* src/oobs-defines.h: private header for adding internal defines
 	* src/oobs-groupsconfig.[ch]: added. Object for handing groups 

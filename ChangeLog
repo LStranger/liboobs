@@ -1,3 +1,10 @@
+2005-09-17  Carlos Garnacho Parro  <carlosg@gnome.org>
+
+	* src/oobs-timeconfig.[ch], oobs-smbconfig.[ch], oobs-nfsconfig.[ch]:
+	added, they handle (respectively) time, samba and nfs configuration.
+	* src/oobs.h: added those headers
+	* src/Makefile.am: added those files
+
 2005-08-13  Carlos Garnacho Parro  <carlosg@gnome.org>
 
 	* src/oobs*.[ch]: Silly copy & paste, s/GPL/LGPL/g in licenses

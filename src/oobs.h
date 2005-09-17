@@ -21,16 +21,10 @@
 #ifndef __OOBS_H_
 #define __OOBS_H_
 
-
 #include <glib-object.h>
 #include <oobs/oobs-object.h>
 #include <oobs/oobs-session.h>
 #include <oobs/oobs-list.h>
-/*
-#include <oobs/oobs-share.h>
-#include <oobs/oobs-share-nfs.h>
-#include <oobs/oobs-share-smb.h>
-*/
 #include <oobs/oobs-shell.h>
 #include <oobs/oobs-shellsconfig.h>
 #include <oobs/oobs-user.h>
@@ -39,6 +33,11 @@
 #include <oobs/oobs-groupsconfig.h>
 #include <oobs/oobs-ntpserver.h>
 #include <oobs/oobs-ntpconfig.h>
-
+#include <oobs/oobs-timeconfig.h>
+#include <oobs/oobs-share.h>
+#include <oobs/oobs-share-nfs.h>
+#include <oobs/oobs-nfsconfig.h>
+#include <oobs/oobs-share-smb.h>
+#include <oobs/oobs-smbconfig.h>
 
 #endif /* __OOBS_H_ */

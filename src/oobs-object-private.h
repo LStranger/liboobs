@@ -18,31 +18,13 @@
  * Authors: Carlos Garnacho Parro  <carlosg@gnome.org>
  */
 
-#ifndef __OOBS_H_
-#define __OOBS_H_
+#ifndef __OOBS_OBJECT_PRIVATE_H
+#define __OOBS_OBJECT_PRIVATE_H
 
-#include <glib-object.h>
-#include <oobs/oobs-object.h>
-#include <oobs/oobs-session.h>
-#include <oobs/oobs-list.h>
-#include <oobs/oobs-share.h>
-#include <oobs/oobs-share-smb.h>
-#include <oobs/oobs-smbconfig.h>
-#include <oobs/oobs-share-nfs.h>
-#include <oobs/oobs-nfsconfig.h>
-#include <oobs/oobs-shell.h>
-#include <oobs/oobs-shellsconfig.h>
-#include <oobs/oobs-user.h>
-#include <oobs/oobs-usersconfig.h>
-#include <oobs/oobs-group.h>
-#include <oobs/oobs-groupsconfig.h>
-#include <oobs/oobs-ntpserver.h>
-#include <oobs/oobs-ntpconfig.h>
-#include <oobs/oobs-timeconfig.h>
-#include <oobs/oobs-share.h>
-#include <oobs/oobs-share-nfs.h>
-#include <oobs/oobs-nfsconfig.h>
-#include <oobs/oobs-share-smb.h>
-#include <oobs/oobs-smbconfig.h>
+G_BEGIN_DECLS
 
-#endif /* __OOBS_H_ */
+DBusMessage *_oobs_object_get_dbus_message (OobsObject *object);
+
+G_END_DECLS
+
+#endif /* __OOBS_OBJECT_PRIVATE_H */

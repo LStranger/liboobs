@@ -20,10 +20,12 @@
 
 #include <dbus/dbus.h>
 #include <glib-object.h>
+
+#include "oobs-object.h"
+#include "oobs-object-private.h"
 #include "oobs-ntpconfig.h"
 #include "oobs-list-private.h"
 #include "oobs-ntpserver.h"
-
 
 #define NTP_CONFIG_REMOTE_OBJECT "NTPConfig"
 #define OOBS_NTP_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_NTP_CONFIG, OobsNTPConfigPrivate))
@@ -39,10 +41,9 @@ static void oobs_ntp_config_class_init (OobsNTPConfigClass *class);
 static void oobs_ntp_config_init       (OobsNTPConfig      *config);
 static void oobs_ntp_config_finalize   (GObject            *object);
 
-static void oobs_ntp_config_update     (OobsObject   *object,
-					gpointer     data);
-static void oobs_ntp_config_commit     (OobsObject   *object,
-					gpointer     data);
+static void oobs_ntp_config_update     (OobsObject   *object);
+static void oobs_ntp_config_commit     (OobsObject   *object);
+
 
 G_DEFINE_TYPE (OobsNTPConfig, oobs_ntp_config, OOBS_TYPE_OBJECT);
 
@@ -92,10 +93,10 @@ oobs_ntp_config_finalize (GObject *object)
 }
 
 static void
-oobs_ntp_config_update (OobsObject *object, gpointer data)
+oobs_ntp_config_update (OobsObject *object)
 {
   OobsNTPConfigPrivate *priv;
-  DBusMessage     *reply = (DBusMessage *) data;
+  DBusMessage     *reply;
   DBusMessageIter  iter, elem_iter;
   OobsListIter     list_iter;
   GObject         *ntp_server;
@@ -103,7 +104,8 @@ oobs_ntp_config_update (OobsObject *object, gpointer data)
 
   g_return_if_fail (OOBS_IS_NTP_CONFIG (object));
 
-  priv = OOBS_NTP_CONFIG_GET_PRIVATE (object);
+  priv  = OOBS_NTP_CONFIG_GET_PRIVATE (object);
+  reply = _oobs_object_get_dbus_message (object);
 
   /* First of all, free the previous list */
   oobs_list_clear (priv->servers_list);
@@ -125,7 +127,7 @@ oobs_ntp_config_update (OobsObject *object, gpointer data)
 }
 
 static void
-oobs_ntp_config_commit (OobsObject *object, gpointer data)
+oobs_ntp_config_commit (OobsObject *object)
 {
 }
 

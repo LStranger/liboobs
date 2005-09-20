@@ -21,7 +21,9 @@
 #include <dbus/dbus.h>
 #include <glib-object.h>
 #include <string.h>
+
 #include "oobs-object.h"
+#include "oobs-object-private.h"
 #include "oobs-list.h"
 #include "oobs-list-private.h"
 #include "oobs-nfsconfig.h"
@@ -42,10 +44,8 @@ static void oobs_nfs_config_class_init (OobsNFSConfigClass *class);
 static void oobs_nfs_config_init       (OobsNFSConfig      *config);
 static void oobs_nfs_config_finalize   (GObject            *object);
 
-static void oobs_nfs_config_update     (OobsObject   *object,
-					gpointer     data);
-static void oobs_nfs_config_commit     (OobsObject   *object,
-					gpointer     data);
+static void oobs_nfs_config_update     (OobsObject   *object);
+static void oobs_nfs_config_commit     (OobsObject   *object);
 
 
 G_DEFINE_TYPE (OobsNFSConfig, oobs_nfs_config, OOBS_TYPE_OBJECT);
@@ -94,48 +94,20 @@ create_share_from_dbus_reply (OobsObject      *object,
 			      DBusMessage     *reply,
 			      DBusMessageIter  iter)
 {
-  /*
-  DBusMessageIter dict_iter, entries_iter;
-  gchar *key, *val, *name, *comment, *path;
-
-  name    = NULL;
-  comment = NULL;
-  path    = NULL;
-  dbus_message_iter_recurse (&iter, &dict_iter);
-
-  while (dbus_message_iter_get_arg_type (&dict_iter) == DBUS_TYPE_DICT_ENTRY)
-    {
-      /* get into the dict entries */
-  /*
-      dbus_message_iter_recurse (&dict_iter, &entries_iter);
-
-      dbus_message_iter_get_basic (&entries_iter, &key);
-      dbus_message_iter_next (&entries_iter);
-      dbus_message_iter_get_basic (&entries_iter, &val);
-      dbus_message_iter_next (&entries_iter);
-
-      if (strcmp (key, "point") == 0)
-	path = val;
-      else if (strcmp (key, "name") == 0)
-	name = val;
-
-      dbus_message_iter_next (&dict_iter);
-    }
-
-  return oobs_share_smb_new (name, "bar", path, 0);
-  */
+  return NULL;
 }
 
 static void
-oobs_nfs_config_update (OobsObject *object, gpointer data)
+oobs_nfs_config_update (OobsObject *object)
 {
   OobsNFSConfigPrivate *priv;
-  DBusMessage      *reply = (DBusMessage *) data;
+  DBusMessage      *reply;
   DBusMessageIter   iter, array_iter;
   OobsListIter      list_iter;
   OobsShare        *share;
 
-  priv = OOBS_NFS_CONFIG_GET_PRIVATE (object);
+  priv  = OOBS_NFS_CONFIG_GET_PRIVATE (object);
+  reply = _oobs_object_get_dbus_message (object);
 
   /* First of all, free the previous shares list */
   oobs_list_clear (priv->shares_list);
@@ -157,7 +129,7 @@ oobs_nfs_config_update (OobsObject *object, gpointer data)
 }
 
 static void
-oobs_nfs_config_commit (OobsObject *object, gpointer data)
+oobs_nfs_config_commit (OobsObject *object)
 {
 }
 

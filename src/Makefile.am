@@ -11,10 +11,10 @@ oobsinclude_HEADERS= 	\
 	oobs-list.h		\
 	oobs-shareslist.h	\
 	oobs-share.h		\
-	oobs-share-smb.h	\
 	oobs-smbconfig.h	\
-	oobs-share-nfs.h	\
+	oobs-share-smb.h	\
 	oobs-nfsconfig.h	\
+	oobs-share-nfs.h	\
 	oobs-shellsconfig.h	\
 	oobs-shell.h		\
 	oobs-usersconfig.h	\
@@ -40,10 +40,10 @@ liboobs_1_la_SOURCES = \
 	oobs-timeconfig.h	oobs-timeconfig.c	\
 	oobs-ntpserver.h	oobs-ntpserver.c	\
 	oobs-ntpconfig.h	oobs-ntpconfig.c	\
-	oobs-share.h            oobs-share.c            \
-	oobs-smbconfig.h        oobs-smbconfig.c        \
-	oobs-share-smb.h        oobs-share-smb.c        \
-	oobs-nfsconfig.h        oobs-nfsconfig.c        \
-	oobs-share-nfs.h        oobs-share-nfs.c
+	oobs-share.h		oobs-share.c		\
+	oobs-smbconfig.h	oobs-smbconfig.c	\
+	oobs-share-smb.h	oobs-share-smb.c	\
+	oobs-nfsconfig.h	oobs-nfsconfig.c	\
+	oobs-share-nfs.h	oobs-share-nfs.c
 
 liboobs_1_la_LIBADD= $(OOBS_LIBS)

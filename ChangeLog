@@ -1,3 +1,17 @@
+2005-09-20  Carlos Garnacho Parro  <carlosg@gnome.org>
+
+	* src/oobs-object-private.h: added, contains the function to extract
+	the DBusMessage* from an object
+	* src/oobs-object.[ch]: hide the pointer that contained the 
+	DBusMessage* stuff in the public API to prevent API/ABI changes 
+	if there's a change in the used IPC.
+	* src/oobs-groupsconfig.c, oobs-nfsconfig.c, oobs-ntpconfig.c,
+	oobs-shellsconfig.c, oobs-smbconfig.c, oobs-timeconfig.c,
+	oobs-usersconfig.c: use function from oobs-object-private.h to extract
+	the DBusMessage*
+	* src/oobs.h: forgot to include share includes
+	* src/Makefile.am: trivial changes
+
 2005-09-17  Carlos Garnacho Parro  <carlosg@gnome.org>
 
 	* src/oobs-timeconfig.[ch], oobs-smbconfig.[ch], oobs-nfsconfig.[ch]:

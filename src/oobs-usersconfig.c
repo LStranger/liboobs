@@ -24,6 +24,7 @@
 #include <string.h>
 
 #include "oobs-object.h"
+#include "oobs-object-private.h"
 #include "oobs-list.h"
 #include "oobs-list-private.h"
 #include "oobs-usersconfig.h"
@@ -59,10 +60,8 @@ static void oobs_users_config_get_property (GObject      *object,
 					    GValue       *value,
 					    GParamSpec   *pspec);
 
-static void oobs_users_config_update     (OobsObject   *object,
-					  gpointer     data);
-static void oobs_users_config_commit     (OobsObject   *object,
-					  gpointer     data);
+static void oobs_users_config_update     (OobsObject   *object);
+static void oobs_users_config_commit     (OobsObject   *object);
 
 enum
 {
@@ -266,15 +265,16 @@ create_user_from_dbus_reply (OobsObject      *object,
 }
 
 static void
-oobs_users_config_update (OobsObject *object, gpointer data)
+oobs_users_config_update (OobsObject *object)
 {
   OobsUsersConfigPrivate *priv;
-  DBusMessage     *reply = (DBusMessage *) data;
+  DBusMessage     *reply;
   DBusMessageIter  iter, elem_iter;
   OobsListIter     list_iter;
   GObject         *user;
 
-  priv = OOBS_USERS_CONFIG_GET_PRIVATE (object);
+  priv  = OOBS_USERS_CONFIG_GET_PRIVATE (object);
+  reply = _oobs_object_get_dbus_message (object);
 
   /* First of all, free the previous list */
   oobs_list_clear (priv->users_list);
@@ -307,7 +307,7 @@ oobs_users_config_update (OobsObject *object, gpointer data)
 }
 
 static void
-oobs_users_config_commit (OobsObject *object, gpointer data)
+oobs_users_config_commit (OobsObject *object)
 {
 }
 

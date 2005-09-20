@@ -50,11 +50,8 @@ static void oobs_time_config_get_property (GObject      *object,
 					   GValue       *value,
 					   GParamSpec   *pspec);
 */
-static void oobs_time_config_update     (OobsObject   *object,
-					 gpointer     data);
-static void oobs_time_config_commit     (OobsObject   *object,
-					 gpointer     data);
-
+static void oobs_time_config_update     (OobsObject   *object);
+static void oobs_time_config_commit     (OobsObject   *object);
 
 
 G_DEFINE_TYPE (OobsTimeConfig, oobs_time_config, OOBS_TYPE_OBJECT);
@@ -101,12 +98,12 @@ oobs_time_config_finalize (GObject *object)
 }
 
 static void
-oobs_time_config_update (OobsObject *object, gpointer data)
+oobs_time_config_update (OobsObject *object)
 {
 }
 
 static void
-oobs_time_config_commit (OobsObject *object, gpointer data)
+oobs_time_config_commit (OobsObject *object)
 {
 }
 

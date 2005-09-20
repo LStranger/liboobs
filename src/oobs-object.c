@@ -64,6 +64,8 @@ enum
   PROP_REMOTE_OBJECT
 };
 
+static GQuark dbus_connection_quark;
+
 static guint object_signals [LAST_SIGNAL] = { 0 };
 
 G_DEFINE_TYPE (OobsObject, oobs_object, G_TYPE_OBJECT);
@@ -81,6 +83,8 @@ oobs_object_class_init (OobsObjectClass *class)
   class->update   = NULL;
   class->changing = oobs_object_update;
   class->changed  = NULL;
+
+  dbus_connection_quark = g_quark_from_static_string ("oobs-dbus-connection");
 
   g_object_class_install_property (object_class,
 				   PROP_SESSION,
@@ -292,7 +296,7 @@ oobs_object_commit (OobsObject *object)
     }
 
   if (class->commit)
-    class->commit (object, NULL);
+    class->commit (object);
 }
 
 void
@@ -320,8 +324,18 @@ oobs_object_update (OobsObject *object)
 
   if (reply)
     {
-      class->update (object, reply);
+      g_object_set_qdata (G_OBJECT (object), dbus_connection_quark, reply);
+      class->update (object);
       g_signal_emit (object, object_signals [CHANGED], 0);
+
+      /* free the reply */
+      reply = g_object_steal_qdata (G_OBJECT (object), dbus_connection_quark);
       dbus_message_unref (reply);
     }
+}
+
+DBusMessage*
+_oobs_object_get_dbus_message (OobsObject *object)
+{
+  return (DBusMessage *) g_object_get_qdata (G_OBJECT (object), dbus_connection_quark);
 }

@@ -21,7 +21,9 @@
 #include <dbus/dbus.h>
 #include <glib-object.h>
 #include <string.h>
+
 #include "oobs-object.h"
+#include "oobs-object-private.h"
 #include "oobs-list.h"
 #include "oobs-list-private.h"
 #include "oobs-groupsconfig.h"
@@ -41,10 +43,8 @@ static void oobs_groups_config_class_init (OobsGroupsConfigClass *class);
 static void oobs_groups_config_init       (OobsGroupsConfig      *groups_list);
 static void oobs_groups_config_finalize   (GObject               *object);
 
-static void oobs_groups_config_update     (OobsObject   *object,
-					   gpointer     data);
-static void oobs_groups_config_commit     (OobsObject   *object,
-					   gpointer     data);
+static void oobs_groups_config_update     (OobsObject   *object);
+static void oobs_groups_config_commit     (OobsObject   *object);
 
 
 G_DEFINE_TYPE (OobsGroupsConfig, oobs_groups_config, OOBS_TYPE_OBJECT);
@@ -123,15 +123,16 @@ create_group_from_dbus_reply (OobsObject      *object,
 }
 
 static void
-oobs_groups_config_update (OobsObject *object, gpointer data)
+oobs_groups_config_update (OobsObject *object)
 {
   OobsGroupsConfigPrivate *priv;
-  DBusMessage     *reply = (DBusMessage *) data;
+  DBusMessage     *reply;
   DBusMessageIter  iter, elem_iter;
   OobsListIter     list_iter;
   GObject         *group;
 
-  priv = OOBS_GROUPS_CONFIG_GET_PRIVATE (object);
+  priv  = OOBS_GROUPS_CONFIG_GET_PRIVATE (object);
+  reply = _oobs_object_get_dbus_message (object);
 
   /* First of all, free the previous list */
   oobs_list_clear (priv->groups_list);
@@ -152,7 +153,7 @@ oobs_groups_config_update (OobsObject *object, gpointer data)
 }
 
 static void
-oobs_groups_config_commit (OobsObject *object, gpointer data)
+oobs_groups_config_commit (OobsObject *object)
 {
 }
 

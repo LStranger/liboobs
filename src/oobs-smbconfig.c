@@ -21,7 +21,9 @@
 #include <dbus/dbus.h>
 #include <glib-object.h>
 #include <string.h>
+
 #include "oobs-object.h"
+#include "oobs-object-private.h"
 #include "oobs-list.h"
 #include "oobs-list-private.h"
 #include "oobs-smbconfig.h"
@@ -42,10 +44,8 @@ static void oobs_smb_config_class_init (OobsSMBConfigClass *class);
 static void oobs_smb_config_init       (OobsSMBConfig      *config);
 static void oobs_smb_config_finalize   (GObject            *object);
 
-static void oobs_smb_config_update     (OobsObject   *object,
-					gpointer     data);
-static void oobs_smb_config_commit     (OobsObject   *object,
-					gpointer     data);
+static void oobs_smb_config_update     (OobsObject   *object);
+static void oobs_smb_config_commit     (OobsObject   *object);
 
 
 G_DEFINE_TYPE (OobsSMBConfig, oobs_smb_config, OOBS_TYPE_OBJECT);
@@ -124,15 +124,16 @@ create_share_from_dbus_reply (OobsObject      *object,
 }
 
 static void
-oobs_smb_config_update (OobsObject *object, gpointer data)
+oobs_smb_config_update (OobsObject *object)
 {
   OobsSMBConfigPrivate *priv;
-  DBusMessage      *reply = (DBusMessage *) data;
+  DBusMessage      *reply;
   DBusMessageIter   iter, array_iter;
   OobsListIter      list_iter;
   OobsShare        *share;
 
-  priv = OOBS_SMB_CONFIG_GET_PRIVATE (object);
+  priv  = OOBS_SMB_CONFIG_GET_PRIVATE (object);
+  reply = _oobs_object_get_dbus_message (object);
 
   /* First of all, free the previous shares list */
   oobs_list_clear (priv->shares_list);
@@ -154,7 +155,7 @@ oobs_smb_config_update (OobsObject *object, gpointer data)
 }
 
 static void
-oobs_smb_config_commit (OobsObject *object, gpointer data)
+oobs_smb_config_commit (OobsObject *object)
 {
 }
 

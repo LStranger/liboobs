@@ -22,6 +22,7 @@
 #include <glib-object.h>
 #include <string.h>
 #include "oobs-object.h"
+#include "oobs-object-private.h"
 #include "oobs-list.h"
 #include "oobs-list-private.h"
 #include "oobs-shellsconfig.h"
@@ -42,10 +43,8 @@ static void oobs_shells_config_class_init (OobsShellsConfigClass *class);
 static void oobs_shells_config_init       (OobsShellsConfig      *shells_list);
 static void oobs_shells_config_finalize   (GObject               *object);
 
-static void oobs_shells_config_update     (OobsObject   *object,
-					   gpointer     data);
-static void oobs_shells_config_commit     (OobsObject   *object,
-					   gpointer     data);
+static void oobs_shells_config_update     (OobsObject   *object);
+static void oobs_shells_config_commit     (OobsObject   *object);
 
 
 G_DEFINE_TYPE (OobsShellsConfig, oobs_shells_config, OOBS_TYPE_OBJECT);
@@ -93,16 +92,17 @@ oobs_shells_config_finalize (GObject *object)
 }
 
 static void
-oobs_shells_config_update (OobsObject *object, gpointer data)
+oobs_shells_config_update (OobsObject *object)
 {
   OobsShellsConfigPrivate *priv;
-  DBusMessage      *reply = (DBusMessage *) data;
+  DBusMessage      *reply;
   DBusMessageIter   iter, array_iter;
   GObject          *sh;
   OobsListIter      list_iter;
   char             *shell;
 
-  priv = OOBS_SHELLS_CONFIG_GET_PRIVATE (object);
+  priv  = OOBS_SHELLS_CONFIG_GET_PRIVATE (object);
+  reply = _oobs_object_get_dbus_message (object);
 
   /* First of all, free the previous shares list */
   oobs_list_clear (priv->shells_list);
@@ -125,7 +125,7 @@ oobs_shells_config_update (OobsObject *object, gpointer data)
 }
 
 static void
-oobs_shells_config_commit (OobsObject *object, gpointer data)
+oobs_shells_config_commit (OobsObject *object)
 {
 }
 

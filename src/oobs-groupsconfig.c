@@ -40,7 +40,7 @@ struct _OobsGroupsConfigPrivate
 };
 
 static void oobs_groups_config_class_init (OobsGroupsConfigClass *class);
-static void oobs_groups_config_init       (OobsGroupsConfig      *groups_list);
+static void oobs_groups_config_init       (OobsGroupsConfig      *config);
 static void oobs_groups_config_finalize   (GObject               *object);
 
 static void oobs_groups_config_update     (OobsObject   *object);

@@ -55,4 +55,4 @@ OobsList*   oobs_groups_config_get_groups   (OobsGroupsConfig *config);
 
 G_END_DECLS
 
-#endif /* __OOBS_GROUPS_LIST_H */
+#endif /* __OOBS_GROUPS_CONFIG_H */

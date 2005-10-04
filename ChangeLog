@@ -1,3 +1,11 @@
+2005-10-05  Carlos Garnacho Parro  <carlosg@gnome.org>
+
+	* src/oobs-hostsconfig.[ch], oobs-servicesconfig.[ch]: added, at the
+	moment they're almost dummy files
+	* src/Makefile.am: reflect this
+	* src/oobs.h: here too
+	* src/oobs-groupsconfig.[ch]: fix a couple of small typos
+
 2005-09-20  Carlos Garnacho Parro  <carlosg@gnome.org>
 
 	* src/oobs-object-private.h: added, contains the function to extract

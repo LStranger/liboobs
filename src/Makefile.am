@@ -23,7 +23,9 @@ oobsinclude_HEADERS= 	\
 	oobs-group.h		\
 	oobs-timeconfig.h	\
 	oobs-ntpconfig.h	\
-	oobs-ntpserver.h
+	oobs-ntpserver.h	\
+	oobs-hostsconfig.h	\
+	oobs-servicesconfig.h
 
 liboobs_1_la_SOURCES = \
 	md5-crypt.c	\
@@ -44,6 +46,8 @@ liboobs_1_la_SOURCES = \
 	oobs-smbconfig.h	oobs-smbconfig.c	\
 	oobs-share-smb.h	oobs-share-smb.c	\
 	oobs-nfsconfig.h	oobs-nfsconfig.c	\
-	oobs-share-nfs.h	oobs-share-nfs.c
+	oobs-share-nfs.h	oobs-share-nfs.c	\
+	oobs-hostsconfig.h	oobs-hostsconfig.c	\
+	oobs-servicesconfig.h	oobs-servicesconfig.c
 
 liboobs_1_la_LIBADD= $(OOBS_LIBS)

@@ -44,5 +44,7 @@
 #include <oobs/oobs-nfsconfig.h>
 #include <oobs/oobs-share-smb.h>
 #include <oobs/oobs-smbconfig.h>
+#include <oobs/oobs-hostsconfig.h>
+#include <oobs/oobs-servicesconfig.h>
 
 #endif /* __OOBS_H_ */

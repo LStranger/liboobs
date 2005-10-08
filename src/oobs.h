@@ -44,7 +44,14 @@
 #include <oobs/oobs-nfsconfig.h>
 #include <oobs/oobs-share-smb.h>
 #include <oobs/oobs-smbconfig.h>
+#include <oobs/oobs-statichost.h>
 #include <oobs/oobs-hostsconfig.h>
+#include <oobs/oobs-iface.h>
+#include <oobs/oobs-iface-ethernet.h>
+#include <oobs/oobs-iface-wireless.h>
+#include <oobs/oobs-iface-plip.h>
+#include <oobs/oobs-iface-isdn.h>
+#include <oobs/oobs-iface-modem.h>
 #include <oobs/oobs-servicesconfig.h>
 
 #endif /* __OOBS_H_ */

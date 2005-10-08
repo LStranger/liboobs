@@ -55,10 +55,10 @@ struct _OobsShareSmbClass {
 GType             oobs_share_smb_get_type (void);
 GType             oobs_share_smb_flags_get_type (void);
 
-const gchar*      oobs_share_smb_get_name    (OobsShareSmb*);
+G_CONST_RETURN gchar* oobs_share_smb_get_name    (OobsShareSmb*);
 void              oobs_share_smb_set_name    (OobsShareSmb*, const gchar*);
 
-const gchar*      oobs_share_smb_get_comment (OobsShareSmb*);
+G_CONST_RETURN gchar* oobs_share_smb_get_comment (OobsShareSmb*);
 void              oobs_share_smb_set_comment (OobsShareSmb*, const gchar*);
 
 OobsShareSmbFlags oobs_share_smb_get_flags (OobsShareSmb*);

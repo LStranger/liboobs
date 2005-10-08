@@ -140,7 +140,7 @@ oobs_share_get_property (GObject      *object,
     }
 }
 
-const gchar*
+G_CONST_RETURN gchar*
 oobs_share_get_path (OobsShare *share)
 {
   OobsSharePrivate *priv;

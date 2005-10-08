@@ -1,3 +1,14 @@
+2005-10-08  Carlos Garnacho Parro  <carlosg@gnome.org>
+
+	* src/oobs-iface-ethernet.[ch], oobs-iface-isdn.[ch],
+	oobs-iface-modem.[ch], oobs-iface-plip.[ch], oobs-iface-wireless.[ch],
+	oobs-iface.[ch]: added
+	* src/oobs-statichost.[ch]: ditto
+	* src/oobs.h: added new headers
+	* src/Makefile.am: added source files
+	* src/oobs-share-nfs.[ch]: removed a wrong const return
+	* src/oobs-share-smb.[ch], src/oobs-share.[ch]: s/const/G_CONST_RETURN/
+
 2005-10-05  Carlos Garnacho Parro  <carlosg@gnome.org>
 
 	* src/oobs-hostsconfig.[ch], oobs-servicesconfig.[ch]: added, at the

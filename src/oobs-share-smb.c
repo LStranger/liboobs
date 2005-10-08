@@ -202,7 +202,7 @@ oobs_share_smb_get_property (GObject      *object,
     }
 }
 
-const gchar*
+G_CONST_RETURN gchar*
 oobs_share_smb_get_name (OobsShareSmb *share)
 {
   OobsShareSmbPrivate *priv;
@@ -225,7 +225,7 @@ oobs_share_smb_set_name (OobsShareSmb *share, const gchar *name)
   g_object_notify (G_OBJECT (share), "name");
 }
 
-const gchar*
+G_CONST_RETURN gchar*
 oobs_share_smb_get_comment (OobsShareSmb *share)
 {
   OobsShareSmbPrivate *priv;

@@ -25,6 +25,13 @@ oobsinclude_HEADERS= 	\
 	oobs-ntpconfig.h	\
 	oobs-ntpserver.h	\
 	oobs-hostsconfig.h	\
+	oobs-statichost.h	\
+	oobs-iface.h		\
+	oobs-iface-ethernet.h	\
+	oobs-iface-wireless.h	\
+	oobs-iface-plip.h	\
+	oobs-iface-isdn.h	\
+	oobs-iface-modem.h	\
 	oobs-servicesconfig.h
 
 liboobs_1_la_SOURCES = \
@@ -42,12 +49,19 @@ liboobs_1_la_SOURCES = \
 	oobs-timeconfig.h	oobs-timeconfig.c	\
 	oobs-ntpserver.h	oobs-ntpserver.c	\
 	oobs-ntpconfig.h	oobs-ntpconfig.c	\
-	oobs-share.h		oobs-share.c		\
-	oobs-smbconfig.h	oobs-smbconfig.c	\
-	oobs-share-smb.h	oobs-share-smb.c	\
-	oobs-nfsconfig.h	oobs-nfsconfig.c	\
-	oobs-share-nfs.h	oobs-share-nfs.c	\
-	oobs-hostsconfig.h	oobs-hostsconfig.c	\
+	oobs-share.h            oobs-share.c            \
+	oobs-smbconfig.h        oobs-smbconfig.c        \
+	oobs-share-smb.h        oobs-share-smb.c        \
+	oobs-nfsconfig.h        oobs-nfsconfig.c        \
+	oobs-share-nfs.h        oobs-share-nfs.c	\
+	oobs-statichost.h	oobs-statichost.c	\
+	oobs-hostsconfig.h      oobs-hostsconfig.c	\
+	oobs-iface.h		oobs-iface.c		\
+	oobs-iface-ethernet.h	oobs-iface-ethernet.c	\
+	oobs-iface-wireless.h	oobs-iface-wireless.c	\
+	oobs-iface-plip.h	oobs-iface-plip.c	\
+	oobs-iface-isdn.h	oobs-iface-isdn.c	\
+	oobs-iface-modem.h	oobs-iface-modem.c
 	oobs-servicesconfig.h	oobs-servicesconfig.c
 
 liboobs_1_la_LIBADD= $(OOBS_LIBS)

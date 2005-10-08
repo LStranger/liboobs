@@ -45,7 +45,7 @@ struct _OobsShareClass {
 
 GType         oobs_share_get_type    (void);
 
-const gchar*  oobs_share_get_path    (OobsShare *share);
+G_CONST_RETURN gchar*  oobs_share_get_path    (OobsShare *share);
 void          oobs_share_set_path    (OobsShare *share, const gchar *path);
 
 G_END_DECLS

@@ -139,7 +139,7 @@ oobs_share_nfs_set_acl (OobsShareNfs *share, GSList *acl)
   priv->acl = acl;
 }
 
-const GSList*
+GSList*
 oobs_share_nfs_get_acl (OobsShareNfs *share)
 {
   OobsShareNfsPrivate *priv;

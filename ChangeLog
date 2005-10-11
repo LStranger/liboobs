@@ -1,3 +1,11 @@
+2005-10-11  Carlos Garnacho Parro  <carlosg@gnome.org>
+
+	* src/oobs-timeconfig.[ch]: added "timezone" and "unix-time",
+	properties, made it to actually get data from the backend, completed
+	oobs_time_config_(get|set)_timezone, and added
+	oobs_time_config_(get|set)_unix_time
+	* src/oobs-user.h: removed unneeded include
+
 2005-10-08  Carlos Garnacho Parro  <carlosg@gnome.org>
 
 	* src/oobs-iface-ethernet.[ch], oobs-iface-isdn.[ch],

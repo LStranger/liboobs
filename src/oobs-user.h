@@ -24,7 +24,6 @@
 G_BEGIN_DECLS
 
 #include <sys/types.h>
-#include "oobs-object.h"
 
 #define OOBS_TYPE_USER         (oobs_user_get_type())
 #define OOBS_USER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_USER, OobsUser))

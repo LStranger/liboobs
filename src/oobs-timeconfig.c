@@ -24,6 +24,7 @@
 #include <time.h>
 
 #include "oobs-object.h"
+#include "oobs-object-private.h"
 #include "oobs-timeconfig.h"
 
 #define TIME_CONFIG_REMOTE_OBJECT "TimeConfig"
@@ -33,14 +34,15 @@ typedef struct _OobsTimeConfigPrivate OobsTimeConfigPrivate;
 
 struct _OobsTimeConfigPrivate
 {
-  gboolean time_is_set;
-  GTimeVal time;
+  gboolean  time_is_set;
+  GTimeVal  time;
+  gchar    *timezone;
 };
 
 static void oobs_time_config_class_init (OobsTimeConfigClass *class);
 static void oobs_time_config_init       (OobsTimeConfig      *config);
 static void oobs_time_config_finalize   (GObject             *object);
-/*
+
 static void oobs_time_config_set_property (GObject      *object,
 					   guint         prop_id,
 					   const GValue *value,
@@ -49,10 +51,16 @@ static void oobs_time_config_get_property (GObject      *object,
 					   guint         prop_id,
 					   GValue       *value,
 					   GParamSpec   *pspec);
-*/
+
 static void oobs_time_config_update     (OobsObject   *object);
 static void oobs_time_config_commit     (OobsObject   *object);
 
+enum
+{
+  PROP_0,
+  PROP_UNIX_TIME,
+  PROP_TIMEZONE
+};
 
 G_DEFINE_TYPE (OobsTimeConfig, oobs_time_config, OOBS_TYPE_OBJECT);
 
@@ -62,14 +70,31 @@ oobs_time_config_class_init (OobsTimeConfigClass *class)
   GObjectClass *object_class = G_OBJECT_CLASS (class);
   OobsObjectClass *oobs_object_class = OOBS_OBJECT_CLASS (class);
 
-  /*
-  object_class->set_property = oobs_users_config_set_property;
-  object_class->get_property = oobs_users_config_get_property;
-  */
+  object_class->set_property = oobs_time_config_set_property;
+  object_class->get_property = oobs_time_config_get_property;
   object_class->finalize     = oobs_time_config_finalize;
 
   oobs_object_class->commit  = oobs_time_config_commit;
   oobs_object_class->update  = oobs_time_config_update;
+
+  g_object_class_install_property (object_class,
+				   PROP_TIMEZONE,
+				   g_param_spec_long ("unix-time",
+						      "Unix time",
+						      "Current unix time for the computer",
+						      0,
+						      G_MAXLONG,
+						      0,
+						      G_PARAM_READWRITE));
+  g_object_class_install_property (object_class,
+				   PROP_TIMEZONE,
+				   g_param_spec_string ("timezone",
+							"Timezone",
+							"Timezone for the computer",
+							NULL,
+							G_PARAM_READWRITE));
+  g_type_class_add_private (object_class,
+			    sizeof (OobsTimeConfigPrivate));
 }
 
 static void
@@ -98,8 +123,95 @@ oobs_time_config_finalize (GObject *object)
 }
 
 static void
+oobs_time_config_set_property (GObject      *object,
+			       guint         prop_id,
+			       const GValue *value,
+			       GParamSpec   *pspec)
+{
+  OobsTimeConfigPrivate *priv;
+
+  g_return_if_fail (OOBS_IS_TIME_CONFIG (object));
+
+  priv = OOBS_TIME_CONFIG_GET_PRIVATE (object);
+
+  switch (prop_id)
+    {
+    case PROP_UNIX_TIME:
+      priv->time.tv_sec  = g_value_get_long (value);
+      priv->time.tv_usec = 0;
+      priv->time_is_set  = TRUE;
+      break;
+    case PROP_TIMEZONE:
+      g_free (priv->timezone);
+      priv->timezone = g_value_dup_string (value);
+      break;
+    }
+}
+
+static void
+oobs_time_config_get_property (GObject    *object,
+			       guint       prop_id,
+			       GValue     *value,
+			       GParamSpec *pspec)
+{
+  OobsTimeConfigPrivate *priv;
+  GTimeVal tv;
+
+  g_return_if_fail (OOBS_IS_TIME_CONFIG (object));
+
+  priv = OOBS_TIME_CONFIG_GET_PRIVATE (object);
+
+  switch (prop_id)
+    {
+    case PROP_UNIX_TIME:
+      if (!priv->time_is_set)
+	{
+	  /* return the current time */
+	  /* FIXME: using local information instead
+	     of backend data, this avoids latency, but
+	     won't work when remote configuration is
+	     possible */
+	  g_get_current_time (&tv);
+	}
+      else
+	{
+	  /* once set, the time configuration will
+	     stop getting the current time */
+	  tv.tv_sec  = priv->time.tv_sec;
+	  tv.tv_usec = priv->time.tv_usec;
+	}
+
+      g_value_set_long (value, tv.tv_sec);
+      break;
+    case PROP_TIMEZONE:
+      g_value_set_string (value, priv->timezone);
+      break;
+    }
+}
+
+static void
 oobs_time_config_update (OobsObject *object)
 {
+  OobsTimeConfigPrivate *priv;
+  DBusMessage *reply;
+  DBusMessageIter iter;
+
+  priv  = OOBS_TIME_CONFIG_GET_PRIVATE (object);
+  reply = _oobs_object_get_dbus_message (object);
+
+  /* FIXME: skip time & date settings, at the moment
+   * we rely on the local configuration, this has
+   * to change when we allow remote configuration
+   */
+  dbus_message_iter_init (reply, &iter);
+  dbus_message_iter_next (&iter);
+  dbus_message_iter_next (&iter);
+  dbus_message_iter_next (&iter);
+  dbus_message_iter_next (&iter);
+  dbus_message_iter_next (&iter);
+
+  dbus_message_iter_next (&iter);
+  dbus_message_iter_get_basic (&iter, &priv->timezone);
 }
 
 static void
@@ -161,41 +273,42 @@ date_is_sane (gint year,
   return TRUE;
 }
 
-void
-oobs_time_get_time (OobsTimeConfig *config,
-		    gint           *year,
-		    gint           *month,
-		    gint           *day,
-		    gint           *hour,
-		    gint           *minute,
-		    gint           *second)
+glong
+oobs_time_config_get_unix_time (OobsTimeConfig *config)
 {
-  OobsTimeConfigPrivate *priv;
-  GTimeVal tv;
+  glong unix_time;
+
+  g_return_val_if_fail (OOBS_IS_TIME_CONFIG (config), 0);
+
+  g_object_get (G_OBJECT (config), "unix-time", &unix_time, NULL);
+
+  return unix_time;
+}
+
+void
+oobs_time_config_set_unix_time (OobsTimeConfig *config, glong unix_time)
+{
+  g_return_if_fail (OOBS_IS_TIME_CONFIG (config));
+
+  g_object_set (G_OBJECT (config), "unix-time", unix_time, NULL);
+}
+
+void
+oobs_time_config_get_time (OobsTimeConfig *config,
+			   gint           *year,
+			   gint           *month,
+			   gint           *day,
+			   gint           *hour,
+			   gint           *minute,
+			   gint           *second)
+{
+  glong unix_time;
   struct tm *tm;
 
   g_return_if_fail (OOBS_IS_TIME_CONFIG (config));
 
-  priv = OOBS_TIME_CONFIG_GET_PRIVATE (config);
-
-  if (!priv->time_is_set)
-    {
-      /* return the current time */
-      /* FIXME: using local information instead
-	 of backend data, this avoids latency, but
-	 won't work when remote configuration is
-	 possible */
-      g_get_current_time (&tv);
-    }
-  else
-    {
-      /* once set, the time configuration will
-	 stop getting the current time */
-      tv.tv_sec  = priv->time.tv_sec;
-      tv.tv_usec = priv->time.tv_usec;
-    }
-
-  tm = localtime (&tv.tv_sec);
+  unix_time = oobs_time_config_get_unix_time (config);
+  tm = localtime (&unix_time);
 
   if (year)
     *year = tm->tm_year;
@@ -219,21 +332,18 @@ oobs_time_get_time (OobsTimeConfig *config,
 }
 
 void
-oobs_time_set_time (OobsTimeConfig *config,
-		    gint            year,
-		    gint            month,
-		    gint            day,
-		    gint            hour,
-		    gint            minute,
-		    gint            second)
+oobs_time_config_set_time (OobsTimeConfig *config,
+			   gint            year,
+			   gint            month,
+			   gint            day,
+			   gint            hour,
+			   gint            minute,
+			   gint            second)
 {
-  OobsTimeConfigPrivate *priv;
   struct tm tm;
 
   g_return_if_fail (OOBS_IS_TIME_CONFIG (config));
   g_return_if_fail (date_is_sane (year, month, day, hour, minute, second));
-
-  priv = OOBS_TIME_CONFIG_GET_PRIVATE (config);
 
   tm.tm_year = year;
   tm.tm_mon  = month;
@@ -242,20 +352,26 @@ oobs_time_set_time (OobsTimeConfig *config,
   tm.tm_min  = minute;
   tm.tm_sec  = second;
 
-  priv->time.tv_sec  = mktime (&tm);
-  priv->time.tv_usec = 0;
-  priv->time_is_set  = TRUE;
+  oobs_time_config_set_unix_time (config, mktime (&tm));
 }
 
 G_CONST_RETURN gchar*
-oobs_time_get_timezone (OobsTimeConfig *config)
+oobs_time_config_get_timezone (OobsTimeConfig *config)
 {
-  return NULL;
+  OobsTimeConfigPrivate *priv;
+
+  g_return_val_if_fail (OOBS_IS_TIME_CONFIG (config), NULL);
+
+  priv = OOBS_TIME_CONFIG_GET_PRIVATE (config);
+
+  return priv->timezone;
 }
 
 void
-oobs_time_set_timezone (OobsTimeConfig *config,
-			const gchar    *timezone)
+oobs_time_config_set_timezone (OobsTimeConfig *config,
+			       const gchar    *timezone)
 {
+  g_return_if_fail (OOBS_IS_TIME_CONFIG (config));
 
+  g_object_set (G_OBJECT (config), "timezone", timezone, NULL);
 }

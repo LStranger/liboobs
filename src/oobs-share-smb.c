@@ -22,19 +22,19 @@
 #include "oobs-share.h"
 #include "oobs-share-smb.h"
 
-#define OOBS_SHARE_SMB_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_SHARE_SMB, OobsShareSmbPrivate))
+#define OOBS_SHARE_SMB_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_SHARE_SMB, OobsShareSMBPrivate))
 
-typedef struct _OobsShareSmbPrivate OobsShareSmbPrivate;
+typedef struct _OobsShareSMBPrivate OobsShareSMBPrivate;
 
-struct _OobsShareSmbPrivate {
+struct _OobsShareSMBPrivate {
   gchar *name;
   gchar *comment;
 
-  OobsShareSmbFlags flags;
+  OobsShareSMBFlags flags;
 };
 
-static void oobs_share_smb_class_init   (OobsShareSmbClass *class);
-static void oobs_share_smb_init         (OobsShareSmb      *share);
+static void oobs_share_smb_class_init   (OobsShareSMBClass *class);
+static void oobs_share_smb_init         (OobsShareSMB      *share);
 static void oobs_share_smb_finalize     (GObject          *object);
 
 static void oobs_share_smb_set_property (GObject      *object,
@@ -53,7 +53,7 @@ enum {
   PROP_FLAGS
 };
 
-G_DEFINE_TYPE (OobsShareSmb, oobs_share_smb, OOBS_TYPE_SHARE);
+G_DEFINE_TYPE (OobsShareSMB, oobs_share_smb, OOBS_TYPE_SHARE);
 
 GType
 oobs_share_smb_flags_get_type (void)
@@ -71,14 +71,14 @@ oobs_share_smb_flags_get_type (void)
 	  { 0, NULL, NULL }
 	};
 
-      type = g_flags_register_static ("OobsShareSmbFlags", values);
+      type = g_flags_register_static ("OobsShareSMBFlags", values);
     }
 
   return type;
 }
 
 static void
-oobs_share_smb_class_init (OobsShareSmbClass *class)
+oobs_share_smb_class_init (OobsShareSMBClass *class)
 {
   GObjectClass  *object_class = G_OBJECT_CLASS (class);
 
@@ -109,13 +109,13 @@ oobs_share_smb_class_init (OobsShareSmbClass *class)
 						       0,
 						       G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
   g_type_class_add_private (object_class,
-			    sizeof (OobsShareSmbPrivate));
+			    sizeof (OobsShareSMBPrivate));
 }
 
 static void
-oobs_share_smb_init (OobsShareSmb *share)
+oobs_share_smb_init (OobsShareSMB *share)
 {
-  OobsShareSmbPrivate *priv;
+  OobsShareSMBPrivate *priv;
 
   g_return_if_fail (OOBS_IS_SHARE_SMB (share));
   priv = OOBS_SHARE_SMB_GET_PRIVATE (share);
@@ -128,8 +128,8 @@ oobs_share_smb_init (OobsShareSmb *share)
 static void
 oobs_share_smb_finalize (GObject *object)
 {
-  OobsShareSmb        *share;
-  OobsShareSmbPrivate *priv;
+  OobsShareSMB        *share;
+  OobsShareSMBPrivate *priv;
 
   g_return_if_fail (OOBS_IS_SHARE_SMB (object));
 
@@ -152,8 +152,8 @@ oobs_share_smb_set_property (GObject      *object,
 			     const GValue *value,
 			     GParamSpec   *pspec)
 {
-  OobsShareSmb        *share;
-  OobsShareSmbPrivate *priv;
+  OobsShareSMB        *share;
+  OobsShareSMBPrivate *priv;
 
   g_return_if_fail (OOBS_IS_SHARE_SMB (object));
 
@@ -180,8 +180,8 @@ oobs_share_smb_get_property (GObject      *object,
 			     GValue       *value,
 			     GParamSpec   *pspec)
 {
-  OobsShareSmb        *share;
-  OobsShareSmbPrivate *priv;
+  OobsShareSMB        *share;
+  OobsShareSMBPrivate *priv;
 
   g_return_if_fail (OOBS_IS_SHARE_SMB (object));
 
@@ -203,9 +203,9 @@ oobs_share_smb_get_property (GObject      *object,
 }
 
 G_CONST_RETURN gchar*
-oobs_share_smb_get_name (OobsShareSmb *share)
+oobs_share_smb_get_name (OobsShareSMB *share)
 {
-  OobsShareSmbPrivate *priv;
+  OobsShareSMBPrivate *priv;
 
   g_return_val_if_fail (OOBS_IS_SHARE_SMB (share), NULL);
   priv = OOBS_SHARE_SMB_GET_PRIVATE (share);
@@ -214,9 +214,9 @@ oobs_share_smb_get_name (OobsShareSmb *share)
 }
 
 void
-oobs_share_smb_set_name (OobsShareSmb *share, const gchar *name)
+oobs_share_smb_set_name (OobsShareSMB *share, const gchar *name)
 {
-  OobsShareSmbPrivate *priv;
+  OobsShareSMBPrivate *priv;
 
   g_return_if_fail (OOBS_IS_SHARE_SMB (share));
 
@@ -226,9 +226,9 @@ oobs_share_smb_set_name (OobsShareSmb *share, const gchar *name)
 }
 
 G_CONST_RETURN gchar*
-oobs_share_smb_get_comment (OobsShareSmb *share)
+oobs_share_smb_get_comment (OobsShareSMB *share)
 {
-  OobsShareSmbPrivate *priv;
+  OobsShareSMBPrivate *priv;
 
   g_return_val_if_fail (OOBS_IS_SHARE_SMB (share), NULL);
   priv = OOBS_SHARE_SMB_GET_PRIVATE (share);
@@ -237,9 +237,9 @@ oobs_share_smb_get_comment (OobsShareSmb *share)
 }
 
 void
-oobs_share_smb_set_comment (OobsShareSmb *share, const gchar *comment)
+oobs_share_smb_set_comment (OobsShareSMB *share, const gchar *comment)
 {
-  OobsShareSmbPrivate *priv;
+  OobsShareSMBPrivate *priv;
 
   g_return_if_fail (OOBS_IS_SHARE_SMB (share));
 
@@ -248,10 +248,10 @@ oobs_share_smb_set_comment (OobsShareSmb *share, const gchar *comment)
   g_object_notify (G_OBJECT (share), "comment");
 }
 
-OobsShareSmbFlags
-oobs_share_smb_get_flags (OobsShareSmb *share)
+OobsShareSMBFlags
+oobs_share_smb_get_flags (OobsShareSMB *share)
 {
-  OobsShareSmbPrivate *priv;
+  OobsShareSMBPrivate *priv;
 
   g_return_val_if_fail (OOBS_IS_SHARE_SMB (share), 0);
   priv = OOBS_SHARE_SMB_GET_PRIVATE (share);
@@ -260,9 +260,9 @@ oobs_share_smb_get_flags (OobsShareSmb *share)
 }
 
 void
-oobs_share_smb_set_flags (OobsShareSmb *share, OobsShareSmbFlags flags)
+oobs_share_smb_set_flags (OobsShareSMB *share, OobsShareSMBFlags flags)
 {
-  OobsShareSmbPrivate *priv;
+  OobsShareSMBPrivate *priv;
 
   g_return_if_fail (OOBS_IS_SHARE_SMB (share));
 
@@ -275,7 +275,7 @@ OobsShare*
 oobs_share_smb_new (const gchar       *name,
 		    const gchar       *comment,
 		    const gchar       *path,
-		    OobsShareSmbFlags  flags)
+		    OobsShareSMBFlags  flags)
 {
   return g_object_new (OOBS_TYPE_SHARE_SMB,
 		       "name",    name,

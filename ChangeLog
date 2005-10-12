@@ -1,5 +1,10 @@
 2005-10-13  Carlos Garnacho Parro  <carlosg@gnome.org>
 
+	* src/oobs-share-smb.[ch]: s/Smb/SMB/g for consistency
+	* src/oobs-share-nfs.[ch]: s/Nfs/NFS/g for consistency
+
+2005-10-13  Carlos Garnacho Parro  <carlosg@gnome.org>
+
 	* src/oobs-nfsconfig.[ch]: fixed object inheritance, made it retrieves 
 	information from DBus actually. (oobs_nfs_config_get_shares): added.
 	* src/oobs-object.c: plugged a leak.

@@ -31,40 +31,40 @@ typedef enum {
   OOBS_SHARE_SMB_BROWSABLE = 1 << 1,
   OOBS_SHARE_SMB_PUBLIC    = 1 << 2,
   OOBS_SHARE_SMB_WRITABLE  = 1 << 3,
-} OobsShareSmbFlags;
+} OobsShareSMBFlags;
 
 #define OOBS_TYPE_SHARE_SMB         (oobs_share_smb_get_type())
 #define OOBS_TYPE_SHARE_SMB_FLAGS   (oobs_share_smb_flags_get_type())
-#define OOBS_SHARE_SMB(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_SHARE_SMB, OobsShareSmb))
-#define OOBS_SHARE_SMB_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c),    OOBS_TYPE_SHARE_SMB, OobsShareSmbClass))
+#define OOBS_SHARE_SMB(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_SHARE_SMB, OobsShareSMB))
+#define OOBS_SHARE_SMB_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c),    OOBS_TYPE_SHARE_SMB, OobsShareSMBClass))
 #define OOBS_IS_SHARE_SMB(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), OOBS_TYPE_SHARE_SMB))
 #define OOBS_IS_SHARE_SMB_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c),    OOBS_TYPE_SHARE_SMB))
-#define OOBS_SHARE_SMB_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o),  OOBS_TYPE_SHARE_SMB, OobsShareSmbClass))
+#define OOBS_SHARE_SMB_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o),  OOBS_TYPE_SHARE_SMB, OobsShareSMBClass))
 
-typedef struct _OobsShareSmb        OobsShareSmb;
-typedef struct _OobsShareSmbClass   OobsShareSmbClass;
+typedef struct _OobsShareSMB        OobsShareSMB;
+typedef struct _OobsShareSMBClass   OobsShareSMBClass;
 
-struct _OobsShareSmb {
+struct _OobsShareSMB {
   OobsShare parent;
 };
 
-struct _OobsShareSmbClass {
+struct _OobsShareSMBClass {
   OobsShareClass parent_class;
 };
 
 GType             oobs_share_smb_get_type (void);
 GType             oobs_share_smb_flags_get_type (void);
 
-G_CONST_RETURN gchar* oobs_share_smb_get_name    (OobsShareSmb*);
-void              oobs_share_smb_set_name    (OobsShareSmb*, const gchar*);
+G_CONST_RETURN gchar* oobs_share_smb_get_name    (OobsShareSMB*);
+void              oobs_share_smb_set_name    (OobsShareSMB*, const gchar*);
 
-G_CONST_RETURN gchar* oobs_share_smb_get_comment (OobsShareSmb*);
-void              oobs_share_smb_set_comment (OobsShareSmb*, const gchar*);
+G_CONST_RETURN gchar* oobs_share_smb_get_comment (OobsShareSMB*);
+void              oobs_share_smb_set_comment (OobsShareSMB*, const gchar*);
 
-OobsShareSmbFlags oobs_share_smb_get_flags (OobsShareSmb*);
-void              oobs_share_smb_set_flags (OobsShareSmb*, OobsShareSmbFlags);
+OobsShareSMBFlags oobs_share_smb_get_flags (OobsShareSMB*);
+void              oobs_share_smb_set_flags (OobsShareSMB*, OobsShareSMBFlags);
 
-OobsShare*        oobs_share_smb_new (const gchar*, const gchar*, const gchar*, OobsShareSmbFlags);
+OobsShare*        oobs_share_smb_new (const gchar*, const gchar*, const gchar*, OobsShareSMBFlags);
 
 G_END_DECLS
 

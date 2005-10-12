@@ -26,21 +26,21 @@
 G_BEGIN_DECLS
 
 #define OOBS_TYPE_SHARE_NFS         (oobs_share_nfs_get_type())
-#define OOBS_SHARE_NFS(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_SHARE_NFS, OobsShareNfs))
-#define OOBS_SHARE_NFS_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c),  OOBS_TYPE_SHARE_NFS, OobsShareNfsClass))
+#define OOBS_SHARE_NFS(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_SHARE_NFS, OobsShareNFS))
+#define OOBS_SHARE_NFS_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c),  OOBS_TYPE_SHARE_NFS, OobsShareNFSClass))
 #define OOBS_IS_SHARE_NFS(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), OOBS_TYPE_SHARE_NFS))
 #define OOBS_IS_SHARE_NFS_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c),  OOBS_TYPE_SHARE_NFS))
-#define OOBS_SHARE_NFS_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o),  OOBS_TYPE_SHARE_NFS, OobsShareNfsClass))
+#define OOBS_SHARE_NFS_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o),  OOBS_TYPE_SHARE_NFS, OobsShareNFSClass))
 
-typedef struct _OobsShareNfs        OobsShareNfs;
-typedef struct _OobsShareNfsClass   OobsShareNfsClass;
+typedef struct _OobsShareNFS        OobsShareNFS;
+typedef struct _OobsShareNFSClass   OobsShareNFSClass;
 typedef struct _OobsShareAclElement OobsShareAclElement;
 	
-struct _OobsShareNfs {
+struct _OobsShareNFS {
   OobsShare parent;
 };
 
-struct _OobsShareNfsClass {
+struct _OobsShareNFSClass {
   OobsShareClass parent_class;
 };
 
@@ -52,9 +52,9 @@ struct _OobsShareAclElement {
 GType oobs_share_nfs_get_type (void);
 
 OobsShare*     oobs_share_nfs_new             (const gchar *path);
-void           oobs_share_nfs_add_acl_element (OobsShareNfs *share, const gchar *element, gboolean read_only);
-void           oobs_share_nfs_set_acl         (OobsShareNfs *share, GSList *acl);
-GSList*        oobs_share_nfs_get_acl         (OobsShareNfs *share);
+void           oobs_share_nfs_add_acl_element (OobsShareNFS *share, const gchar *element, gboolean read_only);
+void           oobs_share_nfs_set_acl         (OobsShareNFS *share, GSList *acl);
+GSList*        oobs_share_nfs_get_acl         (OobsShareNFS *share);
 
 G_END_DECLS
 

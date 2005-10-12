@@ -22,22 +22,22 @@
 #include "oobs-share.h"
 #include "oobs-share-nfs.h"
 
-#define OOBS_SHARE_NFS_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_SHARE_NFS, OobsShareNfsPrivate))
+#define OOBS_SHARE_NFS_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_SHARE_NFS, OobsShareNFSPrivate))
 
-typedef struct _OobsShareNfsPrivate OobsShareNfsPrivate;
+typedef struct _OobsShareNFSPrivate OobsShareNFSPrivate;
 
-struct _OobsShareNfsPrivate {
+struct _OobsShareNFSPrivate {
   GSList *acl;
 };
 
-static void oobs_share_nfs_class_init (OobsShareNfsClass *class);
-static void oobs_share_nfs_init       (OobsShareNfs      *share);
+static void oobs_share_nfs_class_init (OobsShareNFSClass *class);
+static void oobs_share_nfs_init       (OobsShareNFS      *share);
 static void oobs_share_nfs_finalize   (GObject          *object);
 
-G_DEFINE_TYPE (OobsShareNfs, oobs_share_nfs, OOBS_TYPE_SHARE);
+G_DEFINE_TYPE (OobsShareNFS, oobs_share_nfs, OOBS_TYPE_SHARE);
 
 static void
-oobs_share_nfs_class_init (OobsShareNfsClass *class)
+oobs_share_nfs_class_init (OobsShareNFSClass *class)
 {
   GObjectClass  *object_class = G_OBJECT_CLASS (class);
 
@@ -46,13 +46,13 @@ oobs_share_nfs_class_init (OobsShareNfsClass *class)
   object_class->finalize     = oobs_share_nfs_finalize;
 
   g_type_class_add_private (object_class,
-			    sizeof (OobsShareNfsPrivate));
+			    sizeof (OobsShareNFSPrivate));
 }
 
 static void
-oobs_share_nfs_init (OobsShareNfs *share)
+oobs_share_nfs_init (OobsShareNFS *share)
 {
-  OobsShareNfsPrivate *priv;
+  OobsShareNFSPrivate *priv;
 
   g_return_if_fail (OOBS_IS_SHARE_NFS (share));
 
@@ -70,8 +70,8 @@ acl_element_free (OobsShareAclElement *element, gpointer data)
 static void
 oobs_share_nfs_finalize (GObject *object)
 {
-  OobsShareNfs        *share;
-  OobsShareNfsPrivate *priv;
+  OobsShareNFS        *share;
+  OobsShareNFSPrivate *priv;
 
   g_return_if_fail (OOBS_IS_SHARE_NFS (object));
 
@@ -97,11 +97,11 @@ oobs_share_nfs_new (const gchar *path)
 }
 
 void
-oobs_share_nfs_add_acl_element (OobsShareNfs *share,
+oobs_share_nfs_add_acl_element (OobsShareNFS *share,
 			       const gchar *element,
 			       gboolean     read_only)
 {
-  OobsShareNfsPrivate *priv;
+  OobsShareNFSPrivate *priv;
   OobsShareAclElement *elem;
 
   g_return_if_fail (share != NULL);
@@ -116,9 +116,9 @@ oobs_share_nfs_add_acl_element (OobsShareNfs *share,
 }
 
 void
-oobs_share_nfs_set_acl (OobsShareNfs *share, GSList *acl)
+oobs_share_nfs_set_acl (OobsShareNFS *share, GSList *acl)
 {
-  OobsShareNfsPrivate *priv;
+  OobsShareNFSPrivate *priv;
 
   g_return_if_fail (share != NULL);
   g_return_if_fail (OOBS_IS_SHARE_NFS (share));
@@ -132,9 +132,9 @@ oobs_share_nfs_set_acl (OobsShareNfs *share, GSList *acl)
 }
 
 GSList*
-oobs_share_nfs_get_acl (OobsShareNfs *share)
+oobs_share_nfs_get_acl (OobsShareNFS *share)
 {
-  OobsShareNfsPrivate *priv;
+  OobsShareNFSPrivate *priv;
 
   g_return_val_if_fail (share != NULL, NULL);
   g_return_val_if_fail (OOBS_IS_SHARE_NFS (share), NULL);

@@ -59,6 +59,9 @@ oobs_nfs_config_class_init (OobsNFSConfigClass *class)
   object_class->finalize    = oobs_nfs_config_finalize;
   oobs_object_class->commit = oobs_nfs_config_commit;
   oobs_object_class->update = oobs_nfs_config_update;
+
+  g_type_class_add_private (object_class,
+			    sizeof (OobsNFSConfigPrivate));
 }
 
 static void
@@ -92,9 +95,36 @@ oobs_nfs_config_finalize (GObject *object)
 static OobsShare*
 create_share_from_dbus_reply (OobsObject      *object,
 			      DBusMessage     *reply,
-			      DBusMessageIter  iter)
+			      DBusMessageIter  struct_iter)
 {
-  return NULL;
+  DBusMessageIter iter, array_iter, client_iter;
+  OobsShare *share;
+  gchar *path, *pattern;
+  gboolean rw;
+
+  dbus_message_iter_recurse (&struct_iter, &iter);
+
+  dbus_message_iter_get_basic (&iter, &path);
+  dbus_message_iter_next (&iter);
+
+  share = oobs_share_nfs_new (path);
+  dbus_message_iter_recurse (&iter, &array_iter);
+
+  while (dbus_message_iter_get_arg_type (&array_iter) == DBUS_TYPE_STRUCT)
+    {
+      dbus_message_iter_recurse (&array_iter, &client_iter);
+
+      dbus_message_iter_get_basic (&client_iter, &pattern);
+      dbus_message_iter_next (&client_iter);
+      
+      dbus_message_iter_get_basic (&client_iter, &rw);
+      dbus_message_iter_next (&client_iter);
+
+      oobs_share_nfs_add_acl_element (OOBS_SHARE_NFS (share), pattern, rw);
+      dbus_message_iter_next (&array_iter);
+    }
+
+  return share;
 }
 
 static void
@@ -116,7 +146,7 @@ oobs_nfs_config_update (OobsObject *object)
   dbus_message_iter_init    (reply, &iter);
   dbus_message_iter_recurse (&iter, &array_iter);
 
-  while (dbus_message_iter_get_arg_type (&array_iter) == DBUS_TYPE_ARRAY)
+  while (dbus_message_iter_get_arg_type (&array_iter) == DBUS_TYPE_STRUCT)
     {
       share = create_share_from_dbus_reply (object, reply, array_iter);
 
@@ -148,4 +178,16 @@ oobs_nfs_config_new (OobsSession *session)
 
   oobs_object_update (object);
   return object;
+}
+
+OobsList*
+oobs_nfs_config_get_shares (OobsNFSConfig *config)
+{
+  OobsNFSConfigPrivate *priv;
+
+  g_return_val_if_fail (OOBS_IS_NFS_CONFIG (config), NULL);
+
+  priv = OOBS_NFS_CONFIG_GET_PRIVATE (config);
+
+  return priv->shares_list;
 }

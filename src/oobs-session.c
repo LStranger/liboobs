@@ -139,10 +139,9 @@ oobs_session_finalize (GObject *object)
 
       unregister_objects_list (priv);
 
-      /*
       dbus_connection_disconnect (priv->connection);
-      dbus_connection_unref (priv->connection);
-      */
+      dbus_connection_close (priv->connection);
+      /* dbus_connection_unref (priv->connection); */
     }
 
   if (G_OBJECT_CLASS (oobs_session_parent_class)->finalize)

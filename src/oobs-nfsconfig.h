@@ -41,17 +41,19 @@ typedef struct _OobsNFSConfigClass OobsNFSConfigClass;
 
 struct _OobsNFSConfig
 {
-  OobsList parent;
+  OobsObject parent;
 };
 
 struct _OobsNFSConfigClass
 {
-  OobsListClass parent_class;
+  OobsObjectClass parent_class;
 };
 
 GType       oobs_nfs_config_get_type     (void);
 
 OobsObject* oobs_nfs_config_new          (OobsSession *session);
+
+OobsList*   oobs_nfs_config_get_shares   (OobsNFSConfig *config);
 
 G_END_DECLS
 

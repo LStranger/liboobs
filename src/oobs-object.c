@@ -146,7 +146,13 @@ oobs_object_finalize (GObject *object)
   priv = OOBS_OBJECT_GET_PRIVATE (obj);
 
   if (priv)
-    _oobs_session_unregister_object (priv->session, obj);
+    {
+      _oobs_session_unregister_object (priv->session, obj);
+
+      g_free (priv->remote_object);
+      g_free (priv->path);
+      g_free (priv->method);
+    }
 
   if (G_OBJECT_CLASS (oobs_object_parent_class)->finalize)
     (* G_OBJECT_CLASS (oobs_object_parent_class)->finalize) (object);
@@ -226,7 +232,7 @@ oobs_object_set_property (GObject      *object,
       break;
     case PROP_REMOTE_OBJECT:
       priv->remote_object = g_value_dup_string (value);
-      priv->path   = g_strconcat (OOBS_DBUS_PATH_PREFIX,   "/", priv->remote_object, NULL);
+      priv->path   = g_strconcat (OOBS_DBUS_PATH_PREFIX, "/", priv->remote_object, NULL);
       priv->method = g_strconcat (OOBS_DBUS_METHOD_PREFIX, ".", priv->remote_object, NULL);
       break;
     }
@@ -265,6 +271,7 @@ run_get_message (OobsObject *object)
   connection = _oobs_session_get_connection_bus (priv->session);
 
   g_return_val_if_fail (connection != NULL, NULL);
+
   message = dbus_message_new_method_call (OOBS_DBUS_DESTINATION, priv->path, priv->method, "get");
   reply   = dbus_connection_send_with_reply_and_block (connection, message, -1, &priv->dbus_error);
   dbus_message_unref (message);

@@ -1,3 +1,12 @@
+2005-10-13  Carlos Garnacho Parro  <carlosg@gnome.org>
+
+	* src/oobs-nfsconfig.[ch]: fixed object inheritance, made it retrieves 
+	information from DBus actually. (oobs_nfs_config_get_shares): added.
+	* src/oobs-object.c: plugged a leak.
+	* src/oobs-session.c: uncommented the _disconnect() function.
+	* src/oobs-share-nfs.[ch] (oobs_share_nfs_clear_acl): removed
+	* src/oobs.h: removed duplicate includes
+
 2005-10-11  Carlos Garnacho Parro  <carlosg@gnome.org>
 
 	* src/oobs-timeconfig.[ch]: added "timezone" and "unix-time",

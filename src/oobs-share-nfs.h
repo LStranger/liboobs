@@ -55,7 +55,6 @@ OobsShare*     oobs_share_nfs_new             (const gchar *path);
 void           oobs_share_nfs_add_acl_element (OobsShareNfs *share, const gchar *element, gboolean read_only);
 void           oobs_share_nfs_set_acl         (OobsShareNfs *share, GSList *acl);
 GSList*        oobs_share_nfs_get_acl         (OobsShareNfs *share);
-void           oobs_share_nfs_clear_acl       (OobsShareNfs *share);
 
 G_END_DECLS
 

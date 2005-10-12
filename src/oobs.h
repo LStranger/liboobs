@@ -39,11 +39,6 @@
 #include <oobs/oobs-ntpserver.h>
 #include <oobs/oobs-ntpconfig.h>
 #include <oobs/oobs-timeconfig.h>
-#include <oobs/oobs-share.h>
-#include <oobs/oobs-share-nfs.h>
-#include <oobs/oobs-nfsconfig.h>
-#include <oobs/oobs-share-smb.h>
-#include <oobs/oobs-smbconfig.h>
 #include <oobs/oobs-statichost.h>
 #include <oobs/oobs-hostsconfig.h>
 #include <oobs/oobs-iface.h>

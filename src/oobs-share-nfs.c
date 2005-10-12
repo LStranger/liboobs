@@ -61,6 +61,13 @@ oobs_share_nfs_init (OobsShareNfs *share)
 }
 
 static void
+acl_element_free (OobsShareAclElement *element, gpointer data)
+{
+  g_free (element->element);
+  g_free (element);
+}
+
+static void
 oobs_share_nfs_finalize (GObject *object)
 {
   OobsShareNfs        *share;
@@ -72,7 +79,10 @@ oobs_share_nfs_finalize (GObject *object)
   priv  = OOBS_SHARE_NFS_GET_PRIVATE (share);
 
   if (priv)
-    oobs_share_nfs_clear_acl (share);
+    {
+      g_slist_foreach (priv->acl, (GFunc) acl_element_free, NULL);
+      g_slist_free (priv->acl);
+    }
 
   if (G_OBJECT_CLASS (oobs_share_nfs_parent_class)->finalize)
     (* G_OBJECT_CLASS (oobs_share_nfs_parent_class)->finalize) (object);
@@ -105,27 +115,6 @@ oobs_share_nfs_add_acl_element (OobsShareNfs *share,
   priv->acl = g_slist_append (priv->acl, elem);
 }
 
-static void
-acl_element_free (OobsShareAclElement *element, gpointer data)
-{
-  g_free (element->element);
-  g_free (element);
-}
-
-void
-oobs_share_nfs_clear_acl (OobsShareNfs *share)
-{
-  OobsShareNfsPrivate *priv;
-
-  g_return_if_fail (share != NULL);
-  g_return_if_fail (OOBS_IS_SHARE_NFS (share));
-
-  priv = OOBS_SHARE_NFS_GET_PRIVATE (share);
-  g_slist_foreach (priv->acl, (GFunc) acl_element_free, NULL);
-  g_slist_free (priv->acl);
-  priv->acl = NULL;
-}
-
 void
 oobs_share_nfs_set_acl (OobsShareNfs *share, GSList *acl)
 {
@@ -135,7 +124,10 @@ oobs_share_nfs_set_acl (OobsShareNfs *share, GSList *acl)
   g_return_if_fail (OOBS_IS_SHARE_NFS (share));
 
   priv = OOBS_SHARE_NFS_GET_PRIVATE (share);
-  oobs_share_nfs_clear_acl (share);
+
+  g_slist_foreach (priv->acl, (GFunc) acl_element_free, NULL);
+  g_slist_free (priv->acl);
+
   priv->acl = acl;
 }
 

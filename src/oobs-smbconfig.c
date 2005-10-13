@@ -59,6 +59,9 @@ oobs_smb_config_class_init (OobsSMBConfigClass *class)
   object_class->finalize    = oobs_smb_config_finalize;
   oobs_object_class->commit = oobs_smb_config_commit;
   oobs_object_class->update = oobs_smb_config_update;
+
+  g_type_class_add_private (object_class,
+			    sizeof (OobsSMBConfigPrivate));
 }
 
 static void
@@ -92,35 +95,54 @@ oobs_smb_config_finalize (GObject *object)
 static OobsShare*
 create_share_from_dbus_reply (OobsObject      *object,
 			      DBusMessage     *reply,
-			      DBusMessageIter  iter)
+			      DBusMessageIter  struct_iter)
 {
-  DBusMessageIter dict_iter, entries_iter;
-  gchar *key, *val, *name, *comment, *path;
+  DBusMessageIter iter;
+  gchar *name, *comment, *path;
+  OobsShareSMBFlags flags;
+  gboolean value;
 
   name    = NULL;
   comment = NULL;
   path    = NULL;
-  dbus_message_iter_recurse (&iter, &dict_iter);
+  flags   = 0;
 
-  while (dbus_message_iter_get_arg_type (&dict_iter) == DBUS_TYPE_DICT_ENTRY)
-    {
-      /* get into the dict entries */
-      dbus_message_iter_recurse (&dict_iter, &entries_iter);
+  dbus_message_iter_recurse (&struct_iter, &iter);
 
-      dbus_message_iter_get_basic (&entries_iter, &key);
-      dbus_message_iter_next (&entries_iter);
-      dbus_message_iter_get_basic (&entries_iter, &val);
-      dbus_message_iter_next (&entries_iter);
+  dbus_message_iter_get_basic (&iter, &name);
+  dbus_message_iter_next (&iter);
 
-      if (strcmp (key, "point") == 0)
-	path = val;
-      else if (strcmp (key, "name") == 0)
-	name = val;
+  dbus_message_iter_get_basic (&iter, &path);
+  dbus_message_iter_next (&iter);
+  
+  dbus_message_iter_get_basic (&iter, &comment);
+  dbus_message_iter_next (&iter);
 
-      dbus_message_iter_next (&dict_iter);
-    }
+  dbus_message_iter_get_basic (&iter, &value);
+  dbus_message_iter_next (&iter);
 
-  return oobs_share_smb_new (name, "bar", path, 0);
+  if (value)
+    flags |= OOBS_SHARE_SMB_ENABLED;
+
+  dbus_message_iter_get_basic (&iter, &value);
+  dbus_message_iter_next (&iter);
+
+  if (value)
+    flags |= OOBS_SHARE_SMB_BROWSABLE;
+  
+  dbus_message_iter_get_basic (&iter, &value);
+  dbus_message_iter_next (&iter);
+
+  if (value)
+    flags |= OOBS_SHARE_SMB_PUBLIC;
+  
+  dbus_message_iter_get_basic (&iter, &value);
+  dbus_message_iter_next (&iter);
+
+  if (value)
+    flags |= OOBS_SHARE_SMB_WRITABLE;
+
+  return oobs_share_smb_new (path, name, comment, flags);
 }
 
 static void
@@ -142,7 +164,7 @@ oobs_smb_config_update (OobsObject *object)
   dbus_message_iter_init    (reply, &iter);
   dbus_message_iter_recurse (&iter, &array_iter);
 
-  while (dbus_message_iter_get_arg_type (&array_iter) == DBUS_TYPE_ARRAY)
+  while (dbus_message_iter_get_arg_type (&array_iter) == DBUS_TYPE_STRUCT)
     {
       share = create_share_from_dbus_reply (object, reply, array_iter);
 
@@ -174,4 +196,16 @@ oobs_smb_config_new (OobsSession *session)
 
   oobs_object_update (object);
   return object;
+}
+
+OobsList*
+oobs_smb_config_get_shares (OobsSMBConfig *config)
+{
+  OobsSMBConfigPrivate *priv;
+
+  g_return_val_if_fail (OOBS_IS_SMB_CONFIG (config), NULL);
+
+  priv = OOBS_SMB_CONFIG_GET_PRIVATE (config);
+
+  return priv->shares_list;
 }

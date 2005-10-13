@@ -272,9 +272,9 @@ oobs_share_smb_set_flags (OobsShareSMB *share, OobsShareSMBFlags flags)
 }
 
 OobsShare*
-oobs_share_smb_new (const gchar       *name,
+oobs_share_smb_new (const gchar       *path,
+		    const gchar       *name,
 		    const gchar       *comment,
-		    const gchar       *path,
 		    OobsShareSMBFlags  flags)
 {
   return g_object_new (OOBS_TYPE_SHARE_SMB,

@@ -1,5 +1,12 @@
 2005-10-13  Carlos Garnacho Parro  <carlosg@gnome.org>
 
+	* src/oobs-share-smb.[ch]: changed order of parameters in constructor
+	* src/oobs-smbconfig.c: added private data, made it to actually read
+	data from DBus. (oobs_smb_config_get_shares): added
+	* src/oobs-smbconfig.h: corrected inheritance
+
+2005-10-13  Carlos Garnacho Parro  <carlosg@gnome.org>
+
 	* src/oobs-share-smb.[ch]: s/Smb/SMB/g for consistency
 	* src/oobs-share-nfs.[ch]: s/Nfs/NFS/g for consistency
 

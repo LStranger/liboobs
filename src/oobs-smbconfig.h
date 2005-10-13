@@ -41,17 +41,20 @@ typedef struct _OobsSMBConfigClass OobsSMBConfigClass;
 
 struct _OobsSMBConfig
 {
-  OobsList parent;
+  OobsObject parent;
 };
 
 struct _OobsSMBConfigClass
 {
-  OobsListClass parent_class;
+  OobsObjectClass parent_class;
 };
 
 GType       oobs_smb_config_get_type     (void);
 
 OobsObject* oobs_smb_config_new          (OobsSession *session);
+
+OobsList*   oobs_smb_config_get_shares   (OobsSMBConfig *config);
+
 
 G_END_DECLS
 

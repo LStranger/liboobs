@@ -56,16 +56,17 @@ GType             oobs_share_smb_get_type (void);
 GType             oobs_share_smb_flags_get_type (void);
 
 G_CONST_RETURN gchar* oobs_share_smb_get_name    (OobsShareSMB*);
-void              oobs_share_smb_set_name    (OobsShareSMB*, const gchar*);
+void                  oobs_share_smb_set_name    (OobsShareSMB*, const gchar*);
 
 G_CONST_RETURN gchar* oobs_share_smb_get_comment (OobsShareSMB*);
-void              oobs_share_smb_set_comment (OobsShareSMB*, const gchar*);
+void                  oobs_share_smb_set_comment (OobsShareSMB*, const gchar*);
 
 OobsShareSMBFlags oobs_share_smb_get_flags (OobsShareSMB*);
 void              oobs_share_smb_set_flags (OobsShareSMB*, OobsShareSMBFlags);
 
-OobsShare*        oobs_share_smb_new (const gchar*, const gchar*, const gchar*, OobsShareSMBFlags);
+OobsShare*        oobs_share_smb_new (const gchar *path, const gchar *name, const gchar *comment, OobsShareSMBFlags);
+
 
 G_END_DECLS
 
-#endif /* __SHARE_SMB_EXPORT_H__ */
+#endif /* __OOBS_SHARE_SMB_H__ */

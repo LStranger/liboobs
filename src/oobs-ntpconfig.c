@@ -72,7 +72,6 @@ oobs_ntp_config_init (OobsNTPConfig *config)
 
   priv = OOBS_NTP_CONFIG_GET_PRIVATE (config);
 
-  /* FIXME: not users, NTP servers */
   priv->servers_list = _oobs_list_new (OOBS_TYPE_NTP_SERVER);
 }
 

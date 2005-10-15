@@ -26,6 +26,7 @@
 #include "oobs-list.h"
 #include "oobs-list-private.h"
 #include "oobs-servicesconfig.h"
+#include "oobs-service.h"
 
 #define SERVICES_CONFIG_REMOTE_OBJECT "ServicesConfig"
 #define OOBS_SERVICES_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_SERVICES_CONFIG, OobsServicesConfigPrivate))
@@ -70,7 +71,7 @@ oobs_services_config_init (OobsServicesConfig *config)
 
   priv = OOBS_SERVICES_CONFIG_GET_PRIVATE (config);
 
-  //  priv->services_list = _oobs_list_new (OOBS_TYPE_SERVICE);
+  priv->services_list = _oobs_list_new (OOBS_TYPE_SERVICE);
 }
 
 static void
@@ -89,9 +90,51 @@ oobs_services_config_finalize (GObject *object)
     (* G_OBJECT_CLASS (oobs_services_config_parent_class)->finalize) (object);
 }
 
+static OobsService*
+create_service_from_dbus_reply (DBusMessage     *reply,
+				DBusMessageIter  struct_iter)
+{
+  DBusMessageIter iter;
+  gchar *name, *role;
+
+  dbus_message_iter_recurse (&struct_iter, &iter);
+
+  dbus_message_iter_get_basic (&iter, &name);
+  dbus_message_iter_next (&iter);
+
+  dbus_message_iter_get_basic (&iter, &role);
+  dbus_message_iter_next (&iter);
+
+  /* FIXME: missing runlevels, priorities, etc... */
+
+  return oobs_service_new (name, role);
+}
+
 static void
 oobs_services_config_update (OobsObject *object)
 {
+  OobsServicesConfigPrivate *priv;
+  DBusMessage     *reply;
+  DBusMessageIter  iter, elem_iter;
+  OobsListIter     list_iter;
+  OobsService     *service;
+
+  priv  = OOBS_SERVICES_CONFIG_GET_PRIVATE (object);
+  reply = _oobs_object_get_dbus_message (object);
+
+  dbus_message_iter_init (reply, &iter);
+  dbus_message_iter_recurse (&iter, &elem_iter);
+
+  while (dbus_message_iter_get_arg_type (&elem_iter) == DBUS_TYPE_STRUCT)
+    {
+      service = create_service_from_dbus_reply (reply, elem_iter);
+
+      oobs_list_append (priv->services_list, &list_iter);
+      oobs_list_set    (priv->services_list, &list_iter, G_OBJECT (service));
+      g_object_unref   (service);
+
+      dbus_message_iter_next (&elem_iter);
+    }
 }
 
 static void

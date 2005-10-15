@@ -26,8 +26,8 @@
 typedef struct _OobsStaticHostPrivate OobsStaticHostPrivate;
 
 struct _OobsStaticHostPrivate {
-  gchar  *ip_address;
-  GArray *aliases;
+  gchar *ip_address;
+  GList *aliases;
 };
 
 static void oobs_static_host_class_init (OobsStaticHostClass *class);
@@ -134,7 +134,9 @@ oobs_static_host_finalize (GObject *object)
   if (priv)
     {
       g_free (priv->ip_address);
-      g_array_free (priv->aliases, TRUE);
+
+      g_list_foreach (priv->aliases, (GFunc) g_free, NULL);
+      g_list_free (priv->aliases);
     }
 
   if (G_OBJECT_CLASS (oobs_static_host_parent_class)->finalize)
@@ -142,10 +144,18 @@ oobs_static_host_finalize (GObject *object)
 }
 
 OobsStaticHost*
-oobs_static_host_new (void)
+oobs_static_host_new (const gchar *ip_address,
+		      GList       *aliases)
 {
-  return g_object_new (OOBS_TYPE_STATIC_HOST,
-		       NULL);
+  OobsStaticHost *static_host;
+
+  static_host = g_object_new (OOBS_TYPE_STATIC_HOST,
+			      "ip-address", ip_address,
+			      NULL);
+
+  oobs_static_host_set_aliases (static_host, aliases);
+
+  return static_host;
 }
 
 G_CONST_RETURN gchar*
@@ -161,7 +171,8 @@ oobs_static_host_get_ip_address (OobsStaticHost *static_host)
 }
 
 void
-oobs_static_host_set_ip_address (OobsStaticHost *static_host, const gchar *ip_address)
+oobs_static_host_set_ip_address (OobsStaticHost *static_host,
+				 const gchar    *ip_address)
 {
   /* FIXME: should check ip address validity */
 
@@ -170,7 +181,7 @@ oobs_static_host_set_ip_address (OobsStaticHost *static_host, const gchar *ip_ad
   g_object_set (static_host, "ip-address", ip_address, NULL);
 }
 
-GArray*
+GList*
 oobs_static_host_get_aliases (OobsStaticHost *static_host)
 {
   OobsStaticHostPrivate *priv;
@@ -182,17 +193,20 @@ oobs_static_host_get_aliases (OobsStaticHost *static_host)
   return priv->aliases;
 }
 
-/* FIXME: should add a property for this? */
-/* FIXME: should use GSList? */
-/* FIXME: we're not freeing the previous GArray */
 void
-oobs_static_host_set_aliases (OobsStaticHost *static_host, GArray *aliases)
+oobs_static_host_set_aliases (OobsStaticHost *static_host, GList *aliases)
 {
   OobsStaticHostPrivate *priv;
 
   g_return_if_fail (OOBS_IS_STATIC_HOST (static_host));
 
   priv = OOBS_STATIC_HOST_GET_PRIVATE (static_host);
+
+  if (priv->aliases)
+    {
+      g_list_foreach (priv->aliases, (GFunc) g_free, NULL);
+      g_list_free (priv->aliases);
+    }
 
   priv->aliases = aliases;
 }

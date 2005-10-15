@@ -47,6 +47,7 @@
 #include <oobs/oobs-iface-plip.h>
 #include <oobs/oobs-iface-isdn.h>
 #include <oobs/oobs-iface-modem.h>
+#include <oobs/oobs-service.h>
 #include <oobs/oobs-servicesconfig.h>
 
 #endif /* __OOBS_H_ */

@@ -32,7 +32,8 @@ oobsinclude_HEADERS= 	\
 	oobs-iface-plip.h	\
 	oobs-iface-isdn.h	\
 	oobs-iface-modem.h	\
-	oobs-servicesconfig.h
+	oobs-servicesconfig.h	\
+	oobs-service.h
 
 liboobs_1_la_SOURCES = \
 	md5-crypt.c	\
@@ -61,7 +62,8 @@ liboobs_1_la_SOURCES = \
 	oobs-iface-wireless.h	oobs-iface-wireless.c	\
 	oobs-iface-plip.h	oobs-iface-plip.c	\
 	oobs-iface-isdn.h	oobs-iface-isdn.c	\
-	oobs-iface-modem.h	oobs-iface-modem.c
+	oobs-iface-modem.h	oobs-iface-modem.c	\
+	oobs-service.h		oobs-service.c		\
 	oobs-servicesconfig.h	oobs-servicesconfig.c
 
 liboobs_1_la_LIBADD= $(OOBS_LIBS)

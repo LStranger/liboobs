@@ -170,15 +170,11 @@ changed_signal_filter (DBusConnection *connection,
   priv   = OOBS_OBJECT_GET_PRIVATE (object);
 
   if (dbus_message_is_signal (message, priv->method, "changed"))
-    {
-      g_signal_emit (object, object_signals [CHANGING], 0);
+    g_signal_emit (object, object_signals [CHANGING], 0);
 
-      /* FIXME: we want the rest of the objects of
-	 the same type to get the signal too,
-	 isn't there a better way? */
-      return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
-    }
-
+  /* we want the rest of the objects of
+   * the same type to get the signal too
+   */
   return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
 }
 

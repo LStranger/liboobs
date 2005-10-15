@@ -45,13 +45,13 @@ struct _OobsStaticHostClass {
 
 GType oobs_static_host_get_type (void);
 
-OobsStaticHost* oobs_static_host_new (void);
+OobsStaticHost* oobs_static_host_new (const gchar *ip_address, GList *aliases);
 
 G_CONST_RETURN gchar* oobs_static_host_get_ip_address (OobsStaticHost *static_host);
 void                  oobs_static_host_set_ip_address (OobsStaticHost *static_host, const gchar *ip_address);
 
-GArray*               oobs_static_host_get_aliases (OobsStaticHost *static_host);
-void                  oobs_static_host_set_aliases (OobsStaticHost *static_host, GArray *aliases);
+GList*                oobs_static_host_get_aliases (OobsStaticHost *static_host);
+void                  oobs_static_host_set_aliases (OobsStaticHost *static_host, GList *aliases);
 
 
 G_END_DECLS

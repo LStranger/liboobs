@@ -52,8 +52,8 @@ GType       oobs_hosts_config_get_type     (void);
 OobsObject* oobs_hosts_config_new          (OobsSession *session);
 
 OobsList*   oobs_hosts_config_get_static_hosts   (OobsHostsConfig *config);
-OobsList*   oobs_hosts_config_get_dns_servers    (OobsHostsConfig *config);
-OobsList*   oobs_hosts_config_get_search_domains (OobsHostsConfig *config);
+GList*      oobs_hosts_config_get_dns_servers    (OobsHostsConfig *config);
+GList*      oobs_hosts_config_get_search_domains (OobsHostsConfig *config);
 
 
 G_END_DECLS

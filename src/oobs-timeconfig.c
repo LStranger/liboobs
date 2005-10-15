@@ -224,6 +224,8 @@ oobs_time_config_new (OobsSession *session)
 {
   static OobsObject *object = NULL;
 
+  g_return_val_if_fail (OOBS_IS_SESSION (session), NULL);
+
   if (!object)
     {
       object = g_object_new (OOBS_TYPE_TIME_CONFIG,

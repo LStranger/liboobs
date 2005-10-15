@@ -1,5 +1,12 @@
 2005-10-15  Carlos Garnacho Parro  <carlosg@gnome.org>
 
+	* src/oobs-groupsconfig.c, oobs-hostsconfig.c, oobs-nfsconfig.c,
+	oobs-servicesconfig.c, oobs-smbconfig.c: Oops, made these objects
+	singletons, like they were supposed to be.
+	* src/oobs-timeconfig.c: added a missing g_return_val_if_fail().
+
+2005-10-15  Carlos Garnacho Parro  <carlosg@gnome.org>
+
 	* src/oobs-service.[ch]: added, still missing some things
 	* src/Makefile.am: reflect this
 	* src/oobs-hostsconfig.[ch]: made it to read configuration correctly

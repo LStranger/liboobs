@@ -145,17 +145,21 @@ oobs_services_config_commit (OobsObject *object)
 OobsObject*
 oobs_services_config_new (OobsSession *session)
 {
-  OobsObject *object;
+  static OobsObject *object = NULL;
 
   g_return_val_if_fail (session != NULL, NULL);
   g_return_val_if_fail (OOBS_IS_SESSION (session), NULL);
 
-  object = g_object_new (OOBS_TYPE_SERVICES_CONFIG,
-			 "remote-object", SERVICES_CONFIG_REMOTE_OBJECT,
-			 "session",       session,
-			 NULL);
+  if (!object)
+    {
+      object = g_object_new (OOBS_TYPE_SERVICES_CONFIG,
+			     "remote-object", SERVICES_CONFIG_REMOTE_OBJECT,
+			     "session",       session,
+			     NULL);
 
-  oobs_object_update (object);
+      oobs_object_update (object);
+    }
+
   return object;
 }
 

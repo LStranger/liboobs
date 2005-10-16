@@ -1,5 +1,11 @@
 2005-10-16  Carlos Garnacho Parro  <carlosg@gnome.org>
 
+	* src/oobs-shareslist.[ch]: *ahem*, what was it doing here? it has
+	been obviously deprecated by OobsSMBConfig and OobsNFSConfig
+	* src/Makefile: ditto here
+
+2005-10-16  Carlos Garnacho Parro  <carlosg@gnome.org>
+
 	* src/oobs-list.c: added locking support
 	* src/oobs-list-private.h (_oobs_list_set_locked): added
 	* src/oobs-servicesconfig.c: lock the services list, it isn't supposed

@@ -158,7 +158,7 @@ oobs_groups_config_commit (OobsObject *object)
 }
 
 OobsObject*
-oobs_groups_config_new (OobsSession *session)
+oobs_groups_config_get (OobsSession *session)
 {
   static OobsObject *object = NULL;
 

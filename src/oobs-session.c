@@ -192,8 +192,16 @@ oobs_session_get_property (GObject      *object,
     }
 }
 
+/**
+ * oobs_session_get:
+ * 
+ * Returns the global #OobsSession singleton, which represents
+ * the session with the system tools backends.
+ * 
+ * Return Value: the singleton #OobSession object.
+ **/
 OobsSession*
-oobs_session_new (void)
+oobs_session_get (void)
 {
   static OobsSession *session = NULL;
 
@@ -203,6 +211,15 @@ oobs_session_new (void)
   return session;
 }
 
+/**
+ * oobs_session_set_autocommit_on_exit:
+ * @session: an #OobsSession
+ * @commit: #TRUE to make the session commit all
+ *          changes when the session is being destroyed
+ * 
+ * When set to #TRUE, it tells the #OobsSession
+ * object to save all changes before being destroyed
+ **/
 void
 oobs_session_set_autocommit_on_exit (OobsSession *session, gboolean commit)
 {
@@ -216,6 +233,16 @@ oobs_session_set_autocommit_on_exit (OobsSession *session, gboolean commit)
   g_object_notify (G_OBJECT (session), "commit-on-exit");
 }
 
+/**
+ * oobs_session_get_autocommit_on_exit:
+ * @session: an #OobsSession
+ * 
+ * Returns whether the #OobsSession object is going to save all configuration
+ * when it's being destroyed
+ * 
+ * Return Value: #TRUE if the #OobsSession object is going to commit the
+ *               configuration before being destroyed
+ **/
 gboolean
 oobs_session_get_autocommit_on_exit (OobsSession *session)
 {
@@ -228,6 +255,13 @@ oobs_session_get_autocommit_on_exit (OobsSession *session)
   return priv->commit_on_exit;
 }
 
+/**
+ * oobs_session_commit:
+ * @session: an #OobsSession
+ * 
+ * Commits inmediately all the changes to the configuration
+ * objects that have been requested through this #OobsSession
+ **/
 void
 oobs_session_commit (OobsSession *session)
 {

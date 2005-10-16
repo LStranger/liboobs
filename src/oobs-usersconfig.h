@@ -50,7 +50,7 @@ struct _OobsUsersConfigClass
 
 GType       oobs_users_config_get_type     (void);
 
-OobsObject* oobs_users_config_new          (OobsSession *session);
+OobsObject* oobs_users_config_get          (OobsSession *session);
 OobsList*   oobs_users_config_get_users    (OobsUsersConfig *config);
 
 

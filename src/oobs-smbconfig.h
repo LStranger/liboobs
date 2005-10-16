@@ -51,7 +51,7 @@ struct _OobsSMBConfigClass
 
 GType       oobs_smb_config_get_type     (void);
 
-OobsObject* oobs_smb_config_new          (OobsSession *session);
+OobsObject* oobs_smb_config_get          (OobsSession *session);
 
 OobsList*   oobs_smb_config_get_shares   (OobsSMBConfig *config);
 

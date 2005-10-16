@@ -49,7 +49,7 @@ struct _OobsGroupsConfigClass
 
 GType       oobs_groups_config_get_type     (void);
 
-OobsObject* oobs_groups_config_new          (OobsSession *session);
+OobsObject* oobs_groups_config_get          (OobsSession *session);
 OobsList*   oobs_groups_config_get_groups   (OobsGroupsConfig *config);
 
 

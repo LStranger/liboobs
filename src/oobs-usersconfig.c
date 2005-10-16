@@ -329,7 +329,7 @@ oobs_users_config_commit (OobsObject *object)
 }
 
 OobsObject*
-oobs_users_config_new (OobsSession *session)
+oobs_users_config_get (OobsSession *session)
 {
   static OobsObject *object = NULL;
 

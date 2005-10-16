@@ -131,7 +131,7 @@ oobs_ntp_config_commit (OobsObject *object)
 }
 
 OobsObject*
-oobs_ntp_config_new (OobsSession *session)
+oobs_ntp_config_get (OobsSession *session)
 {
   static OobsObject *object = NULL;
 

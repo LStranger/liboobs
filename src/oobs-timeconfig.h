@@ -50,7 +50,7 @@ struct _OobsTimeConfigClass
 
 GType       oobs_time_config_get_type     (void);
 
-OobsObject* oobs_time_config_new          (OobsSession *session);
+OobsObject* oobs_time_config_get          (OobsSession *session);
 
 void        oobs_time_get_time            (OobsTimeConfig *config, gint *year, gint *month, gint *day, gint *hour, gint *minute, gint *second);
 void        oobs_time_set_time            (OobsTimeConfig *config, gint  year, gint  month, gint  day, gint  hour, gint  minute, gint  second);

@@ -1,3 +1,9 @@
+2005-10-17  Carlos Garnacho Parro  <carlosg@gnome.org>
+
+	* src/oobs-*config.[ch], oobs-session.[ch]: renamed all singleton
+	constructors from _new() to _get().
+	* src/oobs-session.c: added some doc comments
+
 2005-10-16  Carlos Garnacho Parro  <carlosg@gnome.org>
 
 	* src/oobs-shareslist.[ch]: *ahem*, what was it doing here? it has

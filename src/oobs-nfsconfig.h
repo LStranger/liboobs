@@ -51,7 +51,7 @@ struct _OobsNFSConfigClass
 
 GType       oobs_nfs_config_get_type     (void);
 
-OobsObject* oobs_nfs_config_new          (OobsSession *session);
+OobsObject* oobs_nfs_config_get          (OobsSession *session);
 
 OobsList*   oobs_nfs_config_get_shares   (OobsNFSConfig *config);
 

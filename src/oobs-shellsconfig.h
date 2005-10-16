@@ -49,7 +49,7 @@ struct _OobsShellsConfigClass
 
 
 GType       oobs_shells_config_get_type   (void);
-OobsObject* oobs_shells_config_new        (OobsSession *session);
+OobsObject* oobs_shells_config_get        (OobsSession *session);
 OobsList*   oobs_shells_config_get_shells (OobsShellsConfig *config);
 
 

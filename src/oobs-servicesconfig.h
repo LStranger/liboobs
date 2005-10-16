@@ -49,7 +49,7 @@ struct _OobsServicesConfigClass
 
 GType       oobs_services_config_get_type     (void);
 
-OobsObject* oobs_services_config_new          (OobsSession *session);
+OobsObject* oobs_services_config_get          (OobsSession *session);
 OobsList*   oobs_services_config_get_services (OobsServicesConfig *config);
 
 

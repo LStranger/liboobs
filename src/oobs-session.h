@@ -47,7 +47,7 @@ struct _OobsSessionClass
 
 GType        oobs_session_get_type (void);
 
-OobsSession *oobs_session_new      (void);
+OobsSession *oobs_session_get      (void);
 void         oobs_session_commit   (OobsSession *session);
 
 void         oobs_session_set_autocommit_on_exit (OobsSession *session, gboolean do_commit);

@@ -164,7 +164,7 @@ oobs_nfs_config_commit (OobsObject *object)
 }
 
 OobsObject*
-oobs_nfs_config_new (OobsSession *session)
+oobs_nfs_config_get (OobsSession *session)
 {
   static OobsObject *object = NULL;
 

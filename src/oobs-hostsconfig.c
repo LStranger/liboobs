@@ -216,7 +216,7 @@ oobs_hosts_config_commit (OobsObject *object)
 }
 
 OobsObject*
-oobs_hosts_config_new (OobsSession *session)
+oobs_hosts_config_get (OobsSession *session)
 {
   static OobsObject *object = NULL;
 

@@ -50,7 +50,7 @@ struct _OobsNTPConfigClass
 
 GType       oobs_ntp_config_get_type     (void);
 
-OobsObject* oobs_ntp_config_new          (OobsSession *session);
+OobsObject* oobs_ntp_config_get          (OobsSession *session);
 OobsList*   oobs_ntp_config_get_servers  (OobsNTPConfig *config);
 
 

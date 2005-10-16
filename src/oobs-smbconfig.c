@@ -182,7 +182,7 @@ oobs_smb_config_commit (OobsObject *object)
 }
 
 OobsObject*
-oobs_smb_config_new (OobsSession *session)
+oobs_smb_config_get (OobsSession *session)
 {
   static OobsObject *object = NULL;
 

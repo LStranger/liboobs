@@ -118,6 +118,9 @@ oobs_time_config_finalize (GObject *object)
 
   priv = OOBS_TIME_CONFIG_GET_PRIVATE (object);
 
+  if (priv && priv->timezone)
+    g_free (priv->timezone);
+
   if (G_OBJECT_CLASS (oobs_time_config_parent_class)->finalize)
     (* G_OBJECT_CLASS (oobs_time_config_parent_class)->finalize) (object);
 }
@@ -195,9 +198,13 @@ oobs_time_config_update (OobsObject *object)
   OobsTimeConfigPrivate *priv;
   DBusMessage *reply;
   DBusMessageIter iter;
+  gchar *timezone;
 
   priv  = OOBS_TIME_CONFIG_GET_PRIVATE (object);
   reply = _oobs_object_get_dbus_message (object);
+
+  /* First of all, free the previous config */
+  g_free (priv->timezone);
 
   /* FIXME: skip time & date settings, at the moment
    * we rely on the local configuration, this has
@@ -211,7 +218,8 @@ oobs_time_config_update (OobsObject *object)
   dbus_message_iter_next (&iter);
 
   dbus_message_iter_next (&iter);
-  dbus_message_iter_get_basic (&iter, &priv->timezone);
+  dbus_message_iter_get_basic (&iter, &timezone);
+  priv->timezone = g_strdup (timezone);
 }
 
 static void

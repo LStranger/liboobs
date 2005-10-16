@@ -76,6 +76,31 @@ oobs_hosts_config_init (OobsHostsConfig *config)
 }
 
 static void
+free_configuration (OobsHostsConfig *config)
+{
+  OobsHostsConfigPrivate *priv;
+
+  priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
+
+  if (priv->static_hosts_list)
+    oobs_list_clear (priv->static_hosts_list);
+
+  if (priv->dns_list)
+    {
+      g_list_foreach (priv->dns_list, (GFunc) g_free, NULL);
+      g_list_free (priv->dns_list);
+      priv->dns_list = NULL;
+    }
+
+  if (priv->search_domains_list)
+    {
+      g_list_foreach (priv->search_domains_list, (GFunc) g_free, NULL);
+      g_list_free (priv->search_domains_list);
+      priv->search_domains_list = NULL;
+    }
+}
+
+static void
 oobs_hosts_config_finalize (GObject *object)
 {
   OobsHostsConfigPrivate *priv;
@@ -86,20 +111,10 @@ oobs_hosts_config_finalize (GObject *object)
 
   if (priv)
     {
+      free_configuration (OOBS_HOSTS_CONFIG (object));
+
       if (priv->static_hosts_list)
 	g_object_unref (priv->static_hosts_list);
-
-      if (priv->dns_list)
-	{
-	  g_list_foreach (priv->dns_list, (GFunc) g_free, NULL);
-	  g_list_free (priv->dns_list);
-	}
-
-      if (priv->search_domains_list)
-	{
-	  g_list_foreach (priv->search_domains_list, (GFunc) g_free, NULL);
-	  g_list_free (priv->search_domains_list);
-	}
     }
 
   if (G_OBJECT_CLASS (oobs_hosts_config_parent_class)->finalize)
@@ -179,6 +194,9 @@ oobs_hosts_config_update (OobsObject *object)
 
   priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (object);
   reply = _oobs_object_get_dbus_message (object);
+
+  /* First of all, free the previous config */
+  free_configuration (OOBS_HOSTS_CONFIG (object));
 
   dbus_message_iter_init (reply, &iter);
 

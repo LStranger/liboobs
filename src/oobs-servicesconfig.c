@@ -122,6 +122,11 @@ oobs_services_config_update (OobsObject *object)
   priv  = OOBS_SERVICES_CONFIG_GET_PRIVATE (object);
   reply = _oobs_object_get_dbus_message (object);
 
+  _oobs_list_set_locked (priv->services_list, FALSE);
+
+  /* First of all, free the previous config */
+  oobs_list_clear (priv->services_list);
+
   dbus_message_iter_init (reply, &iter);
   dbus_message_iter_recurse (&iter, &elem_iter);
 
@@ -135,6 +140,8 @@ oobs_services_config_update (OobsObject *object)
 
       dbus_message_iter_next (&elem_iter);
     }
+
+  _oobs_list_set_locked (priv->services_list, TRUE);
 }
 
 static void

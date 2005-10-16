@@ -141,6 +141,18 @@ oobs_users_config_init (OobsUsersConfig *config)
 }
 
 static void
+free_configuration (OobsUsersConfig *config)
+{
+  OobsUsersConfigPrivate *priv;
+
+  priv = OOBS_USERS_CONFIG_GET_PRIVATE (config);
+
+  oobs_list_clear (priv->users_list);
+  g_free (priv->default_shell);
+  g_free (priv->default_home);
+}
+
+static void
 oobs_users_config_finalize (GObject *object)
 {
   OobsUsersConfigPrivate *priv;
@@ -149,8 +161,13 @@ oobs_users_config_finalize (GObject *object)
 
   priv = OOBS_USERS_CONFIG_GET_PRIVATE (object);
 
-  if (priv && priv->users_list)
-    g_object_unref (priv->users_list);
+  if (priv)
+    {
+      free_configuration (OOBS_USERS_CONFIG (object));
+
+      if (priv->users_list)
+	g_object_unref (priv->users_list);
+    }
 
   if (G_OBJECT_CLASS (oobs_users_config_parent_class)->finalize)
     (* G_OBJECT_CLASS (oobs_users_config_parent_class)->finalize) (object);
@@ -276,8 +293,8 @@ oobs_users_config_update (OobsObject *object)
   priv  = OOBS_USERS_CONFIG_GET_PRIVATE (object);
   reply = _oobs_object_get_dbus_message (object);
 
-  /* First of all, free the previous list */
-  oobs_list_clear (priv->users_list);
+  /* First of all, free the previous configuration */
+  free_configuration (OOBS_USERS_CONFIG (object));
 
   dbus_message_iter_init (reply, &iter);
   dbus_message_iter_recurse (&iter, &elem_iter);

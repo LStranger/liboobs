@@ -24,6 +24,8 @@
 G_BEGIN_DECLS
 
 OobsList*   _oobs_list_new   (GType contained_type);
+void        _oobs_list_set_locked (OobsList *list, gboolean locked);
+
 
 G_END_DECLS
 

@@ -270,6 +270,15 @@ oobs_iface_ethernet_has_gateway (OobsIface *iface)
 	  (priv->gateway));
 }
 
+/**
+ * oobs_iface_ethernet_get_ip_address:
+ * @iface: An #OobsIfaceEthernet.
+ * 
+ * Returns the IP address that this interface uses.
+ * 
+ * Return Value: A pointer to the IP address as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_iface_ethernet_get_ip_address (OobsIfaceEthernet *iface)
 {
@@ -282,6 +291,14 @@ oobs_iface_ethernet_get_ip_address (OobsIfaceEthernet *iface)
   return priv->address;
 }
 
+/**
+ * oobs_iface_ethernet_set_ip_address:
+ * @iface: An #OobsIfaceEthernet.
+ * @address: a new IP address for the interface.
+ * 
+ * Sets a new IP address for the interface,
+ * overwriting the previous one.
+ **/
 void
 oobs_iface_ethernet_set_ip_address (OobsIfaceEthernet *iface,
 				    const gchar       *address)
@@ -293,6 +310,15 @@ oobs_iface_ethernet_set_ip_address (OobsIfaceEthernet *iface,
   g_object_set (G_OBJECT (iface), "ip-address", address, NULL);
 }
 
+/**
+ * oobs_iface_ethernet_get_network_mask:
+ * @iface: An #OobsIfaceEthernet.
+ * 
+ * Returns the IP network mask that this interface uses.
+ * 
+ * Return Value: A pointer to the network mask as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_iface_ethernet_get_network_mask (OobsIfaceEthernet *iface)
 {
@@ -305,6 +331,14 @@ oobs_iface_ethernet_get_network_mask (OobsIfaceEthernet *iface)
   return priv->netmask;
 }
 
+/**
+ * oobs_iface_ethernet_set_network_mask:
+ * @iface: An #OobsIfaceEthernet.
+ * @mask: a new IP network mask for the interface.
+ * 
+ * Sets a new IP network mask for the interface,
+ * overwriting the previous one.
+ **/
 void
 oobs_iface_ethernet_set_network_mask (OobsIfaceEthernet *iface,
 				      const gchar       *mask)

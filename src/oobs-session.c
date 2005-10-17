@@ -195,7 +195,7 @@ oobs_session_get_property (GObject      *object,
 /**
  * oobs_session_get:
  * 
- * Returns the global #OobsSession singleton, which represents
+ * Returns the #OobsSession singleton, which represents
  * the session with the system tools backends.
  * 
  * Return Value: the singleton #OobSession object.

@@ -215,6 +215,15 @@ oobs_hosts_config_commit (OobsObject *object)
 {
 }
 
+/**
+ * oobs_hosts_config_get:
+ * @session: An #OobsSession.
+ * 
+ * Returns the #OobsHostsConfig singleton, this object
+ * represents the hosts resolution configuration.
+ * 
+ * Return Value: the singleton #OobsHostsConfig.
+ **/
 OobsObject*
 oobs_hosts_config_get (OobsSession *session)
 {
@@ -235,6 +244,14 @@ oobs_hosts_config_get (OobsSession *session)
   return object;
 }
 
+/**
+ * oobs_hosts_config_get_static_hosts:
+ * @config: An #OobsHostsConfig.
+ * 
+ * Returns an #OobsList containing objects of type #OobsStaticHost.
+ * 
+ * Return Value: An #OobsList containing the static hosts configuration.
+ **/
 OobsList*
 oobs_hosts_config_get_static_hosts (OobsHostsConfig *config)
 {
@@ -247,6 +264,15 @@ oobs_hosts_config_get_static_hosts (OobsHostsConfig *config)
   return priv->static_hosts_list;
 }
 
+/**
+ * oobs_hosts_config_get_dns_servers:
+ * @config: An #OobsHostsConfig.
+ * 
+ * Returns a #GList containing the IP addresses of the DNS servers.
+ * The returned list must be freed with g_list_free().
+ * 
+ * Return Value: a #GList of gchar pointers
+ **/
 GList*
 oobs_hosts_config_get_dns_servers (OobsHostsConfig *config)
 {
@@ -256,9 +282,18 @@ oobs_hosts_config_get_dns_servers (OobsHostsConfig *config)
 
   priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
 
-  return priv->dns_list;
+  return g_list_copy (priv->dns_list);
 }
 
+/**
+ * oobs_hosts_config_get_search_domains:
+ * @config: An #OobsHostsConfig.
+ * 
+ * Returns a #GList containing the search domains.
+ * The returned list musts be freed with g_list_free().
+ * 
+ * Return Value: a #GList of gchar pointers.
+ **/
 GList*
 oobs_hosts_config_get_search_domains (OobsHostsConfig *config)
 {

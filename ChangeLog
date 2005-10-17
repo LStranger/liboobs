@@ -1,3 +1,9 @@
+2005-10-18  Carlos Garnacho Parro  <carlosg@gnome.org>
+
+	* oobs-groups.c, oobs-groupsconfig.c, oobs-hostsconfig.c,
+	oobs-iface-ethernet.c: Added some API docs
+	* oobs-session.c: improved wording in API docs
+
 2005-10-17  Carlos Garnacho Parro  <carlosg@gnome.org>
 
 	* autogen.sh: make it use at least automake 1.7

@@ -157,6 +157,15 @@ oobs_groups_config_commit (OobsObject *object)
 {
 }
 
+/**
+ * oobs_groups_config_get:
+ * @session: An #OobsSession.
+ * 
+ * Returns the #OobsGroupsConfig singleton, which
+ * represents the groups configuration.
+ * 
+ * Return Value: the singleton #OobsGoupsConfig
+ **/
 OobsObject*
 oobs_groups_config_get (OobsSession *session)
 {
@@ -178,6 +187,14 @@ oobs_groups_config_get (OobsSession *session)
   return object;
 }
 
+/**
+ * oobs_groups_config_get_groups:
+ * @config: An #OobsGroupsConfig.
+ * 
+ * Returns an #OobsList containing objects of type #OobsGroup.
+ * 
+ * Return Value: An OobsList containing the groups configuration.
+ **/
 OobsList*
 oobs_groups_config_get_groups (OobsGroupsConfig *config)
 {

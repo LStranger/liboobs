@@ -188,13 +188,33 @@ oobs_group_finalize (GObject *object)
     (* G_OBJECT_CLASS (oobs_group_parent_class)->finalize) (object);
 }
 
+/**
+ * oobs_group_new:
+ * @name: group name.
+ * 
+ * Creates a new #OobsGroup with the name specified by @name.
+ * 
+ * Return Value: A new #OobsGroup.
+ **/
 OobsGroup*
-oobs_group_new (void)
+oobs_group_new (const gchar *name)
 {
+  /* FIXME: should check name length */
+
   return g_object_new (OOBS_TYPE_GROUP,
+		       "name", name,
 		       NULL);
 }
 
+/**
+ * oobs_group_get_name:
+ * @group: An #OobsGroup.
+ * 
+ * Returns the #OobsGroup name.
+ * 
+ * Return Value: A pointer to the group name as a string.
+ *               This string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_group_get_name (OobsGroup *group)
 {
@@ -208,6 +228,14 @@ oobs_group_get_name (OobsGroup *group)
   return priv->groupname;
 }
 
+/**
+ * oobs_group_set_name:
+ * @group: An #OobsGroup.
+ * @name: A new name for #group.
+ * 
+ * Sets the name of #group to be #name,
+ * overwriting the previous one.
+ **/
 void
 oobs_group_set_name (OobsGroup *group, const gchar *name)
 {
@@ -220,6 +248,14 @@ oobs_group_set_name (OobsGroup *group, const gchar *name)
   g_object_set (G_OBJECT (group), "name", name, NULL);
 }
 
+/**
+ * oobs_group_set_password:
+ * @group: An #OobsGroup.
+ * @password: A new password for #group.
+ * 
+ * Sets the group password for the group defined
+ * by #OobsGroup, overwriting the previous one.
+ **/
 void
 oobs_group_set_password (OobsGroup *group, const gchar *password)
 {
@@ -229,6 +265,14 @@ oobs_group_set_password (OobsGroup *group, const gchar *password)
   g_object_set (G_OBJECT (group), "password", password, NULL);
 }
 
+/**
+ * oobs_group_get_gid:
+ * @group: An #OobsGroup.
+ * 
+ * Returns the group ID (GID) associated to #OobsGroup
+ * 
+ * Return Value: the #group GID.
+ **/
 gid_t
 oobs_group_get_gid (OobsGroup *group)
 {
@@ -242,6 +286,13 @@ oobs_group_get_gid (OobsGroup *group)
   return priv->gid;
 }
 
+/**
+ * oobs_group_set_gid:
+ * @group: An #OobsGroup.
+ * @gid: A new GID for #group.
+ * 
+ * Sets the group ID (GID) of #group to be #gid.
+ **/
 void
 oobs_group_set_gid (OobsGroup *group, gid_t gid)
 {

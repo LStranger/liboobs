@@ -1,0 +1,112 @@
+<!-- ##### SECTION Title ##### -->
+OobsShareSMB
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### ENUM OobsShareSMBFlags ##### -->
+<para>
+
+</para>
+
+@OOBS_SHARE_SMB_ENABLED: 
+@OOBS_SHARE_SMB_BROWSABLE: 
+@OOBS_SHARE_SMB_PUBLIC: 
+@OOBS_SHARE_SMB_WRITABLE: 
+
+<!-- ##### MACRO OOBS_TYPE_SHARE_SMB_FLAGS ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### FUNCTION oobs_share_smb_flags_get_type ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_share_smb_get_name ##### -->
+<para>
+
+</para>
+
+@Param1: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_share_smb_set_name ##### -->
+<para>
+
+</para>
+
+@Param1: 
+@Param2: 
+
+
+<!-- ##### FUNCTION oobs_share_smb_get_comment ##### -->
+<para>
+
+</para>
+
+@Param1: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_share_smb_set_comment ##### -->
+<para>
+
+</para>
+
+@Param1: 
+@Param2: 
+
+
+<!-- ##### FUNCTION oobs_share_smb_get_flags ##### -->
+<para>
+
+</para>
+
+@Param1: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_share_smb_set_flags ##### -->
+<para>
+
+</para>
+
+@Param1: 
+@Param2: 
+
+
+<!-- ##### FUNCTION oobs_share_smb_new ##### -->
+<para>
+
+</para>
+
+@path: 
+@name: 
+@comment: 
+@Param4: 
+@Returns: 
+
+

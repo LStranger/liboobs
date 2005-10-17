@@ -1,0 +1,57 @@
+<!-- ##### SECTION Title ##### -->
+OobsIfacePlip
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### FUNCTION oobs_iface_plip_get_address ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_iface_plip_set_address ##### -->
+<para>
+
+</para>
+
+@iface: 
+@address: 
+
+
+<!-- ##### FUNCTION oobs_iface_plip_get_remote_address ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_iface_plip_set_remote_address ##### -->
+<para>
+
+</para>
+
+@iface: 
+@address: 
+
+

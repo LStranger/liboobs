@@ -1,0 +1,76 @@
+<!-- ##### SECTION Title ##### -->
+OobsTimeConfig
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### FUNCTION oobs_time_config_get ##### -->
+<para>
+
+</para>
+
+@session: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_time_get_time ##### -->
+<para>
+
+</para>
+
+@config: 
+@year: 
+@month: 
+@day: 
+@hour: 
+@minute: 
+@second: 
+
+
+<!-- ##### FUNCTION oobs_time_set_time ##### -->
+<para>
+
+</para>
+
+@config: 
+@year: 
+@month: 
+@day: 
+@hour: 
+@minute: 
+@second: 
+
+
+<!-- ##### FUNCTION oobs_time_get_timezone ##### -->
+<para>
+
+</para>
+
+@config: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_time_set_timezone ##### -->
+<para>
+
+</para>
+
+@config: 
+@timezone: 
+
+

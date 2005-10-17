@@ -1,0 +1,39 @@
+<!-- ##### SECTION Title ##### -->
+OobsShell
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### FUNCTION oobs_shell_new ##### -->
+<para>
+
+</para>
+
+@path: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_shell_get_path ##### -->
+<para>
+
+</para>
+
+@shell: 
+@Returns: 
+
+

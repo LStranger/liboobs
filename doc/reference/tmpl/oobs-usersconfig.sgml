@@ -1,0 +1,39 @@
+<!-- ##### SECTION Title ##### -->
+OobsUsersConfig
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### FUNCTION oobs_users_config_get ##### -->
+<para>
+
+</para>
+
+@session: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_users_config_get_users ##### -->
+<para>
+
+</para>
+
+@config: 
+@Returns: 
+
+

@@ -1,0 +1,83 @@
+<!-- ##### SECTION Title ##### -->
+OobsGroup
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### FUNCTION oobs_group_new ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_group_get_name ##### -->
+<para>
+
+</para>
+
+@group: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_group_set_name ##### -->
+<para>
+
+</para>
+
+@group: 
+@name: 
+
+
+<!-- ##### FUNCTION oobs_group_set_password ##### -->
+<para>
+
+</para>
+
+@group: 
+@password: 
+
+
+<!-- ##### FUNCTION oobs_group_set_crypted_password ##### -->
+<para>
+
+</para>
+
+@group: 
+@crypted_password: 
+
+
+<!-- ##### FUNCTION oobs_group_get_gid ##### -->
+<para>
+
+</para>
+
+@group: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_group_set_gid ##### -->
+<para>
+
+</para>
+
+@group: 
+@gid: 
+
+

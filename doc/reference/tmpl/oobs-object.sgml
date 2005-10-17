@@ -1,0 +1,37 @@
+<!-- ##### SECTION Title ##### -->
+OobsObject
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### FUNCTION oobs_object_commit ##### -->
+<para>
+
+</para>
+
+@object: 
+
+
+<!-- ##### FUNCTION oobs_object_update ##### -->
+<para>
+
+</para>
+
+@object: 
+
+

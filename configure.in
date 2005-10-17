@@ -29,6 +29,9 @@ GETTEXT_PACKAGE=liboobs
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[The name of the gettext domain])
 
+dnl Check for gtk-doc
+GTK_DOC_CHECK([1.0])
+
 dnl =====================================================
 dnl required packages detection
 dnl =====================================================
@@ -48,6 +51,13 @@ AC_CHECK_HEADER(crypt.h, AC_DEFINE(HAVE_CRYPT_H, "", [whether it has crypt funct
 
 AC_OUTPUT([
 Makefile
+doc/Makefile
+doc/reference/Makefile
+doc/reference/version.xml
 src/Makefile
 liboobs-1.pc
 ])
+
+echo "configuration:
+        doc build:   ${enable_gtk_doc}
+"

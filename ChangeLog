@@ -1,5 +1,11 @@
 2005-10-17  Carlos Garnacho Parro  <carlosg@gnome.org>
 
+	* autogen.sh: make it use at least automake 1.7
+	* doc/*: added initial documentation support
+	* Makefile.am, configure.in: added doc/ stuff
+
+2005-10-17  Carlos Garnacho Parro  <carlosg@gnome.org>
+
 	* src/oobs-*config.[ch], oobs-session.[ch]: renamed all singleton
 	constructors from _new() to _get().
 	* src/oobs-session.c: added some doc comments

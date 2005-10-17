@@ -1,0 +1,48 @@
+<!-- ##### SECTION Title ##### -->
+OobsNTPServer
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### FUNCTION oobs_ntp_server_new ##### -->
+<para>
+
+</para>
+
+@hostname: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_ntp_server_get_path ##### -->
+<para>
+
+</para>
+
+@ntp_server: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_ntp_server_set_path ##### -->
+<para>
+
+</para>
+
+@ntp_server: 
+@hostname: 
+
+

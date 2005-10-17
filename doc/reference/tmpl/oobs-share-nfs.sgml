@@ -1,0 +1,66 @@
+<!-- ##### SECTION Title ##### -->
+OobsShareNFS
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### STRUCT OobsShareAclElement ##### -->
+<para>
+
+</para>
+
+@element: 
+@read_only: 
+
+<!-- ##### FUNCTION oobs_share_nfs_new ##### -->
+<para>
+
+</para>
+
+@path: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_share_nfs_add_acl_element ##### -->
+<para>
+
+</para>
+
+@share: 
+@element: 
+@read_only: 
+
+
+<!-- ##### FUNCTION oobs_share_nfs_set_acl ##### -->
+<para>
+
+</para>
+
+@share: 
+@acl: 
+
+
+<!-- ##### FUNCTION oobs_share_nfs_get_acl ##### -->
+<para>
+
+</para>
+
+@share: 
+@Returns: 
+
+

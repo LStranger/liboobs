@@ -1,0 +1,98 @@
+<!-- ##### SECTION Title ##### -->
+OobsIfaceWireless
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### ENUM OobsWirelessKeyType ##### -->
+<para>
+
+</para>
+
+@OOBS_WIRELESS_KEY_ASCII: 
+@OOBS_WIRELESS_KEY_HEXADECIMAL: 
+
+<!-- ##### MACRO OOBS_TYPE_WIRELESS_KEY_TYPE ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### FUNCTION oobs_iface_wireless_get_type ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_iface_wireless_get_essid ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_iface_wireless_set_essid ##### -->
+<para>
+
+</para>
+
+@iface: 
+@essid: 
+
+
+<!-- ##### FUNCTION oobs_iface_wireless_get_wep_key ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_iface_wireless_set_wep_key ##### -->
+<para>
+
+</para>
+
+@iface: 
+@wep_key: 
+
+
+<!-- ##### FUNCTION oobs_iface_wireless_get_wep_key_type ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_iface_wireless_set_wep_key_type ##### -->
+<para>
+
+</para>
+
+@iface: 
+@key_type: 
+
+

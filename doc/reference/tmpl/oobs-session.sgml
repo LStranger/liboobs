@@ -1,0 +1,55 @@
+<!-- ##### SECTION Title ##### -->
+OobsSession
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### FUNCTION oobs_session_get ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_session_commit ##### -->
+<para>
+
+</para>
+
+@session: 
+
+
+<!-- ##### FUNCTION oobs_session_set_autocommit_on_exit ##### -->
+<para>
+
+</para>
+
+@session: 
+@do_commit: 
+
+
+<!-- ##### FUNCTION oobs_session_get_autocommit_on_exit ##### -->
+<para>
+
+</para>
+
+@session: 
+@Returns: 
+
+

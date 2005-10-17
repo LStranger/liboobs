@@ -1,0 +1,153 @@
+<!-- ##### SECTION Title ##### -->
+OobsIfaceEthernet
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### ENUM OobsIfaceConfigurationMethod ##### -->
+<para>
+
+</para>
+
+@OOBS_METHOD_NONE: 
+@OOBS_METHOD_STATIC: 
+@OOBS_METHOD_DHCP: 
+
+<!-- ##### MACRO OOBS_TYPE_IFACE_CONFIGURATION_METHOD ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### FUNCTION oobs_iface_ethernet_get_type ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_iface_ethernet_get_ip_address ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_iface_ethernet_set_ip_address ##### -->
+<para>
+
+</para>
+
+@iface: 
+@address: 
+
+
+<!-- ##### FUNCTION oobs_iface_ethernet_get_network_mask ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_iface_ethernet_set_network_mask ##### -->
+<para>
+
+</para>
+
+@iface: 
+@mask: 
+
+
+<!-- ##### FUNCTION oobs_iface_ethernet_get_gateway_address ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_iface_ethernet_set_gateway_address ##### -->
+<para>
+
+</para>
+
+@iface: 
+@address: 
+
+
+<!-- ##### FUNCTION oobs_iface_ethernet_get_network_address ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_iface_ethernet_set_network_address ##### -->
+<para>
+
+</para>
+
+@iface: 
+@address: 
+
+
+<!-- ##### FUNCTION oobs_iface_ethernet_get_broadcast_address ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_iface_ethernet_set_broadcast_address ##### -->
+<para>
+
+</para>
+
+@iface: 
+@address: 
+
+
+<!-- ##### FUNCTION oobs_iface_ethernet_get_configuration_method ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_iface_ethernet_set_configuration_method ##### -->
+<para>
+
+</para>
+
+@iface: 
+@method: 
+
+

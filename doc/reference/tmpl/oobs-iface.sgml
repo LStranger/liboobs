@@ -1,0 +1,120 @@
+<!-- ##### SECTION Title ##### -->
+OobsIface
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### FUNCTION oobs_iface_get_auto ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_iface_set_auto ##### -->
+<para>
+
+</para>
+
+@iface: 
+@is_auto: 
+
+
+<!-- ##### FUNCTION oobs_iface_get_enabled ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_iface_set_enabled ##### -->
+<para>
+
+</para>
+
+@iface: 
+@is_enabled: 
+
+
+<!-- ##### FUNCTION oobs_iface_get_dev ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_iface_set_dev ##### -->
+<para>
+
+</para>
+
+@iface: 
+@dev: 
+
+
+<!-- ##### FUNCTION oobs_iface_get_hwaddr ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_iface_set_hwaddr ##### -->
+<para>
+
+</para>
+
+@iface: 
+@hwaddr: 
+
+
+<!-- ##### FUNCTION oobs_iface_is_configured ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_iface_set_configured ##### -->
+<para>
+
+</para>
+
+@iface: 
+@is_configured: 
+
+
+<!-- ##### FUNCTION oobs_iface_has_gateway ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+

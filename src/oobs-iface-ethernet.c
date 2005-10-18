@@ -350,6 +350,15 @@ oobs_iface_ethernet_set_network_mask (OobsIfaceEthernet *iface,
   g_object_set (G_OBJECT (iface), "ip-mask", mask, NULL);
 }
 
+/**
+ * oobs_iface_ethernet_get_gateway_address:
+ * @iface: An #OobsIfaceEthernet.
+ * 
+ * Returns the gateway IP address that this interface uses.
+ * 
+ * Return Value: A pointer to the gateway address as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_iface_ethernet_get_gateway_address (OobsIfaceEthernet *iface)
 {
@@ -362,6 +371,14 @@ oobs_iface_ethernet_get_gateway_address (OobsIfaceEthernet *iface)
   return priv->gateway;
 }
 
+/**
+ * oobs_iface_ethernet_set_gateway_address:
+ * @iface: An #OobsIfaceEthernet.
+ * @address: a new gateway IP address for the interface.
+ * 
+ * Sets a new gateway IP address for the interface,
+ * overwriting the previous one.
+ **/
 void
 oobs_iface_ethernet_set_gateway_address (OobsIfaceEthernet *iface,
 					 const gchar       *address)
@@ -373,6 +390,15 @@ oobs_iface_ethernet_set_gateway_address (OobsIfaceEthernet *iface,
   g_object_set (G_OBJECT (iface), "gateway-address", address, NULL);
 }
 
+/**
+ * oobs_iface_ethernet_get_network_address:
+ * @iface: An #OobsIfaceEthernet.
+ * 
+ * Returns the network address for this interface.
+ * 
+ * Return Value: A pointer to the network address as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_iface_ethernet_get_network_address (OobsIfaceEthernet *iface)
 {
@@ -385,6 +411,14 @@ oobs_iface_ethernet_get_network_address (OobsIfaceEthernet *iface)
   return priv->network;
 }
 
+/**
+ * oobs_iface_ethernet_set_network_address:
+ * @iface: An #OobsIfaceEthernet.
+ * @address: a new network address for the interface.
+ * 
+ * Sets a new network address for the interface,
+ * overwriting the previous one.
+ **/
 void
 oobs_iface_ethernet_set_network_address (OobsIfaceEthernet *iface,
 					 const gchar       *address)
@@ -396,6 +430,15 @@ oobs_iface_ethernet_set_network_address (OobsIfaceEthernet *iface,
   g_object_set (G_OBJECT (iface), "network-address", address, NULL);
 }
 
+/**
+ * oobs_iface_ethernet_get_broadcast_address:
+ * @iface: An #OobsIfaceEthernet.
+ * 
+ * Returns the broadcast address for this interface.
+ * 
+ * Return Value: A pointer to the broadcast address as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_iface_ethernet_get_broadcast_address (OobsIfaceEthernet *iface)
 {
@@ -408,6 +451,14 @@ oobs_iface_ethernet_get_broadcast_address (OobsIfaceEthernet *iface)
   return priv->broadcast;
 }
 
+/**
+ * oobs_iface_ethernet_set_broadcast_address:
+ * @iface: An #OobsIfaceEthernet.
+ * @address: a new broadcast address for the interface.
+ * 
+ * Sets a new broadcast address for the interface,
+ * overwriting the previous one.
+ **/
 void
 oobs_iface_ethernet_set_broadcast_address (OobsIfaceEthernet *iface,
 					   const gchar       *address)
@@ -419,6 +470,14 @@ oobs_iface_ethernet_set_broadcast_address (OobsIfaceEthernet *iface,
   g_object_set (G_OBJECT (iface), "broadcast-address", address, NULL);
 }
 
+/**
+ * oobs_iface_ethernet_get_configuration_method:
+ * @iface: An #OobsIfaceEthernet.
+ * 
+ * Returns the configuration method for the interface.
+ * 
+ * Return Value: The configuration method that the interface uses.
+ **/
 OobsIfaceConfigurationMethod
 oobs_iface_ethernet_get_configuration_method (OobsIfaceEthernet *iface)
 {
@@ -431,6 +490,13 @@ oobs_iface_ethernet_get_configuration_method (OobsIfaceEthernet *iface)
   return priv->configuration_method;
 }
 
+/**
+ * oobs_iface_ethernet_set_configuration_method:
+ * @iface: An #OobsIfaceEthernet.
+ * @method: An #OobsIfaceConfigurationMethod.
+ * 
+ * Sets the configuration method that the interface will use.
+ **/
 void
 oobs_iface_ethernet_set_configuration_method (OobsIfaceEthernet            *iface,
 					      OobsIfaceConfigurationMethod  method)

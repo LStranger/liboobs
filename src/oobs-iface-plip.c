@@ -171,6 +171,15 @@ oobs_iface_plip_has_gateway (OobsIface *iface)
   return TRUE;
 }
 
+/**
+ * oobs_iface_plip_get_address:
+ * @iface: An #OobsIfacePlip.
+ * 
+ * Returns the local IP address for the interface.
+ * 
+ * Return Value: A pointer to the local IP address as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_iface_plip_get_address (OobsIfacePlip *iface)
 {
@@ -183,6 +192,14 @@ oobs_iface_plip_get_address (OobsIfacePlip *iface)
   return priv->address;
 }
 
+/**
+ * oobs_iface_plip_set_address:
+ * @iface: An #OobsIfacePlip.
+ * @address: a new local IP address for the interface.
+ * 
+ * Sets a new local IP address for the interface,
+ * overwriting the previous one.
+ **/
 void
 oobs_iface_plip_set_address (OobsIfacePlip *iface, const gchar *address)
 {
@@ -192,6 +209,15 @@ oobs_iface_plip_set_address (OobsIfacePlip *iface, const gchar *address)
   g_object_set (G_OBJECT (iface), "iface-local-address", address, NULL);
 }
 
+/**
+ * oobs_iface_plip_get_remote_address:
+ * @iface: An #OobsIfacePlip.
+ * 
+ * Returns the remote IP address for the interface.
+ * 
+ * Return Value: A pointer to the remote IP address as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_iface_plip_get_remote_address (OobsIfacePlip *iface)
 {
@@ -204,6 +230,14 @@ oobs_iface_plip_get_remote_address (OobsIfacePlip *iface)
   return priv->remote_address;
 }
 
+/**
+ * oobs_iface_plip_set_remote_address:
+ * @iface: An #OobsIfacePlip.
+ * @address: a new remote IP address for the interface.
+ * 
+ * Sets a new remote IP address for the interface,
+ * overwriting the previous one.
+ **/
 void
 oobs_iface_plip_set_remote_address (OobsIfacePlip *iface, const gchar *address)
 {

@@ -195,6 +195,15 @@ oobs_iface_wireless_get_property (GObject      *object,
     }
 }
 
+/**
+ * oobs_iface_wireless_get_essid:
+ * @iface: an #OobsIfaceWireless.
+ * 
+ * Returns the network identification (ESSID) that this interface uses.
+ * 
+ * Return Value: A pointer to the network identification as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_iface_wireless_get_essid (OobsIfaceWireless *iface)
 {
@@ -207,6 +216,14 @@ oobs_iface_wireless_get_essid (OobsIfaceWireless *iface)
   return priv->essid;
 }
 
+/**
+ * oobs_iface_wireless_set_essid:
+ * @iface: An #OobsIfaceWireless.
+ * @essid: a new ESSID for the interface.
+ * 
+ * Sets a new network identification (ESSID),
+ * overwriting the previous one.
+ **/
 void
 oobs_iface_wireless_set_essid (OobsIfaceWireless *iface, const gchar *essid)
 {
@@ -215,6 +232,16 @@ oobs_iface_wireless_set_essid (OobsIfaceWireless *iface, const gchar *essid)
   g_object_set (G_OBJECT (iface), "iface-essid", essid, NULL);
 }
 
+/**
+ * oobs_iface_wireless_get_wep_key:
+ * @iface: an #OobsIfaceWireless.
+ * 
+ * Returns the network key (WEP key) that this interface uses.
+ * 
+ * Return Value: A pointer to the network key as a string,
+ *               or %NULL if it's unset. This string must
+ *               not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_iface_wireless_get_wep_key (OobsIfaceWireless *iface)
 {
@@ -227,6 +254,13 @@ oobs_iface_wireless_get_wep_key (OobsIfaceWireless *iface)
   return priv->wep_key;
 }
 
+/**
+ * oobs_iface_wireless_set_wep_key:
+ * @iface: an #OobsIfaceWireless.
+ * @wep_key: a new WEP key for the interface, or %NULL to unset it.
+ * 
+ * Sets a new network key (WEP key) that the interface will use.
+ **/
 void
 oobs_iface_wireless_set_wep_key (OobsIfaceWireless *iface, const gchar *wep_key)
 {
@@ -235,6 +269,14 @@ oobs_iface_wireless_set_wep_key (OobsIfaceWireless *iface, const gchar *wep_key)
   g_object_set (G_OBJECT (iface), "iface-wep-key", wep_key, NULL);
 }
 
+/**
+ * oobs_iface_wireless_get_wep_key_type:
+ * @iface: an #OobsIfaceWireless.
+ * 
+ * Returns the type of WEP key that the interface uses.
+ * 
+ * Return Value: The WEP key type.
+ **/
 OobsWirelessKeyType
 oobs_iface_wireless_get_wep_key_type (OobsIfaceWireless *iface)
 {
@@ -247,6 +289,13 @@ oobs_iface_wireless_get_wep_key_type (OobsIfaceWireless *iface)
   return priv->key_type;
 }
 
+/**
+ * oobs_iface_wireless_set_wep_key_type:
+ * @iface: an #OobsIfaceWireless.
+ * @key_type: a new type to define the WEP key.
+ * 
+ * Sets the type for the contained WEP key.
+ **/
 void
 oobs_iface_wireless_set_wep_key_type (OobsIfaceWireless *iface, OobsWirelessKeyType key_type)
 {

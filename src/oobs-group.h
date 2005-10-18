@@ -46,7 +46,7 @@ struct _OobsGroupClass {
 
 GType oobs_group_get_type (void);
 
-OobsGroup* oobs_group_new (void);
+OobsGroup* oobs_group_new (const gchar *name);
 
 G_CONST_RETURN gchar* oobs_group_get_name (OobsGroup *group);
 void       oobs_group_set_name (OobsGroup *group, const gchar *name);

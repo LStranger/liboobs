@@ -227,6 +227,15 @@ oobs_time_config_commit (OobsObject *object)
 {
 }
 
+/**
+ * oobs_time_config_get:
+ * @session: An #OobsSession.
+ * 
+ * Returns the #OobsTimeConfig singleton, this object
+ * represents the date and time configuration.
+ * 
+ * Return Value: the singleton #OobsTimeConfig.
+ **/
 OobsObject*
 oobs_time_config_get (OobsSession *session)
 {
@@ -283,6 +292,14 @@ date_is_sane (gint year,
   return TRUE;
 }
 
+/**
+ * oobs_time_config_get_unix_time:
+ * @config: An #OobsTimeConfig.
+ * 
+ * Returns the time, measured in seconds, since the "epoch" (1970-01-01T00:00:00Z).
+ * 
+ * Return Value: The unix time of the system.
+ **/
 glong
 oobs_time_config_get_unix_time (OobsTimeConfig *config)
 {
@@ -295,6 +312,14 @@ oobs_time_config_get_unix_time (OobsTimeConfig *config)
   return unix_time;
 }
 
+/**
+ * oobs_time_config_set_unix_time:
+ * @config: An #OobsTimeConfig.
+ * @unix_time: new Unix time.
+ * 
+ * This function sets the #config time to be #unix_time. #unix_time
+ * is measured in seconds, since the "epoch" (1970-01-01T00:00:00Z).
+ **/
 void
 oobs_time_config_set_unix_time (OobsTimeConfig *config, glong unix_time)
 {
@@ -303,6 +328,18 @@ oobs_time_config_set_unix_time (OobsTimeConfig *config, glong unix_time)
   g_object_set (G_OBJECT (config), "unix-time", unix_time, NULL);
 }
 
+/**
+ * oobs_time_config_get_time:
+ * @config: An #OobsTimeConfig.
+ * @year: gint pointer to store the year, or NULL.
+ * @month: gint pointer to store the month, or NULL.
+ * @day: gint pointer to store the day, or NULL.
+ * @hour: gint pointer to store the hour, or NULL.
+ * @minute: gint pointer to store the minute, or NULL.
+ * @second: gint pointer to store the second, or NULL.
+ * 
+ * Gets the system time and date in human readable values.
+ **/
 void
 oobs_time_config_get_time (OobsTimeConfig *config,
 			   gint           *year,
@@ -341,6 +378,18 @@ oobs_time_config_get_time (OobsTimeConfig *config,
   g_free (tm);
 }
 
+/**
+ * oobs_time_config_set_time:
+ * @config: An #OobsTimeConfig.
+ * @year: year.
+ * @month: month.
+ * @day: day.
+ * @hour: hour.
+ * @minute: minute.
+ * @second: second.
+ * 
+ * Sets the time and date of #config to be the specified in the parameters.
+ **/
 void
 oobs_time_config_set_time (OobsTimeConfig *config,
 			   gint            year,
@@ -365,6 +414,15 @@ oobs_time_config_set_time (OobsTimeConfig *config,
   oobs_time_config_set_unix_time (config, mktime (&tm));
 }
 
+/**
+ * oobs_time_config_get_timezone:
+ * @config: An #OobsTimeConfig.
+ * 
+ * Returns the timezone set for #config.
+ * 
+ * Return Value: A pointer to the timezone as a string.
+ *               This string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_time_config_get_timezone (OobsTimeConfig *config)
 {
@@ -377,6 +435,14 @@ oobs_time_config_get_timezone (OobsTimeConfig *config)
   return priv->timezone;
 }
 
+/**
+ * oobs_time_config_set_timezone:
+ * @config: An #OobsTimeConfig.
+ * @timezone: A new timezone for #config.
+ * 
+ * Sets the timezone of #config to be #timezone,
+ * overwriting the previous one.
+ **/
 void
 oobs_time_config_set_timezone (OobsTimeConfig *config,
 			       const gchar    *timezone)

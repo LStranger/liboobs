@@ -167,6 +167,17 @@ _oobs_list_set_locked (OobsList *list, gboolean locked)
   priv->locked = locked;
 }
 
+/**
+ * oobs_list_get_iter_first:
+ * @list: An #OobsList
+ * @iter: An uninitialized #OobsListIter
+ * 
+ * Initializes @iter the iterator pointing to the
+ * first element in @list. if @list is empty, then FALSE
+ * is returned, and @iter is not initialized.
+ * 
+ * Return Value: TRUE if @iter was set
+ **/
 gboolean
 oobs_list_get_iter_first (OobsList *list, OobsListIter *iter)
 {
@@ -186,6 +197,17 @@ oobs_list_get_iter_first (OobsList *list, OobsListIter *iter)
   return TRUE;
 }
 
+/**
+ * oobs_list_iter_next:
+ * @list: An #OobsList
+ * @iter: A valid #OobsListIter pointing to an element in @list
+ * 
+ * Sets @iter to point to the element following it. If there's
+ * no next @iter, of if @iter was invalid for @list, #FALSE is
+ * returned, and @iter is set to invalid.
+ * 
+ * Return Value: #TRUE if iter has been correctly changed to the next element
+ **/
 gboolean
 oobs_list_iter_next (OobsList *list, OobsListIter *iter)
 {
@@ -207,6 +229,17 @@ oobs_list_iter_next (OobsList *list, OobsListIter *iter)
   return (iter->data != NULL);
 }
 
+/**
+ * oobs_list_remove_iter:
+ * @list: An #OobsList
+ * @iter: A valid #OobsListIter pointing to an element in @list
+ * 
+ * Removes an element pointed by @iter from @list. This function will not
+ * be effective if @list is locked, or if @iter doesn't point to an element
+ * contained in @list.
+ * 
+ * Return Value: #TRUE if the element was correctly removed
+ **/
 gboolean
 oobs_list_remove_iter (OobsList *list, OobsListIter *iter)
 {
@@ -234,6 +267,15 @@ oobs_list_remove_iter (OobsList *list, OobsListIter *iter)
   return (iter->data != NULL);
 }
 
+/**
+ * oobs_list_append:
+ * @list: An #OobsList
+ * @iter: An unset #OobsListIter to set to the new element
+ * 
+ * Appends a new element to @list. @iter will be changed
+ * to point to this element, to fill in values, you need to call
+ * oobs_list_set().
+ **/
 void
 oobs_list_append (OobsList *list, OobsListIter *iter)
 {
@@ -273,6 +315,15 @@ oobs_list_append (OobsList *list, OobsListIter *iter)
   iter->data  = node;
 }
 
+/**
+ * oobs_list_prepend:
+ * @list: An #OobsList
+ * @iter: An unset #OobsListIter to set to the new element
+ * 
+ * Prepends a new element to @list. @iter will be changed
+ * to point to this element, to fill in values, you need to call
+ * oobs_list_set().
+ **/
 void
 oobs_list_prepend (OobsList *list, OobsListIter *iter)
 {
@@ -302,6 +353,16 @@ oobs_list_prepend (OobsList *list, OobsListIter *iter)
   iter->data  = node;
 }
 
+/**
+ * oobs_list_insert_after:
+ * @list: An #OobsList
+ * @anchor: A valid #OobsListIter
+ * @iter: An unset #OobsListIter to set to the new element
+ * 
+ * Inserts a new element after @anchor. @iter will be changed
+ * to point to this element, to fill in values, you need to call
+ * oobs_list_set().
+ **/
 void
 oobs_list_insert_after (OobsList     *list,
 			OobsListIter *anchor,
@@ -338,6 +399,16 @@ oobs_list_insert_after (OobsList     *list,
   iter->data  = node;
 }
 
+/**
+ * oobs_list_insert_before:
+ * @list: An #OobsList
+ * @anchor: A valid #OobsListIter
+ * @iter: An unset #OobsListIter to set to the new element
+ * 
+ * Inserts a new element before @anchor. @iter will be changed
+ * to point to this element, to fill in values, you need to call
+ * oobs_list_set().
+ **/
 void
 oobs_list_insert_before (OobsList     *list,
 			 OobsListIter *anchor,
@@ -346,6 +417,9 @@ oobs_list_insert_before (OobsList     *list,
   OobsListPrivate *priv;
   GList *node, *anchor_node;
   gboolean list_locked;
+
+  /* FIXME: make it match with the
+     gtk_list_store behavior and api */
 
   g_return_if_fail (list != NULL);
   g_return_if_fail (anchor != NULL);
@@ -374,6 +448,16 @@ oobs_list_insert_before (OobsList     *list,
   iter->data  = node;
 }
 
+/**
+ * oobs_list_get:
+ * @list: an #OobsList
+ * @iter: a valid #OobsListIter for the element being get
+ * 
+ * Retrieves a reference to the element
+ * referenced by #OobsListIter.
+ * 
+ * Return Value: the element referenced by @iter
+ **/
 GObject*
 oobs_list_get (OobsList      *list,
 	       OobsListIter  *iter)
@@ -414,6 +498,16 @@ check_types (OobsList *list,
   return TRUE;
 }
 
+/**
+ * oobs_list_set:
+ * @list: an #OobsList
+ * @iter: a valid #OobsListIter for the element being set
+ * @data: a pointer to the data being set
+ * 
+ * Sets the data for the element referenced by #OobsListIter.
+ * This function will not be effective if the list is locked, or
+ * if @data GType is different to the data contained in #OobsList.
+ **/
 void
 oobs_list_set (OobsList     *list,
 	       OobsListIter *iter,
@@ -445,6 +539,13 @@ oobs_list_set (OobsList     *list,
   node->data = g_object_ref (data);
 }
 
+/**
+ * oobs_list_clear:
+ * @list: an #OobsList
+ * 
+ * Removes all contents from an #OobsList. This function will
+ * not be effective if the list is locked.
+ **/
 void
 oobs_list_clear (OobsList *list)
 {

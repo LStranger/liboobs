@@ -192,7 +192,7 @@ oobs_group_finalize (GObject *object)
  * oobs_group_new:
  * @name: group name.
  * 
- * Creates a new #OobsGroup with the name specified by @name.
+ * Returns a new #OobsGroup with the name specified by @name.
  * 
  * Return Value: A new #OobsGroup.
  **/

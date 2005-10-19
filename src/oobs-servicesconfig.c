@@ -149,6 +149,15 @@ oobs_services_config_commit (OobsObject *object)
 {
 }
 
+/**
+ * oobs_services_config_get:
+ * @session: An #OobsSession.
+ * 
+ * Returns the #OobsServicesConfig singleton, which represents
+ * the services that are run during system init.
+ * 
+ * Return Value: the singleton #OobsServicesConfig object.
+ **/
 OobsObject*
 oobs_services_config_get (OobsSession *session)
 {
@@ -170,6 +179,16 @@ oobs_services_config_get (OobsSession *session)
   return object;
 }
 
+/**
+ * oobs_services_config_get_services:
+ * @config: An #OobsServicesConfig.
+ * 
+ * Returns an #OobsList containing objects of type #OobsService.
+ * The returned #OobsList is locked, meaning that new elements
+ * can't be added nor removed.
+ * 
+ * Return Value: an #OobsList containing the services list.
+ **/
 OobsList*
 oobs_services_config_get_services (OobsServicesConfig *config)
 {

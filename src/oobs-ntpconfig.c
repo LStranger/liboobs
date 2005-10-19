@@ -130,6 +130,15 @@ oobs_ntp_config_commit (OobsObject *object)
 {
 }
 
+/**
+ * oobs_ntp_config_get:
+ * @session: An #OobsSession.
+ * 
+ * Returns the #OobsNTPConfig singleton, which represents
+ * the NTP (Network time servers) system configuration.
+ * 
+ * Return Value: the singleton #OobsNTPConfig object.
+ **/
 OobsObject*
 oobs_ntp_config_get (OobsSession *session)
 {
@@ -150,6 +159,14 @@ oobs_ntp_config_get (OobsSession *session)
   return object;
 }
 
+/**
+ * oobs_ntp_config_get_servers:
+ * @config: An #OobsNTPConfig.
+ * 
+ * Returns an #OobsList containing objects of type #OobsNTPServer.
+ * 
+ * Return Value: an #OobsList containing the NTP servers information.
+ **/
 OobsList*
 oobs_ntp_config_get_servers (OobsNTPConfig *config)
 {

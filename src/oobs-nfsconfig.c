@@ -163,6 +163,15 @@ oobs_nfs_config_commit (OobsObject *object)
 {
 }
 
+/**
+ * oobs_nfs_config_get:
+ * @session: An #OobsSession.
+ * 
+ * Returns the #OobsNFSConfig singleton, which represents
+ * the NFS system configuration.
+ * 
+ * Return Value: the singleton #OobsNFSConfig object.
+ **/
 OobsObject*
 oobs_nfs_config_get (OobsSession *session)
 {
@@ -184,6 +193,14 @@ oobs_nfs_config_get (OobsSession *session)
   return object;
 }
 
+/**
+ * oobs_nfs_config_get_shares:
+ * @config: An #OobsNFSConfig.
+ * 
+ * Returns an #OobsList containing objects of type #OobsShareNFS.
+ * 
+ * Return Value: an #OobsList containing the NFS shares information.
+ **/
 OobsList*
 oobs_nfs_config_get_shares (OobsNFSConfig *config)
 {

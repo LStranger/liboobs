@@ -281,6 +281,13 @@ run_get_message (OobsObject *object)
   return reply;
 }
 
+/**
+ * oobs_object_commit:
+ * @object: an #OobsObject
+ * 
+ * Commits to the system all the changes done
+ * to the configuration held by an #OobsObject.
+ **/
 void
 oobs_object_commit (OobsObject *object)
 {
@@ -302,6 +309,14 @@ oobs_object_commit (OobsObject *object)
     class->commit (object);
 }
 
+/**
+ * oobs_object_update:
+ * @object: an #OobsObject
+ * 
+ * Synchronizes the configuration held by the #OobsObject
+ * with the actual system configuration. All the changes done
+ * to the configuration held by the #OobsObject will be forgotten.
+ **/
 void
 oobs_object_update (OobsObject *object)
 {

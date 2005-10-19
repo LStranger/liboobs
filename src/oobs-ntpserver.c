@@ -137,6 +137,15 @@ oobs_ntp_server_finalize (GObject *object)
     (* G_OBJECT_CLASS (oobs_ntp_server_parent_class)->finalize) (object);
 }
 
+/**
+ * oobs_ntp_server_new:
+ * @hostname: Hostname of the NTP server.
+ * 
+ * Returns a new #OobsNTPServer with hostname set to #hostname.
+ * #hostname can specify an IP address too.
+ * 
+ * Return Value: A new #OobsNTPServer.
+ **/
 OobsNTPServer*
 oobs_ntp_server_new (const gchar *hostname)
 {
@@ -145,6 +154,15 @@ oobs_ntp_server_new (const gchar *hostname)
 		       NULL);
 }
 
+/**
+ * oobs_ntp_server_get_hostname:
+ * @ntp_server: An #OobsNTPServer.
+ * 
+ * Returns the #OobsNTPServer hostname or IP address.
+ * 
+ * Return Value: A pointer to the NTP server hostname (or IP address) as a string.
+ *               This string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_ntp_server_get_hostname (OobsNTPServer *ntp_server)
 {
@@ -157,6 +175,14 @@ oobs_ntp_server_get_hostname (OobsNTPServer *ntp_server)
   return priv->hostname;
 }
 
+/**
+ * oobs_ntp_server_set_hostname:
+ * @ntp_server: An #OobsNTPServer.
+ * @hostname: a new hostname (or IP address) for #ntp_server.
+ * 
+ * Sets the hostname of #ntp_server to be #hostname.
+ * #hostname can specify an IP address too.
+ **/
 void
 oobs_ntp_server_set_hostname (OobsNTPServer *ntp_server, const gchar *hostname)
 {

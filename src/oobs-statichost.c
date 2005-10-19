@@ -143,6 +143,16 @@ oobs_static_host_finalize (GObject *object)
     (* G_OBJECT_CLASS (oobs_static_host_parent_class)->finalize) (object);
 }
 
+/**
+ * oobs_static_host_new:
+ * @ip_address: IP address for the static host.
+ * @aliases: #GList of aliases to #ip_address.
+ * 
+ * Returns a new #OobsStaticHost defining both the IP address
+ * and the list of hostnames that will point to the IP address.
+ * 
+ * Return Value: A new #OobsStaticHost.
+ **/
 OobsStaticHost*
 oobs_static_host_new (const gchar *ip_address,
 		      GList       *aliases)
@@ -158,6 +168,15 @@ oobs_static_host_new (const gchar *ip_address,
   return static_host;
 }
 
+/**
+ * oobs_static_host_get_ip_address:
+ * @static_host: An #OobsStaticHost.
+ * 
+ * Returns the static host IP address.
+ * 
+ * Return Value: A pointer to the static host IP address as a string.
+ *               This string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_static_host_get_ip_address (OobsStaticHost *static_host)
 {
@@ -170,6 +189,14 @@ oobs_static_host_get_ip_address (OobsStaticHost *static_host)
   return priv->ip_address;
 }
 
+/**
+ * oobs_static_host_set_ip_address:
+ * @static_host: An #OobsStaticHost.
+ * @ip_address: A new IP address for #static_host
+ * 
+ * Sets the IP address of #static_host to be #ip_address,
+ * overwriting the previous one.
+ **/
 void
 oobs_static_host_set_ip_address (OobsStaticHost *static_host,
 				 const gchar    *ip_address)
@@ -181,6 +208,15 @@ oobs_static_host_set_ip_address (OobsStaticHost *static_host,
   g_object_set (static_host, "ip-address", ip_address, NULL);
 }
 
+/**
+ * oobs_static_host_get_aliases:
+ * @static_host: An #OobsStaticHost.
+ * 
+ * Returns the hostname aliases for the #static_host IP address.
+ * The returned list must be freed with g_list_free().
+ * 
+ * Return Value: A #GList of gchar pointers containing the host aliases.
+ **/
 GList*
 oobs_static_host_get_aliases (OobsStaticHost *static_host)
 {
@@ -190,9 +226,17 @@ oobs_static_host_get_aliases (OobsStaticHost *static_host)
 
   priv = OOBS_STATIC_HOST_GET_PRIVATE (static_host);
 
-  return priv->aliases;
+  return g_list_copy (priv->aliases);
 }
 
+/**
+ * oobs_static_host_set_aliases:
+ * @static_host: An #OobsStaticHost.
+ * @aliases: a #GList of gchar pointers containing the host aliases.
+ * 
+ * Sets a new list of aliases for the #static_host
+ * IP address. overwriting the previous one.
+ **/
 void
 oobs_static_host_set_aliases (OobsStaticHost *static_host, GList *aliases)
 {

@@ -181,6 +181,15 @@ oobs_smb_config_commit (OobsObject *object)
 {
 }
 
+/**
+ * oobs_smb_config_get:
+ * @session: An #OobsSession.
+ * 
+ * Returns the #OobsSMBConfig singleton, which represents
+ * the SMB system configuration.
+ * 
+ * Return Value: the singleton #OobsSMBConfig object.
+ **/
 OobsObject*
 oobs_smb_config_get (OobsSession *session)
 {
@@ -202,6 +211,14 @@ oobs_smb_config_get (OobsSession *session)
   return object;
 }
 
+/**
+ * oobs_smb_config_get_shares:
+ * @config: An #OobsSMBConfig.
+ * 
+ * Returns an #OobsList containing objects of type #OobsShareSMB.
+ * 
+ * Return Value: an #OobsList containing the SMB shares information.
+ **/
 OobsList*
 oobs_smb_config_get_shares (OobsSMBConfig *config)
 {

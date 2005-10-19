@@ -140,6 +140,15 @@ oobs_share_get_property (GObject      *object,
     }
 }
 
+/**
+ * oobs_share_get_path:
+ * @share: An #OobsShare.
+ * 
+ * Returns the path that #share shares.
+ * 
+ * Return Value: A pointer to the shared path as a string.
+ *               This string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_share_get_path (OobsShare *share)
 {
@@ -151,6 +160,14 @@ oobs_share_get_path (OobsShare *share)
   return priv->path;
 }
 
+/**
+ * oobs_share_set_path:
+ * @share: An #OobsShare.
+ * @path: A new shared path for #share.
+ *
+ * Sets the shared path of #share to be #path,
+ * overwriting the previous one.
+ **/
 void
 oobs_share_set_path (OobsShare *share, const gchar *path)
 {

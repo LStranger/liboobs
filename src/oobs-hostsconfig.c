@@ -303,5 +303,5 @@ oobs_hosts_config_get_search_domains (OobsHostsConfig *config)
 
   priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
 
-  return priv->search_domains_list;
+  return g_list_copy (priv->search_domains_list);
 }

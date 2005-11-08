@@ -289,6 +289,7 @@ oobs_users_config_update (OobsObject *object)
   DBusMessageIter  iter, elem_iter;
   OobsListIter     list_iter;
   GObject         *user;
+  gchar           *str;
 
   priv  = OOBS_USERS_CONFIG_GET_PRIVATE (object);
   reply = _oobs_object_get_dbus_message (object);
@@ -320,7 +321,8 @@ oobs_users_config_update (OobsObject *object)
   dbus_message_iter_get_basic (&iter, &priv->maximum_uid);
 
   dbus_message_iter_next (&iter);
-  dbus_message_iter_get_basic (&iter, &priv->default_home);
+  dbus_message_iter_get_basic (&iter, &str);
+  priv->default_home = g_strdup (str);
 }
 
 static void

@@ -196,7 +196,10 @@ connect_object_to_session (OobsObject *object)
   dbus_bus_add_match (connection, rule, &priv->dbus_error);
 
   if (dbus_error_is_set (&priv->dbus_error))
-    g_critical ("There was an error adding the match function: %s", priv->dbus_error.message);
+    {
+      g_critical ("There was an error adding the match function: %s", priv->dbus_error.message);
+      dbus_error_free (&priv->dbus_error);
+    }
     
   g_free (rule);
 }
@@ -257,24 +260,23 @@ oobs_object_get_property (GObject      *object,
 }
 
 static DBusMessage*
-run_get_message (OobsObject *object)
+run_message (OobsObject *object, DBusMessage *message)
 {
   OobsObjectPrivate *priv;
-  DBusConnection   *connection;
-  DBusMessage      *message, *reply;
+  DBusConnection    *connection;
+  DBusMessage       *reply;
 
-  priv   = OOBS_OBJECT_GET_PRIVATE (object);
+  priv = OOBS_OBJECT_GET_PRIVATE (object);
   connection = _oobs_session_get_connection_bus (priv->session);
 
   g_return_val_if_fail (connection != NULL, NULL);
 
-  message = dbus_message_new_method_call (OOBS_DBUS_DESTINATION, priv->path, priv->method, "get");
-  reply   = dbus_connection_send_with_reply_and_block (connection, message, -1, &priv->dbus_error);
-  dbus_message_unref (message);
+  reply = dbus_connection_send_with_reply_and_block (connection, message, -1, &priv->dbus_error);
 
   if (dbus_error_is_set (&priv->dbus_error))
     {
       g_critical ("There was an error communicating with the backends: %s", priv->dbus_error.message);
+      dbus_error_free (&priv->dbus_error);
       return NULL;
     }
 
@@ -293,6 +295,7 @@ oobs_object_commit (OobsObject *object)
 {
   OobsObjectClass   *class;
   OobsObjectPrivate *priv;
+  DBusMessage       *message;
 
   g_return_if_fail (OOBS_IS_OBJECT (object));
   priv  = OOBS_OBJECT_GET_PRIVATE  (object);
@@ -305,8 +308,18 @@ oobs_object_commit (OobsObject *object)
       return;
     }
 
-  if (class->commit)
-    class->commit (object);
+  if (!class->commit)
+    return;
+
+  message = dbus_message_new_method_call (OOBS_DBUS_DESTINATION, priv->path, priv->method, "set");
+
+  /* Let the commit() implementation fill the message */
+  g_object_set_qdata (G_OBJECT (object), dbus_connection_quark, message);
+  class->commit (object);
+  message = g_object_steal_qdata (G_OBJECT (object), dbus_connection_quark);
+
+  run_message (object, message);
+  dbus_message_unref (message);
 }
 
 /**
@@ -322,7 +335,7 @@ oobs_object_update (OobsObject *object)
 {
   OobsObjectClass   *class;
   OobsObjectPrivate *priv;
-  DBusMessage       *reply;
+  DBusMessage       *message, *reply;
 
   g_return_if_fail (OOBS_IS_OBJECT (object));
   priv = OOBS_OBJECT_GET_PRIVATE   (object);
@@ -338,7 +351,8 @@ oobs_object_update (OobsObject *object)
   if (!class->update)
     return;
 
-  reply = run_get_message (object);
+  message = dbus_message_new_method_call (OOBS_DBUS_DESTINATION, priv->path, priv->method, "get");
+  reply   = run_message (object, message);
 
   if (reply)
     {
@@ -350,10 +364,18 @@ oobs_object_update (OobsObject *object)
       reply = g_object_steal_qdata (G_OBJECT (object), dbus_connection_quark);
       dbus_message_unref (reply);
     }
+
+  dbus_message_unref (message);
 }
 
 DBusMessage*
 _oobs_object_get_dbus_message (OobsObject *object)
 {
   return (DBusMessage *) g_object_get_qdata (G_OBJECT (object), dbus_connection_quark);
+}
+
+void
+_oobs_object_set_dbus_message (OobsObject *object, DBusMessage *message)
+{
+  g_object_set_qdata (G_OBJECT (object), dbus_connection_quark, message);
 }

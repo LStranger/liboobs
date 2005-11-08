@@ -128,6 +128,46 @@ create_share_from_dbus_reply (OobsObject      *object,
 }
 
 static void
+create_dbus_struct_from_share (GObject         *share,
+			       DBusMessage     *message,
+			       DBusMessageIter *array_iter)
+{
+  DBusMessageIter struct_iter, acl_iter, elem_iter;
+  gchar *path;
+  GSList *acl;
+  OobsShareAclElement *acl_element;
+
+  /* FIXME: should have a function for this */
+  g_object_get (share, "path", &path, NULL);
+  acl = oobs_share_nfs_get_acl (OOBS_SHARE_NFS (share));
+
+  dbus_message_iter_open_container (array_iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
+  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_STRING, &path);
+
+  dbus_message_iter_open_container (&struct_iter,
+				    DBUS_TYPE_ARRAY,
+				    DBUS_STRUCT_BEGIN_CHAR_AS_STRING
+				    DBUS_TYPE_STRING_AS_STRING
+				    DBUS_TYPE_INT32_AS_STRING
+				    DBUS_STRUCT_END_CHAR_AS_STRING,
+				    &acl_iter);
+
+  while (acl)
+    {
+      acl_element = (OobsShareAclElement*) acl->data;
+
+      dbus_message_iter_open_container  (&acl_iter, DBUS_TYPE_STRUCT, NULL, &elem_iter);
+      dbus_message_iter_append_basic    (&elem_iter, DBUS_TYPE_STRING, &acl_element->element);
+      dbus_message_iter_append_basic    (&elem_iter, DBUS_TYPE_INT32,  &acl_element->read_only);
+      dbus_message_iter_close_container (&acl_iter, &elem_iter);
+      acl = acl->next;
+    }
+
+  dbus_message_iter_close_container (&struct_iter, &acl_iter);
+  dbus_message_iter_close_container (array_iter, &struct_iter);
+}
+
+static void
 oobs_nfs_config_update (OobsObject *object)
 {
   OobsNFSConfigPrivate *priv;
@@ -161,6 +201,42 @@ oobs_nfs_config_update (OobsObject *object)
 static void
 oobs_nfs_config_commit (OobsObject *object)
 {
+  OobsNFSConfigPrivate *priv;
+  DBusMessage *message;
+  DBusMessageIter iter, array_iter;
+  OobsListIter list_iter;
+  GObject *share;
+  gboolean valid;
+
+  priv = OOBS_NFS_CONFIG_GET_PRIVATE (object);
+  message = _oobs_object_get_dbus_message (object);
+
+  dbus_message_iter_init_append (message, &iter);
+  dbus_message_iter_open_container (&iter,
+				    DBUS_TYPE_ARRAY,
+				    DBUS_STRUCT_BEGIN_CHAR_AS_STRING
+				    DBUS_TYPE_STRING_AS_STRING
+				    DBUS_TYPE_ARRAY_AS_STRING
+				    DBUS_STRUCT_BEGIN_CHAR_AS_STRING
+				    DBUS_TYPE_STRING_AS_STRING
+				    DBUS_TYPE_INT32_AS_STRING
+				    DBUS_STRUCT_END_CHAR_AS_STRING
+				    DBUS_STRUCT_END_CHAR_AS_STRING,
+				    &array_iter);
+
+  valid  = oobs_list_get_iter_first (priv->shares_list, &list_iter);
+
+  while (valid)
+    {
+      share = oobs_list_get (priv->shares_list, &list_iter);
+      create_dbus_struct_from_share (share, message, &array_iter);
+
+      g_object_unref (share);
+      valid = oobs_list_iter_next (priv->shares_list, &list_iter);
+    }
+
+  dbus_message_iter_close_container (&iter, &array_iter);
+  _oobs_object_set_dbus_message (object, message);
 }
 
 /**

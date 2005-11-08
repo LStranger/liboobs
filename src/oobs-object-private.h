@@ -23,7 +23,10 @@
 
 G_BEGIN_DECLS
 
+
 DBusMessage *_oobs_object_get_dbus_message (OobsObject *object);
+void         _oobs_object_set_dbus_message (OobsObject *object, DBusMessage *message);
+
 
 G_END_DECLS
 

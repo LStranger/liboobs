@@ -69,6 +69,10 @@ void       oobs_list_set            (OobsList *list, OobsListIter *iter, gpointe
 
 void       oobs_list_clear          (OobsList *list);
 
+OobsListIter *oobs_list_iter_copy   (OobsListIter *iter);
+void          oobs_list_iter_free   (OobsListIter *iter);
+
+
 G_END_DECLS
 
 #endif /* __OOBS_LIST_H */

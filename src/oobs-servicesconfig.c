@@ -128,6 +128,11 @@ oobs_services_config_update (OobsObject *object)
   oobs_list_clear (priv->services_list);
 
   dbus_message_iter_init (reply, &iter);
+
+  /* FIXME: runlevels definition and default runlevel are skipped */
+  dbus_message_iter_next (&iter);
+  dbus_message_iter_next (&iter);
+
   dbus_message_iter_recurse (&iter, &elem_iter);
 
   while (dbus_message_iter_get_arg_type (&elem_iter) == DBUS_TYPE_STRUCT)

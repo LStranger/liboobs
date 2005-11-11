@@ -230,7 +230,7 @@ oobs_list_iter_next (OobsList *list, OobsListIter *iter)
 }
 
 /**
- * oobs_list_remove_iter:
+ * oobs_list_remove:
  * @list: An #OobsList
  * @iter: A valid #OobsListIter pointing to an element in @list
  * 
@@ -241,7 +241,7 @@ oobs_list_iter_next (OobsList *list, OobsListIter *iter)
  * Return Value: #TRUE if the element was correctly removed
  **/
 gboolean
-oobs_list_remove_iter (OobsList *list, OobsListIter *iter)
+oobs_list_remove (OobsList *list, OobsListIter *iter)
 {
   OobsListPrivate *priv;
   GList *data;
@@ -566,4 +566,22 @@ oobs_list_clear (OobsList *list)
       g_list_free    (priv->list);
       priv->list = NULL;
     }
+}
+
+OobsListIter*
+oobs_list_iter_copy (OobsListIter *iter)
+{
+  OobsListIter *copy;
+
+  copy = g_new0 (OobsListIter, 1);
+  copy->stamp = iter->stamp;
+  copy->data  = iter->data;
+
+  return copy;
+}
+
+void
+oobs_list_iter_free (OobsListIter *iter)
+{
+  g_free (iter);
 }

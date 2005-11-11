@@ -1,3 +1,11 @@
+2005-11-11  Carlos Garnacho Parro  <carlosg@gnome.org>
+
+	* src/oobs-share-smb.h: fixed a typo in the header
+	* src/oobs-servicesconfig.c: skip at the moment runlevels definitions
+	and current runlevel
+	* src/oobs-list.[ch] (oobs_list_copy) (oobs_list_free): added. fixed a
+	typo in the oobs_list_remove function declaration
+
 2005-11-08  Carlos Garnacho Parro  <carlosg@gnome.org>
 
 	* oobs-usersconfig.c: fixed double free()

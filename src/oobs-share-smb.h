@@ -64,7 +64,7 @@ void                  oobs_share_smb_set_comment (OobsShareSMB*, const gchar*);
 OobsShareSMBFlags oobs_share_smb_get_flags (OobsShareSMB*);
 void              oobs_share_smb_set_flags (OobsShareSMB*, OobsShareSMBFlags);
 
-OobsShare*        oobs_share_smb_new (const gchar *path, const gchar *name, const gchar *comment, OobsShareSMBFlags);
+OobsShare*        oobs_share_smb_new (const gchar *path, const gchar *name, const gchar *comment, OobsShareSMBFlags flags);
 
 
 G_END_DECLS

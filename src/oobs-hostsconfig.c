@@ -161,6 +161,44 @@ create_static_host_from_dbus_reply (DBusMessage     *reply,
 }
 
 static void
+create_dbus_array_from_list (GList           *list,
+			     DBusMessage     *message,
+			     DBusMessageIter *iter)
+{
+  DBusMessageIter array_iter;
+
+  dbus_message_iter_open_container (iter,
+				    DBUS_TYPE_ARRAY,
+				    DBUS_TYPE_STRING_AS_STRING,
+				    &array_iter);
+  while (list)
+    {
+      dbus_message_iter_append_basic (&array_iter, DBUS_TYPE_STRING, &list->data);
+      list = list->next;
+    }
+
+  dbus_message_iter_close_container (iter, &array_iter);
+}
+
+static void
+create_dbus_struct_from_static_host (OobsStaticHost  *host,
+				     DBusMessage     *message,
+				     DBusMessageIter *iter)
+{
+  DBusMessageIter struct_iter;
+  const gchar *ip_address;
+  GList *aliases;
+
+  ip_address = oobs_static_host_get_ip_address (host);
+  aliases = oobs_static_host_get_aliases (host);
+  
+  dbus_message_iter_open_container (iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
+  dbus_message_iter_append_basic   (&struct_iter, DBUS_TYPE_STRING, &ip_address);
+  create_dbus_array_from_list (aliases, message, &struct_iter);
+  dbus_message_iter_close_container (iter, &struct_iter);
+}
+
+static void
 get_static_hosts_list_from_dbus_reply (OobsObject      *object,
 				       DBusMessage     *reply,
 				       DBusMessageIter  iter)
@@ -213,6 +251,45 @@ oobs_hosts_config_update (OobsObject *object)
 static void
 oobs_hosts_config_commit (OobsObject *object)
 {
+  OobsHostsConfigPrivate *priv;
+  GObject *host;
+  DBusMessage *message;
+  DBusMessageIter iter, array_iter;
+  OobsListIter list_iter;
+  gboolean valid;
+
+  priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (object);
+  message = _oobs_object_get_dbus_message (object);
+
+  dbus_message_iter_init_append (message, &iter);
+  dbus_message_iter_open_container (&iter,
+				    DBUS_TYPE_ARRAY,
+				    DBUS_STRUCT_BEGIN_CHAR_AS_STRING
+				    DBUS_TYPE_STRING_AS_STRING
+				    DBUS_TYPE_ARRAY_AS_STRING
+				    DBUS_TYPE_STRING_AS_STRING
+				    DBUS_STRUCT_END_CHAR_AS_STRING
+				    DBUS_TYPE_ARRAY_AS_STRING
+				    DBUS_TYPE_STRING_AS_STRING
+				    DBUS_TYPE_ARRAY_AS_STRING
+				    DBUS_TYPE_STRING_AS_STRING,
+				    &array_iter);
+  valid  = oobs_list_get_iter_first (priv->static_hosts_list, &list_iter);
+
+  while (valid)
+    {
+      host = oobs_list_get (priv->static_hosts_list, &list_iter);
+      create_dbus_struct_from_static_host (OOBS_STATIC_HOST (host), message, &array_iter);
+
+      g_object_unref (host);
+      valid = oobs_list_iter_next (priv->static_hosts_list, &list_iter);
+    }
+
+  dbus_message_iter_close_container (&iter, &array_iter);
+
+  create_dbus_array_from_list (priv->dns_list, message, &iter);
+  create_dbus_array_from_list (priv->search_domains_list, message, &iter);
+  _oobs_object_set_dbus_message (object, message);
 }
 
 /**

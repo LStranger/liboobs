@@ -1,6 +1,10 @@
 2005-11-17  Carlos Garnacho Parro  <carlosg@gnome.org>
 
 	* src/oobs-hostsconfig.c: implemented commit()
+	* src/oobs-timeconfig.c: implemented commit(), some misc fixes related
+	to time parameter getting that should have been commited a long time
+	ago
+	* src/oobs-timeconfig.h: fixed function declarations
 
 2005-11-11  Carlos Garnacho Parro  <carlosg@gnome.org>
 

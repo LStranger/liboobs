@@ -78,7 +78,7 @@ oobs_time_config_class_init (OobsTimeConfigClass *class)
   oobs_object_class->update  = oobs_time_config_update;
 
   g_object_class_install_property (object_class,
-				   PROP_TIMEZONE,
+				   PROP_UNIX_TIME,
 				   g_param_spec_long ("unix-time",
 						      "Unix time",
 						      "Current unix time for the computer",
@@ -225,6 +225,28 @@ oobs_time_config_update (OobsObject *object)
 static void
 oobs_time_config_commit (OobsObject *object)
 {
+  OobsTimeConfigPrivate *priv;
+  DBusMessage *message;
+  DBusMessageIter iter;
+  gint year, month, day, hour, minute, second;
+
+  priv = OOBS_TIME_CONFIG_GET_PRIVATE (object);
+  message = _oobs_object_get_dbus_message (object);
+
+  oobs_time_config_get_time (OOBS_TIME_CONFIG (object),
+			     &year, &month,  &day,
+			     &hour, &minute, &second);
+
+  dbus_message_iter_init_append (message, &iter);
+  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &year);
+  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &month);
+  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &day);
+  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &hour);
+  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &minute);
+  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &second);
+
+  dbus_message_iter_append_basic (&iter, DBUS_TYPE_STRING, &priv->timezone);
+  _oobs_object_set_dbus_message (object, message);
 }
 
 /**
@@ -358,7 +380,7 @@ oobs_time_config_get_time (OobsTimeConfig *config,
   tm = localtime (&unix_time);
 
   if (year)
-    *year = tm->tm_year;
+    *year = tm->tm_year + 1900;
 
   if (month)
     *month = tm->tm_mon;
@@ -375,7 +397,7 @@ oobs_time_config_get_time (OobsTimeConfig *config,
   if (second)
     *second = tm->tm_sec;
 
-  g_free (tm);
+  /* g_free (tm); */
 }
 
 /**

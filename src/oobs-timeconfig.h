@@ -48,12 +48,15 @@ struct _OobsTimeConfigClass
   OobsObjectClass parent_class;
 };
 
-GType       oobs_time_config_get_type     (void);
+GType       oobs_time_config_get_type      (void);
 
-OobsObject* oobs_time_config_get          (OobsSession *session);
+OobsObject* oobs_time_config_get           (OobsSession *session);
 
-void        oobs_time_get_time            (OobsTimeConfig *config, gint *year, gint *month, gint *day, gint *hour, gint *minute, gint *second);
-void        oobs_time_set_time            (OobsTimeConfig *config, gint  year, gint  month, gint  day, gint  hour, gint  minute, gint  second);
+glong       oobs_time_config_get_unix_time (OobsTimeConfig *config);
+void        oobs_time_config_set_unix_time (OobsTimeConfig *config, glong unix_time);
+
+void        oobs_time_config_get_time      (OobsTimeConfig *config, gint *year, gint *month, gint *day, gint *hour, gint *minute, gint *second);
+void        oobs_time_config_set_time      (OobsTimeConfig *config, gint  year, gint  month, gint  day, gint  hour, gint  minute, gint  second);
 
 G_CONST_RETURN gchar* oobs_time_get_timezone (OobsTimeConfig *config);
 void oobs_time_set_timezone (OobsTimeConfig *config, const gchar *timezone);

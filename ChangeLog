@@ -2,6 +2,12 @@
 
 	* src/oobs-ntpconfig.c: implemented commit()
 	* src/oobs-ntpserver.h: fixed function references in header file
+	* src/utils.[ch]: added, contains helper funtions for the rest of the
+	objects.
+	* src/Makefile.am: added utils files
+	* src/oobs-hostsconfig.c (get_string_list_from_dbus_reply)
+	(create_dbus_array_from_list): moved to utils.c, use these
+	* src/oobs-user.c (get_random_string): moved to utils.c, use it.
 
 2005-11-17  Carlos Garnacho Parro  <carlosg@gnome.org>
 

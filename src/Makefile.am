@@ -37,6 +37,7 @@ oobsinclude_HEADERS= 	\
 liboobs_1_la_SOURCES = \
 	md5-crypt.c	\
 	md5.h			md5.c			\
+	utils.h			utils.c			\
 	oobs-session.h		oobs-session.c		\
 	oobs-object.h		oobs-object.c		\
 	oobs-list.h		oobs-list.c		\

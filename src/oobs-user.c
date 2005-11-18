@@ -208,22 +208,6 @@ oobs_user_init (OobsUser *user)
   priv->other_data    = NULL;
 }
 
-static gchar *
-get_random_string (gint len)
-{
-  gchar  alphanum[] = "abcdefghijklmnopqrstuvwxyz0AB1CD2EF3GH4IJ5KL6MN7OP8QR9ST0UVWXYZ";
-  gchar *str;
-  gint   i, alnum_len;
-
-  str = (gchar *) g_malloc0 (len + 1);
-  alnum_len = strlen (alphanum);
-
-  for (i = 0; i < len; i++)
-    str[i] = alphanum [(gint) (((float) alnum_len * rand ()) / (RAND_MAX + 1.0))];
-
-  return str;
-}
-
 static void
 oobs_user_set_property (GObject      *object,
 			guint         prop_id,
@@ -252,12 +236,12 @@ oobs_user_set_property (GObject      *object,
 
       if (use_md5)
 	{
-	  salt = get_random_string (8);
+	  salt = utils_get_random_string (8);
 	  priv->password = crypt_md5 (g_value_get_string (value), salt);
 	}
       else
 	{
-	  salt = get_random_string (2);
+	  salt = utils_get_random_string (2);
 	  priv->password = crypt (g_value_get_string (value), salt);
 	}
 

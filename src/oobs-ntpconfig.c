@@ -128,6 +128,36 @@ oobs_ntp_config_update (OobsObject *object)
 static void
 oobs_ntp_config_commit (OobsObject *object)
 {
+  OobsNTPConfigPrivate *priv;
+  DBusMessage *message;
+  DBusMessageIter iter, array_iter;
+  OobsListIter list_iter;
+  GObject *ntp_server;
+  const gchar *hostname;
+  gboolean valid;
+
+  priv = OOBS_NTP_CONFIG_GET_PRIVATE (object);
+  message = _oobs_object_get_dbus_message (object);
+
+  dbus_message_iter_init_append (message, &iter);
+  dbus_message_iter_open_container (&iter,
+				    DBUS_TYPE_ARRAY,
+				    DBUS_TYPE_STRING_AS_STRING,
+				    &array_iter);
+  valid = oobs_list_get_iter_first (priv->servers_list, &list_iter);
+
+  while (valid)
+    {
+      ntp_server = oobs_list_get (priv->servers_list, &list_iter);
+      hostname = oobs_ntp_server_get_hostname (OOBS_NTP_SERVER (ntp_server));
+
+      dbus_message_iter_append_basic (&array_iter, DBUS_TYPE_STRING, &hostname);
+      g_object_unref (ntp_server);
+      valid = oobs_list_iter_next (priv->servers_list, &list_iter);
+    }
+
+  dbus_message_iter_close_container (&iter, &array_iter);
+  _oobs_object_set_dbus_message (object, message);
 }
 
 /**

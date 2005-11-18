@@ -43,12 +43,12 @@ struct _OobsNTPServerClass {
   GObjectClass parent_class;
 };
 
-GType                  oobs_ntp_server_get_type   (void);
+GType                  oobs_ntp_server_get_type     (void);
 
-OobsNTPServer*         oobs_ntp_server_new        (const gchar *hostname);
+OobsNTPServer*         oobs_ntp_server_new          (const gchar *hostname);
 
-G_CONST_RETURN gchar*  oobs_ntp_server_get_path   (OobsNTPServer *ntp_server);
-void                   oobs_ntp_server_set_path   (OobsNTPServer *ntp_server, const gchar *hostname);
+G_CONST_RETURN gchar*  oobs_ntp_server_get_hostname (OobsNTPServer *ntp_server);
+void                   oobs_ntp_server_set_hostname (OobsNTPServer *ntp_server, const gchar *hostname);
 
 
 G_END_DECLS

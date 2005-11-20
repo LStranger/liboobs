@@ -14,8 +14,6 @@ oobsinclude_HEADERS= 	\
 	oobs-share-smb.h	\
 	oobs-nfsconfig.h	\
 	oobs-share-nfs.h	\
-	oobs-shellsconfig.h	\
-	oobs-shell.h		\
 	oobs-usersconfig.h	\
 	oobs-user.h		\
 	oobs-groupsconfig.h	\
@@ -41,8 +39,6 @@ liboobs_1_la_SOURCES = \
 	oobs-session.h		oobs-session.c		\
 	oobs-object.h		oobs-object.c		\
 	oobs-list.h		oobs-list.c		\
-	oobs-shell.h		oobs-shell.c		\
-	oobs-shellsconfig.h	oobs-shellsconfig.c	\
 	oobs-user.h		oobs-user.c		\
 	oobs-usersconfig.h	oobs-usersconfig.c	\
 	oobs-group.h		oobs-group.c		\

@@ -30,6 +30,7 @@
 #include "oobs-usersconfig.h"
 #include "oobs-user.h"
 #include "oobs-defines.h"
+#include "utils.h"
 
 #define USERS_CONFIG_REMOTE_OBJECT "UsersConfig"
 #define OOBS_USERS_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_USERS_CONFIG, OobsUsersConfigPrivate))
@@ -39,6 +40,8 @@ typedef struct _OobsUsersConfigPrivate OobsUsersConfigPrivate;
 struct _OobsUsersConfigPrivate
 {
   OobsList *users_list;
+
+  GList    *shells;
 
   gboolean  use_md5;
   uid_t     minimum_uid;
@@ -242,13 +245,10 @@ create_user_from_dbus_reply (OobsObject      *object,
 			     DBusMessageIter  struct_iter)
 {
   DBusMessageIter iter;
-  int    id, uid, gid;
+  int    uid, gid;
   gchar *login, *passwd, *home, *shell;
 
   dbus_message_iter_recurse (&struct_iter, &iter);
-
-  dbus_message_iter_get_basic (&iter, &id);
-  dbus_message_iter_next (&iter);
 
   dbus_message_iter_get_basic (&iter, &login);
   dbus_message_iter_next (&iter);
@@ -282,6 +282,40 @@ create_user_from_dbus_reply (OobsObject      *object,
 }
 
 static void
+create_dbus_struct_from_user (OobsUser        *user,
+			      DBusMessage     *message,
+			      DBusMessageIter *array_iter)
+{
+  gint uid, gid;
+  const gchar *login, *password, *shell, *homedir;
+  DBusMessageIter struct_iter, data_iter;
+
+  g_object_get (user,
+		"name", &login,
+		"crypted-password", &password,
+		"uid", &uid,
+		"gid", &gid,
+		"home-directory", &homedir,
+		"shell", &shell,
+		NULL);
+
+  dbus_message_iter_open_container (array_iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
+
+  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_STRING, &login); 
+  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_STRING, &password); 
+  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_INT32,  &uid); 
+  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_INT32,  &gid);
+  
+  dbus_message_iter_open_container (&struct_iter, DBUS_TYPE_ARRAY, DBUS_TYPE_STRING_AS_STRING, &data_iter);
+  /* FIXME: put GECOS fields here */
+  dbus_message_iter_close_container (&struct_iter, &data_iter);
+
+  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_STRING, &homedir); 
+  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_STRING, &shell); 
+  dbus_message_iter_close_container (array_iter, &struct_iter);
+}
+
+static void
 oobs_users_config_update (OobsObject *object)
 {
   OobsUsersConfigPrivate *priv;
@@ -312,6 +346,9 @@ oobs_users_config_update (OobsObject *object)
     }
 
   dbus_message_iter_next (&iter);
+  priv->shells = utils_get_string_list_from_dbus_reply (reply, iter);
+
+  dbus_message_iter_next (&iter);
   dbus_message_iter_get_basic (&iter, &priv->use_md5);
 
   dbus_message_iter_next (&iter);
@@ -328,6 +365,54 @@ oobs_users_config_update (OobsObject *object)
 static void
 oobs_users_config_commit (OobsObject *object)
 {
+  OobsUsersConfigPrivate *priv;
+  DBusMessage *message;
+  DBusMessageIter iter, array_iter;
+  OobsListIter list_iter;
+  GObject *user;
+  gboolean valid;
+
+  priv = OOBS_USERS_CONFIG_GET_PRIVATE (object);
+  message = _oobs_object_get_dbus_message (object);
+
+  dbus_message_iter_init_append (message, &iter);
+  dbus_message_iter_open_container (&iter,
+				    DBUS_TYPE_ARRAY,
+				    DBUS_STRUCT_BEGIN_CHAR_AS_STRING
+				    DBUS_TYPE_STRING_AS_STRING
+				    DBUS_TYPE_STRING_AS_STRING
+				    DBUS_TYPE_INT32_AS_STRING
+				    DBUS_TYPE_INT32_AS_STRING
+				    DBUS_TYPE_ARRAY_AS_STRING
+				    DBUS_TYPE_STRING_AS_STRING
+				    DBUS_TYPE_STRING_AS_STRING
+				    DBUS_TYPE_STRING_AS_STRING
+				    DBUS_STRUCT_END_CHAR_AS_STRING
+				    DBUS_TYPE_INT32_AS_STRING
+				    DBUS_TYPE_INT32_AS_STRING
+				    DBUS_TYPE_INT32_AS_STRING
+				    DBUS_TYPE_STRING_AS_STRING,
+				    &array_iter);
+  valid = oobs_list_get_iter_first (priv->users_list, &list_iter);
+
+  while (valid)
+    {
+      user = oobs_list_get (priv->users_list, &list_iter);
+      create_dbus_struct_from_user (OOBS_USER (user), message, &array_iter);
+
+      g_object_unref (user);
+      valid = oobs_list_iter_next (priv->users_list, &list_iter);
+    }
+
+  dbus_message_iter_close_container (&iter, &array_iter);
+
+  utils_create_dbus_array_from_string_list (priv->shells, message, &iter);
+  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32,  &priv->use_md5);
+  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32,  &priv->minimum_uid);
+  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32,  &priv->maximum_uid);
+  dbus_message_iter_append_basic (&iter, DBUS_TYPE_STRING, &priv->default_home);
+  
+  _oobs_object_set_dbus_message (object, message);
 }
 
 OobsObject*

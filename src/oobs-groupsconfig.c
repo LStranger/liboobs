@@ -28,6 +28,7 @@
 #include "oobs-list-private.h"
 #include "oobs-groupsconfig.h"
 #include "oobs-group.h"
+#include "utils.h"
 
 #define GROUPS_CONFIG_REMOTE_OBJECT "GroupsConfig"
 #define OOBS_GROUPS_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_GROUPS_CONFIG, OobsGroupsConfigPrivate))
@@ -98,13 +99,12 @@ create_group_from_dbus_reply (OobsObject      *object,
 			      DBusMessageIter  struct_iter)
 {
   DBusMessageIter iter;
-  int    id, gid;
-  gchar *groupname, *passwd;
+  int      gid;
+  gchar   *groupname, *passwd;
+  GList   *users;
+  GObject *group;
 
   dbus_message_iter_recurse (&struct_iter, &iter);
-
-  dbus_message_iter_get_basic (&iter, &id);
-  dbus_message_iter_next (&iter);
 
   dbus_message_iter_get_basic (&iter, &groupname);
   dbus_message_iter_next (&iter);
@@ -115,11 +115,44 @@ create_group_from_dbus_reply (OobsObject      *object,
   dbus_message_iter_get_basic (&iter, &gid);
   dbus_message_iter_next (&iter);
 
-  return g_object_new (OOBS_TYPE_GROUP,
-		       "name", groupname,
-		       "crypted-password", passwd,
-		       "gid", gid,
-		       NULL);
+  users = utils_get_string_list_from_dbus_reply (reply, iter);
+
+  group = g_object_new (OOBS_TYPE_GROUP,
+			"name", groupname,
+			"crypted-password", passwd,
+			"gid", gid,
+			NULL);
+  oobs_group_set_users (OOBS_GROUP (group), users);
+
+  return OOBS_GROUP (group);
+}
+
+static void
+create_dbus_struct_from_group (GObject         *group,
+			       DBusMessage     *message,
+			       DBusMessageIter *array_iter)
+{
+  DBusMessageIter struct_iter;
+  int    gid;
+  gchar *groupname, *passwd;
+  GList *users;
+
+  g_object_get (group,
+		"name", &groupname,
+		"crypted-password", &passwd,
+		"gid",  &gid,
+		NULL);
+
+  users = oobs_group_get_users (OOBS_GROUP (group));
+
+  dbus_message_iter_open_container (array_iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
+
+  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_STRING, &groupname);
+  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_STRING, &passwd);
+  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_INT32,  &gid);
+  utils_create_dbus_array_from_string_list (users, message, &struct_iter);
+
+  dbus_message_iter_close_container (array_iter, &struct_iter);
 }
 
 static void
@@ -155,6 +188,41 @@ oobs_groups_config_update (OobsObject *object)
 static void
 oobs_groups_config_commit (OobsObject *object)
 {
+  OobsGroupsConfigPrivate *priv;
+  DBusMessage *message;
+  DBusMessageIter iter, array_iter;
+  OobsListIter list_iter;
+  GObject *group;
+  gboolean valid;
+
+  priv = OOBS_GROUPS_CONFIG_GET_PRIVATE (object);
+  message = _oobs_object_get_dbus_message (object);
+
+  dbus_message_iter_init_append (message, &iter);
+  dbus_message_iter_open_container (&iter,
+				    DBUS_TYPE_ARRAY,
+				    DBUS_STRUCT_BEGIN_CHAR_AS_STRING
+				    DBUS_TYPE_STRING_AS_STRING
+				    DBUS_TYPE_STRING_AS_STRING
+				    DBUS_TYPE_INT32_AS_STRING
+				    DBUS_TYPE_ARRAY_AS_STRING
+				    DBUS_TYPE_STRING_AS_STRING
+				    DBUS_STRUCT_END_CHAR_AS_STRING,
+				    &array_iter);
+
+  valid  = oobs_list_get_iter_first (priv->groups_list, &list_iter);
+
+  while (valid)
+    {
+      group = oobs_list_get (priv->groups_list, &list_iter);
+      create_dbus_struct_from_group (group, message, &array_iter);
+
+      g_object_unref (group);
+      valid = oobs_list_iter_next (priv->groups_list, &list_iter);
+    }
+
+  dbus_message_iter_close_container (&iter, &array_iter);
+  _oobs_object_set_dbus_message (object, message);
 }
 
 /**

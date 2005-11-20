@@ -57,6 +57,9 @@ void       oobs_group_set_crypted_password (OobsGroup *group, const gchar *crypt
 gid_t      oobs_group_get_gid      (OobsGroup *group);
 void       oobs_group_set_gid      (OobsGroup *group, gid_t gid);
 
+GList     *oobs_group_get_users    (OobsGroup *group);
+void       oobs_group_set_users    (OobsGroup *group, GList *users);
+
 
 G_END_DECLS
 

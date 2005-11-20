@@ -1,3 +1,20 @@
+2005-11-20  Carlos Garnacho Parro  <carlosg@gnome.org>
+
+	* src/oobs-group.[ch]: added _get_users() and _set_users() methods,
+	really crypt the password in the "password" property, and make the
+	"crypted-password" property readwrite
+	* src/oobs-groupsconfig.c: don't read group key from the dbus reply,
+	it's deprecated in s-t-b, set user groups in update() implementation,
+	implement commit()
+	* src/oobs-nfsconfig.c: small code improvement
+	* src/oobs-user.c: made "crypted-password" property readwrite
+	* src/oobs-usersconfig.c: store shells, don't read user key from dbus
+	reply, it's deprecated, implement commit()
+	* src/oobs-shellsconfig.[ch], oobs-shell.[ch]: deleted, functionality 
+	has been moved to users config, as it doesn't make much sense as a 
+	separate object.
+	* src/Makefile.am: remove shell objects
+
 2005-11-18  Carlos Garnacho Parro  <carlosg@gnome.org>
 
 	* src/oobs-ntpconfig.c: implemented commit()

@@ -28,6 +28,7 @@
 #include "oobs-user.h"
 #include "oobs-defines.h"
 #include "md5.h"
+#include "utils.h"
 
 #ifdef HAVE_CRYPT_H
 #include <crypt.h>
@@ -117,7 +118,7 @@ oobs_user_class_init (OobsUserClass *class)
 							"Crypted password",
 							"Crypted password for the user",
 							NULL,
-							G_PARAM_WRITABLE));
+							G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
 				   PROP_UID,
 				   g_param_spec_int ("uid",
@@ -305,6 +306,9 @@ oobs_user_get_property (GObject      *object,
     {
     case PROP_USERNAME:
       g_value_set_string (value, priv->username);
+      break;
+    case PROP_CRYPTED_PASSWORD:
+      g_value_set_string (value, priv->password);
       break;
     case PROP_UID:
       g_value_set_int (value, priv->uid);

@@ -137,8 +137,7 @@ create_dbus_struct_from_share (GObject         *share,
   GSList *acl;
   OobsShareAclElement *acl_element;
 
-  /* FIXME: should have a function for this */
-  g_object_get (share, "path", &path, NULL);
+  path = oobs_share_get_path (OOBS_SHARE (share));
   acl = oobs_share_nfs_get_acl (OOBS_SHARE_NFS (share));
 
   dbus_message_iter_open_container (array_iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
@@ -151,7 +150,6 @@ create_dbus_struct_from_share (GObject         *share,
 				    DBUS_TYPE_INT32_AS_STRING
 				    DBUS_STRUCT_END_CHAR_AS_STRING,
 				    &acl_iter);
-
   while (acl)
     {
       acl_element = (OobsShareAclElement*) acl->data;

@@ -1,3 +1,8 @@
+2005-11-24  Carlos Garnacho Parro  <carlosg@gnome.org>
+
+	* src/oobs-timeconfig.h: fixed a typo in getter and setter for
+	timezone
+
 2005-11-20  Carlos Garnacho Parro  <carlosg@gnome.org>
 
 	* src/oobs-group.[ch]: added _get_users() and _set_users() methods,

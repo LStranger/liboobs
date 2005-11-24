@@ -58,8 +58,8 @@ void        oobs_time_config_set_unix_time (OobsTimeConfig *config, glong unix_t
 void        oobs_time_config_get_time      (OobsTimeConfig *config, gint *year, gint *month, gint *day, gint *hour, gint *minute, gint *second);
 void        oobs_time_config_set_time      (OobsTimeConfig *config, gint  year, gint  month, gint  day, gint  hour, gint  minute, gint  second);
 
-G_CONST_RETURN gchar* oobs_time_get_timezone (OobsTimeConfig *config);
-void oobs_time_set_timezone (OobsTimeConfig *config, const gchar *timezone);
+G_CONST_RETURN gchar* oobs_time_config_get_timezone (OobsTimeConfig *config);
+void oobs_time_config_set_timezone (OobsTimeConfig *config, const gchar *timezone);
 
 
 G_END_DECLS

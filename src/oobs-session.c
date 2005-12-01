@@ -89,12 +89,15 @@ oobs_session_init (OobsSession *session)
   priv = OOBS_SESSION_GET_PRIVATE (session);
 
   dbus_error_init (&error);
-  priv->connection = dbus_bus_get (DBUS_BUS_SESSION, NULL);
-  dbus_connection_setup_with_g_main (priv->connection, NULL);
+  priv->connection = dbus_bus_get (DBUS_BUS_SESSION, &error);
 
   if (!priv->connection)
-    g_warning (error.message);
+    {
+      g_critical (error.message);
+      g_assert_not_reached ();
+    }
 
+  dbus_connection_setup_with_g_main (priv->connection, NULL);
   priv->session_objects  = NULL;
   priv->is_authenticated = FALSE;
   priv->commit_on_exit   = FALSE;

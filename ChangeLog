@@ -1,3 +1,8 @@
+2005-12-01  Carlos Garnacho Parro  <carlosg@gnome.org>
+
+	* src/oobs-session.c (oobs_session_init): abort if a DBusConnection
+	couldn't be got.
+
 2005-11-24  Carlos Garnacho Parro  <carlosg@gnome.org>
 
 	* src/oobs-timeconfig.h: fixed a typo in getter and setter for

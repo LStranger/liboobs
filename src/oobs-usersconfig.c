@@ -244,9 +244,10 @@ create_user_from_dbus_reply (OobsObject      *object,
 			     DBusMessage     *reply,
 			     DBusMessageIter  struct_iter)
 {
-  DBusMessageIter iter;
+  DBusMessageIter iter, gecos_iter;
   int    uid, gid;
   gchar *login, *passwd, *home, *shell;
+  gchar *name, *room_number, *work_phone, *home_phone, *other_data;
 
   dbus_message_iter_recurse (&struct_iter, &iter);
 
@@ -262,7 +263,25 @@ create_user_from_dbus_reply (OobsObject      *object,
   dbus_message_iter_get_basic (&iter, &gid);
   dbus_message_iter_next (&iter);
 
-  /* FIXME: missing GECOS fields */
+  /* GECOS fields */
+  dbus_message_iter_recurse (&iter, &gecos_iter);
+
+  dbus_message_iter_get_basic (&gecos_iter, &name);
+  dbus_message_iter_next (&gecos_iter);
+
+  dbus_message_iter_get_basic (&gecos_iter, &room_number);
+  dbus_message_iter_next (&gecos_iter);
+
+  dbus_message_iter_get_basic (&gecos_iter, &work_phone);
+  dbus_message_iter_next (&gecos_iter);
+
+  dbus_message_iter_get_basic (&gecos_iter, &home_phone);
+  dbus_message_iter_next (&gecos_iter);
+
+  dbus_message_iter_get_basic (&gecos_iter, &other_data);
+  dbus_message_iter_next (&gecos_iter);
+  /* end of GECOS fields */
+
   dbus_message_iter_next (&iter);
 
   dbus_message_iter_get_basic (&iter, &home);
@@ -278,6 +297,11 @@ create_user_from_dbus_reply (OobsObject      *object,
 		       "gid", gid,
 		       "home-directory", home,
 		       "shell", shell,
+		       "full-name", name,
+		       "room-number", room_number,
+		       "work-phone", work_phone,
+		       "home-phone", home_phone,
+		       "other-data", other_data,
 		       NULL);
 }
 
@@ -288,6 +312,7 @@ create_dbus_struct_from_user (OobsUser        *user,
 {
   gint uid, gid;
   const gchar *login, *password, *shell, *homedir;
+  const gchar *name, *room_number, *work_phone, *home_phone, *other_data;
   DBusMessageIter struct_iter, data_iter;
 
   g_object_get (user,
@@ -297,6 +322,11 @@ create_dbus_struct_from_user (OobsUser        *user,
 		"gid", &gid,
 		"home-directory", &homedir,
 		"shell", &shell,
+		"full-name", &name,
+		"room-number", &room_number,
+		"work-phone", &work_phone,
+		"home-phone", &home_phone,
+		"other-data", &other_data,
 		NULL);
 
   dbus_message_iter_open_container (array_iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
@@ -307,7 +337,14 @@ create_dbus_struct_from_user (OobsUser        *user,
   dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_INT32,  &gid);
   
   dbus_message_iter_open_container (&struct_iter, DBUS_TYPE_ARRAY, DBUS_TYPE_STRING_AS_STRING, &data_iter);
-  /* FIXME: put GECOS fields here */
+
+  /* GECOS fields */
+  dbus_message_iter_append_basic (&data_iter, DBUS_TYPE_STRING, &name);
+  dbus_message_iter_append_basic (&data_iter, DBUS_TYPE_STRING, &room_number);
+  dbus_message_iter_append_basic (&data_iter, DBUS_TYPE_STRING, &work_phone);
+  dbus_message_iter_append_basic (&data_iter, DBUS_TYPE_STRING, &home_phone);
+  dbus_message_iter_append_basic (&data_iter, DBUS_TYPE_STRING, &other_data);
+  
   dbus_message_iter_close_container (&struct_iter, &data_iter);
 
   dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_STRING, &homedir); 

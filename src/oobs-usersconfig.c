@@ -228,7 +228,7 @@ oobs_users_config_get_property (GObject      *object,
       g_value_set_int (value, priv->minimum_uid);
       break;
     case PROP_MAXIMUM_UID:
-      g_value_set_int (value, priv->minimum_uid);
+      g_value_set_int (value, priv->maximum_uid);
       break;
     case PROP_DEFAULT_SHELL:
       g_value_set_string (value, priv->default_shell);

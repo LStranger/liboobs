@@ -1,3 +1,7 @@
+2005-12-05  Carlos Garnacho Parro  <carlosg@gnome.org>
+
+	* src/oobs-usersconfig.c: fixed stupid typo in the code
+
 2005-12-02  Carlos Garnacho Parro  <carlosg@gnome.org>
 
 	* src/oobs-usersconfig.c: handle GECOS fields

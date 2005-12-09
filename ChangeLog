@@ -1,3 +1,8 @@
+2005-12-09  Carlos Garnacho Parro  <carlosg@gnome.org>
+
+	* oobs-timeconfig.[ch] (oobs_time_config_[gs]et_utc_time): added. Made
+	it to send UTC time to the backend. Other miscellaneous fixes.
+
 2005-12-05  Carlos Garnacho Parro  <carlosg@gnome.org>
 
 	* src/oobs-usersconfig.c: fixed stupid typo in the code

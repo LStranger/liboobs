@@ -22,6 +22,7 @@
 #include <glib-object.h>
 #include <sys/time.h>
 #include <time.h>
+#include <stdlib.h>
 
 #include "oobs-object.h"
 #include "oobs-object-private.h"
@@ -233,9 +234,9 @@ oobs_time_config_commit (OobsObject *object)
   priv = OOBS_TIME_CONFIG_GET_PRIVATE (object);
   message = _oobs_object_get_dbus_message (object);
 
-  oobs_time_config_get_time (OOBS_TIME_CONFIG (object),
-			     &year, &month,  &day,
-			     &hour, &minute, &second);
+  oobs_time_config_get_utc_time (OOBS_TIME_CONFIG (object),
+				 &year, &month,  &day,
+				 &hour, &minute, &second);
 
   dbus_message_iter_init_append (message, &iter);
   dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &year);
@@ -247,6 +248,11 @@ oobs_time_config_commit (OobsObject *object)
 
   dbus_message_iter_append_basic (&iter, DBUS_TYPE_STRING, &priv->timezone);
   _oobs_object_set_dbus_message (object, message);
+
+  /* we've just synchronized with the system
+   * date, so we don't need this anymore
+   */
+  priv->time_is_set = FALSE;
 }
 
 /**
@@ -300,16 +306,16 @@ date_is_sane (gint year,
   gint month_days;
   gboolean is_leap;
 
-  g_return_val_if_fail ((year < 1), FALSE);
-  g_return_val_if_fail ((month < 1 || month > 12), FALSE);
+  g_return_val_if_fail ((year >= 1), FALSE);
+  g_return_val_if_fail ((month >= 0 && month <= 11), FALSE);
 
   is_leap = is_leap_year (year);
   month_days = month_lengths [is_leap][month];
 
-  g_return_val_if_fail ((day < 1 || day > month_days), FALSE);
-  g_return_val_if_fail ((hour < 0 || hour > 23), FALSE);
-  g_return_val_if_fail ((minute < 0 || minute > 59), FALSE);
-  g_return_val_if_fail ((second < 0 || second > 59), FALSE);
+  g_return_val_if_fail ((day >= 1 && day <= month_days), FALSE);
+  g_return_val_if_fail ((hour >= 0 && hour <= 23), FALSE);
+  g_return_val_if_fail ((minute >= 0 && minute <= 59), FALSE);
+  g_return_val_if_fail ((second >= 0 && second <= 59), FALSE);
 
   return TRUE;
 }
@@ -350,6 +356,48 @@ oobs_time_config_set_unix_time (OobsTimeConfig *config, glong unix_time)
   g_object_set (G_OBJECT (config), "unix-time", unix_time, NULL);
 }
 
+static void
+real_get_time (OobsTimeConfig *config,
+	       gboolean        use_utc,
+	       gint           *year,
+	       gint           *month,
+	       gint           *day,
+	       gint           *hour,
+	       gint           *minute,
+	       gint           *second)
+{
+  glong unix_time;
+  struct tm *tm;
+
+  g_return_if_fail (OOBS_IS_TIME_CONFIG (config));
+
+  unix_time = oobs_time_config_get_unix_time (config);
+
+  if (use_utc)
+    tm = gmtime (&unix_time);
+  else
+    tm = localtime (&unix_time);
+
+  if (year)
+    *year = tm->tm_year + 1900;
+
+  if (month)
+    *month = tm->tm_mon;
+
+  if (day)
+    *day = tm->tm_mday;
+
+  if (hour)
+    *hour = tm->tm_hour;
+
+  if (minute)
+    *minute = tm->tm_min;
+
+  if (second)
+    *second = tm->tm_sec;
+}
+
+
 /**
  * oobs_time_config_get_time:
  * @config: An #OobsTimeConfig.
@@ -371,33 +419,76 @@ oobs_time_config_get_time (OobsTimeConfig *config,
 			   gint           *minute,
 			   gint           *second)
 {
+  real_get_time (config, FALSE,
+		 year, month,  day,
+		 hour, minute, second);
+}
+
+void
+oobs_time_config_get_utc_time (OobsTimeConfig *config,
+			       gint           *year,
+			       gint           *month,
+			       gint           *day,
+			       gint           *hour,
+			       gint           *minute,
+			       gint           *second)
+{
+  real_get_time (config, TRUE,
+		 year, month,  day,
+		 hour, minute, second);
+}
+
+static glong
+get_utc_unix_time (struct tm *tm)
+{
+  gchar *tz;
   glong unix_time;
-  struct tm *tm;
+
+  tz = getenv ("TZ");
+  setenv ("TZ", "", 1);
+  tzset ();
+
+  unix_time = mktime (tm);
+
+  if (tz)
+    setenv ("TZ", tz, 1);
+  else
+    unsetenv ("TZ");
+
+  tzset ();
+
+  return unix_time;
+}
+
+static void
+real_set_time (OobsTimeConfig *config,
+	       gboolean        use_utc,
+	       gint            year,
+	       gint            month,
+	       gint            day,
+	       gint            hour,
+	       gint            minute,
+	       gint            second)
+{
+  struct tm tm;
+  glong unix_time;
 
   g_return_if_fail (OOBS_IS_TIME_CONFIG (config));
+  g_return_if_fail (date_is_sane (year, month, day, hour, minute, second));
 
-  unix_time = oobs_time_config_get_unix_time (config);
-  tm = localtime (&unix_time);
+  tm.tm_year = year - 1900;
+  tm.tm_mon  = month;
+  tm.tm_mday = day;
+  tm.tm_hour = hour;
+  tm.tm_min  = minute;
+  tm.tm_sec  = second;
 
-  if (year)
-    *year = tm->tm_year + 1900;
+  if (use_utc)
+    unix_time = get_utc_unix_time (&tm);
+  else
+    unix_time = mktime (&tm);
 
-  if (month)
-    *month = tm->tm_mon;
-
-  if (day)
-    *day = tm->tm_mday;
-
-  if (hour)
-    *hour = tm->tm_hour;
-
-  if (minute)
-    *minute = tm->tm_min;
-
-  if (second)
-    *second = tm->tm_sec;
-
-  /* g_free (tm); */
+  oobs_time_config_set_unix_time (config, unix_time);
 }
 
 /**
@@ -421,19 +512,23 @@ oobs_time_config_set_time (OobsTimeConfig *config,
 			   gint            minute,
 			   gint            second)
 {
-  struct tm tm;
+  real_set_time (config, FALSE,
+		 year, month,  day,
+		 hour, minute, second);
+}
 
-  g_return_if_fail (OOBS_IS_TIME_CONFIG (config));
-  g_return_if_fail (date_is_sane (year, month, day, hour, minute, second));
-
-  tm.tm_year = year;
-  tm.tm_mon  = month;
-  tm.tm_mday = day;
-  tm.tm_hour = hour;
-  tm.tm_min  = minute;
-  tm.tm_sec  = second;
-
-  oobs_time_config_set_unix_time (config, mktime (&tm));
+void
+oobs_time_config_set_utc_time (OobsTimeConfig *config,
+			       gint            year,
+			       gint            month,
+			       gint            day,
+			       gint            hour,
+			       gint            minute,
+			       gint            second)
+{
+  real_set_time (config, TRUE,
+		 year, month,  day,
+		 hour, minute, second);
 }
 
 /**

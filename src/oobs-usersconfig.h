@@ -23,6 +23,7 @@
 
 G_BEGIN_DECLS
 
+#include <sys/types.h>
 #include <glib-object.h>
 #include "oobs-object.h"
 #include "oobs-list.h"
@@ -52,6 +53,20 @@ GType       oobs_users_config_get_type     (void);
 
 OobsObject* oobs_users_config_get          (OobsSession *session);
 OobsList*   oobs_users_config_get_users    (OobsUsersConfig *config);
+
+uid_t       oobs_users_config_get_minimum_users_uid (OobsUsersConfig *config);
+void        oobs_users_config_set_minimum_users_uid (OobsUsersConfig *config, uid_t uid);
+
+uid_t       oobs_users_config_get_maximum_users_uid (OobsUsersConfig *config);
+void        oobs_users_config_set_maximum_users_uid (OobsUsersConfig *config, uid_t uid);
+
+G_CONST_RETURN gchar* oobs_users_config_get_default_shell (OobsUsersConfig *config);
+void                  oobs_users_config_set_default_shell (OobsUsersConfig *config, const gchar *shell);
+
+G_CONST_RETURN gchar* oobs_users_config_get_default_home_dir (OobsUsersConfig *config);
+void                  oobs_users_config_set_default_home_dir (OobsUsersConfig *config, const gchar *home_dir);
+
+GList*      oobs_users_config_get_available_shells (OobsUsersConfig *config);
 
 
 G_END_DECLS

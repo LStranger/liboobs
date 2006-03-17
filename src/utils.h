@@ -29,7 +29,7 @@ G_BEGIN_DECLS
 void   utils_create_dbus_array_from_string_list (GList *list, DBusMessage *message, DBusMessageIter *iter);
 GList *utils_get_string_list_from_dbus_reply    (DBusMessage *reply, DBusMessageIter iter);
 gchar *utils_get_random_string                  (gint len);
-
+void   utils_append_string                      (DBusMessageIter *iter, const gchar *str);
 
 G_END_DECLS
 

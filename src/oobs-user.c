@@ -26,6 +26,7 @@
 
 #include "oobs-usersconfig.h"
 #include "oobs-user.h"
+#include "oobs-group.h"
 #include "oobs-defines.h"
 #include "md5.h"
 #include "utils.h"
@@ -41,11 +42,11 @@ typedef struct _OobsUserPrivate OobsUserPrivate;
 struct _OobsUserPrivate {
   OobsObject *config;
 
+  OobsGroup *main_group;
   gint   key;
   gchar *username;
   gchar *password;
   uid_t  uid;
-  gid_t  gid;
   
   gchar *homedir;
   gchar *shell;
@@ -77,7 +78,6 @@ enum
   PROP_PASSWORD,
   PROP_CRYPTED_PASSWORD,
   PROP_UID,
-  PROP_GID,
   PROP_HOMEDIR,
   PROP_SHELL,
   PROP_FULL_NAME,
@@ -125,13 +125,6 @@ oobs_user_class_init (OobsUserClass *class)
 						     "UID",
 						     "UID for the user",
 						     0, OOBS_MAX_UID, OOBS_MAX_UID,
-						     G_PARAM_READWRITE));
-  g_object_class_install_property (object_class,
-				   PROP_GID,
-				   g_param_spec_int ("gid",
-						     "GID",
-						     "Main group GID for the user",
-						     0, OOBS_MAX_GID, OOBS_MAX_GID,
 						     G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
 				   PROP_HOMEDIR,
@@ -238,7 +231,7 @@ oobs_user_set_property (GObject      *object,
       if (use_md5)
 	{
 	  salt = utils_get_random_string (8);
-	  priv->password = crypt_md5 (g_value_get_string (value), salt);
+	  priv->password = g_strdup (crypt_md5 (g_value_get_string (value), salt));
 	}
       else
 	{
@@ -246,6 +239,7 @@ oobs_user_set_property (GObject      *object,
 	  priv->password = crypt (g_value_get_string (value), salt);
 	}
 
+      g_free (salt);
       break;
     case PROP_CRYPTED_PASSWORD:
       g_free (priv->password);
@@ -253,9 +247,6 @@ oobs_user_set_property (GObject      *object,
       break;
     case PROP_UID:
       priv->uid = g_value_get_int (value);
-      break;
-    case PROP_GID:
-      priv->gid = g_value_get_int (value);
       break;
     case PROP_HOMEDIR:
       g_free (priv->homedir);
@@ -312,9 +303,6 @@ oobs_user_get_property (GObject      *object,
       break;
     case PROP_UID:
       g_value_set_int (value, priv->uid);
-      break;
-    case PROP_GID:
-      g_value_set_int (value, priv->gid);
       break;
     case PROP_HOMEDIR:
       g_value_set_string (value, priv->homedir);
@@ -440,26 +428,31 @@ oobs_user_set_uid (OobsUser *user, uid_t uid)
   g_object_set (G_OBJECT (user), "uid", uid, NULL);
 }
 
-gid_t
-oobs_user_get_gid (OobsUser *user)
+OobsGroup*
+oobs_user_get_main_group (OobsUser *user)
 {
   OobsUserPrivate *priv;
 
-  g_return_val_if_fail (user != NULL, OOBS_MAX_GID);
-  g_return_val_if_fail (OOBS_IS_USER (user), OOBS_MAX_GID);
+  g_return_val_if_fail (OOBS_IS_USER (user), NULL);
 
   priv = OOBS_USER_GET_PRIVATE (user);
-
-  return priv->gid;
+  return priv->main_group;
 }
 
 void
-oobs_user_set_gid (OobsUser *user, gid_t gid)
+oobs_user_set_main_group (OobsUser  *user,
+			  OobsGroup *main_group)
 {
-  g_return_if_fail (user != NULL);
+  OobsUserPrivate *priv;
+
   g_return_if_fail (OOBS_IS_USER (user));
 
-  g_object_set (G_OBJECT (user), "gid", gid, NULL);
+  priv = OOBS_USER_GET_PRIVATE (user);
+
+  if (priv->main_group)
+    g_object_unref (priv->main_group);
+
+  priv->main_group = (main_group) ? g_object_ref (main_group) : NULL;
 }
 
 G_CONST_RETURN gchar*

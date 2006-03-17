@@ -232,7 +232,7 @@ oobs_object_set_property (GObject      *object,
     case PROP_REMOTE_OBJECT:
       priv->remote_object = g_value_dup_string (value);
       priv->path   = g_strconcat (OOBS_DBUS_PATH_PREFIX, "/", priv->remote_object, NULL);
-      priv->method = g_strconcat (OOBS_DBUS_METHOD_PREFIX, ".", priv->remote_object, NULL);
+      priv->method = g_strdup (OOBS_DBUS_METHOD_PREFIX);
       break;
     }
 }
@@ -318,8 +318,17 @@ oobs_object_commit (OobsObject *object)
   class->commit (object);
   message = g_object_steal_qdata (G_OBJECT (object), dbus_connection_quark);
 
-  run_message (object, message);
-  dbus_message_unref (message);
+  if (!message)
+    {
+      /* a NULL message means malformed configuration */
+      g_critical ("Not committing due to inconsistencies in the "
+		  "configuration, this reflects a bug in the application\n");
+    }
+  else
+    {
+      run_message (object, message);
+      dbus_message_unref (message);
+    }
 }
 
 /**

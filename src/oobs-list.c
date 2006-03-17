@@ -193,7 +193,7 @@ oobs_list_get_iter_first (OobsList *list, OobsListIter *iter)
 
   iter->stamp = priv->stamp;
   iter->data  = priv->list;
-  
+
   return TRUE;
 }
 
@@ -226,6 +226,7 @@ oobs_list_iter_next (OobsList *list, OobsListIter *iter)
 
   data = (GList *) iter->data;
   iter->data = data->next;
+
   return (iter->data != NULL);
 }
 
@@ -244,7 +245,7 @@ gboolean
 oobs_list_remove (OobsList *list, OobsListIter *iter)
 {
   OobsListPrivate *priv;
-  GList *data;
+  GList *data, *next;
   gboolean list_locked;
 
   g_return_val_if_fail (list != NULL, FALSE);
@@ -261,8 +262,14 @@ oobs_list_remove (OobsList *list, OobsListIter *iter)
     return FALSE;
 
   data = (GList *) iter->data;
-  iter->data = data->next;
+
+  /* point to the next element */
+  next = data->next;
+
+  g_object_unref (data->data);
   priv->list = g_list_delete_link (priv->list, data);
+
+  iter->data = next;
 
   return (iter->data != NULL);
 }
@@ -280,55 +287,6 @@ void
 oobs_list_append (OobsList *list, OobsListIter *iter)
 {
   OobsListPrivate *priv;
-  GList *node, *l;
-  gboolean list_locked;
-
-  g_return_if_fail (list != NULL);
-  g_return_if_fail (iter != NULL);
-  g_return_if_fail (OOBS_IS_LIST (list));
-
-  priv = OOBS_LIST_GET_PRIVATE (list);
-
-  list_locked = priv->locked;
-  g_return_if_fail (list_locked != TRUE);
-
-  l = priv->list;
-  node = g_list_alloc ();
-  node->data = NULL;
-
-  /* append the node */
-  if (!l)
-    {
-      /* Change the stamp if the list was empty */
-      priv->stamp++;
-      priv->list = node;
-    }
-  else
-    {
-      while (l->next)
-	l = l->next;
-
-      l->next = node;
-    }
-
-  iter->stamp = priv->stamp;
-  iter->data  = node;
-}
-
-/**
- * oobs_list_prepend:
- * @list: An #OobsList
- * @iter: An unset #OobsListIter to set to the new element
- * 
- * Prepends a new element to @list. @iter will be changed
- * to point to this element, to fill in values, you need to call
- * oobs_list_set().
- **/
-void
-oobs_list_prepend (OobsList *list, OobsListIter *iter)
-{
-  OobsListPrivate *priv;
-  GList *node;
   gboolean list_locked;
 
   g_return_if_fail (list != NULL);
@@ -344,13 +302,44 @@ oobs_list_prepend (OobsList *list, OobsListIter *iter)
   if (!priv->list)
     priv->stamp++;
 
-  node = g_list_alloc ();
-  node->data = NULL;
-  node->next = priv->list;
-  priv->list = node;
+  priv->list = g_list_append (priv->list, NULL);
 
+  iter->data = g_list_last (priv->list);
   iter->stamp = priv->stamp;
-  iter->data  = node;
+}
+
+/**
+ * oobs_list_prepend:
+ * @list: An #OobsList
+ * @iter: An unset #OobsListIter to set to the new element
+ * 
+ * Prepends a new element to @list. @iter will be changed
+ * to point to this element, to fill in values, you need to call
+ * oobs_list_set().
+ **/
+void
+oobs_list_prepend (OobsList *list, OobsListIter *iter)
+{
+  OobsListPrivate *priv;
+  gboolean list_locked;
+
+  g_return_if_fail (list != NULL);
+  g_return_if_fail (iter != NULL);
+  g_return_if_fail (OOBS_IS_LIST (list));
+
+  priv = OOBS_LIST_GET_PRIVATE (list);
+
+  list_locked = priv->locked;
+  g_return_if_fail (list_locked != TRUE);
+
+  /* Change the stamp if the list was empty */
+  if (!priv->list)
+    priv->stamp++;
+
+  priv->list = g_list_prepend (priv->list, NULL);
+
+  iter->data = priv->list;
+  iter->stamp = priv->stamp;
 }
 
 /**

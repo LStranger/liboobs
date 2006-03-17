@@ -24,7 +24,6 @@
 G_BEGIN_DECLS
 
 #include <sys/types.h>
-#include "oobs-object.h"
 
 #define OOBS_TYPE_GROUP         (oobs_group_get_type())
 #define OOBS_GROUP(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_GROUP, OobsGroup))
@@ -35,6 +34,8 @@ G_BEGIN_DECLS
 
 typedef struct _OobsGroup        OobsGroup;
 typedef struct _OobsGroupClass   OobsGroupClass;
+
+#include "oobs-user.h"
 	
 struct _OobsGroup {
   GObject parent;
@@ -58,7 +59,8 @@ gid_t      oobs_group_get_gid      (OobsGroup *group);
 void       oobs_group_set_gid      (OobsGroup *group, gid_t gid);
 
 GList     *oobs_group_get_users    (OobsGroup *group);
-void       oobs_group_set_users    (OobsGroup *group, GList *users);
+void       oobs_group_add_user     (OobsGroup *group, OobsUser *user);
+void       oobs_group_remove_user  (OobsGroup *group, OobsUser *user);
 
 
 G_END_DECLS

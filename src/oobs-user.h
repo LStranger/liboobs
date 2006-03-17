@@ -25,6 +25,7 @@ G_BEGIN_DECLS
 
 #include <sys/types.h>
 
+
 #define OOBS_TYPE_USER         (oobs_user_get_type())
 #define OOBS_USER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_USER, OobsUser))
 #define OOBS_USER_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c),    OOBS_TYPE_USER, OobsUserClass))
@@ -34,6 +35,8 @@ G_BEGIN_DECLS
 
 typedef struct _OobsUser        OobsUser;
 typedef struct _OobsUserClass   OobsUserClass;
+
+#include "oobs-group.h"
 	
 struct _OobsUser {
   GObject parent;
@@ -47,6 +50,7 @@ GType oobs_user_get_type (void);
 
 OobsUser* oobs_user_new (const gchar *name);
 
+G_CONST_RETURN gchar* oobs_user_get_login_name (OobsUser *user);
 void  oobs_user_set_login_name (OobsUser *user, const gchar *login);
 
 void  oobs_user_set_password (OobsUser *user, const gchar *password);
@@ -55,8 +59,8 @@ void  oobs_user_set_crypted_password (OobsUser *user, const gchar *crypted_passw
 uid_t oobs_user_get_uid (OobsUser *user);
 void  oobs_user_set_uid (OobsUser *user, uid_t uid);
 
-gid_t oobs_user_get_gid (OobsUser *user);
-void  oobs_user_set_gid (OobsUser *user, gid_t gid);
+OobsGroup* oobs_user_get_main_group (OobsUser *user);
+void       oobs_user_set_main_group (OobsUser  *user, OobsGroup *main_group);
 
 G_CONST_RETURN gchar* oobs_user_get_home_directory (OobsUser *user);
 void oobs_user_set_home_directory (OobsUser *user, const gchar *home_directory);

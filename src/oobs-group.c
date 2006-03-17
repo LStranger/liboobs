@@ -20,6 +20,7 @@
 
 #include <glib-object.h>
 #include "oobs-group.h"
+#include "oobs-user.h"
 #include "oobs-session.h"
 #include "oobs-usersconfig.h"
 #include "oobs-defines.h"
@@ -151,7 +152,7 @@ oobs_group_set_property (GObject      *object,
       if (priv->use_md5)
 	{
 	  salt = utils_get_random_string (8);
-	  priv->password = crypt_md5 (g_value_get_string (value), salt);
+	  priv->password = g_strdup (crypt_md5 (g_value_get_string (value), salt));
 	}
       else
 	{
@@ -159,6 +160,7 @@ oobs_group_set_property (GObject      *object,
 	  priv->password = crypt (g_value_get_string (value), salt);
 	}
 
+      g_free (salt);
       break;
     case PROP_CRYPTED_PASSWORD:
       g_free (priv->password);
@@ -341,24 +343,36 @@ oobs_group_get_users (OobsGroup *group)
   g_return_val_if_fail (OOBS_IS_GROUP (group), NULL);
 
   priv = OOBS_GROUP_GET_PRIVATE (group);
-  return priv->users;
+  return g_list_copy (priv->users);
 }
 
 void
-oobs_group_set_users (OobsGroup *group,
-		      GList     *users)
+oobs_group_add_user (OobsGroup *group,
+		     OobsUser  *user)
 {
   OobsGroupPrivate *priv;
 
   g_return_if_fail (OOBS_IS_GROUP (group));
-
+  g_return_if_fail (OOBS_IS_USER (user));
+  
   priv = OOBS_GROUP_GET_PRIVATE (group);
 
-  if (priv->users)
-    {
-      g_list_foreach (priv->users, (GFunc) g_free, NULL);
-      g_list_free (priv->users);
-    }
+  /* try to avoid several instances */
+  if (!g_list_find (priv->users, user))
+    priv->users = g_list_prepend (priv->users, g_object_ref (user));
+}
 
-  priv->users = users;
+void
+oobs_group_remove_user (OobsGroup *group,
+			OobsUser  *user)
+{
+  OobsGroupPrivate *priv;
+
+  g_return_if_fail (OOBS_IS_GROUP (group));
+  g_return_if_fail (OOBS_IS_USER (user));
+  
+  priv = OOBS_GROUP_GET_PRIVATE (group);
+
+  /* there might be several instances */
+  priv->users = g_list_remove_all (priv->users, user);
 }

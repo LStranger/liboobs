@@ -78,3 +78,12 @@ utils_get_random_string (gint len)
 
   return str;
 }
+
+void
+utils_append_string (DBusMessageIter *iter, const gchar *str)
+{
+  const gchar *empty_str = "";
+
+  /* allow null strings */
+  dbus_message_iter_append_basic (iter, DBUS_TYPE_STRING, (str) ? &str : &empty_str); 
+}

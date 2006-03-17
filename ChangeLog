@@ -1,3 +1,23 @@
+2006-03-17  Carlos Garnacho Parro  <carlosg@gnome.org>
+
+	* oobs-group.c, oobs-user.c: do not free an static variable
+
+	* oobs-group.[ch] (oobs_group_set_user) (oobs_group_remove_user):
+	added. Now an OobsGroup contains references to OobsUser objects
+	* oobs-groupsconfig.c: add "minimum-gid" and "maximum-gid" properties
+	
+	* oobs-list.c: Use GList functions, other small fixes
+
+	* oobs-object.c: the method name is now common for all object, add a
+	security guard for not committing inconsistent data.
+
+	* oobs-user.[ch]: use an OobsGroup reference instead of GID
+	* oobs-usersconfig.c: add default shell property, implement some
+	security for inconsistent data
+	(oobs_users_config_get_available_shells): added
+
+	* utils.[ch] (utils_append_string): added.
+
 2005-12-09  Carlos Garnacho Parro  <carlosg@gnome.org>
 
 	* oobs-timeconfig.[ch] (oobs_time_config_[gs]et_utc_time): added. Made

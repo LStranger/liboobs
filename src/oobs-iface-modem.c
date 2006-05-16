@@ -39,6 +39,8 @@ static void oobs_iface_modem_class_init (OobsIfaceModemClass *class);
 static void oobs_iface_modem_init       (OobsIfaceModem      *iface);
 static void oobs_iface_modem_finalize   (GObject             *object);
 
+static gboolean oobs_iface_modem_is_configured (OobsIface *iface);
+
 static void oobs_iface_modem_set_property (GObject      *object,
 					   guint         prop_id,
 					   const GValue *value,
@@ -100,35 +102,40 @@ oobs_dial_type_get_type (void)
 static void
 oobs_iface_modem_class_init (OobsIfaceModemClass *class)
 {
-  GObjectClass  *object_class = G_OBJECT_CLASS (class);
+  GObjectClass *object_class = G_OBJECT_CLASS (class);
+  OobsIfaceClass *iface_class = OOBS_IFACE_CLASS (class);
 
   object_class->set_property = oobs_iface_modem_set_property;
   object_class->get_property = oobs_iface_modem_get_property;
   object_class->finalize = oobs_iface_modem_finalize;
 
+  iface_class->is_configured = oobs_iface_modem_is_configured;
+
   g_object_class_install_property (object_class,
                                    PROP_SERIAL_PORT,
-                                   g_param_spec_string ("iface_serial_port",
-                                                        "Iface serial port",
+                                   g_param_spec_string ("serial_port",
+                                                        "Serial port",
                                                         "Serial port for the connection",
                                                         NULL,
                                                         G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
                                    PROP_VOLUME,
-                                   g_param_spec_enum ("iface_volume",
-                                                      "Iface volume",
-                                                      "Volume for the connection",
+                                   g_param_spec_enum ("volume",
+                                                      "Modem volume",
+                                                      "Modem volume",
                                                       OOBS_TYPE_MODEM_VOLUME,
                                                       OOBS_MODEM_VOLUME_SILENT,
                                                       G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
                                    PROP_DIAL_TYPE,
-                                   g_param_spec_enum ("iface_dial_type",
-                                                      "Iface dial type",
-                                                      "Dial type for the connection",
+                                   g_param_spec_enum ("dial_type",
+                                                      "Modem dial type",
+                                                      "Modem dial type",
                                                       OOBS_TYPE_DIAL_TYPE,
                                                       OOBS_DIAL_TYPE_TONES,
                                                       G_PARAM_READWRITE));
+  g_type_class_add_private (object_class,
+			    sizeof (OobsIfaceModemPrivate));
 }
 
 static void
@@ -212,4 +219,73 @@ oobs_iface_modem_get_property (GObject    *object,
     }
 }
 
-/* FIXME: add getters and setters */
+static gboolean
+oobs_iface_modem_is_configured (OobsIface *iface)
+{
+  OobsIfaceModemPrivate *priv;
+
+  priv = OOBS_IFACE_MODEM_GET_PRIVATE (iface);
+
+  return (priv->serial_port &&
+	  (* OOBS_IFACE_CLASS (oobs_iface_modem_parent_class)->is_configured) (iface));
+}
+
+void
+oobs_iface_modem_set_serial_port (OobsIfaceModem *iface,
+				  const gchar    *serial_port)
+{
+  g_return_if_fail (OOBS_IS_IFACE_MODEM (iface));
+
+  g_object_set (G_OBJECT (iface), "serial-port", serial_port, NULL);
+}
+
+G_CONST_RETURN gchar*
+oobs_iface_modem_get_serial_port (OobsIfaceModem *iface)
+{
+  OobsIfaceModemPrivate *priv;
+
+  g_return_val_if_fail (OOBS_IS_IFACE_MODEM (iface), NULL);
+
+  priv = OOBS_IFACE_MODEM_GET_PRIVATE (iface);
+  return priv->serial_port;
+}
+
+void
+oobs_iface_modem_set_volume (OobsIfaceModem  *iface,
+			     OobsModemVolume  volume)
+{
+  g_return_if_fail (OOBS_IS_IFACE_MODEM (iface));
+
+  g_object_set (G_OBJECT (iface), "volume", volume, NULL);
+}
+
+OobsModemVolume
+oobs_iface_modem_get_volume (OobsIfaceModem *iface)
+{
+  OobsIfaceModemPrivate *priv;
+
+  g_return_val_if_fail (OOBS_IS_IFACE_MODEM (iface), OOBS_MODEM_VOLUME_SILENT);
+
+  priv = OOBS_IFACE_MODEM_GET_PRIVATE (iface);
+  return priv->volume;
+}
+
+void
+oobs_iface_modem_set_dial_type (OobsIfaceModem  *iface,
+				OobsDialType     dial_type)
+{
+  g_return_if_fail (OOBS_IS_IFACE_MODEM (iface));
+
+  g_object_set (G_OBJECT (iface), "dial-type", dial_type, NULL);
+}
+
+OobsDialType
+oobs_iface_modem_get_dial_type (OobsIfaceModem *iface)
+{
+  OobsIfaceModemPrivate *priv;
+
+  g_return_val_if_fail (OOBS_IS_IFACE_MODEM (iface), OOBS_DIAL_TYPE_TONES);
+
+  priv = OOBS_IFACE_MODEM_GET_PRIVATE (iface);
+  return priv->dial_type;
+}

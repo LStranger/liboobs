@@ -218,17 +218,17 @@ create_group_from_dbus_reply (OobsObject      *object,
 static GList*
 get_users_list (OobsGroup *group)
 {
-  GList *users, *usernames = NULL;
+  GList *users, *elem, *usernames = NULL;
   OobsUser *user;
 
-  users = oobs_group_get_users (group);
+  users = elem = oobs_group_get_users (group);
 
-  while (users)
+  while (elem)
     {
-      user = users->data;
+      user = elem->data;
       usernames = g_list_prepend (usernames, oobs_user_get_login_name (user));
 
-      users = users->next;
+      elem = elem->next;
     }
 
   g_list_free (users);
@@ -327,6 +327,7 @@ query_users (OobsGroupsConfig *groups_config,
 
   users_config = oobs_users_config_get (session);
   g_hash_table_foreach (hashtable, (GHFunc) query_users_foreach, users_config);
+  g_object_unref (session);
 }
 
 static void
@@ -420,7 +421,6 @@ oobs_groups_config_commit (OobsObject *object)
     }
 
   dbus_message_iter_close_container (&iter, &array_iter);
-  _oobs_object_set_dbus_message (object, message);
 }
 
 /**

@@ -53,6 +53,19 @@ enum
 
 G_DEFINE_TYPE (OobsList, oobs_list, G_TYPE_OBJECT);
 
+GType
+oobs_list_iter_get_type (void)
+{
+  static GType iter_type = 0;
+  
+  if (iter_type == 0)
+    iter_type = g_boxed_type_register_static ("OobsListIter",
+					      (GBoxedCopyFunc) oobs_list_iter_copy,
+					      (GBoxedFreeFunc) oobs_list_iter_free);
+
+  return iter_type;
+}
+
 static void
 oobs_list_class_init (OobsListClass *class)
 {

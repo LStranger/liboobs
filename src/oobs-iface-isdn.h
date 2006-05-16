@@ -47,6 +47,29 @@ struct _OobsIfaceISDNClass
 
 GType oobs_iface_isdn_get_type ();
 
+void                   oobs_iface_isdn_set_login (OobsIfaceISDN *iface, const gchar *login);
+G_CONST_RETURN gchar*  oobs_iface_isdn_get_login (OobsIfaceISDN *iface);
+
+void                   oobs_iface_isdn_set_password (OobsIfaceISDN *iface, const gchar *password);
+
+void                   oobs_iface_isdn_set_phone_number (OobsIfaceISDN *iface, const gchar *phone_number);
+G_CONST_RETURN gchar*  oobs_iface_isdn_get_phone_number (OobsIfaceISDN *iface);
+
+void                   oobs_iface_isdn_set_phone_prefix (OobsIfaceISDN *iface, const gchar *phone_prefix);
+G_CONST_RETURN gchar*  oobs_iface_isdn_get_phone_prefix (OobsIfaceISDN *iface);
+
+void                   oobs_iface_isdn_set_default_gateway (OobsIfaceISDN *iface, gboolean default_gw);
+gboolean               oobs_iface_isdn_get_default_gateway (OobsIfaceISDN *iface);
+
+void                   oobs_iface_isdn_set_use_peer_dns (OobsIfaceISDN *iface, gboolean use_peer_dns);
+gboolean               oobs_iface_isdn_get_use_peer_dns (OobsIfaceISDN *iface);
+
+void                   oobs_iface_isdn_set_persistent (OobsIfaceISDN *iface, gboolean persistent);
+gboolean               oobs_iface_isdn_get_persistent (OobsIfaceISDN *iface);
+
+void                   oobs_iface_isdn_set_peer_noauth (OobsIfaceISDN *iface, gboolean use_peer_dns);
+gboolean               oobs_iface_isdn_get_peer_noauth (OobsIfaceISDN *iface);
+
 
 G_END_DECLS
 

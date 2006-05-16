@@ -23,6 +23,8 @@
 
 G_BEGIN_DECLS
 
+#include "oobs-list.h"
+
 OobsList*   _oobs_list_new   (GType contained_type);
 void        _oobs_list_set_locked (OobsList *list, gboolean locked);
 

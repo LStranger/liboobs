@@ -29,13 +29,15 @@ typedef struct _OobsIfaceWirelessPrivate OobsIfaceWirelessPrivate;
 struct _OobsIfaceWirelessPrivate
 {
   gchar *essid;
-  gchar *wep_key;
+  gchar *key;
   OobsWirelessKeyType key_type;
 };
 
 static void oobs_iface_wireless_class_init (OobsIfaceWirelessClass *class);
 static void oobs_iface_wireless_init       (OobsIfaceWireless      *iface);
 static void oobs_iface_wireless_finalize   (GObject                *object);
+
+static gboolean oobs_iface_wireless_is_configured (OobsIface *iface);
 
 static void oobs_iface_wireless_set_property (GObject      *object,
 					      guint         prop_id,
@@ -48,8 +50,8 @@ static void oobs_iface_wireless_get_property (GObject      *object,
 enum {
   PROP_0,
   PROP_ESSID,
-  PROP_WEP_KEY_TYPE,
-  PROP_WEP_KEY
+  PROP_KEY_TYPE,
+  PROP_KEY
 };
 
 GType
@@ -78,31 +80,34 @@ static void
 oobs_iface_wireless_class_init (OobsIfaceWirelessClass *class)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (class);
+  OobsIfaceClass *iface_class = OOBS_IFACE_CLASS (class);
 
   object_class->set_property = oobs_iface_wireless_set_property;
   object_class->get_property = oobs_iface_wireless_get_property;
   object_class->finalize     = oobs_iface_wireless_finalize;
 
+  iface_class->is_configured = oobs_iface_wireless_is_configured;
+
   g_object_class_install_property (object_class,
 				   PROP_ESSID,
-				   g_param_spec_string ("iface_essid",
+				   g_param_spec_string ("essid",
 							"Iface ESSID",
 							"ESSID",
 							NULL,
 							G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
-				   PROP_WEP_KEY_TYPE,
-				   g_param_spec_enum ("iface_wep_key_type",
-						      "Iface WEP key type",
+				   PROP_KEY_TYPE,
+				   g_param_spec_enum ("key_type",
+						      "Iface key type",
 						      "key type",
 						      OOBS_TYPE_WIRELESS_KEY_TYPE,
 						      OOBS_WIRELESS_KEY_HEXADECIMAL,
 						      G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
-				   PROP_WEP_KEY,
-				   g_param_spec_string ("iface_wep_key",
-							"Iface WEP key",
-							"WEP key",
+				   PROP_KEY,
+				   g_param_spec_string ("key",
+							"Iface key",
+							"Key",
 							NULL,
 							G_PARAM_READWRITE));
   g_type_class_add_private (object_class,
@@ -119,7 +124,7 @@ oobs_iface_wireless_init (OobsIfaceWireless *iface)
   priv = OOBS_IFACE_WIRELESS_GET_PRIVATE (iface);
 
   priv->essid = NULL;
-  priv->wep_key = NULL;
+  priv->key = NULL;
 }
 
 static void
@@ -134,7 +139,7 @@ oobs_iface_wireless_finalize (GObject *object)
   if (priv)
     {
       g_free (priv->essid);
-      g_free (priv->wep_key);
+      g_free (priv->key);
     }
 
   if (G_OBJECT_CLASS (oobs_iface_wireless_parent_class)->finalize)
@@ -159,12 +164,12 @@ oobs_iface_wireless_set_property (GObject      *object,
       g_free (priv->essid);
       priv->essid = g_value_dup_string (value);
       break;
-    case PROP_WEP_KEY_TYPE:
+    case PROP_KEY_TYPE:
       priv->key_type = g_value_get_enum (value);
       break;
-    case PROP_WEP_KEY:
-      g_free (priv->wep_key);
-      priv->wep_key = g_value_dup_string (value);
+    case PROP_KEY:
+      g_free (priv->key);
+      priv->key = g_value_dup_string (value);
       break;
     }
 }
@@ -186,13 +191,24 @@ oobs_iface_wireless_get_property (GObject      *object,
     case PROP_ESSID:
       g_value_set_string (value, priv->essid);
       break;
-    case PROP_WEP_KEY_TYPE:
+    case PROP_KEY_TYPE:
       g_value_set_enum (value, priv->key_type);
       break;
-    case PROP_WEP_KEY:
-      g_value_set_string (value, priv->wep_key);
+    case PROP_KEY:
+      g_value_set_string (value, priv->key);
       break;
     }
+}
+
+static gboolean
+oobs_iface_wireless_is_configured (OobsIface *iface)
+{
+  OobsIfaceWirelessPrivate *priv;
+
+  priv = OOBS_IFACE_WIRELESS_GET_PRIVATE (iface);
+
+  return (priv->essid &&
+	  (* OOBS_IFACE_CLASS (oobs_iface_wireless_parent_class)->is_configured) (iface));
 }
 
 /**
@@ -229,21 +245,22 @@ oobs_iface_wireless_set_essid (OobsIfaceWireless *iface, const gchar *essid)
 {
   g_return_if_fail (OOBS_IS_IFACE_WIRELESS (iface));
 
-  g_object_set (G_OBJECT (iface), "iface-essid", essid, NULL);
+  g_object_set (G_OBJECT (iface), "essid", essid, NULL);
 }
 
 /**
- * oobs_iface_wireless_get_wep_key:
+ * oobs_iface_wireless_get_key:
  * @iface: an #OobsIfaceWireless.
  * 
- * Returns the network key (WEP key) that this interface uses.
+ * Returns the network key associated to the ESSID that
+ * this interface uses.
  * 
  * Return Value: A pointer to the network key as a string,
  *               or %NULL if it's unset. This string must
  *               not be freed, modified or stored.
  **/
 G_CONST_RETURN gchar*
-oobs_iface_wireless_get_wep_key (OobsIfaceWireless *iface)
+oobs_iface_wireless_get_key (OobsIfaceWireless *iface)
 {
   OobsIfaceWirelessPrivate *priv;
 
@@ -251,34 +268,34 @@ oobs_iface_wireless_get_wep_key (OobsIfaceWireless *iface)
 
   priv = OOBS_IFACE_WIRELESS_GET_PRIVATE (iface);
 
-  return priv->wep_key;
+  return priv->key;
 }
 
 /**
- * oobs_iface_wireless_set_wep_key:
+ * oobs_iface_wireless_set_key:
  * @iface: an #OobsIfaceWireless.
- * @wep_key: a new WEP key for the interface, or %NULL to unset it.
- * 
- * Sets a new network key (WEP key) that the interface will use.
+ * @key: a new key for the ESSID, or %NULL to unset it.
+ *
+ * Sets a new network key for the ESSID that the interface uses.
  **/
 void
-oobs_iface_wireless_set_wep_key (OobsIfaceWireless *iface, const gchar *wep_key)
+oobs_iface_wireless_set_key (OobsIfaceWireless *iface, const gchar *key)
 {
   g_return_if_fail (OOBS_IS_IFACE_WIRELESS (iface));
 
-  g_object_set (G_OBJECT (iface), "iface-wep-key", wep_key, NULL);
+  g_object_set (G_OBJECT (iface), "key", key, NULL);
 }
 
 /**
- * oobs_iface_wireless_get_wep_key_type:
+ * oobs_iface_wireless_get_key_type:
  * @iface: an #OobsIfaceWireless.
  * 
- * Returns the type of WEP key that the interface uses.
+ * Returns the type of key that the interface uses.
  * 
- * Return Value: The WEP key type.
+ * Return Value: The key type.
  **/
 OobsWirelessKeyType
-oobs_iface_wireless_get_wep_key_type (OobsIfaceWireless *iface)
+oobs_iface_wireless_get_key_type (OobsIfaceWireless *iface)
 {
   OobsIfaceWirelessPrivate *priv;
 
@@ -290,16 +307,17 @@ oobs_iface_wireless_get_wep_key_type (OobsIfaceWireless *iface)
 }
 
 /**
- * oobs_iface_wireless_set_wep_key_type:
+ * oobs_iface_wireless_set_key_type:
  * @iface: an #OobsIfaceWireless.
- * @key_type: a new type to define the WEP key.
+ * @key_type: a new type to define the key.
  * 
- * Sets the type for the contained WEP key.
+ * Sets the type of the contained key.
  **/
 void
-oobs_iface_wireless_set_wep_key_type (OobsIfaceWireless *iface, OobsWirelessKeyType key_type)
+oobs_iface_wireless_set_key_type (OobsIfaceWireless   *iface,
+				  OobsWirelessKeyType  key_type)
 {
   g_return_if_fail (OOBS_IS_IFACE_WIRELESS (iface));
 
-  g_object_set (G_OBJECT (iface), "iface-wep-key-type", key_type, NULL);
+  g_object_set (G_OBJECT (iface), "key-type", key_type, NULL);
 }

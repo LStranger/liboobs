@@ -23,6 +23,9 @@
 
 G_BEGIN_DECLS
 
+#include "oobs-session.h"
+#include "oobs-object.h"
+
 #define OOBS_DBUS_DESTINATION   "org.freedesktop.SystemToolsBackends"
 #define OOBS_DBUS_PATH_PREFIX   "/org/freedesktop/SystemToolsBackends"
 #define OOBS_DBUS_METHOD_PREFIX "org.freedesktop.SystemToolsBackends"

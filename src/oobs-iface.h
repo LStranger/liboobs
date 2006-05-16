@@ -42,6 +42,7 @@ struct _OobsIface {
 struct _OobsIfaceClass {
   GObjectClass parent_class;
 
+  gboolean (*is_configured) (OobsIface*);
   gboolean (*has_gateway) (OobsIface*);
 };
 
@@ -51,16 +52,13 @@ GType oobs_iface_get_type (void);
 gboolean oobs_iface_get_auto (OobsIface *iface);
 void     oobs_iface_set_auto (OobsIface *iface, gboolean is_auto);
 
-gboolean oobs_iface_get_enabled (OobsIface *iface);
-void     oobs_iface_set_enabled (OobsIface *iface, gboolean is_enabled);
+gboolean oobs_iface_get_active (OobsIface *iface);
+void     oobs_iface_set_active (OobsIface *iface, gboolean is_active);
 
-G_CONST_RETURN gchar* oobs_iface_get_dev (OobsIface *iface);
-void         oobs_iface_set_dev (OobsIface *iface, const gchar *dev);
-
+G_CONST_RETURN gchar* oobs_iface_get_device_name (OobsIface *iface);
 G_CONST_RETURN gchar* oobs_iface_get_hwaddr (OobsIface *iface);
-void         oobs_iface_set_hwaddr (OobsIface *iface, const gchar *hwaddr);
 
-gboolean     oobs_iface_is_configured (OobsIface *iface);
+gboolean     oobs_iface_get_configured (OobsIface *iface);
 void         oobs_iface_set_configured (OobsIface *iface, gboolean is_configured);
 
 gboolean     oobs_iface_has_gateway (OobsIface *iface);

@@ -26,6 +26,7 @@ G_BEGIN_DECLS
 #include <glib-object.h>
 
 #define OOBS_TYPE_LIST         (oobs_list_get_type ())
+#define OOBS_TYPE_LIST_ITER    (oobs_list_iter_get_type ())
 #define OOBS_LIST(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_LIST, OobsList))
 #define OOBS_LIST_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c),    OOBS_TYPE_LIST, OobsListClass))
 #define OOBS_IS_LIST(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), OOBS_TYPE_LIST))

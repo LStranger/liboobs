@@ -36,7 +36,8 @@ static void oobs_iface_plip_class_init (OobsIfacePlipClass *class);
 static void oobs_iface_plip_init       (OobsIfacePlip      *iface);
 static void oobs_iface_plip_finalize   (GObject           *object);
 
-static gboolean oobs_iface_plip_has_gateway (OobsIface *iface);
+static gboolean oobs_iface_plip_has_gateway   (OobsIface *iface);
+static gboolean oobs_iface_plip_is_configured (OobsIface *iface);
 
 static void oobs_iface_plip_set_property (GObject      *object,
 					  guint         prop_id,
@@ -66,17 +67,18 @@ oobs_iface_plip_class_init (OobsIfacePlipClass *class)
   object_class->finalize     = oobs_iface_plip_finalize;
 
   iface_class->has_gateway   = oobs_iface_plip_has_gateway;
+  iface_class->is_configured = oobs_iface_plip_is_configured;
 
   g_object_class_install_property (object_class,
 				   PROP_ADDRESS,
-				   g_param_spec_string ("iface_local_address",
+				   g_param_spec_string ("address",
 							"Iface address",
 							"Address for the iface",
 							NULL,
 							G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
 				   PROP_REMOTE_ADDRESS,
-				   g_param_spec_string ("iface_remote_address",
+				   g_param_spec_string ("remote_address",
 							"Iface remote address",
 							"Remote address for the iface",
 							NULL,
@@ -171,6 +173,16 @@ oobs_iface_plip_has_gateway (OobsIface *iface)
   return TRUE;
 }
 
+static gboolean
+oobs_iface_plip_is_configured (OobsIface *iface)
+{
+  OobsIfacePlipPrivate *priv;
+
+  priv = OOBS_IFACE_PLIP_GET_PRIVATE (iface);
+
+  return (priv->address && priv->remote_address);
+}
+
 /**
  * oobs_iface_plip_get_address:
  * @iface: An #OobsIfacePlip.
@@ -206,7 +218,7 @@ oobs_iface_plip_set_address (OobsIfacePlip *iface, const gchar *address)
   g_return_if_fail (OOBS_IS_IFACE_PLIP (iface));
 
   /* FIXME: should validate IP address */
-  g_object_set (G_OBJECT (iface), "iface-local-address", address, NULL);
+  g_object_set (G_OBJECT (iface), "address", address, NULL);
 }
 
 /**
@@ -244,5 +256,5 @@ oobs_iface_plip_set_remote_address (OobsIfacePlip *iface, const gchar *address)
   g_return_if_fail (OOBS_IS_IFACE_PLIP (iface));
 
   /* FIXME: should validate IP address */
-  g_object_set (G_OBJECT (iface), "iface-remote-address", address, NULL);
+  g_object_set (G_OBJECT (iface), "remote-address", address, NULL);
 }

@@ -28,21 +28,22 @@ typedef struct _OobsIfaceEthernetPrivate OobsIfaceEthernetPrivate;
 
 struct _OobsIfaceEthernetPrivate
 {
+  OobsIfaceConfigurationMethod configuration_method;
+
   gchar *address;
   gchar *netmask;
   gchar *gateway;
 
   gchar *network;
   gchar *broadcast;
-
-  OobsIfaceConfigurationMethod configuration_method;
 };
 
 static void oobs_iface_ethernet_class_init (OobsIfaceEthernetClass *class);
 static void oobs_iface_ethernet_init       (OobsIfaceEthernet      *iface);
 static void oobs_iface_ethernet_finalize   (GObject                *object);
 
-static gboolean oobs_iface_ethernet_has_gateway (OobsIface *iface);
+static gboolean oobs_iface_ethernet_has_gateway   (OobsIface *iface);
+static gboolean oobs_iface_ethernet_is_configured (OobsIface *iface);
 
 static void oobs_iface_ethernet_set_property (GObject      *object,
 					      guint         prop_id,
@@ -63,7 +64,7 @@ enum {
   PROP_CONFIGURATION_METHOD
 };
 
-G_DEFINE_TYPE (OobsIfaceEthernet, oobs_iface_ethernet, G_TYPE_OBJECT);
+G_DEFINE_TYPE (OobsIfaceEthernet, oobs_iface_ethernet, OOBS_TYPE_IFACE);
 
 GType
 oobs_iface_configuration_method_get_type (void)
@@ -96,6 +97,7 @@ oobs_iface_ethernet_class_init (OobsIfaceEthernetClass *class)
   object_class->finalize     = oobs_iface_ethernet_finalize;
 
   iface_class->has_gateway   = oobs_iface_ethernet_has_gateway;
+  iface_class->is_configured = oobs_iface_ethernet_is_configured;
 
   g_object_class_install_property (object_class,
 				   PROP_ADDRESS,
@@ -134,7 +136,7 @@ oobs_iface_ethernet_class_init (OobsIfaceEthernetClass *class)
 							G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
 				   PROP_CONFIGURATION_METHOD,
-				   g_param_spec_enum ("configuration_method",
+				   g_param_spec_enum ("config_method",
 						      "Iface configuration method",
 						      "Network configuration method for the iface",
 						      OOBS_TYPE_IFACE_CONFIGURATION_METHOD,
@@ -262,12 +264,21 @@ oobs_iface_ethernet_has_gateway (OobsIface *iface)
 {
   OobsIfaceEthernetPrivate *priv;
 
-  g_return_val_if_fail (OOBS_IS_IFACE_ETHERNET (iface), FALSE);
-
   priv = OOBS_IFACE_ETHERNET_GET_PRIVATE (iface);
   
   return ((priv->configuration_method == OOBS_METHOD_DHCP) ||
 	  (priv->gateway));
+}
+
+static gboolean
+oobs_iface_ethernet_is_configured (OobsIface *iface)
+{
+  OobsIfaceEthernetPrivate *priv;
+
+  priv = OOBS_IFACE_ETHERNET_GET_PRIVATE (iface);
+
+  return (priv->configuration_method == OOBS_METHOD_DHCP ||
+	  (priv->address && priv->netmask));
 }
 
 /**

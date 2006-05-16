@@ -215,6 +215,12 @@ oobs_group_finalize (GObject *object)
     {
       g_free (priv->groupname);
       g_free (priv->password);
+
+      if (priv->users)
+	{
+	  g_list_foreach (priv->users, (GFunc) g_object_unref, NULL);
+	  g_list_free (priv->users);
+	}
     }
 
   if (G_OBJECT_CLASS (oobs_group_parent_class)->finalize)

@@ -30,8 +30,6 @@
 #include <oobs/oobs-smbconfig.h>
 #include <oobs/oobs-share-nfs.h>
 #include <oobs/oobs-nfsconfig.h>
-#include <oobs/oobs-shell.h>
-#include <oobs/oobs-shellsconfig.h>
 #include <oobs/oobs-user.h>
 #include <oobs/oobs-usersconfig.h>
 #include <oobs/oobs-group.h>
@@ -44,9 +42,11 @@
 #include <oobs/oobs-iface.h>
 #include <oobs/oobs-iface-ethernet.h>
 #include <oobs/oobs-iface-wireless.h>
+#include <oobs/oobs-iface-irlan.h>
 #include <oobs/oobs-iface-plip.h>
 #include <oobs/oobs-iface-isdn.h>
 #include <oobs/oobs-iface-modem.h>
+#include <oobs/oobs-ifacesconfig.h>
 #include <oobs/oobs-service.h>
 #include <oobs/oobs-servicesconfig.h>
 

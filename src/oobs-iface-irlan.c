@@ -1,5 +1,5 @@
 /* -*- Mode: C; c-file-style: "gnu"; tab-width: 8 -*- */
-/* Copyright (C) 2005 Carlos Garnacho
+/* Copyright (C) 2004-2005 Carlos Garnacho
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,20 +18,23 @@
  * Authors: Carlos Garnacho Parro  <carlosg@gnome.org>
  */
 
-#ifndef __OOBS_UTILS_H__
-#define __OOBS_UTILS_H__
+#include <glib-object.h>
+#include "oobs-iface-irlan.h"
+#include "oobs-iface-ethernet.h"
 
-G_BEGIN_DECLS
+static void oobs_iface_irlan_class_init (OobsIfaceIRLanClass *class);
+static void oobs_iface_irlan_init (OobsIfaceIRLan *iface);
 
-#include <dbus/dbus.h>
-#include <glib.h>
+G_DEFINE_TYPE (OobsIfaceIRLan, oobs_iface_irlan, OOBS_TYPE_IFACE_ETHERNET);
 
-void   utils_create_dbus_array_from_string_list (GList *list, DBusMessage *message, DBusMessageIter *iter);
-GList *utils_get_string_list_from_dbus_reply    (DBusMessage *reply, DBusMessageIter iter);
-gchar *utils_get_random_string                  (gint len);
-void   utils_append_string                      (DBusMessageIter *iter, const gchar *str);
-const gchar* utils_get_string                   (DBusMessageIter *iter);
+static void
+oobs_iface_irlan_class_init (OobsIfaceIRLanClass *class)
+{
+  /* Inherits completely from OobsIfaceEthernet */
+}
 
-G_END_DECLS
-
-#endif /* __OOBS_UTILS_H__ */
+static void
+oobs_iface_irlan_init (OobsIfaceIRLan *iface)
+{
+  /* Inherits completely from OobsIfaceEthernet */
+}

@@ -63,7 +63,7 @@ utils_get_string_list_from_dbus_reply (DBusMessage     *reply,
   return g_list_reverse (l);
 }
 
-gchar *
+gchar*
 utils_get_random_string (gint len)
 {
   gchar  alphanum[] = "abcdefghijklmnopqrstuvwxyz0AB1CD2EF3GH4IJ5KL6MN7OP8QR9ST0UVWXYZ";
@@ -86,4 +86,17 @@ utils_append_string (DBusMessageIter *iter, const gchar *str)
 
   /* allow null strings */
   dbus_message_iter_append_basic (iter, DBUS_TYPE_STRING, (str) ? &str : &empty_str); 
+}
+
+const gchar*
+utils_get_string (DBusMessageIter *iter)
+{
+  gchar *str;
+
+  dbus_message_iter_get_basic (iter, &str);
+
+  if (str && *str)
+    return str;
+
+  return NULL;
 }

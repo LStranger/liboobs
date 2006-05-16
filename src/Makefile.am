@@ -23,9 +23,11 @@ oobsinclude_HEADERS= 	\
 	oobs-ntpserver.h	\
 	oobs-hostsconfig.h	\
 	oobs-statichost.h	\
+	oobs-ifacesconfig.h	\
 	oobs-iface.h		\
 	oobs-iface-ethernet.h	\
 	oobs-iface-wireless.h	\
+	oobs-iface-irlan.h	\
 	oobs-iface-plip.h	\
 	oobs-iface-isdn.h	\
 	oobs-iface-modem.h	\
@@ -56,9 +58,11 @@ liboobs_1_la_SOURCES = \
 	oobs-iface.h		oobs-iface.c		\
 	oobs-iface-ethernet.h	oobs-iface-ethernet.c	\
 	oobs-iface-wireless.h	oobs-iface-wireless.c	\
+	oobs-iface-irlan.h	oobs-iface-irlan.c	\
 	oobs-iface-plip.h	oobs-iface-plip.c	\
 	oobs-iface-isdn.h	oobs-iface-isdn.c	\
 	oobs-iface-modem.h	oobs-iface-modem.c	\
+	oobs-ifacesconfig.h	oobs-ifacesconfig.c	\
 	oobs-service.h		oobs-service.c		\
 	oobs-servicesconfig.h	oobs-servicesconfig.c
 

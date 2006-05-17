@@ -34,6 +34,9 @@ typedef struct _OobsHostsConfigPrivate OobsHostsConfigPrivate;
 
 struct _OobsHostsConfigPrivate
 {
+  gchar *hostname;
+  gchar *domain;
+
   OobsList *static_hosts_list;
   GList *dns_list;
   GList *search_domains_list;
@@ -81,6 +84,18 @@ free_configuration (OobsHostsConfig *config)
   OobsHostsConfigPrivate *priv;
 
   priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
+
+  if (priv->hostname)
+    {
+      g_free (priv->hostname);
+      priv->hostname = NULL;
+    }
+
+  if (priv->domain)
+    {
+      g_free (priv->domain);
+      priv->domain = NULL;
+    }
 
   if (priv->static_hosts_list)
     oobs_list_clear (priv->static_hosts_list);
@@ -156,6 +171,8 @@ create_dbus_struct_from_static_host (OobsStaticHost  *host,
   dbus_message_iter_append_basic   (&struct_iter, DBUS_TYPE_STRING, &ip_address);
   utils_create_dbus_array_from_string_list (aliases, message, &struct_iter);
   dbus_message_iter_close_container (iter, &struct_iter);
+
+  g_list_free (aliases);
 }
 
 static void
@@ -189,6 +206,7 @@ oobs_hosts_config_update (OobsObject *object)
   OobsHostsConfigPrivate *priv;
   DBusMessage *reply;
   DBusMessageIter iter;
+  gchar *str;
 
   priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (object);
   reply = _oobs_object_get_dbus_message (object);
@@ -197,6 +215,15 @@ oobs_hosts_config_update (OobsObject *object)
   free_configuration (OOBS_HOSTS_CONFIG (object));
 
   dbus_message_iter_init (reply, &iter);
+
+  dbus_message_iter_get_basic (&iter, &str);
+  priv->hostname = g_strdup (str);
+  dbus_message_iter_next (&iter);
+
+  /* FIXME: use NULL with empty string? */
+  dbus_message_iter_get_basic (&iter, &str);
+  priv->domain = g_strdup (str);
+  dbus_message_iter_next (&iter);
 
   get_static_hosts_list_from_dbus_reply (object, reply, iter);
   dbus_message_iter_next (&iter);
@@ -249,7 +276,6 @@ oobs_hosts_config_commit (OobsObject *object)
 
   utils_create_dbus_array_from_string_list (priv->dns_list, message, &iter);
   utils_create_dbus_array_from_string_list (priv->search_domains_list, message, &iter);
-  _oobs_object_set_dbus_message (object, message);
 }
 
 /**
@@ -279,6 +305,64 @@ oobs_hosts_config_get (OobsSession *session)
     }
 
   return object;
+}
+
+G_CONST_RETURN gchar*
+oobs_hosts_config_get_hostname (OobsHostsConfig *config)
+{
+  OobsHostsConfigPrivate *priv;
+
+  g_return_val_if_fail (OOBS_IS_HOSTS_CONFIG (config), NULL);
+
+  priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
+
+  return priv->hostname;
+}
+
+void
+oobs_hosts_config_set_hostname (OobsHostsConfig *config,
+				const gchar     *hostname)
+{
+  OobsHostsConfigPrivate *priv;
+
+  g_return_if_fail (OOBS_IS_HOSTS_CONFIG (config));
+  g_return_if_fail (hostname && *hostname);
+
+  priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
+
+  if (priv->hostname)
+    g_free (priv->hostname);
+
+  priv->hostname = g_strdup (hostname);
+}
+
+G_CONST_RETURN gchar*
+oobs_hosts_config_get_domainname (OobsHostsConfig *config)
+{
+  OobsHostsConfigPrivate *priv;
+
+  g_return_val_if_fail (OOBS_IS_HOSTS_CONFIG (config), NULL);
+
+  priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
+
+  return priv->domain;
+}
+
+void
+oobs_hosts_config_set_domainname (OobsHostsConfig *config,
+				  const gchar     *domainname)
+{
+  OobsHostsConfigPrivate *priv;
+
+  g_return_if_fail (OOBS_IS_HOSTS_CONFIG (config));
+  g_return_if_fail (domainname && *domainname);
+
+  priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
+
+  if (priv->domain)
+    g_free (priv->domain);
+
+  priv->domain = g_strdup (domainname);
 }
 
 /**

@@ -23,6 +23,9 @@
 
 G_BEGIN_DECLS
 
+#include "oobs-servicesconfig.h"
+
+
 #define OOBS_TYPE_SERVICE         (oobs_service_get_type())
 #define OOBS_SERVICE(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_SERVICE, OobsService))
 #define OOBS_SERVICE_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c),    OOBS_TYPE_SERVICE, OobsServiceClass))
@@ -30,9 +33,16 @@ G_BEGIN_DECLS
 #define OOBS_IS_SERVICE_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c),    OOBS_TYPE_SERVICE))
 #define OOBS_SERVICE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o),  OOBS_TYPE_SERVICE, OobsServiceClass))
 
-typedef struct _OobsService        OobsService;
-typedef struct _OobsServiceClass   OobsServiceClass;
-	
+typedef struct _OobsService      OobsService;
+typedef struct _OobsServiceClass OobsServiceClass;
+
+typedef enum
+{
+  OOBS_SERVICE_START,
+  OOBS_SERVICE_STOP,
+  OOBS_SERVICE_IGNORE
+} OobsServiceStatus;
+
 struct _OobsService {
   GObject parent;
 };
@@ -43,7 +53,16 @@ struct _OobsServiceClass {
 
 GType oobs_service_get_type (void);
 
-OobsService* oobs_service_new (const gchar *name, const gchar *role);
+void oobs_service_set_runlevel_configuration     (OobsService          *service,
+						  OobsServicesRunlevel *runlevel,
+						  OobsServiceStatus     status,
+						  gint                  priority);
+gboolean oobs_service_get_runlevel_configuration (OobsService          *service,
+						  OobsServicesRunlevel *runlevel,
+						  OobsServiceStatus    *status,
+						  gint                 *priority);
+G_CONST_RETURN gchar* oobs_service_get_name      (OobsService *service);
+G_CONST_RETURN gchar* oobs_service_get_role      (OobsService *service);
 
 
 G_END_DECLS

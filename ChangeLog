@@ -1,3 +1,54 @@
+2006-05-16  Carlos Garnacho  <carlosg@gnome.org>
+
+	* oobs-nfsconfig.c, oobs-ntpconfig.c: remove unnecessary call to
+	_oobs_object_set_dbus_message(), the object already has a pointer to
+	the message
+	* oobs-object.[ch]: removed "changing" signal, default "changed" to do 
+	nothing, if it's necessary, the ::changed handler may call 
+	oobs_object_update () on its own.
+	(_oobs_object_get_dbus_message) (_oobs_object_set_dbus_message),
+	(oobs_object_commit), (oobs_object_commit_async),
+	(oobs_object_update_async): implemented.
+	* oobs-service.[ch]: added support for getting/setting runlevel states
+	and priorities, add getters/setters
+	* oobs-servicesconfig.[ch]: plug some leaks. make it able to get/set
+	all the configuration from/to DBus.
+	* oobs-session.[ch]: add support for telling the backend which
+	platform it's running on, as well as getting the list of supported 
+	platforms. Use system bus. Also remove "commit-on-exit" property, it 
+	was a somewhat silly concept.
+	* oobs-share-smb.c (oobs_share_smb_new): add some path validation
+	* oobs-smbconfig.c: add support for getting/setting global SMB
+	configuration, plus hability to commit configuration
+	* oobs-timeconfig.c: fix a crash
+	* oobs-user.c: unref main group on finalize
+	* oobs-usersconfig.c: plug some leaks, add a guard for not committing
+	malformed data
+
+2006-05-15  Carlos Garnacho  <carlosg@gnome.org>
+
+	* src/oobs-iface-irlan.[ch], oobs-ifacesconfig.[ch]: added files
+	* src/Makefile.am: reflect this
+	* src/oobs.h: include missing headers
+	* src/utils.[ch] (utils_append_string): new helper function, appends a
+	possibly NULL string to a DBus message
+	* oobs-groupsconfig.c: plug a leak.
+	* oobs-group.c: unref the users
+	* oobs-hostsconfig.c: add support for hostname/domain, plug a leak
+	* oobs-iface-ethernet.c, oobs-iface-wireless.c, oobs-iface-plip.c: 
+	implement (* is_configured), a couple of doc fixes
+	* oobs-iface-ethernet.h: set right parent object
+	* oobs-iface-isdn.[ch], oobs-iface-modem.[ch]:
+	pack booleans in struct, set right parent
+	object, make property names shorter, implement (* is_configured), 
+	add missing getter and setter functions.
+	* oobs-iface.[ch]: mark "dev" and "hardware-address" as CONSTRUCT_ONLY,
+	add support for explicitly unconfigured interfaces. s/enabled/active/g
+	* oobs-list-private.h, oobs-object-private.h, oobs-session-private.h: 
+	add missing #includes
+	* oobs-list.[ch]: OobsListIter is now a boxed type
+	
+
 2006-03-17  Carlos Garnacho Parro  <carlosg@gnome.org>
 
 	* oobs-group.c, oobs-user.c: do not free an static variable

@@ -23,11 +23,18 @@
 
 #define OOBS_SERVICE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_SERVICE, OobsServicePrivate))
 
-typedef struct _OobsServicePrivate OobsServicePrivate;
+typedef struct _OobsServicePrivate  OobsServicePrivate;
+typedef struct _OobsServiceRunlevel OobsServiceRunlevel;
 
+struct _OobsServiceRunlevel {
+  guint status;
+  guint priority;
+};
+	
 struct _OobsServicePrivate {
   gchar *name;
   gchar *role;
+  GHashTable *runlevels_config;
 };
 
 static void oobs_service_class_init (OobsServiceClass *class);
@@ -89,6 +96,8 @@ oobs_service_init (OobsService *service)
 
   priv->name = NULL;
   priv->role = NULL;
+  priv->runlevels_config = g_hash_table_new_full (NULL, NULL, NULL,
+						  (GDestroyNotify) g_free);
 }
 
 static void
@@ -146,17 +155,88 @@ oobs_service_finalize (GObject *object)
     {
       g_free (priv->name);
       g_free (priv->role);
+
+      g_hash_table_unref (priv->runlevels_config);
     }
-  
+
   if (G_OBJECT_CLASS (oobs_service_parent_class)->finalize)
     (* G_OBJECT_CLASS (oobs_service_parent_class)->finalize) (object);
 }
 
-OobsService*
-oobs_service_new (const gchar *name, const gchar *role)
+G_CONST_RETURN gchar*
+oobs_service_get_name (OobsService *service)
 {
-  return g_object_new (OOBS_TYPE_SERVICE,
-		       "name", name,
-		       "role", role,
-		       NULL);
+  OobsServicePrivate *priv;
+
+  g_return_val_if_fail (OOBS_IS_SERVICE (service), NULL);
+
+  priv = OOBS_SERVICE_GET_PRIVATE (service);
+  return priv->name;
+}
+
+G_CONST_RETURN gchar*
+oobs_service_get_role (OobsService *service)
+{
+  OobsServicePrivate *priv;
+
+  g_return_val_if_fail (OOBS_IS_SERVICE (service), NULL);
+
+  priv = OOBS_SERVICE_GET_PRIVATE (service);
+  return priv->role;
+}
+
+void
+oobs_service_set_runlevel_configuration (OobsService          *service,
+					 OobsServicesRunlevel *runlevel,
+					 OobsServiceStatus     status,
+					 gint                  priority)
+{
+  OobsServicePrivate *priv;
+  OobsServiceRunlevel *service_runlevel;
+
+  g_return_if_fail (OOBS_IS_SERVICE (service));
+  g_return_if_fail (runlevel != NULL);
+  g_return_if_fail (priority >= 0 && priority <= 99);
+
+  priv = OOBS_SERVICE_GET_PRIVATE (service);
+
+  if (status == OOBS_SERVICE_IGNORE)
+    g_hash_table_remove (priv->runlevels_config, runlevel);
+  else
+    {
+      service_runlevel = g_hash_table_lookup (priv->runlevels_config, runlevel);
+
+      if (!service_runlevel)
+	{
+	  service_runlevel = g_new0 (OobsServiceRunlevel, 1);
+	  g_hash_table_insert (priv->runlevels_config,
+			       runlevel, service_runlevel);
+	}
+
+      service_runlevel->status = status;
+      service_runlevel->priority = priority;
+    }
+}
+
+gboolean
+oobs_service_get_runlevel_configuration (OobsService          *service,
+					 OobsServicesRunlevel *runlevel,
+					 OobsServiceStatus    *status,
+					 gint                 *priority)
+{
+  OobsServicePrivate *priv;
+  OobsServiceRunlevel *service_runlevel;
+
+  g_return_val_if_fail (OOBS_IS_SERVICE (service), FALSE);
+  g_return_val_if_fail (runlevel != NULL, FALSE);
+
+  priv = OOBS_SERVICE_GET_PRIVATE (service);
+
+  service_runlevel = g_hash_table_lookup (priv->runlevels_config, runlevel);
+
+  if (status)
+    *status = (service_runlevel) ? service_runlevel->status : OOBS_SERVICE_IGNORE;
+
+  if (priority)
+    *priority = (service_runlevel) ? service_runlevel->priority : -1;
 }

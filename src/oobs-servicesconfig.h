@@ -36,6 +36,21 @@ G_BEGIN_DECLS
 
 typedef struct _OobsServicesConfig      OobsServicesConfig;
 typedef struct _OobsServicesConfigClass OobsServicesConfigClass;
+typedef struct _OobsServicesRunlevel    OobsServicesRunlevel;
+
+typedef enum
+{
+  OOBS_RUNLEVEL_HALT,
+  OOBS_RUNLEVEL_REBOOT,
+  OOBS_RUNLEVEL_MONOUSER,
+  OOBS_RUNLEVEL_MULTIUSER
+} OobsRunlevelRole;
+
+struct _OobsServicesRunlevel
+{
+  gchar *name;
+  guint role;
+};
 
 struct _OobsServicesConfig
 {
@@ -47,10 +62,13 @@ struct _OobsServicesConfigClass
   OobsObjectClass parent_class;
 };
 
-GType       oobs_services_config_get_type     (void);
+GType       oobs_services_config_get_type      (void);
 
-OobsObject* oobs_services_config_get          (OobsSession *session);
-OobsList*   oobs_services_config_get_services (OobsServicesConfig *config);
+OobsObject* oobs_services_config_get           (OobsSession *session);
+OobsList*   oobs_services_config_get_services  (OobsServicesConfig *config);
+
+GList*      oobs_services_config_get_runlevels (OobsServicesConfig *config);
+G_CONST_RETURN OobsServicesRunlevel* oobs_services_config_get_default_runlevel (OobsServicesConfig *config);
 
 
 G_END_DECLS

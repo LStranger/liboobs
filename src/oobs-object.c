@@ -21,12 +21,14 @@
 #include <dbus/dbus.h>
 #include <glib-object.h>
 #include "oobs-object.h"
+#include "oobs-object-private.h"
 #include "oobs-session.h"
 #include "oobs-session-private.h"
 
 #define OOBS_OBJECT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_OBJECT, OobsObjectPrivate))
 
 typedef struct _OobsObjectPrivate OobsObjectPrivate;
+typedef struct _OobsObjectAsyncCallbackData OobsObjectAsyncCallbackData;
 
 struct _OobsObjectPrivate
 {
@@ -38,21 +40,28 @@ struct _OobsObjectPrivate
   gchar       *method;
 };
 
+struct _OobsObjectAsyncCallbackData
+{
+  GObject *object;
+  gboolean update;
+  OobsObjectAsyncFunc func;
+  gpointer data;
+};
+
 static void oobs_object_class_init (OobsObjectClass *class);
 static void oobs_object_init       (OobsObject      *object);
-static void oobs_object_finalize   (GObject        *object);
+static void oobs_object_finalize   (GObject         *object);
 
-static void oobs_object_set_property (GObject      *object,
-				      guint         prop_id,
-				      const GValue *value,
-				      GParamSpec   *pspec);
-static void oobs_object_get_property (GObject      *object,
-				      guint         prop_id,
-				      GValue       *value,
-				      GParamSpec   *pspec);
+static void oobs_object_set_property (GObject       *object,
+				      guint          prop_id,
+				      const GValue  *value,
+				      GParamSpec    *pspec);
+static void oobs_object_get_property (GObject       *object,
+				      guint          prop_id,
+				      GValue        *value,
+				      GParamSpec    *pspec);
 enum
 {
-  CHANGING,
   CHANGED,
   LAST_SIGNAL
 };
@@ -81,7 +90,6 @@ oobs_object_class_init (OobsObjectClass *class)
 
   class->commit   = NULL;
   class->update   = NULL;
-  class->changing = oobs_object_update;
   class->changed  = NULL;
 
   dbus_connection_quark = g_quark_from_static_string ("oobs-dbus-connection");
@@ -101,13 +109,6 @@ oobs_object_class_init (OobsObjectClass *class)
 							NULL,
 							G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
 
-  object_signals [CHANGING] = g_signal_new ("changing",
-					    G_OBJECT_CLASS_TYPE (object_class),
-					    G_SIGNAL_RUN_LAST,
-					    G_STRUCT_OFFSET (OobsObjectClass, changing),
-					    NULL, NULL,
-					    g_cclosure_marshal_VOID__VOID,
-					    G_TYPE_NONE, 0);
   object_signals [CHANGED] = g_signal_new ("changed",
 					   G_OBJECT_CLASS_TYPE (object_class),
 					   G_SIGNAL_RUN_LAST,
@@ -170,7 +171,7 @@ changed_signal_filter (DBusConnection *connection,
   priv   = OOBS_OBJECT_GET_PRIVATE (object);
 
   if (dbus_message_is_signal (message, priv->method, "changed"))
-    g_signal_emit (object, object_signals [CHANGING], 0);
+    g_signal_emit (object, object_signals [CHANGED], 0);
 
   /* we want the rest of the objects of
    * the same type to get the signal too
@@ -200,7 +201,7 @@ connect_object_to_session (OobsObject *object)
       g_critical ("There was an error adding the match function: %s", priv->dbus_error.message);
       dbus_error_free (&priv->dbus_error);
     }
-    
+
   g_free (rule);
 }
 
@@ -259,6 +260,40 @@ oobs_object_get_property (GObject      *object,
     }
 }
 
+DBusMessage*
+_oobs_object_get_dbus_message (OobsObject *object)
+{
+  return (DBusMessage *) g_object_get_qdata (G_OBJECT (object), dbus_connection_quark);
+}
+
+void
+_oobs_object_set_dbus_message (OobsObject *object, DBusMessage *message)
+{
+  g_object_set_qdata_full (G_OBJECT (object), dbus_connection_quark,
+			   message, (GDestroyNotify) dbus_message_unref);
+}
+
+static OobsObjectResult
+update_object_from_message (OobsObject  *object,
+			    DBusMessage *message)
+{
+  OobsObjectClass *class;
+
+  class = OOBS_OBJECT_GET_CLASS (object);
+
+  if (!class->update)
+    {
+      g_critical ("There is no update() implementation for this object");
+      return OOBS_OBJECT_RESULT_MALFORMED;
+    }
+
+  g_object_set_qdata (G_OBJECT (object), dbus_connection_quark, message);
+  class->update (object);
+  g_object_steal_qdata (G_OBJECT (object), dbus_connection_quark);
+
+  return OOBS_OBJECT_RESULT_OK;
+}
+
 static DBusMessage*
 run_message (OobsObject *object, DBusMessage *message)
 {
@@ -283,38 +318,90 @@ run_message (OobsObject *object, DBusMessage *message)
   return reply;
 }
 
-/**
- * oobs_object_commit:
- * @object: an #OobsObject
- * 
- * Commits to the system all the changes done
- * to the configuration held by an #OobsObject.
- **/
-void
-oobs_object_commit (OobsObject *object)
+static void
+async_message_cb (DBusPendingCall *pending_call, gpointer data)
+{
+  OobsObjectAsyncCallbackData *async_data;
+  OobsObjectResult result = OOBS_OBJECT_RESULT_MALFORMED;
+  DBusMessage *reply;
+  DBusError error;
+
+  dbus_error_init (&error);
+  async_data = (OobsObjectAsyncCallbackData*) data;
+  reply = dbus_pending_call_steal_reply (pending_call);
+
+  if (dbus_set_error_from_message (&error, reply))
+    {
+      /* FIXME: process error */
+      result = OOBS_OBJECT_RESULT_MALFORMED;
+    }
+  else
+    {
+      if (async_data->update)
+	result = update_object_from_message (OOBS_OBJECT (async_data->object), reply);
+      else
+	result = OOBS_OBJECT_RESULT_OK;
+    }
+
+  if (async_data->func)
+    (* async_data->func) (OOBS_OBJECT (async_data->object), result, async_data->data);
+
+  dbus_message_unref (reply);
+  g_object_unref (async_data->object);
+}
+
+static void
+run_message_async (OobsObject          *object,
+		   DBusMessage         *message,
+		   gboolean             update,
+		   OobsObjectAsyncFunc  func,
+		   gpointer             data)
+{
+  OobsObjectPrivate *priv;
+  DBusPendingCall *call;
+  OobsObjectAsyncCallbackData *async_data;
+  DBusConnection *connection;
+
+  priv = OOBS_OBJECT_GET_PRIVATE (object);
+  connection = _oobs_session_get_connection_bus (priv->session);
+  dbus_connection_send_with_reply (connection, message, &call, -1);
+
+  async_data = g_new0 (OobsObjectAsyncCallbackData, 1);
+  async_data->object = g_object_ref (G_OBJECT (object));
+  async_data->update = update;
+  async_data->func = func;
+  async_data->data = data;
+
+  dbus_pending_call_set_notify (call, async_message_cb, async_data, g_free);
+}
+
+static DBusMessage*
+get_commit_message (OobsObject *object)
 {
   OobsObjectClass   *class;
   OobsObjectPrivate *priv;
   DBusMessage       *message;
 
-  g_return_if_fail (OOBS_IS_OBJECT (object));
-  priv  = OOBS_OBJECT_GET_PRIVATE  (object);
-  class = OOBS_OBJECT_GET_CLASS    (object);
+  priv  = OOBS_OBJECT_GET_PRIVATE (object);
+  class = OOBS_OBJECT_GET_CLASS (object);
 
   if (!priv->session)
     {
       g_critical ("Trying to commit changes after the session has terminated, "
 		  "this reflects a bug in the application");
-      return;
+      return NULL;
     }
 
   if (!class->commit)
-    return;
+    {
+      g_critical ("There is no commit() implementation for this object");
+      return NULL;
+    }
 
   message = dbus_message_new_method_call (OOBS_DBUS_DESTINATION, priv->path, priv->method, "set");
 
   /* Let the commit() implementation fill the message */
-  g_object_set_qdata (G_OBJECT (object), dbus_connection_quark, message);
+  _oobs_object_set_dbus_message (object, message);
   class->commit (object);
   message = g_object_steal_qdata (G_OBJECT (object), dbus_connection_quark);
 
@@ -324,11 +411,71 @@ oobs_object_commit (OobsObject *object)
       g_critical ("Not committing due to inconsistencies in the "
 		  "configuration, this reflects a bug in the application\n");
     }
-  else
+
+  return message;
+}
+
+static DBusMessage*
+get_update_message (OobsObject *object)
+{
+  OobsObjectPrivate *priv;
+
+  priv = OOBS_OBJECT_GET_PRIVATE (object);
+
+  if (!priv->session)
     {
-      run_message (object, message);
-      dbus_message_unref (message);
+      g_critical ("Trying to update the object after the session has terminated, "
+		  "this reflects a bug in the application");
+      return NULL;
     }
+
+  return dbus_message_new_method_call (OOBS_DBUS_DESTINATION, priv->path, priv->method, "get");
+}
+
+/**
+ * oobs_object_commit:
+ * @object: an #OobsObject
+ * 
+ * Commits to the system all the changes done
+ * to the configuration held by an #OobsObject.
+ **/
+OobsObjectResult
+oobs_object_commit (OobsObject *object)
+{
+  DBusMessage *message;
+
+  g_return_val_if_fail (OOBS_IS_OBJECT (object), OOBS_OBJECT_RESULT_MALFORMED);
+
+  message = get_commit_message (object);
+
+  if (!message)
+    return OOBS_OBJECT_RESULT_MALFORMED;
+
+  run_message (object, message);
+  dbus_message_unref (message);
+
+  /* FIXME */
+  return OOBS_OBJECT_RESULT_OK;
+}
+
+OobsObjectResult
+oobs_object_commit_async (OobsObject          *object,
+			  OobsObjectAsyncFunc  func,
+			  gpointer             data)
+{
+  DBusMessage *message;
+
+  g_return_val_if_fail (OOBS_IS_OBJECT (object), OOBS_OBJECT_RESULT_MALFORMED);
+
+  message = get_commit_message (object);
+
+  if (!message)
+    return OOBS_OBJECT_RESULT_MALFORMED;
+
+  run_message_async (object, message, FALSE, func, data);
+  dbus_message_unref (message);
+
+  return OOBS_OBJECT_RESULT_OK;
 }
 
 /**
@@ -339,52 +486,45 @@ oobs_object_commit (OobsObject *object)
  * with the actual system configuration. All the changes done
  * to the configuration held by the #OobsObject will be forgotten.
  **/
-void
+OobsObjectResult
 oobs_object_update (OobsObject *object)
 {
-  OobsObjectClass   *class;
-  OobsObjectPrivate *priv;
-  DBusMessage       *message, *reply;
+  DBusMessage *message, *reply;
+  OobsObjectResult result = OOBS_OBJECT_RESULT_MALFORMED;
 
-  g_return_if_fail (OOBS_IS_OBJECT (object));
-  priv = OOBS_OBJECT_GET_PRIVATE   (object);
-  class = OOBS_OBJECT_GET_CLASS    (object);
+  g_return_val_if_fail (OOBS_IS_OBJECT (object), OOBS_OBJECT_RESULT_MALFORMED);
 
-  if (!priv->session)
-    {
-      g_critical ("Trying to update the object after the session has terminated, "
-		  "this reflects a bug in the application");
-      return;
-    }
+  message = get_update_message (object);
 
-  if (!class->update)
-    return;
+  if (!message)
+    return OOBS_OBJECT_RESULT_MALFORMED;
 
-  message = dbus_message_new_method_call (OOBS_DBUS_DESTINATION, priv->path, priv->method, "get");
-  reply   = run_message (object, message);
+  reply = run_message (object, message);
 
   if (reply)
     {
-      g_object_set_qdata (G_OBJECT (object), dbus_connection_quark, reply);
-      class->update (object);
-      g_signal_emit (object, object_signals [CHANGED], 0);
-
-      /* free the reply */
-      reply = g_object_steal_qdata (G_OBJECT (object), dbus_connection_quark);
+      result = update_object_from_message (object, reply);
       dbus_message_unref (reply);
     }
-
+      
   dbus_message_unref (message);
+  return result;
 }
 
-DBusMessage*
-_oobs_object_get_dbus_message (OobsObject *object)
+OobsObjectResult
+oobs_object_update_async (OobsObject          *object,
+			  OobsObjectAsyncFunc  func,
+			  gpointer             data)
 {
-  return (DBusMessage *) g_object_get_qdata (G_OBJECT (object), dbus_connection_quark);
-}
+  DBusMessage *message;
 
-void
-_oobs_object_set_dbus_message (OobsObject *object, DBusMessage *message)
-{
-  g_object_set_qdata (G_OBJECT (object), dbus_connection_quark, message);
+  message = get_update_message (object);
+
+  if (!message)
+    return OOBS_OBJECT_RESULT_MALFORMED;
+
+  run_message_async (object, message, TRUE, func, data);
+  dbus_message_unref (message);
+
+  return OOBS_OBJECT_RESULT_OK;
 }

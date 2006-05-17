@@ -246,8 +246,7 @@ oobs_time_config_commit (OobsObject *object)
   dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &minute);
   dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &second);
 
-  dbus_message_iter_append_basic (&iter, DBUS_TYPE_STRING, &priv->timezone);
-  _oobs_object_set_dbus_message (object, message);
+  utils_append_string (&iter, priv->timezone);
 
   /* we've just synchronized with the system
    * date, so we don't need this anymore

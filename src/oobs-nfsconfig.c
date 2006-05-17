@@ -234,7 +234,6 @@ oobs_nfs_config_commit (OobsObject *object)
     }
 
   dbus_message_iter_close_container (&iter, &array_iter);
-  _oobs_object_set_dbus_message (object, message);
 }
 
 /**

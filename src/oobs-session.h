@@ -32,6 +32,15 @@ G_BEGIN_DECLS
 #define OOBS_IS_SESSION_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((o),    OOBS_TYPE_SESSION))
 #define OOBS_SESSION_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o),  OOBS_TYPE_SESSION, OobsSessionClass))
 
+typedef struct _OobsPlatform OobsPlatform;
+struct _OobsPlatform
+{
+  const gchar *id;
+  const gchar *name;
+  const gchar *version;
+  const gchar *codename;
+};
+
 typedef struct _OobsSession      OobsSession;
 typedef struct _OobsSessionClass OobsSessionClass;
 
@@ -49,6 +58,12 @@ GType        oobs_session_get_type (void);
 
 OobsSession *oobs_session_get      (void);
 void         oobs_session_commit   (OobsSession *session);
+
+GList*       oobs_session_get_supported_platforms (OobsSession *session);
+
+G_CONST_RETURN gchar *oobs_session_get_platform (OobsSession *session);
+void                  oobs_session_set_platform (OobsSession *session,
+						 const gchar *platform);
 
 void         oobs_session_set_autocommit_on_exit (OobsSession *session, gboolean do_commit);
 gboolean     oobs_session_get_autocommit_on_exit (OobsSession *session);

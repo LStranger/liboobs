@@ -350,6 +350,9 @@ oobs_user_finalize (GObject *object)
       g_free (priv->work_phone_no);
       g_free (priv->home_phone_no);
       g_free (priv->other_data);
+
+      if (priv->main_group)
+	g_object_unref (priv->main_group);
     }
 
   if (G_OBJECT_CLASS (oobs_user_parent_class)->finalize)

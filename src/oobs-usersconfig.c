@@ -154,6 +154,13 @@ free_configuration (OobsUsersConfig *config)
   oobs_list_clear (priv->users_list);
   g_free (priv->default_shell);
   g_free (priv->default_home);
+
+  if (priv->shells)
+    {
+      g_list_foreach (priv->shells, (GFunc) g_free, NULL);
+      g_list_free (priv->shells);
+      priv->shells = NULL;
+    }
 }
 
 static void
@@ -321,8 +328,8 @@ create_dbus_struct_from_user (OobsUser        *user,
 {
   OobsGroup *group;
   gint uid, gid;
-  const gchar *login, *password, *shell, *homedir;
-  const gchar *name, *room_number, *work_phone, *home_phone, *other_data;
+  gchar *login, *password, *shell, *homedir;
+  gchar *name, *room_number, *work_phone, *home_phone, *other_data;
   DBusMessageIter struct_iter, data_iter;
 
   g_object_get (user,
@@ -358,12 +365,22 @@ create_dbus_struct_from_user (OobsUser        *user,
   utils_append_string (&data_iter, work_phone);
   utils_append_string (&data_iter, home_phone);
   utils_append_string (&data_iter, other_data);
-  
+
   dbus_message_iter_close_container (&struct_iter, &data_iter);
 
   utils_append_string (&struct_iter, homedir);
   utils_append_string (&struct_iter, shell);
   dbus_message_iter_close_container (array_iter, &struct_iter);
+
+  g_free (login);
+  g_free (password);
+  g_free (shell);
+  g_free (homedir);
+  g_free (name);
+  g_free (room_number);
+  g_free (work_phone);
+  g_free (home_phone);
+  g_free (other_data);
 
   return TRUE;
 }
@@ -411,6 +428,7 @@ query_groups (OobsUsersConfig *users_config,
 
   groups_config = oobs_groups_config_get (session);
   g_hash_table_foreach (hashtable, (GHFunc) query_groups_foreach, groups_config);
+  g_object_unref (session);
 }
 
 static void
@@ -523,7 +541,11 @@ oobs_users_config_commit (OobsObject *object)
   dbus_message_iter_append_basic (&iter, DBUS_TYPE_STRING, &priv->default_home);
   dbus_message_iter_append_basic (&iter, DBUS_TYPE_STRING, &priv->default_shell);
 
-  _oobs_object_set_dbus_message (object, (correct) ? message : NULL);
+  if (!correct)
+    {
+      /* malformed data, unset the message */
+      _oobs_object_set_dbus_message (object, NULL);
+    }
 }
 
 OobsObject*

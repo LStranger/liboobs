@@ -23,7 +23,8 @@
 
 G_BEGIN_DECLS
 
-#include "oobs-object.h"
+#include <glib-object.h>
+#include "oobs-iface.h"
 
 typedef enum {
   OOBS_METHOD_NONE,
@@ -44,11 +45,11 @@ typedef struct _OobsIfaceEthernet        OobsIfaceEthernet;
 typedef struct _OobsIfaceEthernetClass   OobsIfaceEthernetClass;
 	
 struct _OobsIfaceEthernet {
-  GObject parent;
+  OobsIface parent;
 };
 
 struct _OobsIfaceEthernetClass {
-  GObjectClass parent_class;
+  OobsIfaceClass parent_class;
 };
 
 GType oobs_iface_configuration_method_get_type (void);
@@ -74,6 +75,5 @@ void  oobs_iface_ethernet_set_configuration_method (OobsIfaceEthernet *iface, Oo
 
 
 G_END_DECLS
-
 
 #endif /* __OOBS_IFACE_ETHERNET_H__ */

@@ -58,4 +58,4 @@ GList*      oobs_hosts_config_get_search_domains (OobsHostsConfig *config);
 
 G_END_DECLS
 
-#endif /* __OOBS_HOSTS_LIST_H */
+#endif /* __OOBS_HOSTS_CONFIG_H */

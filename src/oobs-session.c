@@ -24,9 +24,13 @@
 #include <glib-object.h>
 #include <glib.h>
 #include "oobs-session.h"
+#include "oobs-session-private.h"
 #include "oobs-object.h"
+#include "utils.h"
 
 #define OOBS_SESSION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_SESSION, OobsSessionPrivate))
+#define PLATFORMS_PATH OOBS_DBUS_PATH_PREFIX "/Platform"
+#define PLATFORMS_INTERFACE OOBS_DBUS_METHOD_PREFIX ".Platform"
 
 typedef struct _OobsSessionPrivate OobsSessionPrivate;
 
@@ -37,6 +41,9 @@ struct _OobsSessionPrivate
   GList    *session_objects;
   gboolean  is_authenticated;
   gboolean  commit_on_exit;
+
+  gchar    *platform;
+  GList    *supported_platforms;
 };
 
 static void oobs_session_class_init (OobsSessionClass *class);
@@ -54,7 +61,7 @@ static void oobs_session_get_property (GObject      *object,
 enum
 {
   PROP_0,
-  PROP_COMMIT_ON_EXIT
+  PROP_PLATFORM
 };
 
 G_DEFINE_TYPE (OobsSession, oobs_session, G_TYPE_OBJECT);
@@ -69,12 +76,12 @@ oobs_session_class_init (OobsSessionClass *class)
   object_class->finalize     = oobs_session_finalize;
 
   g_object_class_install_property (object_class,
-				   PROP_COMMIT_ON_EXIT,
-				   g_param_spec_boolean ("commit-on-exit",
-							 "Commit on exit",
-							 "Tells whether the session should commit all the children objects on finalize",
-							 FALSE,
-							 G_PARAM_READWRITE));
+				   PROP_PLATFORM,
+				   g_param_spec_string ("platform",
+							"Platform",
+							"Name of the platform the session is running on",
+							NULL,
+							G_PARAM_READWRITE));
   g_type_class_add_private (object_class,
 			    sizeof (OobsSessionPrivate));
 }
@@ -83,15 +90,15 @@ static void
 oobs_session_init (OobsSession *session)
 {
   OobsSessionPrivate *priv;
-  DBusError          error;
+  DBusError error;
 
   g_return_if_fail (OOBS_IS_SESSION (session));
   priv = OOBS_SESSION_GET_PRIVATE (session);
 
   dbus_error_init (&error);
-  priv->connection = dbus_bus_get (DBUS_BUS_SESSION, &error);
+  priv->connection = dbus_bus_get (DBUS_BUS_SYSTEM, &error);
 
-  if (!priv->connection)
+  if (dbus_error_is_set (&error))
     {
       g_critical (error.message);
       g_assert_not_reached ();
@@ -145,7 +152,7 @@ oobs_session_finalize (GObject *object)
 
       dbus_connection_disconnect (priv->connection);
       dbus_connection_close (priv->connection);
-      /* dbus_connection_unref (priv->connection); */
+      dbus_connection_unref (priv->connection);
     }
 
   if (G_OBJECT_CLASS (oobs_session_parent_class)->finalize)
@@ -158,18 +165,18 @@ oobs_session_set_property (GObject      *object,
 			   const GValue *value,
 			   GParamSpec   *pspec)
 {
-  OobsSession *obj;
+  OobsSession *session;
   OobsSessionPrivate *priv;
 
   g_return_if_fail (OOBS_IS_SESSION (object));
 
-  obj  = OOBS_SESSION (object);
-  priv = OOBS_SESSION_GET_PRIVATE (obj);
+  session = OOBS_SESSION (object);
+  priv = OOBS_SESSION_GET_PRIVATE (session);
 
   switch (prop_id)
     {
-    case PROP_COMMIT_ON_EXIT:
-      priv->commit_on_exit = g_value_get_boolean (value);
+    case PROP_PLATFORM:
+      oobs_session_set_platform (session, g_value_get_string (value));
       break;
     }
 }
@@ -180,18 +187,16 @@ oobs_session_get_property (GObject      *object,
 			   GValue       *value,
 			   GParamSpec   *pspec)
 {
-  OobsSession *obj;
   OobsSessionPrivate *priv;
 
   g_return_if_fail (OOBS_IS_SESSION (object));
 
-  obj  = OOBS_SESSION (object);
-  priv = OOBS_SESSION_GET_PRIVATE (obj);
+  priv = OOBS_SESSION_GET_PRIVATE (object);
 
   switch (prop_id)
     {
-    case PROP_COMMIT_ON_EXIT:
-      g_value_set_boolean (value, priv->commit_on_exit);
+    case PROP_PLATFORM:
+      g_value_set_string (value, priv->platform);
       break;
     }
 }
@@ -213,50 +218,6 @@ oobs_session_get (void)
     session = g_object_new (OOBS_TYPE_SESSION, NULL);
 
   return session;
-}
-
-/**
- * oobs_session_set_autocommit_on_exit:
- * @session: an #OobsSession
- * @commit: #TRUE to make the session commit all
- *          changes when the session is being destroyed
- * 
- * When set to #TRUE, it tells the #OobsSession
- * object to save all changes before being destroyed
- **/
-void
-oobs_session_set_autocommit_on_exit (OobsSession *session, gboolean commit)
-{
-  OobsSessionPrivate *priv;
-
-  g_return_if_fail (session != NULL);
-  g_return_if_fail (OOBS_IS_SESSION (session));
-
-  priv = OOBS_SESSION_GET_PRIVATE (session);
-  priv->commit_on_exit = commit;
-  g_object_notify (G_OBJECT (session), "commit-on-exit");
-}
-
-/**
- * oobs_session_get_autocommit_on_exit:
- * @session: an #OobsSession
- * 
- * Returns whether the #OobsSession object is going to save all configuration
- * when it's being destroyed
- * 
- * Return Value: #TRUE if the #OobsSession object is going to commit the
- *               configuration before being destroyed
- **/
-gboolean
-oobs_session_get_autocommit_on_exit (OobsSession *session)
-{
-  OobsSessionPrivate *priv;
-
-  g_return_val_if_fail (session != NULL, FALSE);
-  g_return_val_if_fail (OOBS_IS_SESSION (session), FALSE);
-
-  priv = OOBS_SESSION_GET_PRIVATE (session);
-  return priv->commit_on_exit;
 }
 
 /**
@@ -286,6 +247,128 @@ oobs_session_commit (OobsSession *session)
 
       node = node->next;
     }
+}
+
+G_CONST_RETURN gchar*
+oobs_session_get_platform (OobsSession *session)
+{
+  OobsSessionPrivate *priv;
+  DBusMessage *message, *reply;
+  DBusMessageIter iter;
+  const gchar *platform;
+
+  g_return_val_if_fail (OOBS_IS_SESSION (session), NULL);
+
+  priv = OOBS_SESSION_GET_PRIVATE (session);
+  message = dbus_message_new_method_call (OOBS_DBUS_DESTINATION,
+					  PLATFORMS_PATH,
+					  PLATFORMS_INTERFACE,
+					  "getPlatform");
+
+  reply = dbus_connection_send_with_reply_and_block (priv->connection, message, -1, NULL);
+  dbus_message_iter_init (reply, &iter);
+  platform = utils_get_string (&iter);
+  priv->platform = (platform) ? g_strdup (platform) : NULL;
+
+  dbus_message_unref (message);
+  dbus_message_unref (reply);
+
+  return priv->platform;
+}
+
+void
+oobs_session_set_platform (OobsSession *session,
+			   const gchar *platform)
+{
+  OobsSessionPrivate *priv;
+  DBusMessage *message;
+  DBusMessageIter iter;
+
+  g_return_if_fail (OOBS_IS_SESSION (session));
+  g_return_if_fail (platform != NULL);
+
+  priv = OOBS_SESSION_GET_PRIVATE (session);
+
+  priv->platform = g_strdup (platform);
+  g_object_notify (G_OBJECT (session), "platform");
+
+  message = dbus_message_new_method_call (OOBS_DBUS_DESTINATION,
+					  PLATFORMS_PATH,
+					  PLATFORMS_INTERFACE,
+					  "setPlatform");
+  dbus_message_iter_init_append (message, &iter);
+  utils_append_string (&iter, priv->platform);
+
+  dbus_connection_send (priv->connection, message, NULL);
+  dbus_connection_flush (priv->connection);
+}
+
+static GList*
+get_supported_platforms (OobsSession *session)
+{
+  OobsSessionPrivate *priv;
+  DBusMessage *message, *reply;
+  DBusMessageIter list_iter, iter;
+  OobsPlatform *platform;
+  GList *platforms = NULL;
+  const gchar *str;
+
+  priv = OOBS_SESSION_GET_PRIVATE (session);
+  message = dbus_message_new_method_call (OOBS_DBUS_DESTINATION,
+					  PLATFORMS_PATH,
+					  PLATFORMS_INTERFACE,
+					  "getPlatformList");
+
+  reply = dbus_connection_send_with_reply_and_block (priv->connection,
+						     message, -1, NULL);
+
+  dbus_message_iter_init (reply, &list_iter);
+  dbus_message_iter_recurse (&list_iter, &list_iter);
+
+  while (dbus_message_iter_get_arg_type (&list_iter) == DBUS_TYPE_STRUCT)
+    {
+      platform = g_new0 (OobsPlatform, 1);
+      dbus_message_iter_recurse (&list_iter, &iter);
+
+      str = utils_get_string (&iter);
+      platform->name = g_strdup (str);
+      dbus_message_iter_next (&iter);
+
+      str = utils_get_string (&iter);
+      platform->version = g_strdup (str);
+      dbus_message_iter_next (&iter);
+	  
+      str = utils_get_string (&iter);
+      platform->codename = g_strdup (str);
+      dbus_message_iter_next (&iter);
+
+      str = utils_get_string (&iter);
+      platform->id = g_strdup (str);
+
+      platforms = g_list_prepend (platforms, platform);
+      dbus_message_iter_next (&list_iter);
+    }
+
+  platforms = g_list_reverse (platforms);
+  dbus_message_unref (message);
+  dbus_message_unref (reply);
+
+  return platforms;
+}
+
+GList*
+oobs_session_get_supported_platforms (OobsSession *session)
+{
+  OobsSessionPrivate *priv;
+
+  g_return_val_if_fail (OOBS_IS_SESSION (session), NULL);
+
+  priv = OOBS_SESSION_GET_PRIVATE (session);
+
+  if (!priv->supported_platforms)
+    priv->supported_platforms = get_supported_platforms (session);
+
+  return g_list_copy (priv->supported_platforms);
 }
 
 /* protected methods */

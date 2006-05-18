@@ -33,4 +33,4 @@ if test -z "$gnome_autogen" ; then
   exit 1
 fi
 
-REQUIRED_AUTOMAKE_VERSION=1.7 . $gnome_autogen
+REQUIRED_AUTOMAKE_VERSION=1.9 . $gnome_autogen

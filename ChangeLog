@@ -1,3 +1,9 @@
+2006-05-18  Carlos Garnacho  <carlosg@gnome.org>
+
+	* configure.in: use correct .pc file and version for 
+	system-tools-backends
+	* autogen.sh: use automake 1.9
+
 2006-05-16  Carlos Garnacho  <carlosg@gnome.org>
 
 	* oobs-nfsconfig.c, oobs-ntpconfig.c: remove unnecessary call to

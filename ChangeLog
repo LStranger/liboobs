@@ -1,3 +1,9 @@
+2006-05-24  Carlos Garnacho  <carlosg@gnome.org>
+
+	* src/oobs-hostsconfig.c (oobs_hosts_config_set_dns_servers)
+	(oobs_hosts_config_set_search_domains): added, they were missing
+	* src/oobs-hostsconfig.h: add missing function declarations
+
 2006-05-18  Carlos Garnacho  <carlosg@gnome.org>
 
 	* configure.in: use correct .pc file and version for 

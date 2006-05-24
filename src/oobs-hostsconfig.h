@@ -51,6 +51,14 @@ GType       oobs_hosts_config_get_type     (void);
 
 OobsObject* oobs_hosts_config_get          (OobsSession *session);
 
+G_CONST_RETURN gchar*  oobs_hosts_config_get_hostname   (OobsHostsConfig *config);
+void                   oobs_hosts_config_set_hostname   (OobsHostsConfig *config,
+							 const gchar     *hostname);
+
+G_CONST_RETURN gchar*  oobs_hosts_config_get_domainname (OobsHostsConfig *config);
+void                   oobs_hosts_config_set_domainname (OobsHostsConfig *config,
+							 const gchar     *domainname);
+
 OobsList*   oobs_hosts_config_get_static_hosts   (OobsHostsConfig *config);
 GList*      oobs_hosts_config_get_dns_servers    (OobsHostsConfig *config);
 GList*      oobs_hosts_config_get_search_domains (OobsHostsConfig *config);

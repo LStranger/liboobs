@@ -406,6 +406,25 @@ oobs_hosts_config_get_dns_servers (OobsHostsConfig *config)
   return g_list_copy (priv->dns_list);
 }
 
+void
+oobs_hosts_config_set_dns_servers (OobsHostsConfig *config,
+				   GList           *dns_list)
+{
+  OobsHostsConfigPrivate *priv;
+
+  g_return_val_if_fail (OOBS_IS_HOSTS_CONFIG (config), NULL);
+
+  priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
+
+  if (priv->dns_list)
+    {
+      g_list_foreach (priv->dns_list, (GFunc) g_free, NULL);
+      g_list_free (priv->dns_list);
+    }
+
+  priv->dns_list = dns_list;
+}
+
 /**
  * oobs_hosts_config_get_search_domains:
  * @config: An #OobsHostsConfig.
@@ -425,4 +444,23 @@ oobs_hosts_config_get_search_domains (OobsHostsConfig *config)
   priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
 
   return g_list_copy (priv->search_domains_list);
+}
+
+void
+oobs_hosts_config_set_search_domains (OobsHostsConfig *config,
+				      GList           *search_domains_list)
+{
+  OobsHostsConfigPrivate *priv;
+
+  g_return_val_if_fail (OOBS_IS_HOSTS_CONFIG (config), NULL);
+
+  priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
+
+  if (priv->search_domains_list)
+    {
+      g_list_foreach (priv->search_domains_list, (GFunc) g_free, NULL);
+      g_list_free (priv->search_domains_list);
+    }
+
+  priv->search_domains_list = search_domains_list;
 }

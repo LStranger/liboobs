@@ -1,3 +1,7 @@
+2006-05-27  Frederic Peters  <fpeters@entrouvert.com>
+
+	* src/oobs-usersconfig.[ch]: unbreak build
+
 2006-05-26  Carlos Garnacho  <carlosg@gnome.org>
 
 	* src/oobs-usersconfig.[ch]: get/set default group for new users

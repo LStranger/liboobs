@@ -28,6 +28,7 @@ G_BEGIN_DECLS
 #include "oobs-object.h"
 #include "oobs-list.h"
 #include "oobs-session.h"
+#include "oobs-group.h"
 
 #define OOBS_TYPE_USERS_CONFIG         (oobs_users_config_get_type ())
 #define OOBS_USERS_CONFIG(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_USERS_CONFIG, OobsUsersConfig))

@@ -582,7 +582,7 @@ oobs_users_config_commit (OobsObject *object)
   dbus_message_iter_append_basic (&iter, DBUS_TYPE_STRING, &priv->default_shell);
 
   default_gid = (priv->default_group) ? oobs_group_get_gid (priv->default_group) : -1;
-  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &default_group);
+  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &default_gid);
 
   if (!correct)
     {

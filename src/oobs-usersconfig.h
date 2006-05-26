@@ -66,6 +66,7 @@ void                  oobs_users_config_set_default_shell (OobsUsersConfig *conf
 G_CONST_RETURN gchar* oobs_users_config_get_default_home_dir (OobsUsersConfig *config);
 void                  oobs_users_config_set_default_home_dir (OobsUsersConfig *config, const gchar *home_dir);
 
+OobsGroup*  oobs_users_config_get_default_group    (OobsUsersConfig *config);
 GList*      oobs_users_config_get_available_shells (OobsUsersConfig *config);
 
 

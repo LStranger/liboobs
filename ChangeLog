@@ -1,3 +1,7 @@
+2006-05-26  Carlos Garnacho  <carlosg@gnome.org>
+
+	* src/oobs-usersconfig.[ch]: get/set default group for new users
+
 2006-05-24  Carlos Garnacho  <carlosg@gnome.org>
 
 	* src/oobs-hostsconfig.c (oobs_hosts_config_set_dns_servers)

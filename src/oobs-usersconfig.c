@@ -49,6 +49,8 @@ struct _OobsUsersConfigPrivate
   uid_t     maximum_uid;
   gchar    *default_shell;
   gchar    *default_home;
+
+  OobsGroup *default_group;
 };
 
 static void oobs_users_config_class_init (OobsUsersConfigClass *class);
@@ -74,7 +76,8 @@ enum
   PROP_MINIMUM_UID,
   PROP_MAXIMUM_UID,
   PROP_DEFAULT_SHELL,
-  PROP_DEFAULT_HOME
+  PROP_DEFAULT_HOME,
+  PROP_DEFAULT_GROUP
 };
 
 G_DEFINE_TYPE (OobsUsersConfig, oobs_users_config, OOBS_TYPE_OBJECT);
@@ -128,6 +131,13 @@ oobs_users_config_class_init (OobsUsersConfigClass *class)
 							"Default home directory for new users",
 							NULL,
 							G_PARAM_READWRITE));
+  g_object_class_install_property (object_class,
+				   PROP_DEFAULT_GROUP,
+				   g_param_spec_object ("default-group",
+							"Default group",
+							"Default group for new users",
+							OOBS_TYPE_GROUP,
+							G_PARAM_READABLE));
   g_type_class_add_private (object_class,
 			    sizeof (OobsUsersConfigPrivate));
 }
@@ -385,18 +395,16 @@ create_dbus_struct_from_user (OobsUser        *user,
   return TRUE;
 }
 
-static void
-query_groups_foreach (OobsUser *user,
-		      gint      gid,
-		      gpointer  data)
+static OobsGroup*
+get_group_with_gid (OobsGroupsConfig *config,
+		    gint              gid)
 {
-  OobsGroupsConfig *groups_config = OOBS_GROUPS_CONFIG (data);
   OobsList *groups_list;
   OobsListIter iter;
   OobsGroup *group;
   gboolean valid;
 
-  groups_list = oobs_groups_config_get_groups (groups_config);
+  groups_list = oobs_groups_config_get_groups (config);
   valid = oobs_list_get_iter_first (groups_list, &iter);
 
   while (valid)
@@ -404,23 +412,38 @@ query_groups_foreach (OobsUser *user,
       group = OOBS_GROUP (oobs_list_get (groups_list, &iter));
 
       if (oobs_group_get_gid (group) == gid)
-	{
-	  oobs_user_set_main_group (user, group);
-	  g_object_unref (group);
-	  break;
-	}
+	return group;
 
-      valid = oobs_list_iter_next (groups_list, &iter);
       g_object_unref (group);
+      valid = oobs_list_iter_next (groups_list, &iter);
     }
+
+  return NULL;
+}
+
+static void
+query_groups_foreach (OobsUser *user,
+		      gint      gid,
+		      gpointer  data)
+{
+  OobsGroupsConfig *groups_config = OOBS_GROUPS_CONFIG (data);
+  OobsGroup *group;
+
+  group = get_group_with_gid (groups_config, gid);
+  oobs_user_set_main_group (user, group);
+
+  if (group)
+    g_object_unref (group);
 }
 
 static void
 query_groups (OobsUsersConfig *users_config,
-	      GHashTable      *hashtable)
+	      GHashTable      *hashtable,
+	      gint             default_gid)
 {
   OobsObject *groups_config;
   OobsSession *session;
+  OobsGroup *group;
 
   g_object_get (G_OBJECT (users_config),
 		"session", &session,
@@ -428,6 +451,17 @@ query_groups (OobsUsersConfig *users_config,
 
   groups_config = oobs_groups_config_get (session);
   g_hash_table_foreach (hashtable, (GHFunc) query_groups_foreach, groups_config);
+
+  /* get the default group */
+  if (default_gid > 0)
+    {
+      group = get_group_with_gid (OOBS_GROUPS_CONFIG (groups_config), default_gid);
+      OOBS_USERS_CONFIG_GET_PRIVATE (users_config)->default_group = group;
+
+      if (group)
+	g_object_unref (group);
+    }
+
   g_object_unref (session);
 }
 
@@ -441,6 +475,7 @@ oobs_users_config_update (OobsObject *object)
   GObject         *user;
   gchar           *str;
   GHashTable      *hashtable;
+  gint             default_gid;
 
   priv  = OOBS_USERS_CONFIG_GET_PRIVATE (object);
   reply = _oobs_object_get_dbus_message (object);
@@ -484,8 +519,11 @@ oobs_users_config_update (OobsObject *object)
   dbus_message_iter_get_basic (&iter, &str);
   priv->default_shell = g_strdup (str);
 
+  dbus_message_iter_next (&iter);
+  dbus_message_iter_get_basic (&iter, &default_gid);
+
   /* last of all, query the groups now that the list is generated */
-  query_groups (OOBS_USERS_CONFIG (object), hashtable);
+  query_groups (OOBS_USERS_CONFIG (object), hashtable, default_gid);
   g_hash_table_unref (hashtable);
 }
 
@@ -498,6 +536,7 @@ oobs_users_config_commit (OobsObject *object)
   OobsListIter list_iter;
   GObject *user;
   gboolean valid, correct;
+  gint default_gid;
 
   priv = OOBS_USERS_CONFIG_GET_PRIVATE (object);
   message = _oobs_object_get_dbus_message (object);
@@ -518,6 +557,7 @@ oobs_users_config_commit (OobsObject *object)
 				    DBUS_TYPE_INT32_AS_STRING
 				    DBUS_TYPE_INT32_AS_STRING
 				    DBUS_TYPE_INT32_AS_STRING
+				    DBUS_TYPE_STRING_AS_STRING
 				    DBUS_TYPE_STRING_AS_STRING,
 				    &array_iter);
   valid = oobs_list_get_iter_first (priv->users_list, &list_iter);
@@ -540,6 +580,9 @@ oobs_users_config_commit (OobsObject *object)
   dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32,  &priv->maximum_uid);
   dbus_message_iter_append_basic (&iter, DBUS_TYPE_STRING, &priv->default_home);
   dbus_message_iter_append_basic (&iter, DBUS_TYPE_STRING, &priv->default_shell);
+
+  default_gid = (priv->default_group) ? oobs_group_get_gid (priv->default_group) : -1;
+  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &default_group);
 
   if (!correct)
     {
@@ -667,6 +710,19 @@ oobs_users_config_set_default_home_dir (OobsUsersConfig *config, const gchar *ho
   g_return_if_fail (OOBS_IS_USERS_CONFIG (config));
 
   g_object_set (G_OBJECT (config), "default-home", home_dir, NULL);
+}
+
+OobsGroup*
+oobs_users_config_get_default_group (OobsUsersConfig *config)
+{
+  OobsUsersConfigPrivate *priv;
+
+  g_return_val_if_fail (config != NULL, NULL);
+  g_return_val_if_fail (OOBS_IS_USERS_CONFIG (config), NULL);
+
+  priv = OOBS_USERS_CONFIG_GET_PRIVATE (config);
+
+  return priv->default_group;
 }
 
 GList*

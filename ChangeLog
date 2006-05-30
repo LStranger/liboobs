@@ -1,5 +1,10 @@
 2006-05-30  Carlos Garnacho  <carlosg@gnome.org>
 
+	* src/oobs-hostsconfig.c: send hostname and domainname when
+	committing.
+
+2006-05-30  Carlos Garnacho  <carlosg@gnome.org>
+
 	* oobs-iface-ethernet.c (oobs_iface_ethernet_is_configured): check
 	that configuration_method is static before assuming that the interface
 	is statically configured.

@@ -249,6 +249,10 @@ oobs_hosts_config_commit (OobsObject *object)
   message = _oobs_object_get_dbus_message (object);
 
   dbus_message_iter_init_append (message, &iter);
+
+  utils_append_string (&iter, priv->hostname);
+  utils_append_string (&iter, priv->domain);
+  
   dbus_message_iter_open_container (&iter,
 				    DBUS_TYPE_ARRAY,
 				    DBUS_STRUCT_BEGIN_CHAR_AS_STRING

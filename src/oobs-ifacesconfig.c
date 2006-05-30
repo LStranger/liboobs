@@ -185,12 +185,12 @@ create_iface_from_message (DBusMessage     *message,
   if (OOBS_IS_IFACE_ETHERNET (iface))
     {
       const gchar *address, *netmask;
-      gint bootproto;
+      gint config_method;
 
       dbus_message_iter_get_basic (&struct_iter, &active);
       dbus_message_iter_next (&struct_iter);
 
-      dbus_message_iter_get_basic (&struct_iter, &bootproto);
+      dbus_message_iter_get_basic (&struct_iter, &config_method);
       dbus_message_iter_next (&struct_iter);
 
       address = utils_get_string (&struct_iter);
@@ -207,7 +207,8 @@ create_iface_from_message (DBusMessage     *message,
 		    "active", active,
 		    "ip-address", address,
 		    "ip-mask", netmask,
-		    "config-method", (bootproto) ? OOBS_METHOD_DHCP : OOBS_METHOD_STATIC,
+		    /* FIXME: can pass config_method like that? */
+		    "config-method", config_method,
 		    NULL);
 
       if (type == OOBS_IFACE_WIRELESS)
@@ -405,8 +406,7 @@ create_dbus_struct_from_iface (DBusMessage     *message,
 		    "config-method", &config_method,
 		    NULL);
 
-      config_method = (config_method == OOBS_METHOD_DHCP) ? 1 : 0;
-
+      /* FIXME: can pass config_method like that? */
       dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &config_method);
       utils_append_string (&iter, (configured) ? address : NULL);
       utils_append_string (&iter, (configured) ? netmask : NULL);
@@ -547,6 +547,7 @@ create_dbus_struct_from_ifaces_list (OobsObject      *object,
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
+	DBUS_TYPE_INT32_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_STRUCT_END_CHAR_AS_STRING;
       break;

@@ -278,7 +278,8 @@ oobs_iface_ethernet_is_configured (OobsIface *iface)
   priv = OOBS_IFACE_ETHERNET_GET_PRIVATE (iface);
 
   return (priv->configuration_method == OOBS_METHOD_DHCP ||
-	  (priv->address && priv->netmask));
+	  (priv->configuration_method == OOBS_METHOD_STATIC &&
+	   priv->address && priv->netmask));
 }
 
 /**

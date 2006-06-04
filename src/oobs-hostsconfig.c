@@ -359,14 +359,13 @@ oobs_hosts_config_set_domainname (OobsHostsConfig *config,
   OobsHostsConfigPrivate *priv;
 
   g_return_if_fail (OOBS_IS_HOSTS_CONFIG (config));
-  g_return_if_fail (domainname && *domainname);
 
   priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
 
   if (priv->domain)
     g_free (priv->domain);
 
-  priv->domain = g_strdup (domainname);
+  priv->domain = (*domainname) ? g_strdup (domainname) : NULL;
 }
 
 /**

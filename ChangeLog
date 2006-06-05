@@ -3,6 +3,7 @@
 	* doc/reference/tmpl/*, doc/reference/liboobs-docs.sgml,
 	doc/reference/liboobs-sections.txt: update to last changes
 	* doc/reference/Makefile.am: hide utils.h
+	* Makefile.am, src/Makefile.am: distcheck fixes
 
 2006-06-05  Carlos Garnacho  <carlosg@gnome.org>
 

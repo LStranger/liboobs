@@ -29,6 +29,7 @@
 #include "oobs-iface-plip.h"
 #include "oobs-iface-modem.h"
 #include "oobs-iface-isdn.h"
+#include "utils.h"
 
 #define IFACES_CONFIG_REMOTE_OBJECT "IfacesConfig"
 #define OOBS_IFACES_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_IFACES_CONFIG, OobsIfacesConfigPrivate))
@@ -153,7 +154,7 @@ create_iface_from_message (DBusMessage     *message,
   DBusMessageIter struct_iter;
   const gchar *dev;
   gint key_type;
-  gboolean active;
+  gboolean active, is_auto;
 
   dbus_message_iter_recurse (iter, &struct_iter);
 
@@ -187,6 +188,9 @@ create_iface_from_message (DBusMessage     *message,
       const gchar *address, *netmask;
       gint config_method;
 
+      dbus_message_iter_get_basic (&struct_iter, &is_auto);
+      dbus_message_iter_next (&struct_iter);
+
       dbus_message_iter_get_basic (&struct_iter, &active);
       dbus_message_iter_next (&struct_iter);
 
@@ -204,6 +208,7 @@ create_iface_from_message (DBusMessage     *message,
       dbus_message_iter_next (&struct_iter);
 
       g_object_set (iface,
+		    "auto", is_auto,
 		    "active", active,
 		    "ip-address", address,
 		    "ip-mask", netmask,
@@ -235,6 +240,9 @@ create_iface_from_message (DBusMessage     *message,
     {
       const gchar *address, *remote_address;
 
+      dbus_message_iter_get_basic (&struct_iter, &is_auto);
+      dbus_message_iter_next (&struct_iter);
+
       dbus_message_iter_get_basic (&struct_iter, &active);
       dbus_message_iter_next (&struct_iter);
 
@@ -245,6 +253,7 @@ create_iface_from_message (DBusMessage     *message,
       dbus_message_iter_next (&struct_iter);
 
       g_object_set (iface,
+		    "auto", is_auto,
 		    "active", active,
 		    "address", address,
 		    "remote-address", remote_address,
@@ -254,6 +263,9 @@ create_iface_from_message (DBusMessage     *message,
     {
       const gchar *phone_number, *phone_prefix, *login, *password;
       gboolean default_gw, peer_dns, persistent, noauth;
+
+      dbus_message_iter_get_basic (&struct_iter, &is_auto);
+      dbus_message_iter_next (&struct_iter);
 
       dbus_message_iter_get_basic (&struct_iter, &active);
       dbus_message_iter_next (&struct_iter);
@@ -304,6 +316,8 @@ create_iface_from_message (DBusMessage     *message,
       dbus_message_iter_next (&struct_iter);
 
       g_object_set (iface,
+		    "auto", is_auto,
+		    "active", active,
 		    "login", login,
 		    "password", password,
 		    "phone-number", phone_number,
@@ -382,11 +396,12 @@ create_dbus_struct_from_iface (DBusMessage     *message,
 {
   DBusMessageIter iter;
   gchar *dev;
-  gboolean configured, active;
+  gboolean configured, active, is_auto;
 
   g_object_get (G_OBJECT (iface),
 		"device", &dev,
 		"configured", &configured,
+		"auto", &is_auto,
 		"active", &active,
 		NULL);
 
@@ -394,6 +409,7 @@ create_dbus_struct_from_iface (DBusMessage     *message,
 
   utils_append_string (&iter, dev);
   dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &active);
+  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &is_auto);
 
   if (OOBS_IS_IFACE_ETHERNET (iface))
     {
@@ -530,6 +546,7 @@ create_dbus_struct_from_ifaces_list (OobsObject      *object,
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_TYPE_INT32_AS_STRING
 	DBUS_TYPE_INT32_AS_STRING
+	DBUS_TYPE_INT32_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
@@ -540,6 +557,7 @@ create_dbus_struct_from_ifaces_list (OobsObject      *object,
       signature =
 	DBUS_STRUCT_BEGIN_CHAR_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
+	DBUS_TYPE_INT32_AS_STRING
 	DBUS_TYPE_INT32_AS_STRING
 	DBUS_TYPE_INT32_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
@@ -556,6 +574,7 @@ create_dbus_struct_from_ifaces_list (OobsObject      *object,
 	DBUS_STRUCT_BEGIN_CHAR_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_TYPE_INT32_AS_STRING
+	DBUS_TYPE_INT32_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_STRUCT_END_CHAR_AS_STRING;
@@ -564,6 +583,7 @@ create_dbus_struct_from_ifaces_list (OobsObject      *object,
       signature =
 	DBUS_STRUCT_BEGIN_CHAR_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
+	DBUS_TYPE_INT32_AS_STRING
 	DBUS_TYPE_INT32_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
@@ -582,6 +602,7 @@ create_dbus_struct_from_ifaces_list (OobsObject      *object,
       signature =
 	DBUS_STRUCT_BEGIN_CHAR_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
+	DBUS_TYPE_INT32_AS_STRING
 	DBUS_TYPE_INT32_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
@@ -606,7 +627,7 @@ create_dbus_struct_from_ifaces_list (OobsObject      *object,
   while (valid)
     {
       iface = oobs_list_get (list, &list_iter);
-      create_dbus_struct_from_iface (message, &array_iter, iface);
+      create_dbus_struct_from_iface (message, &array_iter, OOBS_IFACE (iface));
       g_object_unref (iface);
 
       valid = oobs_list_iter_next (list, &list_iter);

@@ -1,6 +1,7 @@
 2006-06-05  Carlos Garnacho  <carlosg@gnome.org>
 
 	* src/oobs-hostsconfig.c: allow empty domain name.
+	* src/oobs-ifacesconfig.c: get/set "auto"
 
 2006-05-30  Carlos Garnacho  <carlosg@gnome.org>
 

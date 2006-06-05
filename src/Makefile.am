@@ -34,36 +34,47 @@ oobsinclude_HEADERS= 	\
 	oobs-servicesconfig.h	\
 	oobs-service.h
 
+oobs_private_headers = 	\
+	md5.h				\
+	oobs-defines.h			\
+	oobs-list-private.h		\
+	oobs-object-private.h	\
+	oobs-session-private.h	\
+	utils.h
+
 liboobs_1_la_SOURCES = \
-	md5-crypt.c	\
-	md5.h			md5.c			\
-	utils.h			utils.c			\
-	oobs-session.h		oobs-session.c		\
-	oobs-object.h		oobs-object.c		\
-	oobs-list.h		oobs-list.c		\
-	oobs-user.h		oobs-user.c		\
-	oobs-usersconfig.h	oobs-usersconfig.c	\
-	oobs-group.h		oobs-group.c		\
-	oobs-groupsconfig.h	oobs-groupsconfig.c	\
-	oobs-timeconfig.h	oobs-timeconfig.c	\
-	oobs-ntpserver.h	oobs-ntpserver.c	\
-	oobs-ntpconfig.h	oobs-ntpconfig.c	\
-	oobs-share.h            oobs-share.c            \
-	oobs-smbconfig.h        oobs-smbconfig.c        \
-	oobs-share-smb.h        oobs-share-smb.c        \
-	oobs-nfsconfig.h        oobs-nfsconfig.c        \
-	oobs-share-nfs.h        oobs-share-nfs.c	\
-	oobs-statichost.h	oobs-statichost.c	\
-	oobs-hostsconfig.h      oobs-hostsconfig.c	\
-	oobs-iface.h		oobs-iface.c		\
-	oobs-iface-ethernet.h	oobs-iface-ethernet.c	\
-	oobs-iface-wireless.h	oobs-iface-wireless.c	\
-	oobs-iface-irlan.h	oobs-iface-irlan.c	\
-	oobs-iface-plip.h	oobs-iface-plip.c	\
-	oobs-iface-isdn.h	oobs-iface-isdn.c	\
-	oobs-iface-modem.h	oobs-iface-modem.c	\
-	oobs-ifacesconfig.h	oobs-ifacesconfig.c	\
-	oobs-service.h		oobs-service.c		\
-	oobs-servicesconfig.h	oobs-servicesconfig.c
+	md5-crypt.c			\
+	md5.c				\
+	utils.c				\
+	oobs-session.c			\
+	oobs-object.c			\
+	oobs-list.c			\
+	oobs-user.c			\
+	oobs-usersconfig.c		\
+	oobs-group.c			\
+	oobs-groupsconfig.c		\
+	oobs-timeconfig.c		\
+	oobs-ntpserver.c		\
+	oobs-ntpconfig.c		\
+	oobs-share.c			\
+	oobs-smbconfig.c		\
+	oobs-share-smb.c		\
+	oobs-nfsconfig.c		\
+	oobs-share-nfs.c		\
+	oobs-statichost.c		\
+	oobs-hostsconfig.c		\
+	oobs-iface.c			\
+	oobs-iface-ethernet.c	\
+	oobs-iface-wireless.c	\
+	oobs-iface-irlan.c		\
+	oobs-iface-plip.c		\
+	oobs-iface-isdn.c		\
+	oobs-iface-modem.c		\
+	oobs-ifacesconfig.c		\
+	oobs-service.c			\
+	oobs-servicesconfig.c
 
 liboobs_1_la_LIBADD= $(OOBS_LIBS)
+
+EXTRA_DIST= $(oobs_private_headers)
+

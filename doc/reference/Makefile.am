@@ -26,7 +26,8 @@ IGNORE_HFILES=	\
 	oobs-defines.h		\
 	oobs-list-private.h	\
 	oobs-object-private.h	\
-	oobs-session-private.h
+	oobs-session-private.h	\
+	utils.h
 
 # CFLAGS and LDFLAGS for compiling scan program. Only needed if your app/lib
 # contains GtkObjects/GObjects and you want to document signals and properties.

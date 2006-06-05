@@ -19,6 +19,13 @@ OobsNFSConfig
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### STRUCT OobsNFSConfig ##### -->
+<para>
+
+</para>
+
+@parent: 
+
 <!-- ##### FUNCTION oobs_nfs_config_get ##### -->
 <para>
 

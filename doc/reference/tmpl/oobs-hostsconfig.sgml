@@ -19,6 +19,13 @@ OobsHostsConfig
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### STRUCT OobsHostsConfig ##### -->
+<para>
+
+</para>
+
+@parent: 
+
 <!-- ##### FUNCTION oobs_hosts_config_get ##### -->
 <para>
 
@@ -26,6 +33,42 @@ OobsHostsConfig
 
 @session: 
 @Returns: 
+
+
+<!-- ##### FUNCTION oobs_hosts_config_get_hostname ##### -->
+<para>
+
+</para>
+
+@config: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_hosts_config_set_hostname ##### -->
+<para>
+
+</para>
+
+@config: 
+@hostname: 
+
+
+<!-- ##### FUNCTION oobs_hosts_config_get_domainname ##### -->
+<para>
+
+</para>
+
+@config: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_hosts_config_set_domainname ##### -->
+<para>
+
+</para>
+
+@config: 
+@domainname: 
 
 
 <!-- ##### FUNCTION oobs_hosts_config_get_static_hosts ##### -->

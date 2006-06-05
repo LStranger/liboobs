@@ -1,5 +1,11 @@
 2006-06-05  Carlos Garnacho  <carlosg@gnome.org>
 
+	* doc/reference/tmpl/*, doc/reference/liboobs-docs.sgml,
+	doc/reference/liboobs-sections.txt: update to last changes
+	* doc/reference/Makefile.am: hide utils.h
+
+2006-06-05  Carlos Garnacho  <carlosg@gnome.org>
+
 	* src/oobs-hostsconfig.c: allow empty domain name.
 	* src/oobs-ifacesconfig.c: get/set "auto"
 

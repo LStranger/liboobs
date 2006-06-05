@@ -19,6 +19,13 @@ OobsGroupsConfig
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### STRUCT OobsGroupsConfig ##### -->
+<para>
+
+</para>
+
+@parent: 
+
 <!-- ##### FUNCTION oobs_groups_config_get ##### -->
 <para>
 

@@ -19,6 +19,13 @@ OobsNTPServer
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### STRUCT OobsNTPServer ##### -->
+<para>
+
+</para>
+
+@parent: 
+
 <!-- ##### FUNCTION oobs_ntp_server_new ##### -->
 <para>
 
@@ -28,7 +35,7 @@ OobsNTPServer
 @Returns: 
 
 
-<!-- ##### FUNCTION oobs_ntp_server_get_path ##### -->
+<!-- ##### FUNCTION oobs_ntp_server_get_hostname ##### -->
 <para>
 
 </para>
@@ -37,7 +44,7 @@ OobsNTPServer
 @Returns: 
 
 
-<!-- ##### FUNCTION oobs_ntp_server_set_path ##### -->
+<!-- ##### FUNCTION oobs_ntp_server_set_hostname ##### -->
 <para>
 
 </para>

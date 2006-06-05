@@ -19,11 +19,19 @@ OobsGroup
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### STRUCT OobsGroup ##### -->
+<para>
+
+</para>
+
+@parent: 
+
 <!-- ##### FUNCTION oobs_group_new ##### -->
 <para>
 
 </para>
 
+@name: 
 @Returns: 
 
 
@@ -79,5 +87,32 @@ OobsGroup
 
 @group: 
 @gid: 
+
+
+<!-- ##### FUNCTION oobs_group_get_users ##### -->
+<para>
+
+</para>
+
+@group: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_group_add_user ##### -->
+<para>
+
+</para>
+
+@group: 
+@user: 
+
+
+<!-- ##### FUNCTION oobs_group_remove_user ##### -->
+<para>
+
+</para>
+
+@group: 
+@user: 
 
 

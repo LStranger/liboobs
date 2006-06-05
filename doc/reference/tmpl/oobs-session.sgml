@@ -19,6 +19,23 @@ OobsSession
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### STRUCT OobsPlatform ##### -->
+<para>
+
+</para>
+
+@id: 
+@name: 
+@version: 
+@codename: 
+
+<!-- ##### STRUCT OobsSession ##### -->
+<para>
+
+</para>
+
+@parent: 
+
 <!-- ##### FUNCTION oobs_session_get ##### -->
 <para>
 
@@ -33,6 +50,33 @@ OobsSession
 </para>
 
 @session: 
+
+
+<!-- ##### FUNCTION oobs_session_get_supported_platforms ##### -->
+<para>
+
+</para>
+
+@session: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_session_get_platform ##### -->
+<para>
+
+</para>
+
+@session: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_session_set_platform ##### -->
+<para>
+
+</para>
+
+@session: 
+@platform: 
 
 
 <!-- ##### FUNCTION oobs_session_set_autocommit_on_exit ##### -->

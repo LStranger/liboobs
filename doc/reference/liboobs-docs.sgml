@@ -8,32 +8,33 @@
 
   <chapter>
     <title>[Insert title here]</title>
+    <xi:include href="xml/oobs-group.xml"/>
+    <xi:include href="xml/oobs-groupsconfig.xml"/>
+    <xi:include href="xml/oobs-hostsconfig.xml"/>
+    <xi:include href="xml/oobs-iface-ethernet.xml"/>
+    <xi:include href="xml/oobs-iface-irlan.xml"/>
+    <xi:include href="xml/oobs-iface-isdn.xml"/>
+    <xi:include href="xml/oobs-iface-modem.xml"/>
+    <xi:include href="xml/oobs-iface-plip.xml"/>
+    <xi:include href="xml/oobs-iface-wireless.xml"/>
+    <xi:include href="xml/oobs-iface.xml"/>
+    <xi:include href="xml/oobs-ifacesconfig.xml"/>
     <xi:include href="xml/oobs-list.xml"/>
+    <xi:include href="xml/oobs-nfsconfig.xml"/>
+    <xi:include href="xml/oobs-ntpconfig.xml"/>
+    <xi:include href="xml/oobs-ntpserver.xml"/>
     <xi:include href="xml/oobs-object.xml"/>
+    <xi:include href="xml/oobs-service.xml"/>
+    <xi:include href="xml/oobs-servicesconfig.xml"/>
     <xi:include href="xml/oobs-session.xml"/>
     <xi:include href="xml/oobs-share-nfs.xml"/>
     <xi:include href="xml/oobs-share-smb.xml"/>
     <xi:include href="xml/oobs-share.xml"/>
-    <xi:include href="xml/oobs-shellsconfig.xml"/>
-    <xi:include href="xml/oobs-groupsconfig.xml"/>
-    <xi:include href="xml/oobs-usersconfig.xml"/>
-    <xi:include href="xml/oobs-shell.xml"/>
+    <xi:include href="xml/oobs-smbconfig.xml"/>
+    <xi:include href="xml/oobs-statichost.xml"/>
     <xi:include href="xml/oobs-timeconfig.xml"/>
     <xi:include href="xml/oobs-user.xml"/>
-    <xi:include href="xml/oobs-group.xml"/>
-    <xi:include href="xml/oobs-ntpconfig.xml"/>
-    <xi:include href="xml/oobs-nfsconfig.xml"/>
-    <xi:include href="xml/oobs-ntpserver.xml"/>
-    <xi:include href="xml/oobs-smbconfig.xml"/>
-    <xi:include href="xml/oobs-iface.xml"/>
-    <xi:include href="xml/oobs-iface-ethernet.xml"/>
-    <xi:include href="xml/oobs-iface-wireless.xml"/>
-    <xi:include href="xml/oobs-iface-plip.xml"/>
-    <xi:include href="xml/oobs-iface-isdn.xml"/>
-    <xi:include href="xml/oobs-iface-modem.xml"/>
-    <xi:include href="xml/oobs-servicesconfig.xml"/>
-    <xi:include href="xml/oobs-hostsconfig.xml"/>
-    <xi:include href="xml/oobs-statichost.xml"/>
-    <xi:include href="xml/oobs-service.xml"/>
+    <xi:include href="xml/oobs-usersconfig.xml"/>
+    <xi:include href="xml/utils.xml"/>
   </chapter>
 </book>

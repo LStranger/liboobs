@@ -19,12 +19,28 @@ OobsUser
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### STRUCT OobsUser ##### -->
+<para>
+
+</para>
+
+@parent: 
+
 <!-- ##### FUNCTION oobs_user_new ##### -->
 <para>
 
 </para>
 
 @name: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_user_get_login_name ##### -->
+<para>
+
+</para>
+
+@user: 
 @Returns: 
 
 
@@ -73,7 +89,7 @@ OobsUser
 @uid: 
 
 
-<!-- ##### FUNCTION oobs_user_get_gid ##### -->
+<!-- ##### FUNCTION oobs_user_get_main_group ##### -->
 <para>
 
 </para>
@@ -82,13 +98,13 @@ OobsUser
 @Returns: 
 
 
-<!-- ##### FUNCTION oobs_user_set_gid ##### -->
+<!-- ##### FUNCTION oobs_user_set_main_group ##### -->
 <para>
 
 </para>
 
 @user: 
-@gid: 
+@main_group: 
 
 
 <!-- ##### FUNCTION oobs_user_get_home_directory ##### -->

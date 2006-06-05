@@ -36,6 +36,13 @@ OobsShareSMB
 
 
 
+<!-- ##### STRUCT OobsShareSMB ##### -->
+<para>
+
+</para>
+
+@parent: 
+
 <!-- ##### FUNCTION oobs_share_smb_flags_get_type ##### -->
 <para>
 
@@ -106,7 +113,7 @@ OobsShareSMB
 @path: 
 @name: 
 @comment: 
-@Param4: 
+@flags: 
 @Returns: 
 
 

@@ -19,6 +19,13 @@ OobsStaticHost
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### STRUCT OobsStaticHost ##### -->
+<para>
+
+</para>
+
+@parent: 
+
 <!-- ##### FUNCTION oobs_static_host_new ##### -->
 <para>
 

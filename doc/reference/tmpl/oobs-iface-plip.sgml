@@ -19,6 +19,13 @@ OobsIfacePlip
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### STRUCT OobsIfacePlip ##### -->
+<para>
+
+</para>
+
+@parent: 
+
 <!-- ##### FUNCTION oobs_iface_plip_get_address ##### -->
 <para>
 

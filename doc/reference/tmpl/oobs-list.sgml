@@ -19,6 +19,13 @@ OobsList
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### MACRO OOBS_TYPE_LIST_ITER ##### -->
+<para>
+
+</para>
+
+
+
 <!-- ##### STRUCT OobsListIter ##### -->
 <para>
 
@@ -26,6 +33,13 @@ OobsList
 
 @stamp: 
 @data: 
+
+<!-- ##### STRUCT OobsList ##### -->
+<para>
+
+</para>
+
+@parent: 
 
 <!-- ##### FUNCTION oobs_list_get_iter_first ##### -->
 <para>
@@ -121,5 +135,22 @@ OobsList
 </para>
 
 @list: 
+
+
+<!-- ##### FUNCTION oobs_list_iter_copy ##### -->
+<para>
+
+</para>
+
+@iter: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_list_iter_free ##### -->
+<para>
+
+</para>
+
+@iter: 
 
 

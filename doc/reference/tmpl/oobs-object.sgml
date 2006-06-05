@@ -19,12 +19,52 @@ OobsObject
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### ENUM OobsObjectResult ##### -->
+<para>
+
+</para>
+
+@OOBS_OBJECT_RESULT_OK: 
+@OOBS_OBJECT_RESULT_DENIED: 
+@OOBS_OBJECT_RESULT_NO_PLATFORM: 
+@OOBS_OBJECT_RESULT_MALFORMED: 
+@OOBS_OBJECT_RESULT_ERROR: 
+
+<!-- ##### STRUCT OobsObject ##### -->
+<para>
+
+</para>
+
+@parent: 
+
+<!-- ##### USER_FUNCTION OobsObjectAsyncFunc ##### -->
+<para>
+
+</para>
+
+@object: 
+@result: 
+@data: 
+
+
 <!-- ##### FUNCTION oobs_object_commit ##### -->
 <para>
 
 </para>
 
 @object: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_object_commit_async ##### -->
+<para>
+
+</para>
+
+@object: 
+@func: 
+@data: 
+@Returns: 
 
 
 <!-- ##### FUNCTION oobs_object_update ##### -->
@@ -33,5 +73,17 @@ OobsObject
 </para>
 
 @object: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_object_update_async ##### -->
+<para>
+
+</para>
+
+@object: 
+@func: 
+@data: 
+@Returns: 
 
 

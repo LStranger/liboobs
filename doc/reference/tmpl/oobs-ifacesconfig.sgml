@@ -1,0 +1,66 @@
+<!-- ##### SECTION Title ##### -->
+OobsIfacesConfig
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### ENUM OobsIfaceType ##### -->
+<para>
+
+</para>
+
+@OOBS_IFACE_ETHERNET: 
+@OOBS_IFACE_WIRELESS: 
+@OOBS_IFACE_IRLAN: 
+@OOBS_IFACE_PLIP: 
+@OOBS_IFACE_MODEM: 
+@OOBS_IFACE_ISDN: 
+
+<!-- ##### MACRO OOBS_TYPE_IFACE_TYPE ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### STRUCT OobsIfacesConfig ##### -->
+<para>
+
+</para>
+
+@parent: 
+
+<!-- ##### FUNCTION oobs_ifaces_config_get ##### -->
+<para>
+
+</para>
+
+@session: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_ifaces_config_get_ifaces ##### -->
+<para>
+
+</para>
+
+@config: 
+@type: 
+@Returns: 
+
+

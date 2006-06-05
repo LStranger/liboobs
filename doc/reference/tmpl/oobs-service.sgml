@@ -19,13 +19,60 @@ OobsService
 <!-- ##### SECTION Stability_Level ##### -->
 
 
-<!-- ##### FUNCTION oobs_service_new ##### -->
+<!-- ##### ENUM OobsServiceStatus ##### -->
 <para>
 
 </para>
 
-@name: 
-@role: 
+@OOBS_SERVICE_START: 
+@OOBS_SERVICE_STOP: 
+@OOBS_SERVICE_IGNORE: 
+
+<!-- ##### STRUCT OobsService ##### -->
+<para>
+
+</para>
+
+@parent: 
+
+<!-- ##### FUNCTION oobs_service_set_runlevel_configuration ##### -->
+<para>
+
+</para>
+
+@service: 
+@runlevel: 
+@status: 
+@priority: 
+
+
+<!-- ##### FUNCTION oobs_service_get_runlevel_configuration ##### -->
+<para>
+
+</para>
+
+@service: 
+@runlevel: 
+@status: 
+@priority: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_service_get_name ##### -->
+<para>
+
+</para>
+
+@service: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_service_get_role ##### -->
+<para>
+
+</para>
+
+@service: 
 @Returns: 
 
 

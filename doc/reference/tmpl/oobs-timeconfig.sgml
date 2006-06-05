@@ -19,6 +19,13 @@ OobsTimeConfig
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### STRUCT OobsTimeConfig ##### -->
+<para>
+
+</para>
+
+@parent: 
+
 <!-- ##### FUNCTION oobs_time_config_get ##### -->
 <para>
 
@@ -28,35 +35,7 @@ OobsTimeConfig
 @Returns: 
 
 
-<!-- ##### FUNCTION oobs_time_get_time ##### -->
-<para>
-
-</para>
-
-@config: 
-@year: 
-@month: 
-@day: 
-@hour: 
-@minute: 
-@second: 
-
-
-<!-- ##### FUNCTION oobs_time_set_time ##### -->
-<para>
-
-</para>
-
-@config: 
-@year: 
-@month: 
-@day: 
-@hour: 
-@minute: 
-@second: 
-
-
-<!-- ##### FUNCTION oobs_time_get_timezone ##### -->
+<!-- ##### FUNCTION oobs_time_config_get_unix_time ##### -->
 <para>
 
 </para>
@@ -65,7 +44,81 @@ OobsTimeConfig
 @Returns: 
 
 
-<!-- ##### FUNCTION oobs_time_set_timezone ##### -->
+<!-- ##### FUNCTION oobs_time_config_set_unix_time ##### -->
+<para>
+
+</para>
+
+@config: 
+@unix_time: 
+
+
+<!-- ##### FUNCTION oobs_time_config_get_time ##### -->
+<para>
+
+</para>
+
+@config: 
+@year: 
+@month: 
+@day: 
+@hour: 
+@minute: 
+@second: 
+
+
+<!-- ##### FUNCTION oobs_time_config_set_time ##### -->
+<para>
+
+</para>
+
+@config: 
+@year: 
+@month: 
+@day: 
+@hour: 
+@minute: 
+@second: 
+
+
+<!-- ##### FUNCTION oobs_time_config_get_utc_time ##### -->
+<para>
+
+</para>
+
+@config: 
+@year: 
+@month: 
+@day: 
+@hour: 
+@minute: 
+@second: 
+
+
+<!-- ##### FUNCTION oobs_time_config_set_utc_time ##### -->
+<para>
+
+</para>
+
+@config: 
+@year: 
+@month: 
+@day: 
+@hour: 
+@minute: 
+@second: 
+
+
+<!-- ##### FUNCTION oobs_time_config_get_timezone ##### -->
+<para>
+
+</para>
+
+@config: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_time_config_set_timezone ##### -->
 <para>
 
 </para>

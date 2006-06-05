@@ -35,6 +35,13 @@ OobsIfaceEthernet
 
 
 
+<!-- ##### STRUCT OobsIfaceEthernet ##### -->
+<para>
+
+</para>
+
+@parent: 
+
 <!-- ##### FUNCTION oobs_iface_ethernet_get_type ##### -->
 <para>
 

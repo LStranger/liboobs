@@ -1,0 +1,11 @@
+Liboobs 0.1.0, 2006-06-06
+-----------------------------------------------
+
+Liboobs version 0.1.0 "Shattered ataraxia" has been released.
+
+Liboobs is a lightweight library that provides a GObject based interface to system-tools-backends. It's completely abstracted of the communication and authentication details, making it easy for applications to integrate with the system details.
+
+Downloading
+===========
+You can get it from :
+ftp://ftp.gnome.org/pub/GNOME/sources/liboobs/0.1/

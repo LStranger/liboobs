@@ -35,7 +35,6 @@ oobsinclude_HEADERS= 	\
 	oobs-service.h
 
 oobs_private_headers = 	\
-	md5.h				\
 	oobs-defines.h			\
 	oobs-list-private.h		\
 	oobs-object-private.h	\
@@ -43,8 +42,6 @@ oobs_private_headers = 	\
 	utils.h
 
 liboobs_1_la_SOURCES = \
-	md5-crypt.c			\
-	md5.c				\
 	utils.c				\
 	oobs-session.c			\
 	oobs-object.c			\

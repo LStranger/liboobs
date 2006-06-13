@@ -28,12 +28,8 @@
 #include "oobs-user.h"
 #include "oobs-group.h"
 #include "oobs-defines.h"
-#include "md5.h"
 #include "utils.h"
-
-#ifdef HAVE_CRYPT_H
 #include <crypt.h>
-#endif
 
 #define OOBS_USER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_USER, OobsUserPrivate))
 
@@ -211,7 +207,7 @@ oobs_user_set_property (GObject      *object,
   OobsUser *user;
   OobsUserPrivate *priv;
   gboolean use_md5;
-  gchar *salt;
+  gchar *salt, *str;
 
   g_return_if_fail (OOBS_IS_USER (object));
 
@@ -230,13 +226,16 @@ oobs_user_set_property (GObject      *object,
 
       if (use_md5)
 	{
-	  salt = utils_get_random_string (8);
-	  priv->password = g_strdup (crypt_md5 (g_value_get_string (value), salt));
+	  salt = utils_get_random_string (5);
+	  str = g_strdup_printf ("$1$%s", salt);
+	  priv->password = g_strdup ((gchar *) crypt (g_value_get_string (value), str));
+
+	  g_free (str);
 	}
       else
 	{
 	  salt = utils_get_random_string (2);
-	  priv->password = crypt (g_value_get_string (value), salt);
+	  priv->password = g_strdup ((gchar *) crypt (g_value_get_string (value), salt));
 	}
 
       g_free (salt);

@@ -3,6 +3,7 @@
 	* src/oobs-user.c, oobs-group.c: use crypt builtin MD5 encryption, 
 	modified patch from Michael Vogt <mvo@ubuntu.org>
 	* src/md5.[ch], md5-crypt.c: nuked, they're obsolete
+	* configure.in, src/Makefile.am: add libtool library versioning
 
 2006-06-06  Carlos Garnacho  <carlosg@gnome.org>
 

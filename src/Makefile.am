@@ -72,6 +72,7 @@ liboobs_1_la_SOURCES = \
 	oobs-servicesconfig.c
 
 liboobs_1_la_LIBADD= $(OOBS_LIBS)
+liboobs_1_la_LDFLAGS= -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 EXTRA_DIST= $(oobs_private_headers)
 

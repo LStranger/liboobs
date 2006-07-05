@@ -60,9 +60,13 @@ void                   oobs_hosts_config_set_domainname (OobsHostsConfig *config
 							 const gchar     *domainname);
 
 OobsList*   oobs_hosts_config_get_static_hosts   (OobsHostsConfig *config);
-GList*      oobs_hosts_config_get_dns_servers    (OobsHostsConfig *config);
-GList*      oobs_hosts_config_get_search_domains (OobsHostsConfig *config);
 
+GList*      oobs_hosts_config_get_dns_servers    (OobsHostsConfig *config);
+void        oobs_hosts_config_set_dns_servers    (OobsHostsConfig *config,
+						  GList           *dns_list);
+GList*      oobs_hosts_config_get_search_domains (OobsHostsConfig *config);
+void        oobs_hosts_config_set_search_domains (OobsHostsConfig *config,
+						  GList           *search_domains_list);
 
 G_END_DECLS
 

@@ -570,6 +570,18 @@ oobs_list_clear (OobsList *list)
     }
 }
 
+gint
+oobs_list_get_n_items (OobsList *list)
+{
+  OobsListPrivate *priv;
+
+  g_return_val_if_fail (OOBS_IS_LIST (list), 0);
+
+  priv = OOBS_LIST_GET_PRIVATE (list);
+
+  return g_list_length (priv->list);
+}
+
 OobsListIter*
 oobs_list_iter_copy (OobsListIter *iter)
 {

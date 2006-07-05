@@ -65,12 +65,12 @@ oobs_iface_type_get_type (void)
     {
       static const GEnumValue values[] =
 	{
-	  { OOBS_IFACE_ETHERNET, "OOBS_IFACE_ETHERNET", "ethernet" },
-	  { OOBS_IFACE_WIRELESS, "OOBS_IFACE_WIRELESS", "wireless" },
-	  { OOBS_IFACE_IRLAN,    "OOBS_IFACE_IRLAN",    "infrared" },
-	  { OOBS_IFACE_PLIP,     "OOBS_IFACE_PLIP",     "parallel" },
-	  { OOBS_IFACE_MODEM,    "OOBS_IFACE_MODEM",    "modem" },
-	  { OOBS_IFACE_ISDN,     "OOBS_IFACE_ISDN",     "isdn" },
+	  { OOBS_IFACE_TYPE_ETHERNET, "OOBS_IFACE_TYPE_ETHERNET", "ethernet" },
+	  { OOBS_IFACE_TYPE_WIRELESS, "OOBS_IFACE_TYPE_WIRELESS", "wireless" },
+	  { OOBS_IFACE_TYPE_IRLAN,    "OOBS_IFACE_TYPE_IRLAN",    "infrared" },
+	  { OOBS_IFACE_TYPE_PLIP,     "OOBS_IFACE_TYPE_PLIP",     "parallel" },
+	  { OOBS_IFACE_TYPE_MODEM,    "OOBS_IFACE_TYPE_MODEM",    "modem" },
+	  { OOBS_IFACE_TYPE_ISDN,     "OOBS_IFACE_TYPE_ISDN",     "isdn" },
 	};
 
       etype = g_enum_register_static ("OobsIfaceType", values);
@@ -163,22 +163,22 @@ create_iface_from_message (DBusMessage     *message,
 
   switch (type)
     {
-    case OOBS_IFACE_ETHERNET:
+    case OOBS_IFACE_TYPE_ETHERNET:
       iface = g_object_new (OOBS_TYPE_IFACE_ETHERNET, "device", dev, NULL);
       break;
-    case OOBS_IFACE_WIRELESS:
+    case OOBS_IFACE_TYPE_WIRELESS:
       iface = g_object_new (OOBS_TYPE_IFACE_WIRELESS, "device", dev, NULL);
       break;
-    case OOBS_IFACE_IRLAN:
+    case OOBS_IFACE_TYPE_IRLAN:
       iface = g_object_new (OOBS_TYPE_IFACE_IRLAN, "device", dev, NULL);
       break;
-    case OOBS_IFACE_PLIP:
+    case OOBS_IFACE_TYPE_PLIP:
       iface = g_object_new (OOBS_TYPE_IFACE_PLIP, "device", dev, NULL);
       break;
-    case OOBS_IFACE_MODEM:
+    case OOBS_IFACE_TYPE_MODEM:
       iface = g_object_new (OOBS_TYPE_IFACE_MODEM, "device", dev, NULL);
       break;
-    case OOBS_IFACE_ISDN:
+    case OOBS_IFACE_TYPE_ISDN:
       iface = g_object_new (OOBS_TYPE_IFACE_ISDN, "device", dev, NULL);
       break;
     }
@@ -216,7 +216,7 @@ create_iface_from_message (DBusMessage     *message,
 		    "config-method", config_method,
 		    NULL);
 
-      if (type == OOBS_IFACE_WIRELESS)
+      if (type == OOBS_IFACE_TYPE_WIRELESS)
 	{
 	  const gchar *essid, *key;
 
@@ -371,22 +371,22 @@ oobs_ifaces_config_update (OobsObject *object)
   free_configuration (OOBS_IFACES_CONFIG (object));
 
   dbus_message_iter_init (reply, &iter);
-  create_ifaces_list (reply, &iter, OOBS_IFACE_ETHERNET, priv->ethernet_ifaces);
+  create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_ETHERNET, priv->ethernet_ifaces);
 
   dbus_message_iter_next (&iter);
-  create_ifaces_list (reply, &iter, OOBS_IFACE_WIRELESS, priv->wireless_ifaces);
+  create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_WIRELESS, priv->wireless_ifaces);
 
   dbus_message_iter_next (&iter);
-  create_ifaces_list (reply, &iter, OOBS_IFACE_IRLAN, priv->irlan_ifaces);
+  create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_IRLAN, priv->irlan_ifaces);
 
   dbus_message_iter_next (&iter);
-  create_ifaces_list (reply, &iter, OOBS_IFACE_PLIP, priv->plip_ifaces);
+  create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_PLIP, priv->plip_ifaces);
 
   dbus_message_iter_next (&iter);
-  create_ifaces_list (reply, &iter, OOBS_IFACE_MODEM, priv->modem_ifaces);
+  create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_MODEM, priv->modem_ifaces);
 
   dbus_message_iter_next (&iter);
-  create_ifaces_list (reply, &iter, OOBS_IFACE_ISDN, priv->isdn_ifaces);
+  create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_ISDN, priv->isdn_ifaces);
 }
 
 static void
@@ -539,8 +539,8 @@ create_dbus_struct_from_ifaces_list (OobsObject      *object,
 
   switch (type)
     {
-    case OOBS_IFACE_ETHERNET:
-    case OOBS_IFACE_IRLAN:
+    case OOBS_IFACE_TYPE_ETHERNET:
+    case OOBS_IFACE_TYPE_IRLAN:
       signature =
 	DBUS_STRUCT_BEGIN_CHAR_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
@@ -553,7 +553,7 @@ create_dbus_struct_from_ifaces_list (OobsObject      *object,
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_STRUCT_END_CHAR_AS_STRING;
       break;
-    case OOBS_IFACE_WIRELESS:
+    case OOBS_IFACE_TYPE_WIRELESS:
       signature =
 	DBUS_STRUCT_BEGIN_CHAR_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
@@ -569,7 +569,7 @@ create_dbus_struct_from_ifaces_list (OobsObject      *object,
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_STRUCT_END_CHAR_AS_STRING;
       break;
-    case OOBS_IFACE_PLIP:
+    case OOBS_IFACE_TYPE_PLIP:
       signature =
 	DBUS_STRUCT_BEGIN_CHAR_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
@@ -579,7 +579,7 @@ create_dbus_struct_from_ifaces_list (OobsObject      *object,
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_STRUCT_END_CHAR_AS_STRING;
       break;
-    case OOBS_IFACE_MODEM:
+    case OOBS_IFACE_TYPE_MODEM:
       signature =
 	DBUS_STRUCT_BEGIN_CHAR_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
@@ -598,7 +598,7 @@ create_dbus_struct_from_ifaces_list (OobsObject      *object,
 	DBUS_TYPE_INT32_AS_STRING
 	DBUS_STRUCT_END_CHAR_AS_STRING;
       break;
-    case OOBS_IFACE_ISDN:
+    case OOBS_IFACE_TYPE_ISDN:
       signature =
 	DBUS_STRUCT_BEGIN_CHAR_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
@@ -648,12 +648,12 @@ oobs_ifaces_config_commit (OobsObject *object)
 
   dbus_message_iter_init_append (message, &iter);
 
-  create_dbus_struct_from_ifaces_list (object, message, &iter, priv->ethernet_ifaces, OOBS_IFACE_ETHERNET);
-  create_dbus_struct_from_ifaces_list (object, message, &iter, priv->wireless_ifaces, OOBS_IFACE_WIRELESS);
-  create_dbus_struct_from_ifaces_list (object, message, &iter, priv->irlan_ifaces, OOBS_IFACE_IRLAN);
-  create_dbus_struct_from_ifaces_list (object, message, &iter, priv->plip_ifaces, OOBS_IFACE_PLIP);
-  create_dbus_struct_from_ifaces_list (object, message, &iter, priv->modem_ifaces, OOBS_IFACE_MODEM);
-  create_dbus_struct_from_ifaces_list (object, message, &iter, priv->isdn_ifaces, OOBS_IFACE_ISDN);
+  create_dbus_struct_from_ifaces_list (object, message, &iter, priv->ethernet_ifaces, OOBS_IFACE_TYPE_ETHERNET);
+  create_dbus_struct_from_ifaces_list (object, message, &iter, priv->wireless_ifaces, OOBS_IFACE_TYPE_WIRELESS);
+  create_dbus_struct_from_ifaces_list (object, message, &iter, priv->irlan_ifaces, OOBS_IFACE_TYPE_IRLAN);
+  create_dbus_struct_from_ifaces_list (object, message, &iter, priv->plip_ifaces, OOBS_IFACE_TYPE_PLIP);
+  create_dbus_struct_from_ifaces_list (object, message, &iter, priv->modem_ifaces, OOBS_IFACE_TYPE_MODEM);
+  create_dbus_struct_from_ifaces_list (object, message, &iter, priv->isdn_ifaces, OOBS_IFACE_TYPE_ISDN);
 }
 
 OobsObject*
@@ -688,17 +688,17 @@ oobs_ifaces_config_get_ifaces (OobsIfacesConfig *config,
 
   switch (type)
     {
-    case OOBS_IFACE_ETHERNET:
+    case OOBS_IFACE_TYPE_ETHERNET:
       return priv->ethernet_ifaces;
-    case OOBS_IFACE_WIRELESS:
+    case OOBS_IFACE_TYPE_WIRELESS:
       return priv->wireless_ifaces;
-    case OOBS_IFACE_IRLAN:
+    case OOBS_IFACE_TYPE_IRLAN:
       return priv->irlan_ifaces;
-    case OOBS_IFACE_PLIP:
+    case OOBS_IFACE_TYPE_PLIP:
       return priv->plip_ifaces;
-    case OOBS_IFACE_MODEM:
+    case OOBS_IFACE_TYPE_MODEM:
       return priv->modem_ifaces;
-    case OOBS_IFACE_ISDN:
+    case OOBS_IFACE_TYPE_ISDN:
       return priv->isdn_ifaces;
     default:
       g_critical ("Unknown interface type");

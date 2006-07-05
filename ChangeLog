@@ -1,3 +1,13 @@
+2006-07-05  Carlos Garnacho  <carlosg@gnome.org>
+
+	* src/oobs-hostsconfig.c (oobs_hosts_config_set_domainname): prevent a
+	crash if the given domainname is NULL.
+	* src/oobs-hostsconfig.h: oops, forgot to add a couple of function
+	declarations.
+	* src/oobs-ifacesconfig.[ch]: s/OOBS_IFACE_*/OOBS_IFACE_TYPE_*/ in
+	OobsIfaceType.
+	* src/oobs-list.[ch] (oobs_list_get_n_items): added
+
 2006-06-13  Carlos Garnacho  <carlosg@gnome.org>
 
 	* src/oobs-user.c, oobs-group.c: use crypt builtin MD5 encryption, 

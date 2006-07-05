@@ -69,6 +69,7 @@ GObject*   oobs_list_get            (OobsList *list, OobsListIter *iter);
 void       oobs_list_set            (OobsList *list, OobsListIter *iter, gpointer data);
 
 void       oobs_list_clear          (OobsList *list);
+gint       oobs_list_get_n_items    (OobsList *list);
 
 OobsListIter *oobs_list_iter_copy   (OobsListIter *iter);
 void          oobs_list_iter_free   (OobsListIter *iter);

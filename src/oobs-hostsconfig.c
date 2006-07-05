@@ -365,7 +365,7 @@ oobs_hosts_config_set_domainname (OobsHostsConfig *config,
   if (priv->domain)
     g_free (priv->domain);
 
-  priv->domain = (*domainname) ? g_strdup (domainname) : NULL;
+  priv->domain = (domainname && *domainname) ? g_strdup (domainname) : NULL;
 }
 
 /**

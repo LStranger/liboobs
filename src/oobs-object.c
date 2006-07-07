@@ -170,7 +170,8 @@ changed_signal_filter (DBusConnection *connection,
   object = OOBS_OBJECT (user_data);
   priv   = OOBS_OBJECT_GET_PRIVATE (object);
 
-  if (dbus_message_is_signal (message, priv->method, "changed"))
+  if (dbus_message_is_signal (message, priv->method, "changed") &&
+      dbus_message_has_path (message, priv->path))
     g_signal_emit (object, object_signals [CHANGED], 0);
 
   /* we want the rest of the objects of
@@ -192,8 +193,8 @@ connect_object_to_session (OobsObject *object)
   _oobs_session_register_object (priv->session, object);
   dbus_connection_add_filter (connection, changed_signal_filter, object, NULL);
 
-  rule = g_strdup_printf ("type='signal',sender='%s',interface='%s',path='%s'",
-			  OOBS_DBUS_DESTINATION, priv->method, priv->path);
+  rule = g_strdup_printf ("type='signal',interface='%s',path='%s'",
+			  priv->method, priv->path);
   dbus_bus_add_match (connection, rule, &priv->dbus_error);
 
   if (dbus_error_is_set (&priv->dbus_error))

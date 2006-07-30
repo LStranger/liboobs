@@ -1,3 +1,7 @@
+2006-07-30  Ed Catmur  <ed@catmur.co.uk>
+
+	* doc/reference/liboobs-docs.sgml: put title to the API reference
+
 2006-07-06  Carlos Garnacho  <carlosg@gnome.org>
 
 	* src/oobs-object.c (changed_signal_filter)

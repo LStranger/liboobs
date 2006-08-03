@@ -1,4 +1,11 @@
-INCLUDES= -Wall $(OOBS_CFLAGS)
+INCLUDES = \
+	-Wall \
+	-DG_LOG_DOMAIN=\"Liboobs\" \
+	$(OOBS_CFLAGS)
+
+libtool_opts = \
+	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
+	-export-dynamic -export-symbols-regex "^oobs_.*"
 
 oobsincludedir=$(includedir)/liboobs-1.0/oobs/
 
@@ -72,7 +79,7 @@ liboobs_1_la_SOURCES = \
 	oobs-servicesconfig.c
 
 liboobs_1_la_LIBADD= $(OOBS_LIBS)
-liboobs_1_la_LDFLAGS= -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+liboobs_1_la_LDFLAGS= $(libtool_opts)
 
 EXTRA_DIST= $(oobs_private_headers)
 

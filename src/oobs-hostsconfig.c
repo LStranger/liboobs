@@ -311,6 +311,15 @@ oobs_hosts_config_get (OobsSession *session)
   return object;
 }
 
+/**
+ * oobs_hosts_config_get_hostname:
+ * @config: An #OobsHostsConfig.
+ * 
+ * Returns the hostname for the machine.
+ * 
+ * Return Value: A pointer to the hostname as a string. This
+ * string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_hosts_config_get_hostname (OobsHostsConfig *config)
 {
@@ -323,6 +332,13 @@ oobs_hosts_config_get_hostname (OobsHostsConfig *config)
   return priv->hostname;
 }
 
+/**
+ * oobs_hosts_config_set_hostname:
+ * @config: An #OobsHostsConfig.
+ * @hostname: A new hostname.
+ * 
+ * Sets a new hostname, overwriting the previous one.
+ **/
 void
 oobs_hosts_config_set_hostname (OobsHostsConfig *config,
 				const gchar     *hostname)
@@ -340,6 +356,15 @@ oobs_hosts_config_set_hostname (OobsHostsConfig *config,
   priv->hostname = g_strdup (hostname);
 }
 
+/**
+ * oobs_hosts_config_get_domainname:
+ * @config: An #OobsHostsConfig.
+ * 
+ * Returns the domain name for the machine.
+ * 
+ * Return Value: A pointer to the domain name as a string. This
+ * string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_hosts_config_get_domainname (OobsHostsConfig *config)
 {
@@ -352,6 +377,13 @@ oobs_hosts_config_get_domainname (OobsHostsConfig *config)
   return priv->domain;
 }
 
+/**
+ * oobs_hosts_config_set_domainname:
+ * @config: An #OobsHostsConfig.
+ * @domainname: A new domain name.
+ * 
+ * Sets a new domain name, overwriting the previous one.
+ **/
 void
 oobs_hosts_config_set_domainname (OobsHostsConfig *config,
 				  const gchar     *domainname)
@@ -409,6 +441,14 @@ oobs_hosts_config_get_dns_servers (OobsHostsConfig *config)
   return g_list_copy (priv->dns_list);
 }
 
+/**
+ * oobs_hosts_config_set_dns_servers:
+ * @config: An #OobsHostsConfig.
+ * @dns_list: a #GList containing strings with the IP addresses of the DNS servers.
+ * 
+ * Overwrites the list of DNS servers. The previous list and its contents will
+ * be freed, so any merging will have to be done by hand.
+ **/
 void
 oobs_hosts_config_set_dns_servers (OobsHostsConfig *config,
 				   GList           *dns_list)
@@ -449,6 +489,14 @@ oobs_hosts_config_get_search_domains (OobsHostsConfig *config)
   return g_list_copy (priv->search_domains_list);
 }
 
+/**
+ * oobs_hosts_config_set_search_domains:
+ * @config: An #OobsHostsConfig
+ * @search_domains_list: a #GList containing strings with the search domains.
+ * 
+ * Overwrites the list of search domains. The previous list and its contents will
+ * be freed, so any merging will have to be done by hand.
+ **/
 void
 oobs_hosts_config_set_search_domains (OobsHostsConfig *config,
 				      GList           *search_domains_list)

@@ -1,3 +1,13 @@
+2006-09-04  Carlos Garnacho  <carlosg@gnome.org>
+
+	* configure.in: bump some required versions.
+	* oobs-group.c, oobs-hostsconfig.c, oobs-iface.c, oobs-list.c,
+	oobs-object.c, oobs-timeconfig.c: document, document, document.
+	* oobs-servicesconfig.c, oobs-service.[ch]: the backend doesn't 
+	provide roles for services/runlevels anymore.
+	* oobs-session.[ch]: remove some old code, do not use
+	dbus_connection_disconnect()
+
 2006-08-04  Carlos Garnacho  <carlosg@gnome.org>
 
 	* src/Makefile.am: do not export unwanted symbols

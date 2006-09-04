@@ -9,12 +9,10 @@ OobsHostsConfig
 
 </para>
 
-
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
-
 
 <!-- ##### SECTION Stability_Level ##### -->
 
@@ -89,6 +87,15 @@ OobsHostsConfig
 @Returns: 
 
 
+<!-- ##### FUNCTION oobs_hosts_config_set_dns_servers ##### -->
+<para>
+
+</para>
+
+@config: 
+@dns_list: 
+
+
 <!-- ##### FUNCTION oobs_hosts_config_get_search_domains ##### -->
 <para>
 
@@ -96,5 +103,14 @@ OobsHostsConfig
 
 @config: 
 @Returns: 
+
+
+<!-- ##### FUNCTION oobs_hosts_config_set_search_domains ##### -->
+<para>
+
+</para>
+
+@config: 
+@search_domains_list: 
 
 

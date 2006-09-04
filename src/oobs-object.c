@@ -439,6 +439,8 @@ get_update_message (OobsObject *object)
  * 
  * Commits to the system all the changes done
  * to the configuration held by an #OobsObject.
+ *
+ * Return value: an #OobsObjectResult enum with the error code.
  **/
 OobsObjectResult
 oobs_object_commit (OobsObject *object)
@@ -459,6 +461,18 @@ oobs_object_commit (OobsObject *object)
   return OOBS_OBJECT_RESULT_OK;
 }
 
+/**
+ * oobs_object_commit_async:
+ * @object: An #OobsObject.
+ * @func: An #OobsObjectAsyncFunc that will be called when the asynchronous operation has ended.
+ * @data: Aditional data to pass to @func.
+ * 
+ * Commits to the system all the changes done to the configuration held by an #OobsObject.
+ * This change will be asynchronous, being run the function @func when the change has been done.
+ * 
+ * Return value: an #OobsObjectResult enum with the error code. Due to the asynchronous nature
+ * of the function, only OOBS_OBJECT_RESULT_MALFORMED and OOBS_OBJECT_RESULT_OK can be returned.
+ **/
 OobsObjectResult
 oobs_object_commit_async (OobsObject          *object,
 			  OobsObjectAsyncFunc  func,
@@ -486,6 +500,8 @@ oobs_object_commit_async (OobsObject          *object,
  * Synchronizes the configuration held by the #OobsObject
  * with the actual system configuration. All the changes done
  * to the configuration held by the #OobsObject will be forgotten.
+ *
+ * Return value: an #OobsObjectResult enum with the error code.
  **/
 OobsObjectResult
 oobs_object_update (OobsObject *object)
@@ -512,6 +528,21 @@ oobs_object_update (OobsObject *object)
   return result;
 }
 
+/**
+ * oobs_object_update_async:
+ * @object: An #OobsObject
+ * @func: An #OobsObjectAsyncFunc that will be called when the asynchronous operation has ended.
+ * @data: Aditional data to pass to @func.
+ * 
+ * Synchronizes the configuration held by the #OobsObject
+ * with the actual system configuration. All the changes done
+ * to the configuration held by the #OobsObject will be forgotten.
+ * The update operation will be asynchronous, being run the
+ * function @func when the update has been done.
+ * 
+ * Return value: an #OobsObjectResult enum with the error code. Due to the asynchronous nature
+ * of the function, only OOBS_OBJECT_RESULT_MALFORMED and OOBS_OBJECT_RESULT_OK can be returned.
+ **/
 OobsObjectResult
 oobs_object_update_async (OobsObject          *object,
 			  OobsObjectAsyncFunc  func,

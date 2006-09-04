@@ -129,31 +129,24 @@ runlevel_to_role (const gchar *runlevel)
 static void
 create_runlevels_list_from_dbus_reply (OobsObject      *object,
 				       DBusMessage     *reply,
-				       DBusMessageIter  struct_iter)
+				       DBusMessageIter  iter)
 {
   OobsServicesConfigPrivate *priv;
   OobsServicesRunlevel *runlevel;
-  DBusMessageIter iter;
   gchar *name;
 
   priv = OOBS_SERVICES_CONFIG_GET_PRIVATE (object);
 
-  while (dbus_message_iter_get_arg_type (&struct_iter) == DBUS_TYPE_STRUCT)
+  while (dbus_message_iter_get_arg_type (&iter) == DBUS_TYPE_STRING)
     {
-      dbus_message_iter_recurse (&struct_iter, &iter);
-
       dbus_message_iter_get_basic (&iter, &name);
-      dbus_message_iter_next (&iter);
-
-      /* FIXME: role not used, guess our own */
-      dbus_message_iter_next (&iter);
 
       runlevel = g_new0 (OobsServicesRunlevel, 1);
       runlevel->name = g_strdup (name);
       runlevel->role = runlevel_to_role (runlevel->name);
 
       priv->runlevels = g_list_prepend (priv->runlevels, runlevel);
-      dbus_message_iter_next (&struct_iter);
+      dbus_message_iter_next (&iter);
     }
 
   priv->runlevels = g_list_reverse (priv->runlevels);
@@ -227,19 +220,15 @@ create_service_from_dbus_reply (OobsServicesConfig *config,
 {
   GObject *service;
   DBusMessageIter iter, runlevels_iter;
-  gchar *name, *role;
+  gchar *name;
 
   dbus_message_iter_recurse (&struct_iter, &iter);
 
   dbus_message_iter_get_basic (&iter, &name);
   dbus_message_iter_next (&iter);
 
-  dbus_message_iter_get_basic (&iter, &role);
-  dbus_message_iter_next (&iter);
-
   service = g_object_new (OOBS_TYPE_SERVICE,
 			  "name", name,
-			  "role", role,
 			  NULL);
 
   dbus_message_iter_recurse (&iter, &runlevels_iter);

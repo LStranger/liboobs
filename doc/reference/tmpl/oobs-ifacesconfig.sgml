@@ -9,12 +9,10 @@ OobsIfacesConfig
 
 </para>
 
-
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
-
 
 <!-- ##### SECTION Stability_Level ##### -->
 
@@ -24,12 +22,12 @@ OobsIfacesConfig
 
 </para>
 
-@OOBS_IFACE_ETHERNET: 
-@OOBS_IFACE_WIRELESS: 
-@OOBS_IFACE_IRLAN: 
-@OOBS_IFACE_PLIP: 
-@OOBS_IFACE_MODEM: 
-@OOBS_IFACE_ISDN: 
+@OOBS_IFACE_TYPE_ETHERNET: 
+@OOBS_IFACE_TYPE_WIRELESS: 
+@OOBS_IFACE_TYPE_IRLAN: 
+@OOBS_IFACE_TYPE_PLIP: 
+@OOBS_IFACE_TYPE_MODEM: 
+@OOBS_IFACE_TYPE_ISDN: 
 
 <!-- ##### MACRO OOBS_TYPE_IFACE_TYPE ##### -->
 <para>

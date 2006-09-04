@@ -231,7 +231,7 @@ oobs_group_finalize (GObject *object)
  * oobs_group_new:
  * @name: group name.
  * 
- * Returns a new #OobsGroup with the name specified by @name.
+ * Returns a newly allocated #OobsGroup with the name specified by @name.
  * 
  * Return Value: A new #OobsGroup.
  **/
@@ -249,7 +249,7 @@ oobs_group_new (const gchar *name)
  * oobs_group_get_name:
  * @group: An #OobsGroup.
  * 
- * Returns the #OobsGroup name.
+ * Returns the name of the group represented by #OobsGroup.
  * 
  * Return Value: A pointer to the group name as a string.
  *               This string must not be freed, modified or stored.
@@ -305,6 +305,24 @@ oobs_group_set_password (OobsGroup *group, const gchar *password)
 }
 
 /**
+ * oobs_group_set_crypted_password:
+ * @group: An #OobsGroup.
+ * @crypted_password: a new crypted password for #group.
+ * 
+ * Sets an already crypted password for the group
+ * defined by #OobsGroup, overwriting the previous one.
+ **/
+void
+oobs_group_set_crypted_password (OobsGroup   *group,
+				 const gchar *crypted_password)
+{
+  g_return_if_fail (group != NULL);
+  g_return_if_fail (OOBS_IS_GROUP (group));
+
+  g_object_set (G_OBJECT (group), "crypted-password", crypted_password, NULL);
+}
+
+/**
  * oobs_group_get_gid:
  * @group: An #OobsGroup.
  * 
@@ -341,6 +359,15 @@ oobs_group_set_gid (OobsGroup *group, gid_t gid)
   g_object_set (G_OBJECT (group), "gid", gid, NULL);
 }
 
+/**
+ * oobs_group_get_users:
+ * @group: An #OobsGroup.
+ * 
+ * Returns a #GList containing pointers to the #OobsUser objects
+ * that represent the users represented by the group.
+ * 
+ * Return Value: a newly allocated #GList, use g_list_free() to free it.
+ **/
 GList*
 oobs_group_get_users (OobsGroup *group)
 {
@@ -352,6 +379,14 @@ oobs_group_get_users (OobsGroup *group)
   return g_list_copy (priv->users);
 }
 
+/**
+ * oobs_group_add_user:
+ * @group: An #OobsGroup.
+ * @user: An #OobsUser to add to the group.
+ * 
+ * Adds a new user to the group. If the user is
+ * already in the group, it does nothing.
+ **/
 void
 oobs_group_add_user (OobsGroup *group,
 		     OobsUser  *user)
@@ -368,6 +403,14 @@ oobs_group_add_user (OobsGroup *group,
     priv->users = g_list_prepend (priv->users, g_object_ref (user));
 }
 
+/**
+ * oobs_group_remove_user:
+ * @group: An #OobsGroup.
+ * @user: An #OobsUser to remove from the group.
+ * 
+ * Removes an user from the group. If the user isn't a
+ * member of this group, this function does nothing.
+ **/
 void
 oobs_group_remove_user (OobsGroup *group,
 			OobsUser  *user)

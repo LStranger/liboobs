@@ -1,0 +1,104 @@
+<!-- ##### SECTION ./tmpl/oobs-shell.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/oobs-shell.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/oobs-shell.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/oobs-shell.sgml:Stability_Level ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/oobs-shell.sgml:Title ##### -->
+OobsShell
+
+
+<!-- ##### SECTION ./tmpl/oobs-shellsconfig.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/oobs-shellsconfig.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/oobs-shellsconfig.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/oobs-shellsconfig.sgml:Stability_Level ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/oobs-shellsconfig.sgml:Title ##### -->
+OobsShellsConfig
+
+
+<!-- ##### SECTION ./tmpl/utils.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/utils.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/utils.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/utils.sgml:Stability_Level ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/utils.sgml:Title ##### -->
+utils
+
+
+<!-- ##### FUNCTION oobs_shell_get_path ##### -->
+<para>
+
+</para>
+
+@shell: 
+@Returns: 
+
+<!-- ##### FUNCTION oobs_shell_new ##### -->
+<para>
+
+</para>
+
+@path: 
+@Returns: 
+
+<!-- ##### FUNCTION oobs_shells_config_get ##### -->
+<para>
+
+</para>
+
+@session: 
+@Returns: 
+
+<!-- ##### FUNCTION oobs_shells_config_get_shells ##### -->
+<para>
+
+</para>
+
+@config: 
+@Returns: 
+

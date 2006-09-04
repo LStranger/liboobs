@@ -62,7 +62,6 @@ gboolean oobs_service_get_runlevel_configuration (OobsService          *service,
 						  OobsServiceStatus    *status,
 						  gint                 *priority);
 G_CONST_RETURN gchar* oobs_service_get_name      (OobsService *service);
-G_CONST_RETURN gchar* oobs_service_get_role      (OobsService *service);
 
 
 G_END_DECLS

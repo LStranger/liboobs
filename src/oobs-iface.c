@@ -203,6 +203,14 @@ oobs_iface_get_property (GObject      *object,
     }
 }
 
+/**
+ * oobs_iface_get_auto:
+ * @iface: An #OobsIface.
+ * 
+ * Returns whether the interface is started automatically at boot time.
+ * 
+ * Return Value: #TRUE if the interface starts during system boot.
+ **/
 gboolean
 oobs_iface_get_auto (OobsIface *iface)
 {
@@ -215,6 +223,13 @@ oobs_iface_get_auto (OobsIface *iface)
   return priv->is_auto;
 }
 
+/**
+ * oobs_iface_set_auto:
+ * @iface: An #OobsIface.
+ * @is_auto: #TRUE to make the interface start at boot time.
+ * 
+ * Sets whether the interface is started automatically at boot time.
+ **/
 void
 oobs_iface_set_auto (OobsIface *iface, gboolean is_auto)
 {
@@ -223,6 +238,14 @@ oobs_iface_set_auto (OobsIface *iface, gboolean is_auto)
   g_object_set (G_OBJECT (iface), "auto", is_auto, NULL);
 }
 
+/**
+ * oobs_iface_get_active:
+ * @iface: An #OobsIface.
+ * 
+ * Returns whether the interface is active.
+ * 
+ * Return Value: #TRUE if the interface is active.
+ **/
 gboolean
 oobs_iface_get_active (OobsIface *iface)
 {
@@ -235,6 +258,13 @@ oobs_iface_get_active (OobsIface *iface)
   return priv->is_enabled;
 }
 
+/**
+ * oobs_iface_set_active:
+ * @iface: An #OobsIface.
+ * @is_active: #TRUE to enable the interface.
+ * 
+ * Sets whether the interface is currently active.
+ **/
 void
 oobs_iface_set_active (OobsIface *iface, gboolean is_active)
 {
@@ -243,6 +273,15 @@ oobs_iface_set_active (OobsIface *iface, gboolean is_active)
   g_object_set (G_OBJECT (iface), "active", is_active, NULL);
 }
 
+/**
+ * oobs_iface_get_device_name:
+ * @iface: An #OobsIface.
+ * 
+ * Returns the device name for the interface.
+ * 
+ * Return Value: A string containing the device name.
+ * This string must not be freed or modified.
+ **/
 G_CONST_RETURN gchar*
 oobs_iface_get_device_name (OobsIface *iface)
 {
@@ -267,6 +306,16 @@ oobs_iface_get_hwaddr (OobsIface *iface)
   return priv->hwaddr;
 }
 
+/**
+ * oobs_iface_get_configured:
+ * @iface: An #OobsIface.
+ * 
+ * Returns whether the interface has a valid (i.e.: complete)
+ * configuration and is explicitly marked as configured
+ * (see oobs_iface_set_configured ()).
+ * 
+ * Return Value: #TRUE if its configuration is valid.
+ **/
 gboolean
 oobs_iface_get_configured (OobsIface *iface)
 {
@@ -282,6 +331,15 @@ oobs_iface_get_configured (OobsIface *iface)
   return (* OOBS_IFACE_GET_CLASS (iface)->is_configured) (iface);
 }
 
+/**
+ * oobs_iface_set_configured:
+ * @iface: An #OobsIface.
+ * @is_configured: #FALSE to explictitly mark the interface as not configured.
+ * 
+ * If @is_configured is #FALSE, the function explicitly marks the interface
+ * as not configured. If @is_configured is #TRUE, the explicit mark will be
+ * removed, but the interface may still have an incomplete/invalid configuration.
+ **/
 void
 oobs_iface_set_configured (OobsIface *iface, gboolean is_configured)
 {

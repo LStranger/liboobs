@@ -35,6 +35,5 @@
     <xi:include href="xml/oobs-timeconfig.xml"/>
     <xi:include href="xml/oobs-user.xml"/>
     <xi:include href="xml/oobs-usersconfig.xml"/>
-    <xi:include href="xml/utils.xml"/>
   </chapter>
 </book>

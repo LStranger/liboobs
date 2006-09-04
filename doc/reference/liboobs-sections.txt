@@ -13,6 +13,7 @@ oobs_group_get_users
 oobs_group_add_user
 oobs_group_remove_user
 <SUBSECTION Standard>
+OobsGroupClass
 OOBS_GROUP
 OOBS_IS_GROUP
 OOBS_TYPE_GROUP
@@ -29,6 +30,7 @@ OobsGroupsConfig
 oobs_groups_config_get
 oobs_groups_config_get_groups
 <SUBSECTION Standard>
+OobsGroupsConfigClass
 OOBS_GROUPS_CONFIG
 OOBS_IS_GROUPS_CONFIG
 OOBS_TYPE_GROUPS_CONFIG
@@ -49,8 +51,11 @@ oobs_hosts_config_get_domainname
 oobs_hosts_config_set_domainname
 oobs_hosts_config_get_static_hosts
 oobs_hosts_config_get_dns_servers
+oobs_hosts_config_set_dns_servers
 oobs_hosts_config_get_search_domains
+oobs_hosts_config_set_search_domains
 <SUBSECTION Standard>
+OobsHostsConfigClass
 OOBS_HOSTS_CONFIG
 OOBS_IS_HOSTS_CONFIG
 OOBS_TYPE_HOSTS_CONFIG
@@ -80,6 +85,7 @@ oobs_iface_ethernet_set_broadcast_address
 oobs_iface_ethernet_get_configuration_method
 oobs_iface_ethernet_set_configuration_method
 <SUBSECTION Standard>
+OobsIfaceEthernetClass
 OOBS_IFACE_ETHERNET
 OOBS_IS_IFACE_ETHERNET
 OOBS_TYPE_IFACE_ETHERNET
@@ -94,6 +100,7 @@ OOBS_IFACE_ETHERNET_GET_CLASS
 <TITLE>OobsIfaceIRLan</TITLE>
 OobsIfaceIRLan
 <SUBSECTION Standard>
+OobsIfaceIRLanClass
 OOBS_IFACE_IRLAN
 OOBS_IS_IFACE_IRLAN
 OOBS_TYPE_IFACE_IRLAN
@@ -123,6 +130,7 @@ oobs_iface_isdn_get_persistent
 oobs_iface_isdn_set_peer_noauth
 oobs_iface_isdn_get_peer_noauth
 <SUBSECTION Standard>
+OobsIfaceISDNClass
 OOBS_IFACE_ISDN
 OOBS_IS_IFACE_ISDN
 OOBS_TYPE_IFACE_ISDN
@@ -149,6 +157,7 @@ oobs_iface_modem_get_volume
 oobs_iface_modem_set_dial_type
 oobs_iface_modem_get_dial_type
 <SUBSECTION Standard>
+OobsIfaceModemClass
 OOBS_IFACE_MODEM
 OOBS_IS_IFACE_MODEM
 OOBS_TYPE_IFACE_MODEM
@@ -167,6 +176,7 @@ oobs_iface_plip_set_address
 oobs_iface_plip_get_remote_address
 oobs_iface_plip_set_remote_address
 <SUBSECTION Standard>
+OobsIfacePlipClass
 OOBS_IFACE_PLIP
 OOBS_IS_IFACE_PLIP
 OOBS_TYPE_IFACE_PLIP
@@ -190,6 +200,7 @@ oobs_iface_wireless_set_wep_key
 oobs_iface_wireless_get_wep_key_type
 oobs_iface_wireless_set_wep_key_type
 <SUBSECTION Standard>
+OobsIfaceWirelessClass
 OOBS_IFACE_WIRELESS
 OOBS_IS_IFACE_WIRELESS
 OOBS_TYPE_IFACE_WIRELESS
@@ -213,6 +224,7 @@ oobs_iface_get_configured
 oobs_iface_set_configured
 oobs_iface_has_gateway
 <SUBSECTION Standard>
+OobsIfaceClass
 OOBS_IFACE
 OOBS_IS_IFACE
 OOBS_TYPE_IFACE
@@ -231,6 +243,7 @@ OobsIfacesConfig
 oobs_ifaces_config_get
 oobs_ifaces_config_get_ifaces
 <SUBSECTION Standard>
+OobsIfacesConfigClass
 OOBS_IFACES_CONFIG
 OOBS_IS_IFACES_CONFIG
 OOBS_TYPE_IFACES_CONFIG
@@ -258,7 +271,9 @@ oobs_list_set
 oobs_list_clear
 oobs_list_iter_copy
 oobs_list_iter_free
+oobs_list_get_n_items
 <SUBSECTION Standard>
+OobsListClass
 OOBS_LIST
 OOBS_IS_LIST
 OOBS_TYPE_LIST
@@ -275,6 +290,7 @@ OobsNFSConfig
 oobs_nfs_config_get
 oobs_nfs_config_get_shares
 <SUBSECTION Standard>
+OobsNFSConfigClass
 OOBS_NFS_CONFIG
 OOBS_IS_NFS_CONFIG
 OOBS_TYPE_NFS_CONFIG
@@ -291,6 +307,7 @@ OobsNTPConfig
 oobs_ntp_config_get
 oobs_ntp_config_get_servers
 <SUBSECTION Standard>
+OobsNTPConfigClass
 OOBS_NTP_CONFIG
 OOBS_IS_NTP_CONFIG
 OOBS_TYPE_NTP_CONFIG
@@ -308,6 +325,7 @@ oobs_ntp_server_new
 oobs_ntp_server_get_hostname
 oobs_ntp_server_set_hostname
 <SUBSECTION Standard>
+OobsNTPServerClass
 OOBS_NTP_SERVER
 OOBS_IS_NTP_SERVER
 OOBS_TYPE_NTP_SERVER
@@ -328,6 +346,7 @@ oobs_object_commit_async
 oobs_object_update
 oobs_object_update_async
 <SUBSECTION Standard>
+OobsObjectClass
 OOBS_OBJECT
 OOBS_IS_OBJECT
 OOBS_TYPE_OBJECT
@@ -347,6 +366,7 @@ oobs_service_get_runlevel_configuration
 oobs_service_get_name
 oobs_service_get_role
 <SUBSECTION Standard>
+OobsServiceClass
 OOBS_SERVICE
 OOBS_IS_SERVICE
 OOBS_TYPE_SERVICE
@@ -367,6 +387,7 @@ oobs_services_config_get_services
 oobs_services_config_get_runlevels
 oobs_services_config_get_default_runlevel
 <SUBSECTION Standard>
+OobsServicesConfigClass
 OOBS_SERVICES_CONFIG
 OOBS_IS_SERVICES_CONFIG
 OOBS_TYPE_SERVICES_CONFIG
@@ -389,6 +410,7 @@ oobs_session_set_platform
 oobs_session_set_autocommit_on_exit
 oobs_session_get_autocommit_on_exit
 <SUBSECTION Standard>
+OobsSessionClass
 OOBS_SESSION
 OOBS_IS_SESSION
 OOBS_TYPE_SESSION
@@ -408,6 +430,7 @@ oobs_share_nfs_add_acl_element
 oobs_share_nfs_set_acl
 oobs_share_nfs_get_acl
 <SUBSECTION Standard>
+OobsShareNFSClass
 OOBS_SHARE_NFS
 OOBS_IS_SHARE_NFS
 OOBS_TYPE_SHARE_NFS
@@ -432,6 +455,7 @@ oobs_share_smb_get_flags
 oobs_share_smb_set_flags
 oobs_share_smb_new
 <SUBSECTION Standard>
+OobsShareSMBClass
 OOBS_SHARE_SMB
 OOBS_IS_SHARE_SMB
 OOBS_TYPE_SHARE_SMB
@@ -448,6 +472,7 @@ OobsShare
 oobs_share_get_path
 oobs_share_set_path
 <SUBSECTION Standard>
+OobsShareClass
 OOBS_SHARE
 OOBS_IS_SHARE
 OOBS_TYPE_SHARE
@@ -464,6 +489,7 @@ OobsSMBConfig
 oobs_smb_config_get
 oobs_smb_config_get_shares
 <SUBSECTION Standard>
+OobsSMBConfigClass
 OOBS_SMB_CONFIG
 OOBS_IS_SMB_CONFIG
 OOBS_TYPE_SMB_CONFIG
@@ -483,6 +509,7 @@ oobs_static_host_set_ip_address
 oobs_static_host_get_aliases
 oobs_static_host_set_aliases
 <SUBSECTION Standard>
+OobsStaticHostClass
 OOBS_STATIC_HOST
 OOBS_IS_STATIC_HOST
 OOBS_TYPE_STATIC_HOST
@@ -506,6 +533,7 @@ oobs_time_config_set_utc_time
 oobs_time_config_get_timezone
 oobs_time_config_set_timezone
 <SUBSECTION Standard>
+OobsTimeConfigClass
 OOBS_TIME_CONFIG
 OOBS_IS_TIME_CONFIG
 OOBS_TYPE_TIME_CONFIG
@@ -543,6 +571,7 @@ oobs_user_set_home_phone_number
 oobs_user_get_other_data
 oobs_user_set_other_data
 <SUBSECTION Standard>
+OobsUserClass
 OOBS_USER
 OOBS_IS_USER
 OOBS_TYPE_USER
@@ -569,6 +598,7 @@ oobs_users_config_set_default_home_dir
 oobs_users_config_get_default_group
 oobs_users_config_get_available_shells
 <SUBSECTION Standard>
+OobsUsersConfigClass
 OOBS_USERS_CONFIG
 OOBS_IS_USERS_CONFIG
 OOBS_TYPE_USERS_CONFIG
@@ -581,13 +611,3 @@ OOBS_USERS_CONFIG_GET_CLASS
 <SECTION>
 <FILE>oobs</FILE>
 </SECTION>
-
-<SECTION>
-<FILE>utils</FILE>
-utils_create_dbus_array_from_string_list
-utils_get_string_list_from_dbus_reply
-utils_get_random_string
-utils_append_string
-utils_get_string
-</SECTION>
-

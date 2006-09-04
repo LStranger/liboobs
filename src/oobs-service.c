@@ -33,7 +33,6 @@ struct _OobsServiceRunlevel {
 	
 struct _OobsServicePrivate {
   gchar *name;
-  gchar *role;
   GHashTable *runlevels_config;
 };
 
@@ -52,8 +51,7 @@ static void oobs_service_get_property (GObject      *object,
 enum
 {
   PROP_0,
-  PROP_NAME,
-  PROP_ROLE
+  PROP_NAME
 };
 
 G_DEFINE_TYPE (OobsService, oobs_service, G_TYPE_OBJECT);
@@ -74,13 +72,6 @@ oobs_service_class_init (OobsServiceClass *class)
 							"Name of the service",
 							NULL,
 							G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
-  g_object_class_install_property (object_class,
-				   PROP_ROLE,
-				   g_param_spec_string ("role",
-							"Service role",
-							"Role that defines what the service does",
-							NULL,
-							G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
   g_type_class_add_private (object_class,
 			    sizeof (OobsServicePrivate));
 }
@@ -95,7 +86,6 @@ oobs_service_init (OobsService *service)
   priv = OOBS_SERVICE_GET_PRIVATE (service);
 
   priv->name = NULL;
-  priv->role = NULL;
   priv->runlevels_config = g_hash_table_new_full (NULL, NULL, NULL,
 						  (GDestroyNotify) g_free);
 }
@@ -116,10 +106,6 @@ oobs_service_set_property (GObject      *object,
       g_free (priv->name);
       priv->name  = g_value_dup_string (value);
       break;
-    case PROP_ROLE:
-      g_free (priv->role);
-      priv->role = g_value_dup_string (value);
-      break;
     }
 }
 
@@ -138,9 +124,6 @@ oobs_service_get_property (GObject      *object,
     case PROP_NAME:
       g_value_set_string (value, priv->name);
       break;
-    case PROP_ROLE:
-      g_value_set_string (value, priv->role);
-      break;
     }
 }
 
@@ -154,8 +137,6 @@ oobs_service_finalize (GObject *object)
   if (priv)
     {
       g_free (priv->name);
-      g_free (priv->role);
-
       g_hash_table_unref (priv->runlevels_config);
     }
 
@@ -172,17 +153,6 @@ oobs_service_get_name (OobsService *service)
 
   priv = OOBS_SERVICE_GET_PRIVATE (service);
   return priv->name;
-}
-
-G_CONST_RETURN gchar*
-oobs_service_get_role (OobsService *service)
-{
-  OobsServicePrivate *priv;
-
-  g_return_val_if_fail (OOBS_IS_SERVICE (service), NULL);
-
-  priv = OOBS_SERVICE_GET_PRIVATE (service);
-  return priv->role;
 }
 
 void

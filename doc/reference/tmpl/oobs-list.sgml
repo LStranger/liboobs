@@ -9,12 +9,10 @@ OobsList
 
 </para>
 
-
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
-
 
 <!-- ##### SECTION Stability_Level ##### -->
 
@@ -152,5 +150,14 @@ OobsList
 </para>
 
 @iter: 
+
+
+<!-- ##### FUNCTION oobs_list_get_n_items ##### -->
+<para>
+
+</para>
+
+@list: 
+@Returns: 
 
 

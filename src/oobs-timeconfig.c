@@ -423,6 +423,18 @@ oobs_time_config_get_time (OobsTimeConfig *config,
 		 hour, minute, second);
 }
 
+/**
+ * oobs_time_config_get_utc_time:
+ * @config: An #OobsTimeConfig.
+ * @year: gint pointer to store the year, or NULL.
+ * @month: gint pointer to store the month, or NULL.
+ * @day: gint pointer to store the day, or NULL.
+ * @hour: gint pointer to store the hour, or NULL.
+ * @minute: gint pointer to store the minute, or NULL.
+ * @second: gint pointer to store the second, or NULL.
+ * 
+ * Gets the system time and date in human readable values (UTC).
+ **/
 void
 oobs_time_config_get_utc_time (OobsTimeConfig *config,
 			       gint           *year,
@@ -516,6 +528,18 @@ oobs_time_config_set_time (OobsTimeConfig *config,
 		 hour, minute, second);
 }
 
+/**
+ * oobs_time_config_set_utc_time:
+ * @config: An #OobsTimeConfig.
+ * @year: year.
+ * @month: month.
+ * @day: day.
+ * @hour: hour.
+ * @minute: minute.
+ * @second: second.
+ * 
+ * Sets the time and date of @config to be the specified in the parameters (assuming they're in UTC).
+ **/
 void
 oobs_time_config_set_utc_time (OobsTimeConfig *config,
 			       gint            year,

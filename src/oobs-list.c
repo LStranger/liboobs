@@ -189,7 +189,7 @@ _oobs_list_set_locked (OobsList *list, gboolean locked)
  * first element in @list. if @list is empty, then FALSE
  * is returned, and @iter is not initialized.
  * 
- * Return Value: TRUE if @iter was set
+ * Return Value: #TRUE if @iter was set
  **/
 gboolean
 oobs_list_get_iter_first (OobsList *list, OobsListIter *iter)
@@ -570,6 +570,14 @@ oobs_list_clear (OobsList *list)
     }
 }
 
+/**
+ * oobs_list_get_n_items:
+ * @list: An #OobsList.
+ * 
+ * Returns the number of elements that the list contains.
+ * 
+ * Return Value: the number of elements.
+ **/
 gint
 oobs_list_get_n_items (OobsList *list)
 {
@@ -582,6 +590,17 @@ oobs_list_get_n_items (OobsList *list)
   return g_list_length (priv->list);
 }
 
+/**
+ * oobs_list_iter_copy:
+ * @iter: An #OobsListIter.
+ * 
+ * Returns a newly allocated copy of the given iterator. This function is not
+ * intended for use in applications, because you can just copy the structs by
+ * value (OobsListIter new_iter = iter;). You must free this iter with
+ * oobs_list_iter_free().
+ * 
+ * Return Value: A newly allocated iterator.
+ **/
 OobsListIter*
 oobs_list_iter_copy (OobsListIter *iter)
 {
@@ -594,6 +613,12 @@ oobs_list_iter_copy (OobsListIter *iter)
   return copy;
 }
 
+/**
+ * oobs_list_iter_free:
+ * @iter: An #OobsListIter.
+ * 
+ * Frees an iterator that has been allocated in the heap.
+ **/
 void
 oobs_list_iter_free (OobsListIter *iter)
 {

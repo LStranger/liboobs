@@ -40,7 +40,6 @@ struct _OobsSessionPrivate
 
   GList    *session_objects;
   gboolean  is_authenticated;
-  gboolean  commit_on_exit;
 
   gchar    *platform;
   GList    *supported_platforms;
@@ -107,7 +106,6 @@ oobs_session_init (OobsSession *session)
   dbus_connection_setup_with_g_main (priv->connection, NULL);
   priv->session_objects  = NULL;
   priv->is_authenticated = FALSE;
-  priv->commit_on_exit   = FALSE;
 }
 
 static void
@@ -145,12 +143,7 @@ oobs_session_finalize (GObject *object)
 
   if (priv)
     {
-      if (priv->commit_on_exit)
-	oobs_session_commit (session);
-
       unregister_objects_list (priv);
-
-      dbus_connection_disconnect (priv->connection);
       dbus_connection_close (priv->connection);
       dbus_connection_unref (priv->connection);
     }

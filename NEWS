@@ -1,7 +1,27 @@
+Liboobs 0.3.0, 2006-09-04
+-----------------------------------------------
+
+Liboobs version 0.3.0 "Blackwards" has been released.
+
+Liboobs is a lightweight library that provides a GObject based interface to system-tools-backends. It's completely abstracted of the communication and authentication details, making it easy for applications to integrate with the system details.
+
+Changes since last release
+==========================
+* do not export unwanted symbols (garnacho)
+* documentation improvements (garnacho)
+* update to newer DBus API (garnacho)
+* do not offer API functions for guessing init.d service roles
+
+Downloading
+===========
+You can get it from :
+ftp://ftp.gnome.org/pub/GNOME/sources/liboobs/0.3/
+
+
 Liboobs 0.2.0, 2006-08-02
 -----------------------------------------------
 
-Liboobs version 0.1.0 "Oxygen drowning" has been released.
+Liboobs version 0.2.0 "Oxygen drowning" has been released.
 
 Liboobs is a lightweight library that provides a GObject based interface to system-tools-backends. It's completely abstracted of the communication and authentication details, making it easy for applications to integrate with the system details.
 

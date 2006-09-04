@@ -1,5 +1,9 @@
 2006-09-04  Carlos Garnacho  <carlosg@gnome.org>
 
+	* Release 0.3.0
+
+2006-09-04  Carlos Garnacho  <carlosg@gnome.org>
+
 	* configure.in: bump some required versions.
 	* oobs-group.c, oobs-hostsconfig.c, oobs-iface.c, oobs-list.c,
 	oobs-object.c, oobs-timeconfig.c: document, document, document.

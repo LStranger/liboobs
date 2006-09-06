@@ -342,8 +342,6 @@ create_dbus_struct_from_service (OobsService     *service,
   dbus_message_iter_open_container (array_iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
 
   utils_append_string (&struct_iter, name);
-  /* FIXME: no role */
-  utils_append_string (&struct_iter, NULL);
   create_dbus_struct_from_service_runlevels (service, runlevels, message, &struct_iter);
 
   dbus_message_iter_close_container (array_iter, &struct_iter);
@@ -366,17 +364,10 @@ oobs_services_config_commit (OobsObject *object)
   correct = TRUE;
   priv = OOBS_SERVICES_CONFIG_GET_PRIVATE (object);
   message = _oobs_object_get_dbus_message (object);
-
   dbus_message_iter_init_append (message, &iter);
-  dbus_message_iter_open_container (&iter,
-				    DBUS_TYPE_ARRAY,
-				    DBUS_STRUCT_BEGIN_CHAR_AS_STRING
-				    DBUS_TYPE_STRING_AS_STRING
-				    DBUS_TYPE_STRING_AS_STRING
-				    DBUS_STRUCT_END_CHAR_AS_STRING,
-				    &array_iter);
+
   /* FIXME: nothing inserted here, backends ignore this */
-  dbus_message_iter_close_container (&iter, &array_iter);
+  utils_create_dbus_array_from_string_list (NULL, message, &iter);
 
   /* FIXME: this is ignored by the backend too */
   utils_append_string (&iter, NULL);
@@ -384,7 +375,6 @@ oobs_services_config_commit (OobsObject *object)
   dbus_message_iter_open_container (&iter,
 				    DBUS_TYPE_ARRAY,
 				    DBUS_STRUCT_BEGIN_CHAR_AS_STRING
-				    DBUS_TYPE_STRING_AS_STRING
 				    DBUS_TYPE_STRING_AS_STRING
 				    DBUS_TYPE_ARRAY_AS_STRING
 				    DBUS_STRUCT_BEGIN_CHAR_AS_STRING

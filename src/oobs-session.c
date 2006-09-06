@@ -37,6 +37,7 @@ typedef struct _OobsSessionPrivate OobsSessionPrivate;
 struct _OobsSessionPrivate
 {
   DBusConnection *connection;
+  DBusError       dbus_error;
 
   GList    *session_objects;
   gboolean  is_authenticated;
@@ -89,17 +90,16 @@ static void
 oobs_session_init (OobsSession *session)
 {
   OobsSessionPrivate *priv;
-  DBusError error;
 
   g_return_if_fail (OOBS_IS_SESSION (session));
   priv = OOBS_SESSION_GET_PRIVATE (session);
 
-  dbus_error_init (&error);
-  priv->connection = dbus_bus_get (DBUS_BUS_SYSTEM, &error);
+  dbus_error_init (&priv->dbus_error);
+  priv->connection = dbus_bus_get (DBUS_BUS_SYSTEM, &priv->dbus_error);
 
-  if (dbus_error_is_set (&error))
+  if (dbus_error_is_set (&priv->dbus_error))
     {
-      g_critical (error.message);
+      g_critical (priv->dbus_error.message);
       g_assert_not_reached ();
     }
 
@@ -258,14 +258,23 @@ oobs_session_get_platform (OobsSession *session)
 					  PLATFORMS_INTERFACE,
 					  "getPlatform");
 
-  reply = dbus_connection_send_with_reply_and_block (priv->connection, message, -1, NULL);
+  reply = dbus_connection_send_with_reply_and_block (priv->connection,
+						     message, -1, &priv->dbus_error);
+  dbus_message_unref (message);
+
+  if (dbus_error_is_set (&priv->dbus_error))
+    {
+      g_warning ("Could not get the current platform");
+      dbus_error_free (&priv->dbus_error);
+
+      return NULL;
+    }
+
   dbus_message_iter_init (reply, &iter);
   platform = utils_get_string (&iter);
   priv->platform = (platform) ? g_strdup (platform) : NULL;
 
-  dbus_message_unref (message);
   dbus_message_unref (reply);
-
   return priv->platform;
 }
 
@@ -313,7 +322,15 @@ get_supported_platforms (OobsSession *session)
 					  "getPlatformList");
 
   reply = dbus_connection_send_with_reply_and_block (priv->connection,
-						     message, -1, NULL);
+						     message, -1, &priv->dbus_error);
+  dbus_message_unref (message);
+
+  if (dbus_error_is_set (&priv->dbus_error))
+    {
+      g_warning ("Could not get supported platforms list");
+      dbus_error_free (&priv->dbus_error);
+      return NULL;
+    }
 
   dbus_message_iter_init (reply, &list_iter);
   dbus_message_iter_recurse (&list_iter, &list_iter);
@@ -343,7 +360,6 @@ get_supported_platforms (OobsSession *session)
     }
 
   platforms = g_list_reverse (platforms);
-  dbus_message_unref (message);
   dbus_message_unref (reply);
 
   return platforms;

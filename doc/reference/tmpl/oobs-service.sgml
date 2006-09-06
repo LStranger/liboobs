@@ -65,12 +65,3 @@ OobsService
 @Returns: 
 
 
-<!-- ##### FUNCTION oobs_service_get_role ##### -->
-<para>
-
-</para>
-
-@service: 
-@Returns: 
-
-

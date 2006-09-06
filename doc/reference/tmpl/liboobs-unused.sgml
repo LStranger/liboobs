@@ -70,6 +70,30 @@ OobsShellsConfig
 utils
 
 
+<!-- ##### FUNCTION oobs_service_get_role ##### -->
+<para>
+
+</para>
+
+@service: 
+@Returns: 
+
+<!-- ##### FUNCTION oobs_session_get_autocommit_on_exit ##### -->
+<para>
+
+</para>
+
+@session: 
+@Returns: 
+
+<!-- ##### FUNCTION oobs_session_set_autocommit_on_exit ##### -->
+<para>
+
+</para>
+
+@session: 
+@do_commit: 
+
 <!-- ##### FUNCTION oobs_shell_get_path ##### -->
 <para>
 

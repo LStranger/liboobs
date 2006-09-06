@@ -296,7 +296,9 @@ update_object_from_message (OobsObject  *object,
 }
 
 static DBusMessage*
-run_message (OobsObject *object, DBusMessage *message)
+run_message (OobsObject       *object,
+	     DBusMessage      *message,
+	     OobsObjectResult *result)
 {
   OobsObjectPrivate *priv;
   DBusConnection    *connection;
@@ -311,11 +313,16 @@ run_message (OobsObject *object, DBusMessage *message)
 
   if (dbus_error_is_set (&priv->dbus_error))
     {
-      g_critical ("There was an error communicating with the backends: %s", priv->dbus_error.message);
+      if (dbus_error_has_name (&priv->dbus_error, DBUS_ERROR_ACCESS_DENIED))
+	*result = OOBS_OBJECT_RESULT_DENIED;
+      else
+	g_critical ("There was an unknown error communicating with the backends: %s", priv->dbus_error.message);
+
       dbus_error_free (&priv->dbus_error);
       return NULL;
     }
 
+  *result = OOBS_OBJECT_RESULT_OK;
   return reply;
 }
 
@@ -333,8 +340,15 @@ async_message_cb (DBusPendingCall *pending_call, gpointer data)
 
   if (dbus_set_error_from_message (&error, reply))
     {
-      /* FIXME: process error */
-      result = OOBS_OBJECT_RESULT_MALFORMED;
+      if (dbus_error_has_name (&error, DBUS_ERROR_ACCESS_DENIED))
+	result = OOBS_OBJECT_RESULT_DENIED;
+      else
+	{
+	  /* FIXME: process error */
+	  result = OOBS_OBJECT_RESULT_MALFORMED;
+	}
+
+      dbus_error_free (&error);
     }
   else
     {
@@ -446,6 +460,7 @@ OobsObjectResult
 oobs_object_commit (OobsObject *object)
 {
   DBusMessage *message;
+  OobsObjectResult result;
 
   g_return_val_if_fail (OOBS_IS_OBJECT (object), OOBS_OBJECT_RESULT_MALFORMED);
 
@@ -454,11 +469,10 @@ oobs_object_commit (OobsObject *object)
   if (!message)
     return OOBS_OBJECT_RESULT_MALFORMED;
 
-  run_message (object, message);
+  run_message (object, message, &result);
   dbus_message_unref (message);
 
-  /* FIXME */
-  return OOBS_OBJECT_RESULT_OK;
+  return result;
 }
 
 /**
@@ -516,7 +530,7 @@ oobs_object_update (OobsObject *object)
   if (!message)
     return OOBS_OBJECT_RESULT_MALFORMED;
 
-  reply = run_message (object, message);
+  reply = run_message (object, message, &result);
 
   if (reply)
     {

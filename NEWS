@@ -1,3 +1,20 @@
+Liboobs 0.4.0, 2006-09-06
+-----------------------------------------------
+
+Liboobs version 0.4.0 "I'll wait on the corner" has been released.
+
+Liboobs is a lightweight library that provides a GObject based interface to system-tools-backends. It's completely abstracted of the communication and authentication details, making it easy for applications to integrate with the system details.
+
+Changes since last release
+==========================
+* fixed a bad bad nasty-de-plasty weird bug that could cripple your init.d, I should be buried beside a nest of cannibal ants for this. My apologies to anyone affected. I'll buy the shovel. (garnacho)
+
+Downloading
+===========
+You can get it from :
+ftp://ftp.gnome.org/pub/GNOME/sources/liboobs/0.4/
+
+
 Liboobs 0.3.0, 2006-09-04
 -----------------------------------------------
 

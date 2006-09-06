@@ -1,5 +1,9 @@
 2006-09-06  Carlos Garnacho  <carlosg@gnome.org>
 
+	* Release 0.4.0
+
+2006-09-06  Carlos Garnacho  <carlosg@gnome.org>
+
 	* src/oobs-servicesconfig.c (oobs_services_config_commit): fixed a bad
 	bad nasty-de-plasty weird bug that could cripple your init.d, I should
 	be buried beside a nest of cannibal ants for this. My apologies to

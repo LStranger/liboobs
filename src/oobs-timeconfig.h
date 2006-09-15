@@ -41,11 +41,19 @@ typedef struct _OobsTimeConfigClass OobsTimeConfigClass;
 struct _OobsTimeConfig
 {
   OobsObject parent;
+
+  /*<private>*/
+  gpointer _priv;
 };
 
 struct _OobsTimeConfigClass
 {
   OobsObjectClass parent_class;
+
+  void (*_oobs_padding1) (void);
+  void (*_oobs_padding2) (void);
+  void (*_oobs_padding3) (void);
+  void (*_oobs_padding4) (void);
 };
 
 GType       oobs_time_config_get_type      (void);

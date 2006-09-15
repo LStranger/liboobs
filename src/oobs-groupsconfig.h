@@ -40,11 +40,19 @@ typedef struct _OobsGroupsConfigClass OobsGroupsConfigClass;
 struct _OobsGroupsConfig
 {
   OobsObject parent;
+
+  /*<private>*/
+  gpointer _priv;
 };
 
 struct _OobsGroupsConfigClass
 {
   OobsObjectClass parent_class;
+
+  void (*_oobs_padding1) (void);
+  void (*_oobs_padding2) (void);
+  void (*_oobs_padding3) (void);
+  void (*_oobs_padding4) (void);
 };
 
 GType       oobs_groups_config_get_type     (void);

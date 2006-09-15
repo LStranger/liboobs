@@ -46,10 +46,16 @@ typedef struct _OobsIfaceEthernetClass   OobsIfaceEthernetClass;
 	
 struct _OobsIfaceEthernet {
   OobsIface parent;
+
+  /*<private>*/
+  gpointer _priv;
 };
 
 struct _OobsIfaceEthernetClass {
   OobsIfaceClass parent_class;
+
+  void (*_oobs_padding1) (void);
+  void (*_oobs_padding2) (void);
 };
 
 GType oobs_iface_configuration_method_get_type (void);

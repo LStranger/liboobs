@@ -54,11 +54,17 @@ typedef struct _OobsIfaceModemClass OobsIfaceModemClass;
 struct _OobsIfaceModem
 {
   OobsIfaceISDN parent;
+
+  /*<private>*/
+  gpointer _priv;
 };
 
 struct _OobsIfaceModemClass
 {
   OobsIfaceISDNClass parent_class;
+
+  void (*_oobs_padding1) (void);
+  void (*_oobs_padding2) (void);
 };
 
 GType oobs_modem_volume_get_type ();

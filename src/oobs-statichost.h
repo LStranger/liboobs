@@ -37,10 +37,16 @@ typedef struct _OobsStaticHostClass   OobsStaticHostClass;
 	
 struct _OobsStaticHost {
   GObject parent;
+
+  /*<private>*/
+  gpointer _priv;
 };
 
 struct _OobsStaticHostClass {
   GObjectClass parent_class;
+
+  void (*_oobs_padding1) (void);
+  void (*_oobs_padding2) (void);
 };
 
 GType oobs_static_host_get_type (void);

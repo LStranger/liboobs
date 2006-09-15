@@ -201,6 +201,7 @@ oobs_user_init (OobsUser *user)
   priv->work_phone_no = NULL;
   priv->home_phone_no = NULL;
   priv->other_data    = NULL;
+  user->_priv         = priv;
 }
 
 static void
@@ -217,7 +218,7 @@ oobs_user_set_property (GObject      *object,
   g_return_if_fail (OOBS_IS_USER (object));
 
   user = OOBS_USER (object);
-  priv = OOBS_USER_GET_PRIVATE (user);
+  priv = user->_priv;
 
   switch (prop_id)
     {
@@ -295,7 +296,7 @@ oobs_user_get_property (GObject      *object,
   g_return_if_fail (OOBS_IS_USER (object));
 
   user = OOBS_USER (object);
-  priv = OOBS_USER_GET_PRIVATE (user);
+  priv = user->_priv;
 
   switch (prop_id)
     {
@@ -341,7 +342,7 @@ oobs_user_finalize (GObject *object)
   g_return_if_fail (OOBS_IS_USER (object));
 
   user = OOBS_USER (object);
-  priv = OOBS_USER_GET_PRIVATE (user);
+  priv = user->_priv;
 
   if (priv)
     {
@@ -376,7 +377,7 @@ oobs_user_constructor (GType                  type,
 								     n_construct_properties,
 								     construct_params);
   user = OOBS_USER (object);
-  priv = OOBS_USER_GET_PRIVATE (user);
+  priv = user->_priv;
   user->id = _oobs_users_config_get_id (OOBS_USERS_CONFIG (priv->config));
 
   return object;
@@ -398,7 +399,7 @@ oobs_user_get_login_name (OobsUser *user)
   g_return_val_if_fail (user != NULL, NULL);
   g_return_val_if_fail (OOBS_IS_USER (user), NULL);
 
-  priv = OOBS_USER_GET_PRIVATE (user);
+  priv = user->_priv;
 
   return priv->username;
 }
@@ -440,7 +441,7 @@ oobs_user_get_uid (OobsUser *user)
   g_return_val_if_fail (user != NULL, OOBS_MAX_UID);
   g_return_val_if_fail (OOBS_IS_USER (user), OOBS_MAX_UID);
 
-  priv = OOBS_USER_GET_PRIVATE (user);
+  priv = user->_priv;
 
   return priv->uid;
 }
@@ -461,7 +462,7 @@ oobs_user_get_main_group (OobsUser *user)
 
   g_return_val_if_fail (OOBS_IS_USER (user), NULL);
 
-  priv = OOBS_USER_GET_PRIVATE (user);
+  priv = user->_priv;
   return priv->main_group;
 }
 
@@ -473,7 +474,7 @@ oobs_user_set_main_group (OobsUser  *user,
 
   g_return_if_fail (OOBS_IS_USER (user));
 
-  priv = OOBS_USER_GET_PRIVATE (user);
+  priv = user->_priv;
 
   if (priv->main_group)
     g_object_unref (priv->main_group);
@@ -489,7 +490,7 @@ oobs_user_get_home_directory (OobsUser *user)
   g_return_val_if_fail (user != NULL, NULL);
   g_return_val_if_fail (OOBS_IS_USER (user), NULL);
 
-  priv = OOBS_USER_GET_PRIVATE (user);
+  priv = user->_priv;
 
   return priv->homedir;
 }
@@ -511,7 +512,7 @@ oobs_user_get_shell (OobsUser *user)
   g_return_val_if_fail (user != NULL, NULL);
   g_return_val_if_fail (OOBS_IS_USER (user), NULL);
 
-  priv = OOBS_USER_GET_PRIVATE (user);
+  priv = user->_priv;
 
   return priv->shell;
 }
@@ -533,7 +534,7 @@ oobs_user_get_full_name (OobsUser *user)
   g_return_val_if_fail (user != NULL, NULL);
   g_return_val_if_fail (OOBS_IS_USER (user), NULL);
 
-  priv = OOBS_USER_GET_PRIVATE (user);
+  priv = user->_priv;
 
   return priv->full_name;
 }
@@ -555,7 +556,7 @@ oobs_user_get_room_number (OobsUser *user)
   g_return_val_if_fail (user != NULL, NULL);
   g_return_val_if_fail (OOBS_IS_USER (user), NULL);
 
-  priv = OOBS_USER_GET_PRIVATE (user);
+  priv = user->_priv;
 
   return priv->room_no;
 }
@@ -577,7 +578,7 @@ oobs_user_get_work_phone_number (OobsUser *user)
   g_return_val_if_fail (user != NULL, NULL);
   g_return_val_if_fail (OOBS_IS_USER (user), NULL);
 
-  priv = OOBS_USER_GET_PRIVATE (user);
+  priv = user->_priv;
 
   return priv->work_phone_no;
 }
@@ -599,7 +600,7 @@ oobs_user_get_home_phone_number (OobsUser *user)
   g_return_val_if_fail (user != NULL, NULL);
   g_return_val_if_fail (OOBS_IS_USER (user), NULL);
 
-  priv = OOBS_USER_GET_PRIVATE (user);
+  priv = user->_priv;
 
   return priv->home_phone_no;
 }
@@ -621,7 +622,7 @@ oobs_user_get_other_data (OobsUser *user)
   g_return_val_if_fail (user != NULL, NULL);
   g_return_val_if_fail (OOBS_IS_USER (user), NULL);
 
-  priv = OOBS_USER_GET_PRIVATE (user);
+  priv = user->_priv;
 
   return priv->other_data;
 }

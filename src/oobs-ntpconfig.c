@@ -73,6 +73,7 @@ oobs_ntp_config_init (OobsNTPConfig *config)
   priv = OOBS_NTP_CONFIG_GET_PRIVATE (config);
 
   priv->servers_list = _oobs_list_new (OOBS_TYPE_NTP_SERVER);
+  config->_priv = priv;
 }
 
 static void
@@ -82,7 +83,7 @@ oobs_ntp_config_finalize (GObject *object)
 
   g_return_if_fail (OOBS_IS_NTP_CONFIG (object));
 
-  priv = OOBS_NTP_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_NTP_CONFIG (object)->_priv;
 
   if (priv && priv->servers_list)
     g_object_unref (priv->servers_list);
@@ -103,7 +104,7 @@ oobs_ntp_config_update (OobsObject *object)
 
   g_return_if_fail (OOBS_IS_NTP_CONFIG (object));
 
-  priv  = OOBS_NTP_CONFIG_GET_PRIVATE (object);
+  priv  = OOBS_NTP_CONFIG (object)->_priv;
   reply = _oobs_object_get_dbus_message (object);
 
   /* First of all, free the previous list */
@@ -136,7 +137,7 @@ oobs_ntp_config_commit (OobsObject *object)
   const gchar *hostname;
   gboolean valid;
 
-  priv = OOBS_NTP_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_NTP_CONFIG (object)->_priv;
   message = _oobs_object_get_dbus_message (object);
 
   dbus_message_iter_init_append (message, &iter);
@@ -203,7 +204,7 @@ oobs_ntp_config_get_servers (OobsNTPConfig *config)
 
   g_return_val_if_fail (OOBS_IS_NTP_CONFIG (config), NULL);
 
-  priv = OOBS_NTP_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   return priv->servers_list;
 }

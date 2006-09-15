@@ -88,6 +88,7 @@ oobs_service_init (OobsService *service)
   priv->name = NULL;
   priv->runlevels_config = g_hash_table_new_full (NULL, NULL, NULL,
 						  (GDestroyNotify) g_free);
+  service->_priv = priv;
 }
 
 static void
@@ -98,7 +99,7 @@ oobs_service_set_property (GObject      *object,
 {
   OobsServicePrivate *priv;
 
-  priv = OOBS_SERVICE_GET_PRIVATE (object);
+  priv = OOBS_SERVICE (object)->_priv;
 
   switch (prop_id)
     {
@@ -117,7 +118,7 @@ oobs_service_get_property (GObject      *object,
 {
   OobsServicePrivate *priv;
 
-  priv = OOBS_SERVICE_GET_PRIVATE (object);
+  priv = OOBS_SERVICE (object)->_priv;
 
   switch (prop_id)
     {
@@ -132,7 +133,7 @@ oobs_service_finalize (GObject *object)
 {
   OobsServicePrivate *priv;
 
-  priv = OOBS_SERVICE_GET_PRIVATE (object);
+  priv = OOBS_SERVICE (object)->_priv;
 
   if (priv)
     {
@@ -151,7 +152,7 @@ oobs_service_get_name (OobsService *service)
 
   g_return_val_if_fail (OOBS_IS_SERVICE (service), NULL);
 
-  priv = OOBS_SERVICE_GET_PRIVATE (service);
+  priv = service->_priv;
   return priv->name;
 }
 
@@ -168,7 +169,7 @@ oobs_service_set_runlevel_configuration (OobsService          *service,
   g_return_if_fail (runlevel != NULL);
   g_return_if_fail (priority >= 0 && priority <= 99);
 
-  priv = OOBS_SERVICE_GET_PRIVATE (service);
+  priv = service->_priv;
 
   if (status == OOBS_SERVICE_IGNORE)
     g_hash_table_remove (priv->runlevels_config, runlevel);
@@ -200,7 +201,7 @@ oobs_service_get_runlevel_configuration (OobsService          *service,
   g_return_val_if_fail (OOBS_IS_SERVICE (service), FALSE);
   g_return_val_if_fail (runlevel != NULL, FALSE);
 
-  priv = OOBS_SERVICE_GET_PRIVATE (service);
+  priv = service->_priv;
 
   service_runlevel = g_hash_table_lookup (priv->runlevels_config, runlevel);
 

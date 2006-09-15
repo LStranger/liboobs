@@ -42,10 +42,14 @@ struct _OobsGroup {
 
   /*<private>*/
   guint id;
+  gpointer _priv;
 };
 
 struct _OobsGroupClass {
   GObjectClass parent_class;
+  
+  void (*_oobs_padding1) (void);
+  void (*_oobs_padding2) (void);
 };
 
 GType oobs_group_get_type (void);

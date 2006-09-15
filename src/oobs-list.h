@@ -40,11 +40,17 @@ typedef struct _OobsListIter  OobsListIter;
 struct _OobsList
 {
   GObject parent;
+
+  /*<private>*/
+  gpointer _priv;
 };
 
 struct _OobsListClass
 {
   GObjectClass parent_class;
+
+  void (*_oobs_padding1) (void);
+  void (*_oobs_padding2) (void);
 };
 
 struct _OobsListIter

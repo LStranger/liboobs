@@ -160,6 +160,7 @@ oobs_iface_ethernet_init (OobsIfaceEthernet *iface)
   priv->gateway = NULL;
   priv->network = NULL;
   priv->broadcast = NULL;
+  iface->_priv = priv;
 }
 
 static void
@@ -169,7 +170,7 @@ oobs_iface_ethernet_finalize (GObject *object)
 
   g_return_if_fail (OOBS_IS_IFACE_ETHERNET (object));
 
-  priv = OOBS_IFACE_ETHERNET_GET_PRIVATE (object);
+  priv = OOBS_IFACE_ETHERNET (object)->_priv;
 
   if (priv)
     {
@@ -194,7 +195,7 @@ oobs_iface_ethernet_set_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_IFACE_ETHERNET (object));
 
-  priv = OOBS_IFACE_ETHERNET_GET_PRIVATE (object);
+  priv = OOBS_IFACE_ETHERNET (object)->_priv;
 
   switch (prop_id)
     {
@@ -234,7 +235,7 @@ oobs_iface_ethernet_get_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_IFACE_ETHERNET (object));
 
-  priv = OOBS_IFACE_ETHERNET_GET_PRIVATE (object);
+  priv = OOBS_IFACE_ETHERNET (object)->_priv;
 
   switch (prop_id)
     {
@@ -264,7 +265,7 @@ oobs_iface_ethernet_has_gateway (OobsIface *iface)
 {
   OobsIfaceEthernetPrivate *priv;
 
-  priv = OOBS_IFACE_ETHERNET_GET_PRIVATE (iface);
+  priv = OOBS_IFACE_ETHERNET (iface)->_priv;
   
   return ((priv->configuration_method == OOBS_METHOD_DHCP) ||
 	  (priv->gateway));
@@ -275,7 +276,7 @@ oobs_iface_ethernet_is_configured (OobsIface *iface)
 {
   OobsIfaceEthernetPrivate *priv;
 
-  priv = OOBS_IFACE_ETHERNET_GET_PRIVATE (iface);
+  priv = OOBS_IFACE_ETHERNET (iface)->_priv;
 
   return (priv->configuration_method == OOBS_METHOD_DHCP ||
 	  (priv->configuration_method == OOBS_METHOD_STATIC &&
@@ -298,7 +299,7 @@ oobs_iface_ethernet_get_ip_address (OobsIfaceEthernet *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE_ETHERNET (iface), NULL);
   
-  priv = OOBS_IFACE_ETHERNET_GET_PRIVATE (iface);
+  priv = iface->_priv;
 
   return priv->address;
 }
@@ -338,7 +339,7 @@ oobs_iface_ethernet_get_network_mask (OobsIfaceEthernet *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE_ETHERNET (iface), NULL);
   
-  priv = OOBS_IFACE_ETHERNET_GET_PRIVATE (iface);
+  priv = iface->_priv;
 
   return priv->netmask;
 }
@@ -378,7 +379,7 @@ oobs_iface_ethernet_get_gateway_address (OobsIfaceEthernet *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE_ETHERNET (iface), NULL);
   
-  priv = OOBS_IFACE_ETHERNET_GET_PRIVATE (iface);
+  priv = iface->_priv;
 
   return priv->gateway;
 }
@@ -418,7 +419,7 @@ oobs_iface_ethernet_get_network_address (OobsIfaceEthernet *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE_ETHERNET (iface), NULL);
   
-  priv = OOBS_IFACE_ETHERNET_GET_PRIVATE (iface);
+  priv = iface->_priv;
 
   return priv->network;
 }
@@ -458,7 +459,7 @@ oobs_iface_ethernet_get_broadcast_address (OobsIfaceEthernet *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE_ETHERNET (iface), NULL);
   
-  priv = OOBS_IFACE_ETHERNET_GET_PRIVATE (iface);
+  priv = iface->_priv;
 
   return priv->broadcast;
 }
@@ -497,7 +498,7 @@ oobs_iface_ethernet_get_configuration_method (OobsIfaceEthernet *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE_ETHERNET (iface), OOBS_METHOD_NONE);
   
-  priv = OOBS_IFACE_ETHERNET_GET_PRIVATE (iface);
+  priv = iface->_priv;
 
   return priv->configuration_method;
 }

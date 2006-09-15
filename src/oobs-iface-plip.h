@@ -38,11 +38,17 @@ typedef struct _OobsIfacePlipClass OobsIfacePlipClass;
 struct _OobsIfacePlip
 {
   OobsIface parent;
+
+  /*<private>*/
+  gpointer _priv;
 };
 
 struct _OobsIfacePlipClass
 {
   OobsIfaceClass parent_class;
+
+  void (*_oobs_padding1) (void);
+  void (*_oobs_padding2) (void);
 };
 
 GType oobs_iface_plip_get_type (void);

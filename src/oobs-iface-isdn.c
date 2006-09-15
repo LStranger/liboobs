@@ -171,6 +171,7 @@ oobs_iface_isdn_init (OobsIfaceISDN *iface)
   priv->peerdns = TRUE;
   priv->persist = TRUE;
   priv->noauth = TRUE;
+  iface->_priv = priv;
 }
 
 static void
@@ -180,7 +181,7 @@ oobs_iface_isdn_finalize (GObject *object)
 
   g_return_if_fail (OOBS_IS_IFACE_ISDN (object));
 
-  priv = OOBS_IFACE_ISDN_GET_PRIVATE (object);
+  priv = OOBS_IFACE_ISDN (object)->_priv;
 
   if (priv)
     {
@@ -205,7 +206,7 @@ oobs_iface_isdn_set_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_IFACE_ISDN (object));
 
-  priv = OOBS_IFACE_ISDN_GET_PRIVATE (object);
+  priv = OOBS_IFACE_ISDN (object)->_priv;
   
   switch (prop_id)
     {
@@ -253,7 +254,7 @@ oobs_iface_isdn_get_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_IFACE_ISDN (object));
 
-  priv = OOBS_IFACE_ISDN_GET_PRIVATE (object);
+  priv = OOBS_IFACE_ISDN (object)->_priv;
   
   switch (prop_id)
     {
@@ -294,7 +295,7 @@ oobs_iface_isdn_has_gateway (OobsIface *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE_ISDN (iface), FALSE);
 
-  priv = OOBS_IFACE_ISDN_GET_PRIVATE (iface);
+  priv = OOBS_IFACE_ISDN (iface)->_priv;
   
   return priv->default_gw;
 }
@@ -304,7 +305,7 @@ oobs_iface_isdn_is_configured (OobsIface *iface)
 {
   OobsIfaceISDNPrivate *priv;
 
-  priv = OOBS_IFACE_ISDN_GET_PRIVATE (iface);
+  priv = OOBS_IFACE_ISDN (iface)->_priv;
 
   return (priv->login && priv->phone_number);
 }
@@ -325,7 +326,7 @@ oobs_iface_isdn_get_login (OobsIfaceISDN *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE_ISDN (iface), NULL);
 
-  priv = OOBS_IFACE_ISDN_GET_PRIVATE (iface);
+  priv = iface->_priv;
   return priv->login;
 }
 
@@ -354,7 +355,7 @@ oobs_iface_isdn_get_phone_number (OobsIfaceISDN *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE_ISDN (iface), NULL);
 
-  priv = OOBS_IFACE_ISDN_GET_PRIVATE (iface);
+  priv = iface->_priv;
   return priv->phone_number;
 }
 
@@ -374,7 +375,7 @@ oobs_iface_isdn_get_phone_prefix (OobsIfaceISDN *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE_ISDN (iface), NULL);
 
-  priv = OOBS_IFACE_ISDN_GET_PRIVATE (iface);
+  priv = iface->_priv;
   return priv->dial_prefix;
 }
 
@@ -394,7 +395,7 @@ oobs_iface_isdn_get_default_gateway (OobsIfaceISDN *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE_ISDN (iface), FALSE);
 
-  priv = OOBS_IFACE_ISDN_GET_PRIVATE (iface);
+  priv = iface->_priv;
   return priv->default_gw;
 }
 
@@ -414,7 +415,7 @@ oobs_iface_isdn_get_use_peer_dns (OobsIfaceISDN *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE_ISDN (iface), FALSE);
 
-  priv = OOBS_IFACE_ISDN_GET_PRIVATE (iface);
+  priv = iface->_priv;
   return priv->peerdns;
 }
 
@@ -434,7 +435,7 @@ oobs_iface_isdn_get_persistent (OobsIfaceISDN *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE_ISDN (iface), FALSE);
 
-  priv = OOBS_IFACE_ISDN_GET_PRIVATE (iface);
+  priv = iface->_priv;
   return priv->persist;
 }
 
@@ -454,6 +455,6 @@ oobs_iface_isdn_get_peer_noauth (OobsIfaceISDN *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE_ISDN (iface), FALSE);
 
-  priv = OOBS_IFACE_ISDN_GET_PRIVATE (iface);
+  priv = iface->_priv;
   return priv->noauth;
 }

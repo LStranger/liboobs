@@ -148,6 +148,7 @@ oobs_iface_modem_init (OobsIfaceModem *iface)
   priv = OOBS_IFACE_MODEM_GET_PRIVATE (iface);
 
   priv->serial_port = NULL;
+  iface->_priv = priv;
 }
 
 static void
@@ -157,7 +158,7 @@ oobs_iface_modem_finalize (GObject *object)
 
   g_return_if_fail (OOBS_IS_IFACE_MODEM (object));
 
-  priv = OOBS_IFACE_MODEM_GET_PRIVATE (object);
+  priv = OOBS_IFACE_MODEM (object)->_priv;
 
   if (priv)
     g_free (priv->serial_port);
@@ -176,7 +177,7 @@ oobs_iface_modem_set_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_IFACE_MODEM (object));
 
-  priv = OOBS_IFACE_MODEM_GET_PRIVATE (object);
+  priv = OOBS_IFACE_MODEM (object)->_priv;
   
   switch (prop_id)
     {
@@ -203,7 +204,7 @@ oobs_iface_modem_get_property (GObject    *object,
 
   g_return_if_fail (OOBS_IS_IFACE_MODEM (object));
 
-  priv = OOBS_IFACE_MODEM_GET_PRIVATE (object);
+  priv = OOBS_IFACE_MODEM (object)->_priv;
   
   switch (prop_id)
     {
@@ -224,7 +225,7 @@ oobs_iface_modem_is_configured (OobsIface *iface)
 {
   OobsIfaceModemPrivate *priv;
 
-  priv = OOBS_IFACE_MODEM_GET_PRIVATE (iface);
+  priv = OOBS_IFACE_MODEM (iface)->_priv;
 
   return (priv->serial_port &&
 	  (* OOBS_IFACE_CLASS (oobs_iface_modem_parent_class)->is_configured) (iface));
@@ -246,7 +247,7 @@ oobs_iface_modem_get_serial_port (OobsIfaceModem *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE_MODEM (iface), NULL);
 
-  priv = OOBS_IFACE_MODEM_GET_PRIVATE (iface);
+  priv = iface->_priv;
   return priv->serial_port;
 }
 
@@ -266,7 +267,7 @@ oobs_iface_modem_get_volume (OobsIfaceModem *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE_MODEM (iface), OOBS_MODEM_VOLUME_SILENT);
 
-  priv = OOBS_IFACE_MODEM_GET_PRIVATE (iface);
+  priv = iface->_priv;
   return priv->volume;
 }
 
@@ -286,6 +287,6 @@ oobs_iface_modem_get_dial_type (OobsIfaceModem *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE_MODEM (iface), OOBS_DIAL_TYPE_TONES);
 
-  priv = OOBS_IFACE_MODEM_GET_PRIVATE (iface);
+  priv = iface->_priv;
   return priv->dial_type;
 }

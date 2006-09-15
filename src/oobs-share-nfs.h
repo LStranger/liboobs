@@ -38,10 +38,16 @@ typedef struct _OobsShareAclElement OobsShareAclElement;
 	
 struct _OobsShareNFS {
   OobsShare parent;
+
+  /*<private>*/
+  gpointer _priv;
 };
 
 struct _OobsShareNFSClass {
   OobsShareClass parent_class;
+
+  void (*_oobs_padding1) (void);
+  void (*_oobs_padding2) (void);
 };
 
 struct _OobsShareAclElement {

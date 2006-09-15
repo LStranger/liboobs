@@ -78,6 +78,7 @@ oobs_share_init (OobsShare *share)
   priv = OOBS_SHARE_GET_PRIVATE (share);
   
   priv->path = NULL;
+  share->_priv = priv;
 }
 
 static void
@@ -88,7 +89,7 @@ oobs_share_finalize (GObject *object)
 
   g_return_if_fail (OOBS_IS_SHARE (object));
   share = OOBS_SHARE (object);
-  priv  = OOBS_SHARE_GET_PRIVATE (share);
+  priv  = share->_priv;
 
   if (priv)
     g_free (priv->path);
@@ -108,7 +109,7 @@ oobs_share_set_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_SHARE (object));
   share = OOBS_SHARE (object);
-  priv  = OOBS_SHARE_GET_PRIVATE (share);
+  priv  = share->_priv;
 
   switch (prop_id)
     {
@@ -130,7 +131,7 @@ oobs_share_get_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_SHARE (object));
   share = OOBS_SHARE (object);
-  priv  = OOBS_SHARE_GET_PRIVATE (share);
+  priv  = share->_priv;
 
   switch (prop_id)
     {
@@ -155,7 +156,7 @@ oobs_share_get_path (OobsShare *share)
   OobsSharePrivate *priv;
 
   g_return_val_if_fail (OOBS_IS_SHARE (share), NULL);
-  priv = OOBS_SHARE_GET_PRIVATE (share);
+  priv = share->_priv;
 
   return priv->path;
 }
@@ -175,6 +176,6 @@ oobs_share_set_path (OobsShare *share, const gchar *path)
 
   g_return_if_fail (OOBS_IS_SHARE (share));
 
-  priv = OOBS_SHARE_GET_PRIVATE (share);
+  priv = share->_priv;
   priv->path = g_strdup (path);
 }

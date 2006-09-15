@@ -153,6 +153,7 @@ oobs_users_config_init (OobsUsersConfig *config)
   priv = OOBS_USERS_CONFIG_GET_PRIVATE (config);
 
   priv->users_list = _oobs_list_new (OOBS_TYPE_USER);
+  config->_priv = priv;
 }
 
 static void
@@ -160,7 +161,7 @@ free_configuration (OobsUsersConfig *config)
 {
   OobsUsersConfigPrivate *priv;
 
-  priv = OOBS_USERS_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   oobs_list_clear (priv->users_list);
   g_free (priv->default_shell);
@@ -181,7 +182,7 @@ oobs_users_config_finalize (GObject *object)
 
   g_return_if_fail (OOBS_IS_USERS_CONFIG (object));
 
-  priv = OOBS_USERS_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_USERS_CONFIG (object)->_priv;
 
   if (priv)
     {
@@ -205,7 +206,7 @@ oobs_users_config_set_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_USERS_CONFIG (object));
 
-  priv = OOBS_USERS_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_USERS_CONFIG (object)->_priv;
 
   switch (prop_id)
     {
@@ -236,7 +237,7 @@ oobs_users_config_get_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_USERS_CONFIG (object));
 
-  priv = OOBS_USERS_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_USERS_CONFIG (object)->_priv;
 
   switch (prop_id)
     {
@@ -467,7 +468,7 @@ query_groups (OobsUsersConfig *users_config,
   if (default_gid > 0)
     {
       group = get_group_with_gid (OOBS_GROUPS_CONFIG (groups_config), default_gid);
-      OOBS_USERS_CONFIG_GET_PRIVATE (users_config)->default_group = group;
+      ((OobsUsersConfigPrivate *) users_config->_priv)->default_group = group;
 
       if (group)
 	g_object_unref (group);
@@ -488,7 +489,7 @@ oobs_users_config_update (OobsObject *object)
   GHashTable      *hashtable;
   gint             default_gid;
 
-  priv  = OOBS_USERS_CONFIG_GET_PRIVATE (object);
+  priv  = OOBS_USERS_CONFIG (object)->_priv;
   reply = _oobs_object_get_dbus_message (object);
   hashtable = g_hash_table_new_full (NULL, NULL, g_object_unref, NULL);
   priv->id = 0;
@@ -550,7 +551,7 @@ oobs_users_config_commit (OobsObject *object)
   gboolean valid, correct;
   gint default_gid;
 
-  priv = OOBS_USERS_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_USERS_CONFIG (object)->_priv;
   message = _oobs_object_get_dbus_message (object);
 
   dbus_message_iter_init_append (message, &iter);
@@ -632,7 +633,7 @@ oobs_users_config_get_users (OobsUsersConfig *config)
   g_return_val_if_fail (config != NULL, NULL);
   g_return_val_if_fail (OOBS_IS_USERS_CONFIG (config), NULL);
 
-  priv = OOBS_USERS_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   return priv->users_list;
 }
@@ -645,7 +646,7 @@ oobs_users_config_get_minimum_users_uid (OobsUsersConfig *config)
   g_return_val_if_fail (config != NULL, OOBS_MAX_UID);
   g_return_val_if_fail (OOBS_IS_USERS_CONFIG (config), OOBS_MAX_UID);
 
-  priv = OOBS_USERS_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   return priv->minimum_uid;
 }
@@ -667,7 +668,7 @@ oobs_users_config_get_maximum_users_uid (OobsUsersConfig *config)
   g_return_val_if_fail (config != NULL, OOBS_MAX_UID);
   g_return_val_if_fail (OOBS_IS_USERS_CONFIG (config), OOBS_MAX_UID);
 
-  priv = OOBS_USERS_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   return priv->maximum_uid;
 }
@@ -689,7 +690,7 @@ oobs_users_config_get_default_shell (OobsUsersConfig *config)
   g_return_val_if_fail (config != NULL, NULL);
   g_return_val_if_fail (OOBS_IS_USERS_CONFIG (config), NULL);
 
-  priv = OOBS_USERS_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   return priv->default_shell;
 }
@@ -711,7 +712,7 @@ oobs_users_config_get_default_home_dir (OobsUsersConfig *config)
   g_return_val_if_fail (config != NULL, NULL);
   g_return_val_if_fail (OOBS_IS_USERS_CONFIG (config), NULL);
 
-  priv = OOBS_USERS_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   return priv->default_home;
 }
@@ -733,7 +734,7 @@ oobs_users_config_get_default_group (OobsUsersConfig *config)
   g_return_val_if_fail (config != NULL, NULL);
   g_return_val_if_fail (OOBS_IS_USERS_CONFIG (config), NULL);
 
-  priv = OOBS_USERS_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   return priv->default_group;
 }
@@ -746,7 +747,7 @@ oobs_users_config_get_available_shells (OobsUsersConfig *config)
   g_return_val_if_fail (config != NULL, NULL);
   g_return_val_if_fail (OOBS_IS_USERS_CONFIG (config), NULL);
 
-  priv = OOBS_USERS_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   return priv->shells;
 }
@@ -756,7 +757,7 @@ _oobs_users_config_get_id (OobsUsersConfig *config)
 {
   OobsUsersConfigPrivate *priv;
 
-  priv = OOBS_USERS_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   /* FIXME: this could overflow */
   return ++priv->id;

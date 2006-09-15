@@ -37,6 +37,9 @@ typedef struct _OobsIfaceClass   OobsIfaceClass;
 	
 struct _OobsIface {
   GObject parent;
+
+  /*<private>*/
+  gpointer _priv;
 };
 
 struct _OobsIfaceClass {
@@ -44,6 +47,8 @@ struct _OobsIfaceClass {
 
   gboolean (*is_configured) (OobsIface*);
   gboolean (*has_gateway) (OobsIface*);
+  void (*_oobs_padding1) (void);
+  void (*_oobs_padding2) (void);
 };
 
 GType oobs_iface_get_type (void);

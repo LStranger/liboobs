@@ -131,8 +131,9 @@ oobs_object_init (OobsObject *object)
   priv = OOBS_OBJECT_GET_PRIVATE (object);
   priv->session = NULL;
   priv->remote_object = NULL;
-
   dbus_error_init (&priv->dbus_error);
+
+  object->_priv = priv;
 }
 
 static void
@@ -144,7 +145,7 @@ oobs_object_finalize (GObject *object)
   g_return_if_fail (OOBS_IS_OBJECT (object));
 
   obj  = OOBS_OBJECT (object);
-  priv = OOBS_OBJECT_GET_PRIVATE (obj);
+  priv = OOBS_OBJECT (object)->_priv;
 
   if (priv)
     {
@@ -168,7 +169,7 @@ changed_signal_filter (DBusConnection *connection,
   OobsObjectPrivate *priv;
 
   object = OOBS_OBJECT (user_data);
-  priv   = OOBS_OBJECT_GET_PRIVATE (object);
+  priv   = OOBS_OBJECT (object)->_priv;
 
   if (dbus_message_is_signal (message, priv->method, "changed") &&
       dbus_message_has_path (message, priv->path))
@@ -187,7 +188,7 @@ connect_object_to_session (OobsObject *object)
   DBusConnection    *connection;
   gchar             *rule;
 
-  priv = OOBS_OBJECT_GET_PRIVATE (object);
+  priv = OOBS_OBJECT (object)->_priv;
   connection = _oobs_session_get_connection_bus (priv->session);
 
   _oobs_session_register_object (priv->session, object);
@@ -218,7 +219,7 @@ oobs_object_set_property (GObject      *object,
   g_return_if_fail (OOBS_IS_OBJECT (object));
 
   obj  = OOBS_OBJECT (object);
-  priv = OOBS_OBJECT_GET_PRIVATE (obj);
+  priv = obj->_priv;
 
   switch (prop_id)
     {
@@ -251,7 +252,7 @@ oobs_object_get_property (GObject      *object,
   g_return_if_fail (OOBS_IS_OBJECT (object));
 
   obj  = OOBS_OBJECT (object);
-  priv = OOBS_OBJECT_GET_PRIVATE (obj);
+  priv = obj->_priv;
 
   switch (prop_id)
     {
@@ -304,7 +305,7 @@ run_message (OobsObject       *object,
   DBusConnection    *connection;
   DBusMessage       *reply;
 
-  priv = OOBS_OBJECT_GET_PRIVATE (object);
+  priv = object->_priv;
   connection = _oobs_session_get_connection_bus (priv->session);
 
   g_return_val_if_fail (connection != NULL, NULL);
@@ -377,7 +378,7 @@ run_message_async (OobsObject          *object,
   OobsObjectAsyncCallbackData *async_data;
   DBusConnection *connection;
 
-  priv = OOBS_OBJECT_GET_PRIVATE (object);
+  priv = object->_priv;
   connection = _oobs_session_get_connection_bus (priv->session);
   dbus_connection_send_with_reply (connection, message, &call, -1);
 
@@ -397,7 +398,7 @@ get_commit_message (OobsObject *object)
   OobsObjectPrivate *priv;
   DBusMessage       *message;
 
-  priv  = OOBS_OBJECT_GET_PRIVATE (object);
+  priv  = object->_priv;
   class = OOBS_OBJECT_GET_CLASS (object);
 
   if (!priv->session)
@@ -435,7 +436,7 @@ get_update_message (OobsObject *object)
 {
   OobsObjectPrivate *priv;
 
-  priv = OOBS_OBJECT_GET_PRIVATE (object);
+  priv = object->_priv;
 
   if (!priv->session)
     {

@@ -76,6 +76,7 @@ oobs_hosts_config_init (OobsHostsConfig *config)
   priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
 
   priv->static_hosts_list = _oobs_list_new (OOBS_TYPE_STATIC_HOST);
+  config->_priv = priv;
 }
 
 static void
@@ -83,7 +84,7 @@ free_configuration (OobsHostsConfig *config)
 {
   OobsHostsConfigPrivate *priv;
 
-  priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   if (priv->hostname)
     {
@@ -122,7 +123,7 @@ oobs_hosts_config_finalize (GObject *object)
 
   g_return_if_fail (OOBS_IS_HOSTS_CONFIG (object));
 
-  priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_HOSTS_CONFIG (object)->_priv;
 
   if (priv)
     {
@@ -185,7 +186,7 @@ get_static_hosts_list_from_dbus_reply (OobsObject      *object,
   OobsStaticHost *static_host;
   OobsListIter     list_iter;
 
-  priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_HOSTS_CONFIG (object)->_priv;
   dbus_message_iter_recurse (&iter, &struct_iter);
 
   while (dbus_message_iter_get_arg_type (&struct_iter) == DBUS_TYPE_STRUCT)
@@ -208,7 +209,7 @@ oobs_hosts_config_update (OobsObject *object)
   DBusMessageIter iter;
   gchar *str;
 
-  priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_HOSTS_CONFIG (object)->_priv;
   reply = _oobs_object_get_dbus_message (object);
 
   /* First of all, free the previous config */
@@ -245,7 +246,7 @@ oobs_hosts_config_commit (OobsObject *object)
   OobsListIter list_iter;
   gboolean valid;
 
-  priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_HOSTS_CONFIG (object)->_priv;
   message = _oobs_object_get_dbus_message (object);
 
   dbus_message_iter_init_append (message, &iter);
@@ -327,7 +328,7 @@ oobs_hosts_config_get_hostname (OobsHostsConfig *config)
 
   g_return_val_if_fail (OOBS_IS_HOSTS_CONFIG (config), NULL);
 
-  priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   return priv->hostname;
 }
@@ -348,7 +349,7 @@ oobs_hosts_config_set_hostname (OobsHostsConfig *config,
   g_return_if_fail (OOBS_IS_HOSTS_CONFIG (config));
   g_return_if_fail (hostname && *hostname);
 
-  priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   if (priv->hostname)
     g_free (priv->hostname);
@@ -372,7 +373,7 @@ oobs_hosts_config_get_domainname (OobsHostsConfig *config)
 
   g_return_val_if_fail (OOBS_IS_HOSTS_CONFIG (config), NULL);
 
-  priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   return priv->domain;
 }
@@ -392,7 +393,7 @@ oobs_hosts_config_set_domainname (OobsHostsConfig *config,
 
   g_return_if_fail (OOBS_IS_HOSTS_CONFIG (config));
 
-  priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   if (priv->domain)
     g_free (priv->domain);
@@ -415,7 +416,7 @@ oobs_hosts_config_get_static_hosts (OobsHostsConfig *config)
 
   g_return_val_if_fail (OOBS_IS_HOSTS_CONFIG (config), NULL);
 
-  priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   return priv->static_hosts_list;
 }
@@ -436,7 +437,7 @@ oobs_hosts_config_get_dns_servers (OobsHostsConfig *config)
 
   g_return_val_if_fail (OOBS_IS_HOSTS_CONFIG (config), NULL);
 
-  priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   return g_list_copy (priv->dns_list);
 }
@@ -457,7 +458,7 @@ oobs_hosts_config_set_dns_servers (OobsHostsConfig *config,
 
   g_return_val_if_fail (OOBS_IS_HOSTS_CONFIG (config), NULL);
 
-  priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   if (priv->dns_list)
     {
@@ -484,7 +485,7 @@ oobs_hosts_config_get_search_domains (OobsHostsConfig *config)
 
   g_return_val_if_fail (OOBS_IS_HOSTS_CONFIG (config), NULL);
 
-  priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   return g_list_copy (priv->search_domains_list);
 }
@@ -505,7 +506,7 @@ oobs_hosts_config_set_search_domains (OobsHostsConfig *config,
 
   g_return_val_if_fail (OOBS_IS_HOSTS_CONFIG (config), NULL);
 
-  priv = OOBS_HOSTS_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   if (priv->search_domains_list)
     {

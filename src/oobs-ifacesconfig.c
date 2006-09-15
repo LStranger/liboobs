@@ -106,6 +106,7 @@ oobs_ifaces_config_init (OobsIfacesConfig *config)
   priv->plip_ifaces = _oobs_list_new (OOBS_TYPE_IFACE_PLIP);
   priv->modem_ifaces = _oobs_list_new (OOBS_TYPE_IFACE_MODEM);
   priv->isdn_ifaces = _oobs_list_new (OOBS_TYPE_IFACE_ISDN);
+  config->_priv = priv;
 }
 
 static void
@@ -113,7 +114,7 @@ free_configuration (OobsIfacesConfig *config)
 {
   OobsIfacesConfigPrivate *priv;
 
-  priv = OOBS_IFACES_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   oobs_list_clear (priv->ethernet_ifaces);
   oobs_list_clear (priv->wireless_ifaces);
@@ -128,7 +129,7 @@ oobs_ifaces_config_finalize (GObject *object)
 {
   OobsIfacesConfigPrivate *priv;
 
-  priv = OOBS_IFACES_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_IFACES_CONFIG (object)->_priv;
 
   if (priv)
     {
@@ -364,7 +365,7 @@ oobs_ifaces_config_update (OobsObject *object)
   DBusMessage *reply;
   DBusMessageIter iter;
 
-  priv = OOBS_IFACES_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_IFACES_CONFIG (object)->_priv;
   reply = _oobs_object_get_dbus_message (object);
 
   /* First of all, free the previous configuration */
@@ -643,7 +644,7 @@ oobs_ifaces_config_commit (OobsObject *object)
   DBusMessage *message;
   DBusMessageIter iter;
 
-  priv = OOBS_IFACES_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_IFACES_CONFIG (object)->_priv;
   message = _oobs_object_get_dbus_message (object);
 
   dbus_message_iter_init_append (message, &iter);
@@ -684,7 +685,7 @@ oobs_ifaces_config_get_ifaces (OobsIfacesConfig *config,
 
   g_return_val_if_fail (OOBS_IS_IFACES_CONFIG (config), NULL);
 
-  priv = OOBS_IFACES_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   switch (type)
     {

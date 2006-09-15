@@ -47,11 +47,17 @@ typedef struct _OobsSessionClass OobsSessionClass;
 struct _OobsSession
 {
   GObject parent;
+
+  /*<private>*/
+  gpointer _priv;
 };
 
 struct _OobsSessionClass
 {
   GObjectClass parent_class;
+
+  void (*_oobs_padding1) (void);
+  void (*_oobs_padding2) (void);
 };
 
 GType        oobs_session_get_type (void);

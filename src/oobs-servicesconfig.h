@@ -55,11 +55,19 @@ struct _OobsServicesRunlevel
 struct _OobsServicesConfig
 {
   OobsObject parent;
+
+  /*<private>*/
+  gpointer _priv;
 };
 
 struct _OobsServicesConfigClass
 {
   OobsObjectClass parent_class;
+
+  void (*_oobs_padding1) (void);
+  void (*_oobs_padding2) (void);
+  void (*_oobs_padding3) (void);
+  void (*_oobs_padding4) (void);
 };
 
 GType       oobs_services_config_get_type      (void);

@@ -95,6 +95,7 @@ oobs_list_init (OobsList *object)
   priv->stamp  = 0;
   priv->list   = NULL;
   priv->locked = FALSE;
+  object->_priv = priv;
 }
 
 static void
@@ -106,7 +107,7 @@ oobs_list_finalize (GObject *object)
   g_return_if_fail (OOBS_IS_LIST (object));
 
   list = OOBS_LIST (object);
-  priv = OOBS_LIST_GET_PRIVATE (list);
+  priv = list->_priv;
 
   /* set locking to FALSE, the object
    * is already being finalized anyway */
@@ -132,7 +133,7 @@ oobs_list_set_property (GObject      *object,
   g_return_if_fail (OOBS_IS_LIST (object));
 
   list = OOBS_LIST (object);
-  priv = OOBS_LIST_GET_PRIVATE (list);
+  priv = list->_priv;
 
   switch (prop_id)
     {
@@ -176,7 +177,7 @@ _oobs_list_set_locked (OobsList *list, gboolean locked)
 
   g_return_if_fail (OOBS_IS_LIST (list));
 
-  priv = OOBS_LIST_GET_PRIVATE (list);
+  priv = list->_priv;
   priv->locked = locked;
 }
 
@@ -199,7 +200,7 @@ oobs_list_get_iter_first (OobsList *list, OobsListIter *iter)
   g_return_val_if_fail (list != NULL, FALSE);
   g_return_val_if_fail (OOBS_IS_LIST (list), FALSE);
 
-  priv = OOBS_LIST_GET_PRIVATE (list);
+  priv = list->_priv;
 
   if (!priv->list)
     return FALSE;
@@ -232,7 +233,7 @@ oobs_list_iter_next (OobsList *list, OobsListIter *iter)
   g_return_val_if_fail (iter->data != NULL, FALSE);
   g_return_val_if_fail (OOBS_IS_LIST (list), FALSE);
 
-  priv = OOBS_LIST_GET_PRIVATE (list);
+  priv = list->_priv;
 
   if (!check_iter (priv, iter))
     return FALSE;
@@ -266,7 +267,7 @@ oobs_list_remove (OobsList *list, OobsListIter *iter)
   g_return_val_if_fail (iter->data != NULL, FALSE);
   g_return_val_if_fail (OOBS_IS_LIST (list), FALSE);
 
-  priv = OOBS_LIST_GET_PRIVATE (list);
+  priv = list->_priv;
 
   list_locked = priv->locked;
   g_return_val_if_fail (list_locked != TRUE, FALSE);
@@ -306,7 +307,7 @@ oobs_list_append (OobsList *list, OobsListIter *iter)
   g_return_if_fail (iter != NULL);
   g_return_if_fail (OOBS_IS_LIST (list));
 
-  priv = OOBS_LIST_GET_PRIVATE (list);
+  priv = list->_priv;
 
   list_locked = priv->locked;
   g_return_if_fail (list_locked != TRUE);
@@ -340,7 +341,7 @@ oobs_list_prepend (OobsList *list, OobsListIter *iter)
   g_return_if_fail (iter != NULL);
   g_return_if_fail (OOBS_IS_LIST (list));
 
-  priv = OOBS_LIST_GET_PRIVATE (list);
+  priv = list->_priv;
 
   list_locked = priv->locked;
   g_return_if_fail (list_locked != TRUE);
@@ -380,7 +381,7 @@ oobs_list_insert_after (OobsList     *list,
   g_return_if_fail (iter != NULL);
   g_return_if_fail (OOBS_IS_LIST (list));
 
-  priv = OOBS_LIST_GET_PRIVATE (list);
+  priv = list->_priv;
   
   list_locked = priv->locked;
   g_return_if_fail (list_locked != TRUE);
@@ -429,7 +430,7 @@ oobs_list_insert_before (OobsList     *list,
   g_return_if_fail (iter != NULL);
   g_return_if_fail (OOBS_IS_LIST (list));
 
-  priv = OOBS_LIST_GET_PRIVATE (list);
+  priv = list->_priv;
   
   list_locked = priv->locked;
   g_return_if_fail (list_locked != TRUE);
@@ -461,8 +462,8 @@ oobs_list_insert_before (OobsList     *list,
  * Return Value: the element referenced by @iter
  **/
 GObject*
-oobs_list_get (OobsList      *list,
-	       OobsListIter  *iter)
+oobs_list_get (OobsList     *list,
+	       OobsListIter *iter)
 {
   OobsListPrivate *priv;
   GList *node;
@@ -473,7 +474,7 @@ oobs_list_get (OobsList      *list,
   g_return_val_if_fail (OOBS_IS_LIST (list), NULL);
 
   node = iter->data;
-  priv = OOBS_LIST_GET_PRIVATE (list);
+  priv = list->_priv;
 
   g_return_val_if_fail (node->data != NULL, NULL);
 
@@ -485,11 +486,11 @@ oobs_list_get (OobsList      *list,
 
 static gboolean
 check_types (OobsList *list,
-	     GObject *data)
+	     GObject  *data)
 {
   OobsListPrivate *priv;
 
-  priv = OOBS_LIST_GET_PRIVATE (list);
+  priv = list->_priv;
   
   if (!G_TYPE_CHECK_INSTANCE_TYPE (data, priv->contained_type))
     {
@@ -525,7 +526,7 @@ oobs_list_set (OobsList     *list,
   g_return_if_fail (G_IS_OBJECT (data));
 
   node = iter->data;
-  priv = OOBS_LIST_GET_PRIVATE (list);
+  priv = list->_priv;
 
   list_locked = priv->locked;
   g_return_if_fail (list_locked != TRUE);
@@ -557,7 +558,7 @@ oobs_list_clear (OobsList *list)
   g_return_if_fail (list != NULL);
   g_return_if_fail (OOBS_IS_LIST (list));
 
-  priv = OOBS_LIST_GET_PRIVATE (list);
+  priv = list->_priv;
 
   list_locked = priv->locked;
   g_return_if_fail (list_locked != TRUE);
@@ -585,7 +586,7 @@ oobs_list_get_n_items (OobsList *list)
 
   g_return_val_if_fail (OOBS_IS_LIST (list), 0);
 
-  priv = OOBS_LIST_GET_PRIVATE (list);
+  priv = list->_priv;
 
   return g_list_length (priv->list);
 }

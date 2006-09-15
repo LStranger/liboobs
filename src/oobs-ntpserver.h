@@ -37,10 +37,16 @@ typedef struct _OobsNTPServerClass   OobsNTPServerClass;
 	
 struct _OobsNTPServer {
   GObject parent;
+
+  /*<private>*/
+  gpointer _priv;
 };
 
 struct _OobsNTPServerClass {
   GObjectClass parent_class;
+
+  void (*_oobs_padding1) (void);
+  void (*_oobs_padding2) (void);
 };
 
 GType                  oobs_ntp_server_get_type     (void);

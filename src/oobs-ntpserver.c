@@ -78,6 +78,7 @@ oobs_ntp_server_init (OobsNTPServer *ntp_server)
 
   priv = OOBS_NTP_SERVER_GET_PRIVATE (ntp_server);
   priv->hostname = NULL;
+  ntp_server->_priv = priv;
 }
 
 static void
@@ -90,7 +91,7 @@ oobs_ntp_server_set_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_NTP_SERVER (object));
 
-  priv = OOBS_NTP_SERVER_GET_PRIVATE (object);
+  priv = OOBS_NTP_SERVER (object)->_priv;
 
   switch (prop_id)
     {
@@ -111,7 +112,7 @@ oobs_ntp_server_get_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_NTP_SERVER (object));
 
-  priv = OOBS_NTP_SERVER_GET_PRIVATE (object);
+  priv = OOBS_NTP_SERVER (object)->_priv;
 
   switch (prop_id)
     {
@@ -128,7 +129,7 @@ oobs_ntp_server_finalize (GObject *object)
 
   g_return_if_fail (OOBS_IS_NTP_SERVER (object));
 
-  priv = OOBS_NTP_SERVER_GET_PRIVATE (object);
+  priv = OOBS_NTP_SERVER (object)->_priv;
 
   if (priv)
     g_free (priv->hostname);
@@ -170,7 +171,7 @@ oobs_ntp_server_get_hostname (OobsNTPServer *ntp_server)
 
   g_return_val_if_fail (OOBS_IS_NTP_SERVER (ntp_server), NULL);
 
-  priv = OOBS_NTP_SERVER_GET_PRIVATE (ntp_server);
+  priv = ntp_server->_priv;
 
   return priv->hostname;
 }

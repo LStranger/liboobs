@@ -98,6 +98,7 @@ oobs_iface_plip_init (OobsIfacePlip *iface)
 
   priv->address = NULL;
   priv->remote_address = NULL;
+  iface->_priv = priv;
 }
 
 static void
@@ -107,7 +108,7 @@ oobs_iface_plip_finalize (GObject *object)
 
   g_return_if_fail (OOBS_IS_IFACE_PLIP (object));
 
-  priv = OOBS_IFACE_PLIP_GET_PRIVATE (object);
+  priv = OOBS_IFACE_PLIP (object)->_priv;
 
   if (priv)
     {
@@ -129,7 +130,7 @@ oobs_iface_plip_set_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_IFACE_PLIP (object));
 
-  priv = OOBS_IFACE_PLIP_GET_PRIVATE (object);
+  priv = OOBS_IFACE_PLIP (object)->_priv;
 
   switch (prop_id)
     {
@@ -154,7 +155,7 @@ oobs_iface_plip_get_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_IFACE_PLIP (object));
 
-  priv = OOBS_IFACE_PLIP_GET_PRIVATE (object);
+  priv = OOBS_IFACE_PLIP (object)->_priv;
 
   switch (prop_id)
     {
@@ -178,7 +179,7 @@ oobs_iface_plip_is_configured (OobsIface *iface)
 {
   OobsIfacePlipPrivate *priv;
 
-  priv = OOBS_IFACE_PLIP_GET_PRIVATE (iface);
+  priv = OOBS_IFACE_PLIP (iface)->_priv;
 
   return (priv->address && priv->remote_address);
 }
@@ -199,7 +200,7 @@ oobs_iface_plip_get_address (OobsIfacePlip *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE_PLIP (iface), NULL);
 
-  priv = OOBS_IFACE_PLIP_GET_PRIVATE (iface);
+  priv = iface->_priv;
 
   return priv->address;
 }
@@ -237,7 +238,7 @@ oobs_iface_plip_get_remote_address (OobsIfacePlip *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE_PLIP (iface), NULL);
 
-  priv = OOBS_IFACE_PLIP_GET_PRIVATE (iface);
+  priv = iface->_priv;
 
   return priv->remote_address;
 }

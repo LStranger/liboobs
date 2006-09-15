@@ -106,6 +106,7 @@ oobs_session_init (OobsSession *session)
   dbus_connection_setup_with_g_main (priv->connection, NULL);
   priv->session_objects  = NULL;
   priv->is_authenticated = FALSE;
+  session->_priv = priv;
 }
 
 static void
@@ -139,7 +140,7 @@ oobs_session_finalize (GObject *object)
   g_return_if_fail (OOBS_IS_SESSION (object));
 
   session = OOBS_SESSION (object);
-  priv    = OOBS_SESSION_GET_PRIVATE (session);
+  priv    = session->_priv;
 
   if (priv)
     {
@@ -164,7 +165,7 @@ oobs_session_set_property (GObject      *object,
   g_return_if_fail (OOBS_IS_SESSION (object));
 
   session = OOBS_SESSION (object);
-  priv = OOBS_SESSION_GET_PRIVATE (session);
+  priv    = session->_priv;
 
   switch (prop_id)
     {
@@ -184,7 +185,7 @@ oobs_session_get_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_SESSION (object));
 
-  priv = OOBS_SESSION_GET_PRIVATE (object);
+  priv = OOBS_SESSION (object)->_priv;
 
   switch (prop_id)
     {
@@ -230,7 +231,7 @@ oobs_session_commit (OobsSession *session)
   g_return_if_fail (session != NULL);
   g_return_if_fail (OOBS_IS_SESSION (session));
 
-  priv = OOBS_SESSION_GET_PRIVATE (session);
+  priv = session->_priv;
   node = priv->session_objects;
 
   while (node)
@@ -252,7 +253,7 @@ oobs_session_get_platform (OobsSession *session)
 
   g_return_val_if_fail (OOBS_IS_SESSION (session), NULL);
 
-  priv = OOBS_SESSION_GET_PRIVATE (session);
+  priv = session->_priv;
   message = dbus_message_new_method_call (OOBS_DBUS_DESTINATION,
 					  PLATFORMS_PATH,
 					  PLATFORMS_INTERFACE,
@@ -289,7 +290,7 @@ oobs_session_set_platform (OobsSession *session,
   g_return_if_fail (OOBS_IS_SESSION (session));
   g_return_if_fail (platform != NULL);
 
-  priv = OOBS_SESSION_GET_PRIVATE (session);
+  priv = session->_priv;
 
   priv->platform = g_strdup (platform);
   g_object_notify (G_OBJECT (session), "platform");
@@ -315,7 +316,7 @@ get_supported_platforms (OobsSession *session)
   GList *platforms = NULL;
   const gchar *str;
 
-  priv = OOBS_SESSION_GET_PRIVATE (session);
+  priv = session->_priv;
   message = dbus_message_new_method_call (OOBS_DBUS_DESTINATION,
 					  PLATFORMS_PATH,
 					  PLATFORMS_INTERFACE,
@@ -372,7 +373,7 @@ oobs_session_get_supported_platforms (OobsSession *session)
 
   g_return_val_if_fail (OOBS_IS_SESSION (session), NULL);
 
-  priv = OOBS_SESSION_GET_PRIVATE (session);
+  priv = session->_priv;
 
   if (!priv->supported_platforms)
     priv->supported_platforms = get_supported_platforms (session);
@@ -389,7 +390,7 @@ _oobs_session_get_connection_bus (OobsSession *session)
   g_return_val_if_fail (session != NULL, NULL);
   g_return_val_if_fail (OOBS_IS_SESSION (session), NULL);
 
-  priv = OOBS_SESSION_GET_PRIVATE (session);
+  priv = session->_priv;
   return priv->connection;
 }
 
@@ -401,7 +402,7 @@ _oobs_session_register_object (OobsSession *session, OobsObject *object)
   if (!session || !object)
     return;
 
-  priv = OOBS_SESSION_GET_PRIVATE (session);
+  priv = session->_priv;
   priv->session_objects = g_list_prepend (priv->session_objects,
 					  g_object_ref (object));
 }
@@ -416,7 +417,7 @@ _oobs_session_unregister_object (OobsSession *session, OobsObject *object)
   if (!session || !object)
     return;
 
-  priv  = OOBS_SESSION_GET_PRIVATE (session);
+  priv  = session->_priv;
   node  = priv->session_objects;
   found = FALSE;
 

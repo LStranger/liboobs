@@ -42,11 +42,19 @@ typedef struct _OobsSMBConfigClass OobsSMBConfigClass;
 struct _OobsSMBConfig
 {
   OobsObject parent;
+
+  /*<private>*/
+  gpointer _priv;
 };
 
 struct _OobsSMBConfigClass
 {
   OobsObjectClass parent_class;
+
+  void (*_oobs_padding1) (void);
+  void (*_oobs_padding2) (void);
+  void (*_oobs_padding3) (void);
+  void (*_oobs_padding4) (void);
 };
 
 GType       oobs_smb_config_get_type     (void);

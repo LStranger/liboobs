@@ -46,6 +46,9 @@ typedef struct _OobsObjectClass OobsObjectClass;
 struct _OobsObject
 {
   GObject parent;
+
+  /*<private>*/
+  gpointer _priv;
 };
 
 struct _OobsObjectClass
@@ -58,6 +61,9 @@ struct _OobsObjectClass
 
   /* signals */
   void (*changed)  (OobsObject *object);
+
+  void (*_oobs_padding1) (void);
+  void (*_oobs_padding2) (void);
 };
 
 typedef void (*OobsObjectAsyncFunc) (OobsObject       *object,

@@ -127,6 +127,7 @@ oobs_smb_config_init (OobsSMBConfig *config)
   priv = OOBS_SMB_CONFIG_GET_PRIVATE (config);
 
   priv->shares_list = _oobs_list_new (OOBS_TYPE_SHARE_SMB);
+  config->_priv = priv;
 }
 
 static void
@@ -137,7 +138,7 @@ oobs_smb_config_set_property (GObject      *object,
 {
   OobsSMBConfigPrivate *priv;
 
-  priv = OOBS_SMB_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_SMB_CONFIG (object)->_priv;
 
   switch (prop_id)
     {
@@ -164,7 +165,7 @@ oobs_smb_config_get_property (GObject      *object,
 {
   OobsSMBConfigPrivate *priv;
 
-  priv = OOBS_SMB_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_SMB_CONFIG (object)->_priv;
 
   switch (prop_id)
     {
@@ -190,7 +191,7 @@ oobs_smb_config_finalize (GObject *object)
 
   g_return_if_fail (OOBS_IS_SMB_CONFIG (object));
 
-  priv = OOBS_SMB_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_SMB_CONFIG (object)->_priv;
 
   if (priv && priv->shares_list)
     g_object_unref (priv->shares_list);
@@ -262,7 +263,7 @@ oobs_smb_config_update (OobsObject *object)
   OobsShare        *share;
   const gchar      *str;
 
-  priv  = OOBS_SMB_CONFIG_GET_PRIVATE (object);
+  priv  = OOBS_SMB_CONFIG (object)->_priv;
   reply = _oobs_object_get_dbus_message (object);
 
   /* First of all, free the previous shares list */
@@ -352,7 +353,7 @@ oobs_smb_config_commit (OobsObject *object)
   GObject *share;
   gboolean valid;
 
-  priv = OOBS_SMB_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_SMB_CONFIG (object)->_priv;
   message = _oobs_object_get_dbus_message (object);
 
   dbus_message_iter_init_append (message, &iter);
@@ -433,7 +434,7 @@ oobs_smb_config_get_shares (OobsSMBConfig *config)
 
   g_return_val_if_fail (OOBS_IS_SMB_CONFIG (config), NULL);
 
-  priv = OOBS_SMB_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   return priv->shares_list;
 }
@@ -445,7 +446,7 @@ oobs_smb_config_get_workgroup (OobsSMBConfig *config)
 
   g_return_val_if_fail (OOBS_IS_SMB_CONFIG (config), NULL);
 
-  priv = OOBS_SMB_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
   return priv->workgroup;
 }
 
@@ -465,7 +466,7 @@ oobs_smb_config_get_description (OobsSMBConfig *config)
 
   g_return_val_if_fail (OOBS_IS_SMB_CONFIG (config), NULL);
 
-  priv = OOBS_SMB_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
   return priv->desc;
 }
 
@@ -485,7 +486,7 @@ oobs_smb_config_get_is_wins_server (OobsSMBConfig *config)
 
   g_return_val_if_fail (OOBS_IS_SMB_CONFIG (config), FALSE);
 
-  priv = OOBS_SMB_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
   return priv->is_wins_server;
 }
 
@@ -505,7 +506,7 @@ oobs_smb_config_get_wins_server (OobsSMBConfig *config)
 
   g_return_val_if_fail (OOBS_IS_SMB_CONFIG (config), NULL);
 
-  priv = OOBS_SMB_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
   return priv->wins_server;
 }
 

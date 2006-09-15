@@ -120,6 +120,7 @@ oobs_iface_init (OobsIface *iface)
   priv->hwaddr = NULL;
   priv->file = NULL;
   priv->explicitly_not_configured = FALSE;
+  iface->_priv = priv;
 }
 
 static void
@@ -129,7 +130,7 @@ oobs_iface_finalize (GObject *object)
 
   g_return_if_fail (OOBS_IS_IFACE (object));
 
-  priv = OOBS_IFACE_GET_PRIVATE (object);
+  priv = OOBS_IFACE (object)->_priv;
 
   if (priv)
     {
@@ -152,7 +153,7 @@ oobs_iface_set_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_IFACE (object));
 
-  priv = OOBS_IFACE_GET_PRIVATE (object);
+  priv = OOBS_IFACE (object)->_priv;
 
   switch (prop_id)
     {
@@ -181,7 +182,7 @@ oobs_iface_get_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_IFACE (object));
 
-  priv = OOBS_IFACE_GET_PRIVATE (object);
+  priv = OOBS_IFACE (object)->_priv;
 
   switch (prop_id)
     {
@@ -218,7 +219,7 @@ oobs_iface_get_auto (OobsIface *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE (iface), FALSE);
 
-  priv = OOBS_IFACE_GET_PRIVATE (iface);
+  priv = iface->_priv;
 
   return priv->is_auto;
 }
@@ -253,7 +254,7 @@ oobs_iface_get_active (OobsIface *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE (iface), FALSE);
 
-  priv = OOBS_IFACE_GET_PRIVATE (iface);
+  priv = iface->_priv;
 
   return priv->is_enabled;
 }
@@ -289,7 +290,7 @@ oobs_iface_get_device_name (OobsIface *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE (iface), FALSE);
 
-  priv = OOBS_IFACE_GET_PRIVATE (iface);
+  priv = iface->_priv;
 
   return priv->dev;
 }
@@ -301,7 +302,7 @@ oobs_iface_get_hwaddr (OobsIface *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE (iface), FALSE);
 
-  priv = OOBS_IFACE_GET_PRIVATE (iface);
+  priv = iface->_priv;
 
   return priv->hwaddr;
 }
@@ -323,7 +324,7 @@ oobs_iface_get_configured (OobsIface *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE (iface), FALSE);
 
-  priv = OOBS_IFACE_GET_PRIVATE (iface);
+  priv = iface->_priv;
 
   if (priv->explicitly_not_configured)
     return FALSE;
@@ -347,7 +348,7 @@ oobs_iface_set_configured (OobsIface *iface, gboolean is_configured)
 
   g_return_if_fail (OOBS_IS_IFACE (iface));
 
-  priv = OOBS_IFACE_GET_PRIVATE (iface);
+  priv = iface->_priv;
   priv->explicitly_not_configured = (is_configured == FALSE);
   g_object_notify (G_OBJECT (iface), "configured");
 }

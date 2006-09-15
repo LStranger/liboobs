@@ -43,10 +43,14 @@ struct _OobsUser {
 
   /*<private>*/
   guint id;
+  gpointer _priv;
 };
 
 struct _OobsUserClass {
   GObjectClass parent_class;
+
+  void (*_oobs_padding1) (void);
+  void (*_oobs_padding2) (void);
 };
 
 GType oobs_user_get_type (void);

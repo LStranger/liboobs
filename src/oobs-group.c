@@ -132,6 +132,7 @@ oobs_group_init (OobsGroup *group)
 
   users_config = oobs_users_config_get (oobs_session_get ());
   g_object_get (users_config, "use-md5", &priv->use_md5, NULL);
+  group->_priv = priv;
 }
 
 static void
@@ -147,7 +148,7 @@ oobs_group_set_property (GObject      *object,
   g_return_if_fail (OOBS_IS_GROUP (object));
 
   group = OOBS_GROUP (object);
-  priv = OOBS_GROUP_GET_PRIVATE (group);
+  priv = group->_priv;
 
   switch (prop_id)
     {
@@ -196,7 +197,7 @@ oobs_group_get_property (GObject      *object,
   g_return_if_fail (OOBS_IS_GROUP (object));
 
   group = OOBS_GROUP (object);
-  priv = OOBS_GROUP_GET_PRIVATE (group);
+  priv = group->_priv;
 
   switch (prop_id)
     {
@@ -221,7 +222,7 @@ oobs_group_finalize (GObject *object)
   g_return_if_fail (OOBS_IS_GROUP (object));
 
   group = OOBS_GROUP (object);
-  priv = OOBS_GROUP_GET_PRIVATE (group);
+  priv = group->_priv;
 
   if (priv)
     {
@@ -252,7 +253,7 @@ oobs_group_constructor (GType                  type,
 								      n_construct_properties,
 								      construct_params);
   group = OOBS_GROUP (object);
-  priv = OOBS_GROUP_GET_PRIVATE (group);
+  priv = group->_priv;
   group->id = _oobs_groups_config_get_id (OOBS_GROUPS_CONFIG (priv->config));
 
   return object;
@@ -294,7 +295,7 @@ oobs_group_get_name (OobsGroup *group)
   g_return_val_if_fail (group != NULL, NULL);
   g_return_val_if_fail (OOBS_IS_GROUP (group), NULL);
 
-  priv = OOBS_GROUP_GET_PRIVATE (group);
+  priv = group->_priv;
 
   return priv->groupname;
 }
@@ -370,7 +371,7 @@ oobs_group_get_gid (OobsGroup *group)
   g_return_val_if_fail (group != NULL, OOBS_MAX_GID);
   g_return_val_if_fail (OOBS_IS_GROUP (group), OOBS_MAX_GID);
 
-  priv = OOBS_GROUP_GET_PRIVATE (group);
+  priv = group->_priv;
 
   return priv->gid;
 }
@@ -407,7 +408,7 @@ oobs_group_get_users (OobsGroup *group)
 
   g_return_val_if_fail (OOBS_IS_GROUP (group), NULL);
 
-  priv = OOBS_GROUP_GET_PRIVATE (group);
+  priv = group->_priv;
   return g_list_copy (priv->users);
 }
 
@@ -428,7 +429,7 @@ oobs_group_add_user (OobsGroup *group,
   g_return_if_fail (OOBS_IS_GROUP (group));
   g_return_if_fail (OOBS_IS_USER (user));
   
-  priv = OOBS_GROUP_GET_PRIVATE (group);
+  priv = group->_priv;
 
   /* try to avoid several instances */
   if (!g_list_find (priv->users, user))
@@ -452,7 +453,7 @@ oobs_group_remove_user (OobsGroup *group,
   g_return_if_fail (OOBS_IS_GROUP (group));
   g_return_if_fail (OOBS_IS_USER (user));
   
-  priv = OOBS_GROUP_GET_PRIVATE (group);
+  priv = group->_priv;
 
   /* there might be several instances */
   priv->users = g_list_remove_all (priv->users, user);

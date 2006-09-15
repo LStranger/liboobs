@@ -1,5 +1,18 @@
 2006-09-15  Carlos Garnacho  <carlosg@gnome.org>
 
+	* src/oobs-group.[ch], oobs-groupsconfig.[ch], oobs-hostsconfig.[ch],
+	oobs-iface-ethernet.[ch], oobs-iface-irlan.h, oobs-iface-isdn.[ch],
+	oobs-iface-modem.[ch], oobs-iface-plip.[ch], oobs-iface-wireless.[ch],
+	oobs-iface.[ch], oobs-ifacesconfig.[ch], oobs-list.[ch],
+	oobs-nfsconfig.[ch], oobs-ntpconfig.[ch], oobs-ntpserver.[ch],
+	oobs-object.[ch], oobs-service.[ch], oobs-servicesconfig.[ch],
+	oobs-session.[ch], oobs-share-nfs.[ch], oobs-share-smb.[ch],
+	oobs-share.[ch], oobs-smbconfig.[ch], oobs-statichost.[ch],
+	oobs-timeconfig.[ch], oobs-user.[ch], oobs-usersconfig.[ch]: Add _priv
+	pointer to object structs and some padding pointers to class structs.
+
+2006-09-15  Carlos Garnacho  <carlosg@gnome.org>
+
 	Set of changes to adapt to the new UsersConfig and GroupsConfig
 	parameter, an ID number to identify users/groups, as GID/UID is not
 	reliable enough, and may give problems.

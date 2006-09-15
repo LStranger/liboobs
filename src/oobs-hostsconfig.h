@@ -40,11 +40,19 @@ typedef struct _OobsHostsConfigClass OobsHostsConfigClass;
 struct _OobsHostsConfig
 {
   OobsObject parent;
+
+  /*<private>*/
+  gpointer _priv;
 };
 
 struct _OobsHostsConfigClass
 {
   OobsObjectClass parent_class;
+
+  void (*_oobs_padding1) (void);
+  void (*_oobs_padding2) (void);
+  void (*_oobs_padding3) (void);
+  void (*_oobs_padding4) (void);
 };
 
 GType       oobs_hosts_config_get_type     (void);

@@ -46,10 +46,16 @@ typedef struct _OobsShareSMBClass   OobsShareSMBClass;
 
 struct _OobsShareSMB {
   OobsShare parent;
+
+  /*<private>*/
+  gpointer _priv;
 };
 
 struct _OobsShareSMBClass {
   OobsShareClass parent_class;
+
+  void (*_oobs_padding1) (void);
+  void (*_oobs_padding2) (void);
 };
 
 GType             oobs_share_smb_get_type (void);

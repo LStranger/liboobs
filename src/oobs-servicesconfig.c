@@ -76,6 +76,7 @@ oobs_services_config_init (OobsServicesConfig *config)
   priv = OOBS_SERVICES_CONFIG_GET_PRIVATE (config);
 
   priv->services_list = _oobs_list_new (OOBS_TYPE_SERVICE);
+  config->_priv = priv;
 }
 
 static void
@@ -92,7 +93,7 @@ oobs_services_config_finalize (GObject *object)
 
   g_return_if_fail (OOBS_IS_SERVICES_CONFIG (object));
 
-  priv = OOBS_SERVICES_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_SERVICES_CONFIG (object)->_priv;
 
   if (priv)
     {
@@ -135,7 +136,7 @@ create_runlevels_list_from_dbus_reply (OobsObject      *object,
   OobsServicesRunlevel *runlevel;
   gchar *name;
 
-  priv = OOBS_SERVICES_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_SERVICES_CONFIG (object)->_priv;
 
   while (dbus_message_iter_get_arg_type (&iter) == DBUS_TYPE_STRING)
     {
@@ -160,7 +161,7 @@ get_runlevel (OobsServicesConfig *config,
   OobsServicesRunlevel *rl;
   GList *list;
 
-  priv = OOBS_SERVICES_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
   list = priv->runlevels;
 
   while (list)
@@ -248,7 +249,7 @@ oobs_services_config_update (OobsObject *object)
   OobsService     *service;
   gchar           *default_runlevel;
 
-  priv  = OOBS_SERVICES_CONFIG_GET_PRIVATE (object);
+  priv  = OOBS_SERVICES_CONFIG (object)->_priv;
   reply = _oobs_object_get_dbus_message (object);
 
   _oobs_list_set_locked (priv->services_list, FALSE);
@@ -362,7 +363,7 @@ oobs_services_config_commit (OobsObject *object)
   GObject *service;
 
   correct = TRUE;
-  priv = OOBS_SERVICES_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_SERVICES_CONFIG (object)->_priv;
   message = _oobs_object_get_dbus_message (object);
   dbus_message_iter_init_append (message, &iter);
 
@@ -454,7 +455,7 @@ oobs_services_config_get_services (OobsServicesConfig *config)
   g_return_val_if_fail (config != NULL, NULL);
   g_return_val_if_fail (OOBS_IS_SERVICES_CONFIG (config), NULL);
 
-  priv = OOBS_SERVICES_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   return priv->services_list;
 }
@@ -466,7 +467,7 @@ oobs_services_config_get_runlevels (OobsServicesConfig *config)
 
   g_return_val_if_fail (OOBS_IS_SERVICES_CONFIG (config), NULL);
   
-  priv = OOBS_SERVICES_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   return g_list_copy (priv->runlevels);
 }
@@ -478,7 +479,7 @@ oobs_services_config_get_default_runlevel (OobsServicesConfig *config)
 
   g_return_val_if_fail (OOBS_IS_SERVICES_CONFIG (config), NULL);
   
-  priv = OOBS_SERVICES_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   return priv->default_runlevel;
 }

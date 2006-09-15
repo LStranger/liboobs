@@ -38,10 +38,16 @@ typedef struct _OobsIfaceIRLanClass   OobsIfaceIRLanClass;
 	
 struct _OobsIfaceIRLan {
   OobsIfaceEthernet parent;
+
+  /*<private>*/
+  gpointer _priv;
 };
 
 struct _OobsIfaceIRLanClass {
   OobsIfaceEthernetClass parent_class;
+
+  void (*_oobs_padding1) (void);
+  void (*_oobs_padding2) (void);
 };
 
 GType oobs_iface_irlan_get_type (void);

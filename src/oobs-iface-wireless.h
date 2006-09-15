@@ -44,10 +44,16 @@ typedef struct _OobsIfaceWirelessClass   OobsIfaceWirelessClass;
 	
 struct _OobsIfaceWireless {
   OobsIfaceEthernet parent;
+
+  /*<private>*/
+  gpointer _priv;
 };
 
 struct _OobsIfaceWirelessClass {
   OobsIfaceEthernetClass parent_class;
+
+  void (*_oobs_padding1) (void);
+  void (*_oobs_padding2) (void);
 };
 
 GType oobs_wireless_key_type_get_type (void);

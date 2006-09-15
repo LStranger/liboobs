@@ -79,6 +79,7 @@ oobs_static_host_init (OobsStaticHost *group)
   priv = OOBS_STATIC_HOST_GET_PRIVATE (group);
   priv->ip_address = NULL;
   priv->aliases    = NULL;
+  group->_priv     = priv;
 }
 
 static void
@@ -91,7 +92,7 @@ oobs_static_host_set_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_STATIC_HOST (object));
 
-  priv = OOBS_STATIC_HOST_GET_PRIVATE (object);
+  priv = OOBS_STATIC_HOST (object)->_priv;
 
   switch (prop_id)
     {
@@ -112,7 +113,7 @@ oobs_static_host_get_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_STATIC_HOST (object));
 
-  priv = OOBS_STATIC_HOST_GET_PRIVATE (object);
+  priv = OOBS_STATIC_HOST (object)->_priv;
 
   switch (prop_id)
     {
@@ -129,7 +130,7 @@ oobs_static_host_finalize (GObject *object)
 
   g_return_if_fail (OOBS_IS_STATIC_HOST (object));
 
-  priv = OOBS_STATIC_HOST_GET_PRIVATE (object);
+  priv = OOBS_STATIC_HOST (object)->_priv;
 
   if (priv)
     {
@@ -184,7 +185,7 @@ oobs_static_host_get_ip_address (OobsStaticHost *static_host)
 
   g_return_val_if_fail (OOBS_IS_STATIC_HOST (static_host), NULL);
 
-  priv = OOBS_STATIC_HOST_GET_PRIVATE (static_host);
+  priv = static_host->_priv;
 
   return priv->ip_address;
 }
@@ -224,7 +225,7 @@ oobs_static_host_get_aliases (OobsStaticHost *static_host)
 
   g_return_val_if_fail (OOBS_IS_STATIC_HOST (static_host), NULL);
 
-  priv = OOBS_STATIC_HOST_GET_PRIVATE (static_host);
+  priv = static_host->_priv;
 
   return g_list_copy (priv->aliases);
 }
@@ -244,7 +245,7 @@ oobs_static_host_set_aliases (OobsStaticHost *static_host, GList *aliases)
 
   g_return_if_fail (OOBS_IS_STATIC_HOST (static_host));
 
-  priv = OOBS_STATIC_HOST_GET_PRIVATE (static_host);
+  priv = static_host->_priv;
 
   if (priv->aliases)
     {

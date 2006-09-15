@@ -111,6 +111,7 @@ oobs_groups_config_init (OobsGroupsConfig *config)
 
   priv = OOBS_GROUPS_CONFIG_GET_PRIVATE (config);
 
+  config->_priv = priv;
   priv->groups_list = _oobs_list_new (OOBS_TYPE_GROUP);
 }
 
@@ -121,7 +122,7 @@ oobs_groups_config_finalize (GObject *object)
 
   g_return_if_fail (OOBS_IS_GROUPS_CONFIG (object));
 
-  priv = OOBS_GROUPS_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_GROUPS_CONFIG (object)->_priv;
 
   if (priv && priv->groups_list)
     g_object_unref (priv->groups_list);
@@ -140,7 +141,7 @@ oobs_groups_config_set_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_GROUPS_CONFIG (object));
 
-  priv = OOBS_GROUPS_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_GROUPS_CONFIG (object)->_priv;
 
   switch (prop_id)
     {
@@ -163,7 +164,7 @@ oobs_groups_config_get_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_GROUPS_CONFIG (object));
 
-  priv = OOBS_GROUPS_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_GROUPS_CONFIG (object)->_priv;
 
   switch (prop_id)
     {
@@ -359,7 +360,7 @@ oobs_groups_config_update (OobsObject *object)
   GObject         *group;
   GHashTable      *hashtable;
 
-  priv  = OOBS_GROUPS_CONFIG_GET_PRIVATE (object);
+  priv  = OOBS_GROUPS_CONFIG (object)->_priv;
   reply = _oobs_object_get_dbus_message (object);
   hashtable = g_hash_table_new_full (NULL, NULL,
 				     (GDestroyNotify) g_object_unref,
@@ -406,7 +407,7 @@ oobs_groups_config_commit (OobsObject *object)
   GObject *group;
   gboolean valid;
 
-  priv = OOBS_GROUPS_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_GROUPS_CONFIG (object)->_priv;
   message = _oobs_object_get_dbus_message (object);
 
   dbus_message_iter_init_append (message, &iter);
@@ -482,7 +483,7 @@ oobs_groups_config_get_groups (OobsGroupsConfig *config)
   g_return_val_if_fail (config != NULL, NULL);
   g_return_val_if_fail (OOBS_IS_GROUPS_CONFIG (config), NULL);
 
-  priv = OOBS_GROUPS_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   return priv->groups_list;
 }
@@ -492,7 +493,7 @@ _oobs_groups_config_get_id (OobsGroupsConfig *config)
 {
   OobsGroupsConfigPrivate *priv;
 
-  priv = OOBS_GROUPS_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   /* FIXME: this could overflow */
   return ++priv->id;

@@ -74,6 +74,7 @@ oobs_nfs_config_init (OobsNFSConfig *config)
   priv = OOBS_NFS_CONFIG_GET_PRIVATE (config);
 
   priv->shares_list = _oobs_list_new (OOBS_TYPE_SHARE_NFS);
+  config->_priv = priv;
 }
 
 static void
@@ -83,7 +84,7 @@ oobs_nfs_config_finalize (GObject *object)
 
   g_return_if_fail (OOBS_IS_NFS_CONFIG (object));
 
-  priv = OOBS_NFS_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_NFS_CONFIG (object)->_priv;
 
   if (priv && priv->shares_list)
     g_object_unref (priv->shares_list);
@@ -174,7 +175,7 @@ oobs_nfs_config_update (OobsObject *object)
   OobsListIter      list_iter;
   OobsShare        *share;
 
-  priv  = OOBS_NFS_CONFIG_GET_PRIVATE (object);
+  priv  = OOBS_NFS_CONFIG (object)->_priv;
   reply = _oobs_object_get_dbus_message (object);
 
   /* First of all, free the previous shares list */
@@ -206,7 +207,7 @@ oobs_nfs_config_commit (OobsObject *object)
   GObject *share;
   gboolean valid;
 
-  priv = OOBS_NFS_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_NFS_CONFIG (object)->_priv;
   message = _oobs_object_get_dbus_message (object);
 
   dbus_message_iter_init_append (message, &iter);
@@ -281,7 +282,7 @@ oobs_nfs_config_get_shares (OobsNFSConfig *config)
 
   g_return_val_if_fail (OOBS_IS_NFS_CONFIG (config), NULL);
 
-  priv = OOBS_NFS_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   return priv->shares_list;
 }

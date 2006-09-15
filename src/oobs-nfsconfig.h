@@ -42,11 +42,19 @@ typedef struct _OobsNFSConfigClass OobsNFSConfigClass;
 struct _OobsNFSConfig
 {
   OobsObject parent;
+
+  /*<private>*/
+  gpointer _priv;
 };
 
 struct _OobsNFSConfigClass
 {
   OobsObjectClass parent_class;
+
+  void (*_oobs_padding1) (void);
+  void (*_oobs_padding2) (void);
+  void (*_oobs_padding3) (void);
+  void (*_oobs_padding4) (void);
 };
 
 GType       oobs_nfs_config_get_type     (void);

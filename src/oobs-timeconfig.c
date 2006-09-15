@@ -27,6 +27,7 @@
 #include "oobs-object.h"
 #include "oobs-object-private.h"
 #include "oobs-timeconfig.h"
+#include "utils.h"
 
 #define TIME_CONFIG_REMOTE_OBJECT "TimeConfig"
 #define OOBS_TIME_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_TIME_CONFIG, OobsTimeConfigPrivate))
@@ -108,6 +109,7 @@ oobs_time_config_init (OobsTimeConfig *config)
   priv = OOBS_TIME_CONFIG_GET_PRIVATE (config);
 
   priv->time_is_set = FALSE;
+  config->_priv = priv;
 }
 
 static void
@@ -117,7 +119,7 @@ oobs_time_config_finalize (GObject *object)
 
   g_return_if_fail (OOBS_IS_TIME_CONFIG (object));
 
-  priv = OOBS_TIME_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_TIME_CONFIG (object)->_priv;
 
   if (priv && priv->timezone)
     g_free (priv->timezone);
@@ -136,7 +138,7 @@ oobs_time_config_set_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_TIME_CONFIG (object));
 
-  priv = OOBS_TIME_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_TIME_CONFIG (object)->_priv;
 
   switch (prop_id)
     {
@@ -163,7 +165,7 @@ oobs_time_config_get_property (GObject    *object,
 
   g_return_if_fail (OOBS_IS_TIME_CONFIG (object));
 
-  priv = OOBS_TIME_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_TIME_CONFIG (object)->_priv;
 
   switch (prop_id)
     {
@@ -201,7 +203,7 @@ oobs_time_config_update (OobsObject *object)
   DBusMessageIter iter;
   gchar *timezone;
 
-  priv  = OOBS_TIME_CONFIG_GET_PRIVATE (object);
+  priv  = OOBS_TIME_CONFIG (object)->_priv;
   reply = _oobs_object_get_dbus_message (object);
 
   /* First of all, free the previous config */
@@ -231,7 +233,7 @@ oobs_time_config_commit (OobsObject *object)
   DBusMessageIter iter;
   gint year, month, day, hour, minute, second;
 
-  priv = OOBS_TIME_CONFIG_GET_PRIVATE (object);
+  priv = OOBS_TIME_CONFIG (object)->_priv;
   message = _oobs_object_get_dbus_message (object);
 
   oobs_time_config_get_utc_time (OOBS_TIME_CONFIG (object),
@@ -570,7 +572,7 @@ oobs_time_config_get_timezone (OobsTimeConfig *config)
 
   g_return_val_if_fail (OOBS_IS_TIME_CONFIG (config), NULL);
 
-  priv = OOBS_TIME_CONFIG_GET_PRIVATE (config);
+  priv = config->_priv;
 
   return priv->timezone;
 }

@@ -125,6 +125,7 @@ oobs_iface_wireless_init (OobsIfaceWireless *iface)
 
   priv->essid = NULL;
   priv->key = NULL;
+  iface->_priv = priv;
 }
 
 static void
@@ -134,7 +135,7 @@ oobs_iface_wireless_finalize (GObject *object)
 
   g_return_if_fail (OOBS_IS_IFACE_WIRELESS (object));
 
-  priv = OOBS_IFACE_WIRELESS_GET_PRIVATE (object);
+  priv = OOBS_IFACE_WIRELESS (object)->_priv;
 
   if (priv)
     {
@@ -156,7 +157,7 @@ oobs_iface_wireless_set_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_IFACE_WIRELESS (object));
 
-  priv = OOBS_IFACE_WIRELESS_GET_PRIVATE (object);
+  priv = OOBS_IFACE_WIRELESS (object)->_priv;
 
   switch (prop_id)
     {
@@ -184,7 +185,7 @@ oobs_iface_wireless_get_property (GObject      *object,
 
   g_return_if_fail (OOBS_IS_IFACE_WIRELESS (object));
 
-  priv = OOBS_IFACE_WIRELESS_GET_PRIVATE (object);
+  priv = OOBS_IFACE_WIRELESS (object)->_priv;
 
   switch (prop_id)
     {
@@ -205,7 +206,7 @@ oobs_iface_wireless_is_configured (OobsIface *iface)
 {
   OobsIfaceWirelessPrivate *priv;
 
-  priv = OOBS_IFACE_WIRELESS_GET_PRIVATE (iface);
+  priv = OOBS_IFACE_WIRELESS (iface)->_priv;
 
   return (priv->essid &&
 	  (* OOBS_IFACE_CLASS (oobs_iface_wireless_parent_class)->is_configured) (iface));
@@ -227,7 +228,7 @@ oobs_iface_wireless_get_essid (OobsIfaceWireless *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE_WIRELESS (iface), NULL);
 
-  priv = OOBS_IFACE_WIRELESS_GET_PRIVATE (iface);
+  priv = iface->_priv;
 
   return priv->essid;
 }
@@ -266,7 +267,7 @@ oobs_iface_wireless_get_key (OobsIfaceWireless *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE_WIRELESS (iface), NULL);
 
-  priv = OOBS_IFACE_WIRELESS_GET_PRIVATE (iface);
+  priv = iface->_priv;
 
   return priv->key;
 }
@@ -301,7 +302,7 @@ oobs_iface_wireless_get_key_type (OobsIfaceWireless *iface)
 
   g_return_val_if_fail (OOBS_IS_IFACE_WIRELESS (iface), OOBS_WIRELESS_KEY_ASCII);
 
-  priv = OOBS_IFACE_WIRELESS_GET_PRIVATE (iface);
+  priv = iface->_priv;
 
   return priv->key_type;
 }

@@ -52,11 +52,19 @@ typedef struct _OobsIfacesConfigClass OobsIfacesConfigClass;
 struct _OobsIfacesConfig
 {
   OobsObject parent;
+
+  /*<private>*/
+  gpointer _priv;
 };
 
 struct _OobsIfacesConfigClass
 {
   OobsObjectClass parent_class;
+
+  void (*_oobs_padding1) (void);
+  void (*_oobs_padding2) (void);
+  void (*_oobs_padding3) (void);
+  void (*_oobs_padding4) (void);
 };
 
 GType       oobs_ifaces_config_get_type     (void);

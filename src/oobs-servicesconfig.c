@@ -186,7 +186,7 @@ create_service_runlevels_from_dbus_reply (OobsServicesConfig *config,
   DBusMessageIter runlevel_iter;
   OobsServicesRunlevel *rl;
   OobsServiceStatus status;
-  gchar *runlevel, *start;
+  gchar *runlevel;
   gint priority;
 
   while (dbus_message_iter_get_arg_type (&struct_iter) == DBUS_TYPE_STRUCT)
@@ -196,7 +196,7 @@ create_service_runlevels_from_dbus_reply (OobsServicesConfig *config,
       dbus_message_iter_get_basic (&runlevel_iter, &runlevel);
       dbus_message_iter_next (&runlevel_iter);
 
-      dbus_message_iter_get_basic (&runlevel_iter, &start);
+      dbus_message_iter_get_basic (&runlevel_iter, &status);
       dbus_message_iter_next (&runlevel_iter);
 
       dbus_message_iter_get_basic (&runlevel_iter, &priority);
@@ -205,10 +205,7 @@ create_service_runlevels_from_dbus_reply (OobsServicesConfig *config,
       rl = get_runlevel (config, runlevel);
 
       if (rl)
-	{
-	  status = (strcmp (start, "start") == 0) ? OOBS_SERVICE_START : OOBS_SERVICE_STOP;
-	  oobs_service_set_runlevel_configuration (service, rl, status, priority);
-	}
+	oobs_service_set_runlevel_configuration (service, rl, status, priority);
 
       dbus_message_iter_next (&struct_iter);
     }
@@ -292,13 +289,14 @@ create_dbus_struct_from_service_runlevels (OobsService     *service,
 {
   DBusMessageIter runlevels_iter, struct_iter;
   OobsServicesRunlevel *runlevel;
-  gint status, priority;
+  OobsServiceStatus status;
+  gint priority;
 
   dbus_message_iter_open_container (iter,
 				    DBUS_TYPE_ARRAY,
 				    DBUS_STRUCT_BEGIN_CHAR_AS_STRING
 				    DBUS_TYPE_STRING_AS_STRING
-				    DBUS_TYPE_STRING_AS_STRING
+				    DBUS_TYPE_INT32_AS_STRING
 				    DBUS_TYPE_INT32_AS_STRING
 				    DBUS_STRUCT_END_CHAR_AS_STRING,
 				    &runlevels_iter);
@@ -316,7 +314,7 @@ create_dbus_struct_from_service_runlevels (OobsService     *service,
       dbus_message_iter_open_container (&runlevels_iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
 
       utils_append_string (&struct_iter, runlevel->name);
-      utils_append_string (&struct_iter, (status == OOBS_SERVICE_START) ? "start" : "stop");
+      dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_INT32, &status);
       dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_INT32, &priority);
 
       dbus_message_iter_close_container (&runlevels_iter, &struct_iter);
@@ -380,7 +378,7 @@ oobs_services_config_commit (OobsObject *object)
 				    DBUS_TYPE_ARRAY_AS_STRING
 				    DBUS_STRUCT_BEGIN_CHAR_AS_STRING
 				    DBUS_TYPE_STRING_AS_STRING
-				    DBUS_TYPE_STRING_AS_STRING
+				    DBUS_TYPE_INT32_AS_STRING
 				    DBUS_TYPE_INT32_AS_STRING
 				    DBUS_STRUCT_END_CHAR_AS_STRING
 				    DBUS_STRUCT_END_CHAR_AS_STRING,

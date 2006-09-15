@@ -1,5 +1,10 @@
 2006-09-15  Carlos Garnacho  <carlosg@gnome.org>
 
+	* src/oobs-servicesconfig.c: as of recent s-t-b CVS, the service 
+	status parameter is a enum-like value (int32).
+
+2006-09-15  Carlos Garnacho  <carlosg@gnome.org>
+
 	* src/oobs-group.[ch], oobs-groupsconfig.[ch], oobs-hostsconfig.[ch],
 	oobs-iface-ethernet.[ch], oobs-iface-irlan.h, oobs-iface-isdn.[ch],
 	oobs-iface-modem.[ch], oobs-iface-plip.[ch], oobs-iface-wireless.[ch],

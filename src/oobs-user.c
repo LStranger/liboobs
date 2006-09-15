@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "oobs-usersconfig.h"
+#include "oobs-usersconfig-private.h"
 #include "oobs-user.h"
 #include "oobs-group.h"
 #include "oobs-defines.h"
@@ -39,7 +40,6 @@ struct _OobsUserPrivate {
   OobsObject *config;
 
   OobsGroup *main_group;
-  gint   key;
   gchar *username;
   gchar *password;
   uid_t  uid;
@@ -67,6 +67,10 @@ static void oobs_user_get_property (GObject      *object,
 				    guint         prop_id,
 				    GValue       *value,
 				    GParamSpec   *pspec);
+static GObject* oobs_user_constructor (GType                  type,
+				       guint                  n_construct_properties,
+				       GObjectConstructParam *construct_params);
+
 enum
 {
   PROP_0,
@@ -90,6 +94,7 @@ oobs_user_class_init (OobsUserClass *class)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (class);
 
+  object_class->constructor  = oobs_user_constructor;
   object_class->set_property = oobs_user_set_property;
   object_class->get_property = oobs_user_get_property;
   object_class->finalize     = oobs_user_finalize;
@@ -356,6 +361,25 @@ oobs_user_finalize (GObject *object)
 
   if (G_OBJECT_CLASS (oobs_user_parent_class)->finalize)
     (* G_OBJECT_CLASS (oobs_user_parent_class)->finalize) (object);
+}
+
+static GObject*
+oobs_user_constructor (GType                  type,
+		       guint                  n_construct_properties,
+		       GObjectConstructParam *construct_params)
+{
+  GObject *object;
+  OobsUser *user;
+  OobsUserPrivate *priv;
+
+  object = (* G_OBJECT_CLASS (oobs_user_parent_class)->constructor) (type,
+								     n_construct_properties,
+								     construct_params);
+  user = OOBS_USER (object);
+  priv = OOBS_USER_GET_PRIVATE (user);
+  user->id = _oobs_users_config_get_id (OOBS_USERS_CONFIG (priv->config));
+
+  return object;
 }
 
 OobsUser*

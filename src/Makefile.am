@@ -43,9 +43,11 @@ oobsinclude_HEADERS= 	\
 
 oobs_private_headers = 	\
 	oobs-defines.h			\
+	oobs-groupsconfig-private.h	\
 	oobs-list-private.h		\
 	oobs-object-private.h	\
 	oobs-session-private.h	\
+	oobs-usersconfig-private.h	\
 	utils.h
 
 liboobs_1_la_SOURCES = \

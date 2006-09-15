@@ -43,6 +43,7 @@ struct _OobsGroupsConfigPrivate
 
   gid_t     minimum_gid;
   gid_t     maximum_gid;
+  guint     id;
 };
 
 static void oobs_groups_config_class_init (OobsGroupsConfigClass *class);
@@ -179,15 +180,20 @@ static OobsGroup*
 create_group_from_dbus_reply (OobsObject      *object,
 			      DBusMessage     *reply,
 			      DBusMessageIter  struct_iter,
-			      GHashTable      *hashtable)
+			      GHashTable      *hashtable,
+			      guint           *max_id)
 {
   DBusMessageIter iter;
   int      gid;
+  guint    id;
   gchar   *groupname, *passwd;
   GList   *users;
-  GObject *group;
+  OobsGroup *group;
 
   dbus_message_iter_recurse (&struct_iter, &iter);
+
+  dbus_message_iter_get_basic (&iter, &id);
+  dbus_message_iter_next (&iter);
 
   dbus_message_iter_get_basic (&iter, &groupname);
   dbus_message_iter_next (&iter);
@@ -205,6 +211,10 @@ create_group_from_dbus_reply (OobsObject      *object,
 			"crypted-password", passwd,
 			"gid", gid,
 			NULL);
+
+  /* set the id by hand */
+  group->id = id;
+  *max_id = MAX (id, *max_id);
 
   /* put the users list in the hashtable, when the groups list has
    * been completely generated, we may query the users config safely */
@@ -226,7 +236,7 @@ get_users_list (OobsGroup *group)
   while (elem)
     {
       user = elem->data;
-      usernames = g_list_prepend (usernames, oobs_user_get_login_name (user));
+      usernames = g_list_prepend (usernames, (gpointer) oobs_user_get_login_name (user));
 
       elem = elem->next;
     }
@@ -255,6 +265,7 @@ create_dbus_struct_from_group (GObject         *group,
 
   dbus_message_iter_open_container (array_iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
 
+  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_UINT32,  &(OOBS_GROUP(group)->id));
   utils_append_string (&struct_iter, groupname);
   utils_append_string (&struct_iter, passwd);
   dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_INT32,  &gid);
@@ -353,6 +364,7 @@ oobs_groups_config_update (OobsObject *object)
   hashtable = g_hash_table_new_full (NULL, NULL,
 				     (GDestroyNotify) g_object_unref,
 				     (GDestroyNotify) g_list_free);
+  priv->id = 0;
 
   /* First of all, free the previous list */
   oobs_list_clear (priv->groups_list);
@@ -363,7 +375,7 @@ oobs_groups_config_update (OobsObject *object)
   while (dbus_message_iter_get_arg_type (&elem_iter) == DBUS_TYPE_STRUCT)
     {
       group = G_OBJECT (create_group_from_dbus_reply (object, reply,
-						      elem_iter, hashtable));
+						      elem_iter, hashtable, &priv->id));
 
       oobs_list_append (priv->groups_list, &list_iter);
       oobs_list_set    (priv->groups_list, &list_iter, G_OBJECT (group));
@@ -401,6 +413,7 @@ oobs_groups_config_commit (OobsObject *object)
   dbus_message_iter_open_container (&iter,
 				    DBUS_TYPE_ARRAY,
 				    DBUS_STRUCT_BEGIN_CHAR_AS_STRING
+				    DBUS_TYPE_UINT32_AS_STRING
 				    DBUS_TYPE_STRING_AS_STRING
 				    DBUS_TYPE_STRING_AS_STRING
 				    DBUS_TYPE_INT32_AS_STRING
@@ -472,4 +485,15 @@ oobs_groups_config_get_groups (OobsGroupsConfig *config)
   priv = OOBS_GROUPS_CONFIG_GET_PRIVATE (config);
 
   return priv->groups_list;
+}
+
+guint
+_oobs_groups_config_get_id (OobsGroupsConfig *config)
+{
+  OobsGroupsConfigPrivate *priv;
+
+  priv = OOBS_GROUPS_CONFIG_GET_PRIVATE (config);
+
+  /* FIXME: this could overflow */
+  return ++priv->id;
 }

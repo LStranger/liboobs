@@ -1,3 +1,17 @@
+2006-09-15  Carlos Garnacho  <carlosg@gnome.org>
+
+	Set of changes to adapt to the new UsersConfig and GroupsConfig
+	parameter, an ID number to identify users/groups, as GID/UID is not
+	reliable enough, and may give problems.
+
+	* src/oobs-usersconfig.c, oobs-usersconfig-private.h: implement
+	_oobs_users_config_get_id (), give each user its ID.
+	* src/oobs-groupsconfig.c, oobs-groupsconfig-private.h: implement
+	_oobs_groups_config_get_id (), give each group its ID.
+	* src/Makefile.am: add the new private files.
+	* src/oobs-user.[ch], oobs-group.[ch]: save the new ID number, get one
+	if none is given.
+
 2006-09-06  Carlos Garnacho  <carlosg@gnome.org>
 
 	* src/oobs-session.c: do not try to read from the backend if it has

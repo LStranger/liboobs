@@ -39,6 +39,9 @@ typedef struct _OobsGroupClass   OobsGroupClass;
 	
 struct _OobsGroup {
   GObject parent;
+
+  /*<private>*/
+  guint id;
 };
 
 struct _OobsGroupClass {

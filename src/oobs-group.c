@@ -19,10 +19,12 @@
  */
 
 #include <glib-object.h>
+#include "oobs-session.h"
 #include "oobs-group.h"
 #include "oobs-user.h"
 #include "oobs-session.h"
 #include "oobs-usersconfig.h"
+#include "oobs-groupsconfig-private.h"
 #include "oobs-defines.h"
 #include "utils.h"
 #include <crypt.h>
@@ -32,6 +34,7 @@
 typedef struct _OobsGroupPrivate OobsGroupPrivate;
 
 struct _OobsGroupPrivate {
+  OobsObject *config;
   gint   key;
   gchar *groupname;
   gchar *password;
@@ -54,6 +57,10 @@ static void oobs_group_get_property (GObject      *object,
 				     guint         prop_id,
 				     GValue       *value,
 				     GParamSpec   *pspec);
+static GObject* oobs_group_constructor (GType                  type,
+					guint                  n_construct_properties,
+					GObjectConstructParam *construct_params);
+
 enum {
   PROP_0,
   PROP_GROUPNAME,
@@ -69,6 +76,7 @@ oobs_group_class_init (OobsGroupClass *class)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (class);
 
+  object_class->constructor  = oobs_group_constructor;
   object_class->set_property = oobs_group_set_property;
   object_class->get_property = oobs_group_get_property;
   object_class->finalize     = oobs_group_finalize;
@@ -110,10 +118,14 @@ oobs_group_init (OobsGroup *group)
 {
   OobsGroupPrivate *priv;
   OobsObject *users_config;
+  OobsSession *session;
 
   g_return_if_fail (OOBS_IS_GROUP (group));
 
+  session = oobs_session_get ();
+
   priv = OOBS_GROUP_GET_PRIVATE (group);
+  priv->config    = oobs_groups_config_get (session);
   priv->groupname = NULL;
   priv->password  = NULL;
   priv->users     = NULL;
@@ -225,6 +237,26 @@ oobs_group_finalize (GObject *object)
 
   if (G_OBJECT_CLASS (oobs_group_parent_class)->finalize)
     (* G_OBJECT_CLASS (oobs_group_parent_class)->finalize) (object);
+}
+
+static GObject*
+oobs_group_constructor (GType                  type,
+			guint                  n_construct_properties,
+			GObjectConstructParam *construct_params)
+{
+  GObject *object;
+  OobsGroup *group;
+  OobsGroupPrivate *priv;
+
+  object = (* G_OBJECT_CLASS (oobs_group_parent_class)->constructor) (type,
+								      n_construct_properties,
+								      construct_params);
+  group = OOBS_GROUP (object);
+  priv = OOBS_GROUP_GET_PRIVATE (group);
+  group->id = _oobs_groups_config_get_id (OOBS_GROUPS_CONFIG (priv->config));
+
+  return object;
+
 }
 
 /**

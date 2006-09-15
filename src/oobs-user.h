@@ -40,6 +40,9 @@ typedef struct _OobsUserClass   OobsUserClass;
 	
 struct _OobsUser {
   GObject parent;
+
+  /*<private>*/
+  guint id;
 };
 
 struct _OobsUserClass {

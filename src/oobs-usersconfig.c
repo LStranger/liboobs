@@ -49,6 +49,7 @@ struct _OobsUsersConfigPrivate
   uid_t     maximum_uid;
   gchar    *default_shell;
   gchar    *default_home;
+  guint     id;
 
   OobsGroup *default_group;
 };
@@ -261,15 +262,20 @@ static OobsUser*
 create_user_from_dbus_reply (OobsObject      *object,
 			     DBusMessage     *reply,
 			     DBusMessageIter  struct_iter,
-			     GHashTable      *hashtable)
+			     GHashTable      *hashtable,
+			     guint           *max_id)
 {
   OobsUser *user;
   DBusMessageIter iter, gecos_iter;
   int    uid, gid;
+  guint  id;
   gchar *login, *passwd, *home, *shell;
   gchar *name, *room_number, *work_phone, *home_phone, *other_data;
 
   dbus_message_iter_recurse (&struct_iter, &iter);
+
+  dbus_message_iter_get_basic (&iter, &id);
+  dbus_message_iter_next (&iter);
 
   dbus_message_iter_get_basic (&iter, &login);
   dbus_message_iter_next (&iter);
@@ -323,6 +329,10 @@ create_user_from_dbus_reply (OobsObject      *object,
 		       "other-data", other_data,
 		       NULL);
 
+  /* set the id by hand */
+  user->id = id;
+  *max_id = MAX (id, *max_id);
+
   /* put the GID in the hashtable, when the users list has
    * been completely generated, we may query the groups safely */
   g_hash_table_insert (hashtable,
@@ -362,6 +372,7 @@ create_dbus_struct_from_user (OobsUser        *user,
 
   dbus_message_iter_open_container (array_iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
 
+  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_UINT32,  &user->id);
   utils_append_string (&struct_iter, login);
   utils_append_string (&struct_iter, password);
   dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_INT32,  &uid);
@@ -480,6 +491,7 @@ oobs_users_config_update (OobsObject *object)
   priv  = OOBS_USERS_CONFIG_GET_PRIVATE (object);
   reply = _oobs_object_get_dbus_message (object);
   hashtable = g_hash_table_new_full (NULL, NULL, g_object_unref, NULL);
+  priv->id = 0;
 
   /* First of all, free the previous configuration */
   free_configuration (OOBS_USERS_CONFIG (object));
@@ -490,7 +502,7 @@ oobs_users_config_update (OobsObject *object)
   while (dbus_message_iter_get_arg_type (&elem_iter) == DBUS_TYPE_STRUCT)
     {
       user = G_OBJECT (create_user_from_dbus_reply (object, reply,
-						    elem_iter, hashtable));
+						    elem_iter, hashtable, &priv->id));
 
       oobs_list_append (priv->users_list, &list_iter);
       oobs_list_set    (priv->users_list, &list_iter, G_OBJECT (user));
@@ -545,6 +557,7 @@ oobs_users_config_commit (OobsObject *object)
   dbus_message_iter_open_container (&iter,
 				    DBUS_TYPE_ARRAY,
 				    DBUS_STRUCT_BEGIN_CHAR_AS_STRING
+				    DBUS_TYPE_UINT32_AS_STRING
 				    DBUS_TYPE_STRING_AS_STRING
 				    DBUS_TYPE_STRING_AS_STRING
 				    DBUS_TYPE_INT32_AS_STRING
@@ -736,4 +749,15 @@ oobs_users_config_get_available_shells (OobsUsersConfig *config)
   priv = OOBS_USERS_CONFIG_GET_PRIVATE (config);
 
   return priv->shells;
+}
+
+guint
+_oobs_users_config_get_id (OobsUsersConfig *config)
+{
+  OobsUsersConfigPrivate *priv;
+
+  priv = OOBS_USERS_CONFIG_GET_PRIVATE (config);
+
+  /* FIXME: this could overflow */
+  return ++priv->id;
 }

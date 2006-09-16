@@ -219,39 +219,58 @@ oobs_session_get (void)
  * @session: an #OobsSession
  * 
  * Commits inmediately all the changes to the configuration
- * objects that have been requested through this #OobsSession
+ * objects that have been requested through this #OobsSession.
+ * Note that it will stop if it finds any error.
+ *
+ * Return Value: An #OobsResult representing the error.
  **/
-void
+OobsResult
 oobs_session_commit (OobsSession *session)
 {
   OobsSessionPrivate *priv;
   GList              *node;
   OobsObject         *object;
+  OobsResult          result = OOBS_RESULT_OK;
 
-  g_return_if_fail (session != NULL);
-  g_return_if_fail (OOBS_IS_SESSION (session));
+  g_return_val_if_fail (session != NULL, OOBS_RESULT_ERROR);
+  g_return_val_if_fail (OOBS_IS_SESSION (session), OOBS_RESULT_ERROR);
 
   priv = session->_priv;
   node = priv->session_objects;
 
-  while (node)
+  while (node && (result == OOBS_RESULT_OK))
     {
       object = OOBS_OBJECT (node->data);
-      oobs_object_commit (object);
+      result = oobs_object_commit (object);
 
       node = node->next;
     }
+
+  return result;
 }
 
-G_CONST_RETURN gchar*
-oobs_session_get_platform (OobsSession *session)
+/**
+ * oobs_session_get_platform:
+ * @session: An #OobsSession.
+ * @platform: location to store the current platform, or #NULL. This
+ *            string is of internal use, and must not be freed or modified.
+ * 
+ * Retrieves the platform your system has been identified with, or
+ * #NULL in case your platform is not recognized or other error happens.
+ * 
+ * Return Value: An #OobsResult representing the error.
+ **/
+OobsResult
+oobs_session_get_platform (OobsSession  *session,
+			   gchar       **platform)
 {
   OobsSessionPrivate *priv;
   DBusMessage *message, *reply;
   DBusMessageIter iter;
-  const gchar *platform;
+  OobsResult result;
+  const gchar *str;
 
-  g_return_val_if_fail (OOBS_IS_SESSION (session), NULL);
+  g_return_val_if_fail (OOBS_IS_SESSION (session), OOBS_RESULT_ERROR);
 
   priv = session->_priv;
   message = dbus_message_new_method_call (OOBS_DBUS_DESTINATION,
@@ -265,32 +284,57 @@ oobs_session_get_platform (OobsSession *session)
 
   if (dbus_error_is_set (&priv->dbus_error))
     {
-      g_warning ("Could not get the current platform");
+      if (dbus_error_has_name (&priv->dbus_error, DBUS_ERROR_ACCESS_DENIED))
+	result = OOBS_RESULT_ACCESS_DENIED;
+      else
+	result = OOBS_RESULT_ERROR;
+
       dbus_error_free (&priv->dbus_error);
 
-      return NULL;
+      if (platform)
+	*platform = NULL;
+
+      return result;
     }
 
   dbus_message_iter_init (reply, &iter);
-  platform = utils_get_string (&iter);
-  priv->platform = (platform) ? g_strdup (platform) : NULL;
+  str = utils_get_string (&iter);
+  priv->platform = (str) ? g_strdup (str) : NULL;
+
+  if (platform)
+    *platform = priv->platform;
 
   dbus_message_unref (reply);
-  return priv->platform;
+  return (priv->platform) ? OOBS_RESULT_OK : OOBS_RESULT_NO_PLATFORM;
 }
 
-void
+/**
+ * oobs_session_set_platform:
+ * @session: An #OobsSession.
+ * @platform: A string defining the platform. see
+ *            oobs_session_get_platforms_list() to know where to get this string.
+ * 
+ * Identifies your platform as the one set in @platform. This is only necessary if
+ * your platform could not be guessed (and thus oobs_session_get_platform() would
+ * return #OOBS_RESULT_NO_PLATFORM in this case).
+ * 
+ * Return Value: An #OobsResult representing the error.
+ **/
+OobsResult
 oobs_session_set_platform (OobsSession *session,
 			   const gchar *platform)
 {
   OobsSessionPrivate *priv;
   DBusMessage *message;
   DBusMessageIter iter;
+  DBusError error;
+  OobsResult result;
 
-  g_return_if_fail (OOBS_IS_SESSION (session));
-  g_return_if_fail (platform != NULL);
+  g_return_val_if_fail (OOBS_IS_SESSION (session), OOBS_RESULT_ERROR);
+  g_return_val_if_fail (platform != NULL, OOBS_RESULT_ERROR);
 
   priv = session->_priv;
+  dbus_error_init (&error);
 
   priv->platform = g_strdup (platform);
   g_object_notify (G_OBJECT (session), "platform");
@@ -302,17 +346,33 @@ oobs_session_set_platform (OobsSession *session,
   dbus_message_iter_init_append (message, &iter);
   utils_append_string (&iter, priv->platform);
 
-  dbus_connection_send (priv->connection, message, NULL);
-  dbus_connection_flush (priv->connection);
+  dbus_connection_send_with_reply_and_block (priv->connection, message, -1, &error);
+
+  if (dbus_error_is_set (&error))
+    {
+      if (dbus_error_has_name (&error, DBUS_ERROR_NO_REPLY))
+	result = OOBS_RESULT_OK;
+      if (dbus_error_has_name (&error, DBUS_ERROR_ACCESS_DENIED))
+	result = OOBS_RESULT_ACCESS_DENIED;
+      else
+	result = OOBS_RESULT_ERROR;
+
+      dbus_error_free (&error);
+    }
+  else
+    result = OOBS_RESULT_OK;
+
+  return result;
 }
 
-static GList*
-get_supported_platforms (OobsSession *session)
+static OobsResult
+get_supported_platforms (OobsSession *session, GList **list)
 {
   OobsSessionPrivate *priv;
   DBusMessage *message, *reply;
   DBusMessageIter list_iter, iter;
   OobsPlatform *platform;
+  OobsResult result;
   GList *platforms = NULL;
   const gchar *str;
 
@@ -328,9 +388,14 @@ get_supported_platforms (OobsSession *session)
 
   if (dbus_error_is_set (&priv->dbus_error))
     {
-      g_warning ("Could not get supported platforms list");
+      if (dbus_error_has_name (&priv->dbus_error, DBUS_ERROR_ACCESS_DENIED))
+	result = OOBS_RESULT_ACCESS_DENIED;
+      else
+	result = OOBS_RESULT_ERROR;
+
       dbus_error_free (&priv->dbus_error);
-      return NULL;
+      *list = NULL;
+      return result;
     }
 
   dbus_message_iter_init (reply, &list_iter);
@@ -363,22 +428,47 @@ get_supported_platforms (OobsSession *session)
   platforms = g_list_reverse (platforms);
   dbus_message_unref (reply);
 
-  return platforms;
+  return OOBS_RESULT_OK;
 }
 
-GList*
-oobs_session_get_supported_platforms (OobsSession *session)
+/**
+ * oobs_session_get_supported_platforms:
+ * @session: An #OobsSession.
+ * @platforms: return location for the list of platforms. It's a
+ *             #GList of #OobsPlatform structs. You must free
+ *             this list with g_list_free().
+ * 
+ * Retrieves the list of supported platforms, this is only necessary when
+ + oobs_session_get_platform() has returned #OOBS_RESULT_NO_PLATFORM. To
+ * specify a platform, you must use oobs_session_set_platform(), being
+ * the platform string in that function the platform->id value inside
+ * the #OobsPlatform struct.
+ * 
+ * Return Value: An #OobsResult representing the error.
+ **/
+OobsResult
+oobs_session_get_supported_platforms (OobsSession  *session,
+				      GList       **platforms)
 {
   OobsSessionPrivate *priv;
+  OobsResult result;
 
-  g_return_val_if_fail (OOBS_IS_SESSION (session), NULL);
+  /* it doesn't make any sense to call this function with platforms = NULL */
+  g_return_val_if_fail (platforms != NULL, OOBS_RESULT_ERROR);
+  g_return_val_if_fail (OOBS_IS_SESSION (session), OOBS_RESULT_ERROR);
 
   priv = session->_priv;
 
   if (!priv->supported_platforms)
-    priv->supported_platforms = get_supported_platforms (session);
+    result = get_supported_platforms (session, &priv->supported_platforms);
+  else
+    {
+      /* list is cached */
+      result = OOBS_RESULT_OK;
+    }
 
-  return g_list_copy (priv->supported_platforms);
+  *platforms = (priv->supported_platforms) ? g_list_copy (priv->supported_platforms) : NULL;
+  return result;
 }
 
 /* protected methods */

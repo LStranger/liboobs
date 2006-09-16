@@ -1,3 +1,17 @@
+2006-09-16  Carlos Garnacho  <carlosg@gnome.org>
+
+	* src/oobs-result.h: added, contains a generic enum for return error
+	codes.
+	* src/oobs.h, Makefile.am: add the new file in the pertinent places.
+	* src/oobs-object.[ch]: remove OobsObjectResult,
+	s/OobsObjectResult/OobsResult/g.
+	* src/oobs-session.[ch] (oobs_session_commit)
+	(oobs_session_get_platform) (oobs_session_set_platform)
+	(oobs_session_get_platform_list): slight API changes, make them return
+	an OobsResult value.
+	* configure.in: bump libtool current number. Hopefully it's the last
+	time in a long period.
+
 2006-09-15  Carlos Garnacho  <carlosg@gnome.org>
 
 	* src/oobs-servicesconfig.c: as of recent s-t-b CVS, the service 

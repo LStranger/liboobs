@@ -39,7 +39,8 @@ oobsinclude_HEADERS= 	\
 	oobs-iface-isdn.h	\
 	oobs-iface-modem.h	\
 	oobs-servicesconfig.h	\
-	oobs-service.h
+	oobs-service.h		\
+	oobs-result.h
 
 oobs_private_headers = 	\
 	oobs-defines.h			\

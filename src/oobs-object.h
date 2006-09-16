@@ -24,6 +24,7 @@
 G_BEGIN_DECLS
 
 #include <glib-object.h>
+#include "oobs-result.h"
 
 #define OOBS_TYPE_OBJECT         (oobs_object_get_type ())
 #define OOBS_OBJECT(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_OBJECT, OobsObject))
@@ -32,13 +33,6 @@ G_BEGIN_DECLS
 #define OOBS_IS_OBJECT_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((o),    OOBS_TYPE_OBJECT))
 #define OOBS_OBJECT_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o),  OOBS_TYPE_OBJECT, OobsObjectClass))
 
-typedef enum {
-  OOBS_OBJECT_RESULT_OK,
-  OOBS_OBJECT_RESULT_DENIED,
-  OOBS_OBJECT_RESULT_NO_PLATFORM,
-  OOBS_OBJECT_RESULT_MALFORMED,
-  OOBS_OBJECT_RESULT_ERROR
-} OobsObjectResult;
 
 typedef struct _OobsObject      OobsObject;
 typedef struct _OobsObjectClass OobsObjectClass;
@@ -66,21 +60,21 @@ struct _OobsObjectClass
   void (*_oobs_padding2) (void);
 };
 
-typedef void (*OobsObjectAsyncFunc) (OobsObject       *object,
-				     OobsObjectResult  result,
-				     gpointer          data);
+typedef void (*OobsObjectAsyncFunc) (OobsObject *object,
+				     OobsResult  result,
+				     gpointer    data);
 
 GType oobs_object_get_type (void);
 
-OobsObjectResult  oobs_object_commit       (OobsObject          *object);
-OobsObjectResult  oobs_object_commit_async (OobsObject          *object,
-					    OobsObjectAsyncFunc  func,
-					    gpointer             data);
+OobsResult  oobs_object_commit       (OobsObject          *object);
+OobsResult  oobs_object_commit_async (OobsObject          *object,
+				      OobsObjectAsyncFunc  func,
+				      gpointer             data);
 
-OobsObjectResult  oobs_object_update       (OobsObject          *object);
-OobsObjectResult  oobs_object_update_async (OobsObject          *object,
-					    OobsObjectAsyncFunc  func,
-					    gpointer             data);
+OobsResult  oobs_object_update       (OobsObject          *object);
+OobsResult  oobs_object_update_async (OobsObject          *object,
+				      OobsObjectAsyncFunc  func,
+				      gpointer             data);
 
 
 G_END_DECLS

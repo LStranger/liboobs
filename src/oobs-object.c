@@ -275,7 +275,7 @@ _oobs_object_set_dbus_message (OobsObject *object, DBusMessage *message)
 			   message, (GDestroyNotify) dbus_message_unref);
 }
 
-static OobsObjectResult
+static OobsResult
 update_object_from_message (OobsObject  *object,
 			    DBusMessage *message)
 {
@@ -286,20 +286,20 @@ update_object_from_message (OobsObject  *object,
   if (!class->update)
     {
       g_critical ("There is no update() implementation for this object");
-      return OOBS_OBJECT_RESULT_MALFORMED;
+      return OOBS_RESULT_MALFORMED_DATA;
     }
 
   g_object_set_qdata (G_OBJECT (object), dbus_connection_quark, message);
   class->update (object);
   g_object_steal_qdata (G_OBJECT (object), dbus_connection_quark);
 
-  return OOBS_OBJECT_RESULT_OK;
+  return OOBS_RESULT_OK;
 }
 
 static DBusMessage*
-run_message (OobsObject       *object,
-	     DBusMessage      *message,
-	     OobsObjectResult *result)
+run_message (OobsObject  *object,
+	     DBusMessage *message,
+	     OobsResult  *result)
 {
   OobsObjectPrivate *priv;
   DBusConnection    *connection;
@@ -315,7 +315,7 @@ run_message (OobsObject       *object,
   if (dbus_error_is_set (&priv->dbus_error))
     {
       if (dbus_error_has_name (&priv->dbus_error, DBUS_ERROR_ACCESS_DENIED))
-	*result = OOBS_OBJECT_RESULT_DENIED;
+	*result = OOBS_RESULT_ACCESS_DENIED;
       else
 	g_critical ("There was an unknown error communicating with the backends: %s", priv->dbus_error.message);
 
@@ -323,7 +323,7 @@ run_message (OobsObject       *object,
       return NULL;
     }
 
-  *result = OOBS_OBJECT_RESULT_OK;
+  *result = OOBS_RESULT_OK;
   return reply;
 }
 
@@ -331,7 +331,7 @@ static void
 async_message_cb (DBusPendingCall *pending_call, gpointer data)
 {
   OobsObjectAsyncCallbackData *async_data;
-  OobsObjectResult result = OOBS_OBJECT_RESULT_MALFORMED;
+  OobsResult result = OOBS_RESULT_MALFORMED_DATA;
   DBusMessage *reply;
   DBusError error;
 
@@ -342,11 +342,11 @@ async_message_cb (DBusPendingCall *pending_call, gpointer data)
   if (dbus_set_error_from_message (&error, reply))
     {
       if (dbus_error_has_name (&error, DBUS_ERROR_ACCESS_DENIED))
-	result = OOBS_OBJECT_RESULT_DENIED;
+	result = OOBS_RESULT_ACCESS_DENIED;
       else
 	{
 	  /* FIXME: process error */
-	  result = OOBS_OBJECT_RESULT_MALFORMED;
+	  result = OOBS_RESULT_MALFORMED_DATA;
 	}
 
       dbus_error_free (&error);
@@ -356,7 +356,7 @@ async_message_cb (DBusPendingCall *pending_call, gpointer data)
       if (async_data->update)
 	result = update_object_from_message (OOBS_OBJECT (async_data->object), reply);
       else
-	result = OOBS_OBJECT_RESULT_OK;
+	result = OOBS_RESULT_OK;
     }
 
   if (async_data->func)
@@ -455,20 +455,20 @@ get_update_message (OobsObject *object)
  * Commits to the system all the changes done
  * to the configuration held by an #OobsObject.
  *
- * Return value: an #OobsObjectResult enum with the error code.
+ * Return value: an #OobsResult enum with the error code.
  **/
-OobsObjectResult
+OobsResult
 oobs_object_commit (OobsObject *object)
 {
   DBusMessage *message;
-  OobsObjectResult result;
+  OobsResult result;
 
-  g_return_val_if_fail (OOBS_IS_OBJECT (object), OOBS_OBJECT_RESULT_MALFORMED);
+  g_return_val_if_fail (OOBS_IS_OBJECT (object), OOBS_RESULT_MALFORMED_DATA);
 
   message = get_commit_message (object);
 
   if (!message)
-    return OOBS_OBJECT_RESULT_MALFORMED;
+    return OOBS_RESULT_MALFORMED_DATA;
 
   run_message (object, message, &result);
   dbus_message_unref (message);
@@ -485,27 +485,27 @@ oobs_object_commit (OobsObject *object)
  * Commits to the system all the changes done to the configuration held by an #OobsObject.
  * This change will be asynchronous, being run the function @func when the change has been done.
  * 
- * Return value: an #OobsObjectResult enum with the error code. Due to the asynchronous nature
- * of the function, only OOBS_OBJECT_RESULT_MALFORMED and OOBS_OBJECT_RESULT_OK can be returned.
+ * Return value: an #OobsResult enum with the error code. Due to the asynchronous nature
+ * of the function, only OOBS_RESULT_MALFORMED and OOBS_RESULT_OK can be returned.
  **/
-OobsObjectResult
+OobsResult
 oobs_object_commit_async (OobsObject          *object,
 			  OobsObjectAsyncFunc  func,
 			  gpointer             data)
 {
   DBusMessage *message;
 
-  g_return_val_if_fail (OOBS_IS_OBJECT (object), OOBS_OBJECT_RESULT_MALFORMED);
+  g_return_val_if_fail (OOBS_IS_OBJECT (object), OOBS_RESULT_MALFORMED_DATA);
 
   message = get_commit_message (object);
 
   if (!message)
-    return OOBS_OBJECT_RESULT_MALFORMED;
+    return OOBS_RESULT_MALFORMED_DATA;
 
   run_message_async (object, message, FALSE, func, data);
   dbus_message_unref (message);
 
-  return OOBS_OBJECT_RESULT_OK;
+  return OOBS_RESULT_OK;
 }
 
 /**
@@ -516,20 +516,20 @@ oobs_object_commit_async (OobsObject          *object,
  * with the actual system configuration. All the changes done
  * to the configuration held by the #OobsObject will be forgotten.
  *
- * Return value: an #OobsObjectResult enum with the error code.
+ * Return value: an #OobsResult enum with the error code.
  **/
-OobsObjectResult
+OobsResult
 oobs_object_update (OobsObject *object)
 {
   DBusMessage *message, *reply;
-  OobsObjectResult result = OOBS_OBJECT_RESULT_MALFORMED;
+  OobsResult result = OOBS_RESULT_MALFORMED_DATA;
 
-  g_return_val_if_fail (OOBS_IS_OBJECT (object), OOBS_OBJECT_RESULT_MALFORMED);
+  g_return_val_if_fail (OOBS_IS_OBJECT (object), OOBS_RESULT_MALFORMED_DATA);
 
   message = get_update_message (object);
 
   if (!message)
-    return OOBS_OBJECT_RESULT_MALFORMED;
+    return OOBS_RESULT_MALFORMED_DATA;
 
   reply = run_message (object, message, &result);
 
@@ -555,10 +555,10 @@ oobs_object_update (OobsObject *object)
  * The update operation will be asynchronous, being run the
  * function @func when the update has been done.
  * 
- * Return value: an #OobsObjectResult enum with the error code. Due to the asynchronous nature
- * of the function, only OOBS_OBJECT_RESULT_MALFORMED and OOBS_OBJECT_RESULT_OK can be returned.
+ * Return value: an #OobsResult enum with the error code. Due to the asynchronous nature
+ * of the function, only OOBS_RESULT_MALFORMED and OOBS_RESULT_OK can be returned.
  **/
-OobsObjectResult
+OobsResult
 oobs_object_update_async (OobsObject          *object,
 			  OobsObjectAsyncFunc  func,
 			  gpointer             data)
@@ -568,10 +568,10 @@ oobs_object_update_async (OobsObject          *object,
   message = get_update_message (object);
 
   if (!message)
-    return OOBS_OBJECT_RESULT_MALFORMED;
+    return OOBS_RESULT_MALFORMED_DATA;
 
   run_message_async (object, message, TRUE, func, data);
   dbus_message_unref (message);
 
-  return OOBS_OBJECT_RESULT_OK;
+  return OOBS_RESULT_OK;
 }

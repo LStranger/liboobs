@@ -49,5 +49,6 @@
 #include <oobs/oobs-ifacesconfig.h>
 #include <oobs/oobs-service.h>
 #include <oobs/oobs-servicesconfig.h>
+#include <oobs/oobs-result.h>
 
 #endif /* __OOBS_H_ */

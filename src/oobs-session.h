@@ -24,6 +24,7 @@
 G_BEGIN_DECLS
 
 #include <glib-object.h>
+#include "oobs-result.h"
 
 #define OOBS_TYPE_SESSION         (oobs_session_get_type ())
 #define OOBS_SESSION(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_SESSION, OobsSession))
@@ -63,13 +64,14 @@ struct _OobsSessionClass
 GType        oobs_session_get_type (void);
 
 OobsSession *oobs_session_get      (void);
-void         oobs_session_commit   (OobsSession *session);
+OobsResult   oobs_session_commit   (OobsSession *session);
 
-GList*       oobs_session_get_supported_platforms (OobsSession *session);
-
-G_CONST_RETURN gchar *oobs_session_get_platform (OobsSession *session);
-void                  oobs_session_set_platform (OobsSession *session,
-						 const gchar *platform);
+OobsResult   oobs_session_get_supported_platforms (OobsSession  *session,
+						   GList       **platforms);
+OobsResult   oobs_session_get_platform            (OobsSession  *session,
+						   gchar       **platform);
+OobsResult   oobs_session_set_platform            (OobsSession  *session,
+						   const gchar  *platform);
 
 G_END_DECLS
 

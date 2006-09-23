@@ -1,3 +1,8 @@
+2006-09-23  Carlos Garnacho  <carlosg@gnome.org>
+
+	* src/oobs-timeconfig.c (oobs_time_config_update): keep in mind the
+	possibility of a NULL timezone. Other misc doc fixes.
+
 2006-09-16  Carlos Garnacho  <carlosg@gnome.org>
 
 	* src/oobs-result.h: added, contains a generic enum for return error

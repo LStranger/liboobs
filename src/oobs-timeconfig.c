@@ -221,8 +221,8 @@ oobs_time_config_update (OobsObject *object)
   dbus_message_iter_next (&iter);
 
   dbus_message_iter_next (&iter);
-  dbus_message_iter_get_basic (&iter, &timezone);
-  priv->timezone = g_strdup (timezone);
+  timezone = utils_get_string (&iter);
+  priv->timezone = (timezone) ? g_strdup (timezone) : NULL;
 }
 
 static void
@@ -402,12 +402,12 @@ real_get_time (OobsTimeConfig *config,
 /**
  * oobs_time_config_get_time:
  * @config: An #OobsTimeConfig.
- * @year: gint pointer to store the year, or NULL.
- * @month: gint pointer to store the month, or NULL.
- * @day: gint pointer to store the day, or NULL.
- * @hour: gint pointer to store the hour, or NULL.
- * @minute: gint pointer to store the minute, or NULL.
- * @second: gint pointer to store the second, or NULL.
+ * @year: gint pointer to store the year, or #NULL.
+ * @month: gint pointer to store the month, or #NULL.
+ * @day: gint pointer to store the day, or #NULL.
+ * @hour: gint pointer to store the hour, or #NULL.
+ * @minute: gint pointer to store the minute, or #NULL.
+ * @second: gint pointer to store the second, or #NULL.
  * 
  * Gets the system time and date in human readable values.
  **/
@@ -428,12 +428,12 @@ oobs_time_config_get_time (OobsTimeConfig *config,
 /**
  * oobs_time_config_get_utc_time:
  * @config: An #OobsTimeConfig.
- * @year: gint pointer to store the year, or NULL.
- * @month: gint pointer to store the month, or NULL.
- * @day: gint pointer to store the day, or NULL.
- * @hour: gint pointer to store the hour, or NULL.
- * @minute: gint pointer to store the minute, or NULL.
- * @second: gint pointer to store the second, or NULL.
+ * @year: gint pointer to store the year, or #NULL.
+ * @month: gint pointer to store the month, or #NULL.
+ * @day: gint pointer to store the day, or #NULL.
+ * @hour: gint pointer to store the hour, or #NULL.
+ * @minute: gint pointer to store the minute, or #NULL.
+ * @second: gint pointer to store the second, or #NULL.
  * 
  * Gets the system time and date in human readable values (UTC).
  **/
@@ -562,7 +562,7 @@ oobs_time_config_set_utc_time (OobsTimeConfig *config,
  * 
  * Returns the timezone set for #config.
  * 
- * Return Value: A pointer to the timezone as a string.
+ * Return Value: A pointer to the timezone as a string or #NULL.
  *               This string must not be freed, modified or stored.
  **/
 G_CONST_RETURN gchar*

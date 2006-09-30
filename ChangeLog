@@ -1,3 +1,7 @@
+2006-09-28  Carlos Garnacho  <carlosg@gnome.org>
+
+	* Release 0.5.0
+
 2006-09-23  Carlos Garnacho  <carlosg@gnome.org>
 
 	* src/oobs-timeconfig.c (oobs_time_config_update): keep in mind the

@@ -1,3 +1,22 @@
+Liboobs 0.5.0, 2006-09-28
+-----------------------------------------------
+
+Liboobs version 0.5.0 "Mankind... connected" has been released.
+
+Liboobs is a lightweight library that provides a GObject based interface to system-tools-backends. It's completely abstracted of the communication and authentication details, making it easy for applications to integrate with the system details.
+
+Changes since last release
+==========================
+* Extend and improve error handling, Handle DBUS_ERROR_ACCESS_DENIED properly (garnacho)
+* Adapt to s-t-b DBus struct changes in users, groups and services objects (garnacho)
+* Code robustness fixes (garnacho)
+
+Downloading
+===========
+You can get it from :
+ftp://ftp.gnome.org/pub/GNOME/sources/liboobs/0.5/
+
+
 Liboobs 0.4.0, 2006-09-06
 -----------------------------------------------
 

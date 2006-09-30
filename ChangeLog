@@ -1,3 +1,7 @@
+2006-09-30  Carlos Garnacho  <carlosg@gnome.org>
+
+	* configure.in: depend on latest s-t-b
+
 2006-09-28  Carlos Garnacho  <carlosg@gnome.org>
 
 	* Release 0.5.0

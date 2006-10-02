@@ -278,9 +278,12 @@ oobs_smb_config_update (OobsObject *object)
     {
       share = create_share_from_dbus_reply (object, reply, array_iter);
 
-      oobs_list_append (priv->shares_list, &list_iter);
-      oobs_list_set    (priv->shares_list, &list_iter, G_OBJECT (share));
-      g_object_unref   (share);
+      if (share)
+	{
+	  oobs_list_append (priv->shares_list, &list_iter);
+	  oobs_list_set    (priv->shares_list, &list_iter, G_OBJECT (share));
+	  g_object_unref   (share);
+	}
 
       dbus_message_iter_next (&array_iter);
     }

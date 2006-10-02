@@ -1,5 +1,11 @@
 2006-10-02  Carlos Garnacho  <carlosg@gnome.org>
 
+	* src/oobs-smbconfig.c (oobs_smb_config_update):
+	* src/oobs-nfsconfig.c (oobs_nfs_config_update): make more robust
+	against crappy entries.
+
+2006-10-02  Carlos Garnacho  <carlosg@gnome.org>
+
 	* oobs-session.[ch] (oobs_session_get_connected): added. No longer
 	assert if liboobs can't get the DBusConnection.
 	* oobs-object.c (run_message), (run_message_async): use the new

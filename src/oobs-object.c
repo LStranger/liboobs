@@ -306,9 +306,8 @@ run_message (OobsObject  *object,
   DBusMessage       *reply;
 
   priv = object->_priv;
+  g_return_val_if_fail (oobs_session_get_connected (priv->session), NULL);
   connection = _oobs_session_get_connection_bus (priv->session);
-
-  g_return_val_if_fail (connection != NULL, NULL);
 
   reply = dbus_connection_send_with_reply_and_block (connection, message, -1, &priv->dbus_error);
 
@@ -379,6 +378,7 @@ run_message_async (OobsObject          *object,
   DBusConnection *connection;
 
   priv = object->_priv;
+  g_return_if_fail (oobs_session_get_connected (priv->session));
   connection = _oobs_session_get_connection_bus (priv->session);
   dbus_connection_send_with_reply (connection, message, &call, -1);
 

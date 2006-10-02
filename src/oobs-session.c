@@ -98,12 +98,10 @@ oobs_session_init (OobsSession *session)
   priv->connection = dbus_bus_get (DBUS_BUS_SYSTEM, &priv->dbus_error);
 
   if (dbus_error_is_set (&priv->dbus_error))
-    {
-      g_critical (priv->dbus_error.message);
-      g_assert_not_reached ();
-    }
+    g_warning (priv->dbus_error.message);
+  else
+    dbus_connection_setup_with_g_main (priv->connection, NULL);
 
-  dbus_connection_setup_with_g_main (priv->connection, NULL);
   priv->session_objects  = NULL;
   priv->is_authenticated = FALSE;
   session->_priv = priv;
@@ -247,6 +245,25 @@ oobs_session_commit (OobsSession *session)
     }
 
   return result;
+}
+
+/**
+ * oobs_session_get_connected:
+ * @session: An #OobsSession
+ * 
+ * Returns whether the connection with the backends is established.
+ * 
+ * Return Value: #TRUE if there's connection with the backends.
+ **/
+gboolean
+oobs_session_get_connected (OobsSession *session)
+{
+  OobsSessionPrivate *priv;
+
+  g_return_val_if_fail (OOBS_IS_SESSION (session), FALSE);
+
+  priv = session->_priv;
+  return (priv->connection != NULL);
 }
 
 /**

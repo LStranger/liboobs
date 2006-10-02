@@ -1,3 +1,10 @@
+2006-10-02  Carlos Garnacho  <carlosg@gnome.org>
+
+	* oobs-session.[ch] (oobs_session_get_connected): added. No longer
+	assert if liboobs can't get the DBusConnection.
+	* oobs-object.c (run_message), (run_message_async): use the new
+	function.
+
 2006-09-30  Carlos Garnacho  <carlosg@gnome.org>
 
 	* configure.in: depend on latest s-t-b

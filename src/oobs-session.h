@@ -66,6 +66,7 @@ GType        oobs_session_get_type (void);
 OobsSession *oobs_session_get      (void);
 OobsResult   oobs_session_commit   (OobsSession *session);
 
+gboolean     oobs_session_get_connected (OobsSession  *session);
 OobsResult   oobs_session_get_supported_platforms (OobsSession  *session,
 						   GList       **platforms);
 OobsResult   oobs_session_get_platform            (OobsSession  *session,

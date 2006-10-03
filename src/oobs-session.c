@@ -442,7 +442,7 @@ get_supported_platforms (OobsSession *session, GList **list)
       dbus_message_iter_next (&list_iter);
     }
 
-  platforms = g_list_reverse (platforms);
+  *list = g_list_reverse (platforms);
   dbus_message_unref (reply);
 
   return OOBS_RESULT_OK;

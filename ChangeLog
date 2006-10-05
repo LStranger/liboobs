@@ -1,3 +1,9 @@
+2006-10-06  Carlos Garnacho  <carlosg@gnome.org>
+
+	* src/oobs-ifacesconfig.c: get/set gateway settings for ethernet like
+	interfaces.
+	* configure.in: bump s-t-b requirement to 1.9.7.
+
 2006-10-03  Carlos Garnacho  <carlosg@gnome.org>
 
 	* src/oobs-session.c (get_supported_platforms): fix platforms

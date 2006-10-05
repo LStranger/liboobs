@@ -186,7 +186,7 @@ create_iface_from_message (DBusMessage     *message,
 
   if (OOBS_IS_IFACE_ETHERNET (iface))
     {
-      const gchar *address, *netmask;
+      const gchar *address, *netmask, *gateway;
       gint config_method;
 
       dbus_message_iter_get_basic (&struct_iter, &is_auto);
@@ -208,11 +208,15 @@ create_iface_from_message (DBusMessage     *message,
       dbus_message_iter_next (&struct_iter);
       dbus_message_iter_next (&struct_iter);
 
+      gateway = utils_get_string (&struct_iter);
+      dbus_message_iter_next (&struct_iter);
+
       g_object_set (iface,
 		    "auto", is_auto,
 		    "active", active,
 		    "ip-address", address,
 		    "ip-mask", netmask,
+		    "gateway-address", gateway,
 		    /* FIXME: can pass config_method like that? */
 		    "config-method", config_method,
 		    NULL);
@@ -414,12 +418,13 @@ create_dbus_struct_from_iface (DBusMessage     *message,
 
   if (OOBS_IS_IFACE_ETHERNET (iface))
     {
-      gchar *address, *netmask;
+      gchar *address, *netmask, *gateway;
       gint config_method;
 
       g_object_get (G_OBJECT (iface),
 		    "ip-address", &address,
 		    "ip-mask", &netmask,
+		    "gateway-address", &gateway,
 		    "config-method", &config_method,
 		    NULL);
 
@@ -432,7 +437,7 @@ create_dbus_struct_from_iface (DBusMessage     *message,
       utils_append_string (&iter, NULL);
       utils_append_string (&iter, NULL);
 
-      /* FIXME: missing gateway and possibly other stuff */
+      utils_append_string (&iter, (configured) ? gateway : NULL);
 
       if (OOBS_IS_IFACE_WIRELESS (iface))
 	{
@@ -552,6 +557,7 @@ create_dbus_struct_from_ifaces_list (OobsObject      *object,
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
+	DBUS_TYPE_STRING_AS_STRING
 	DBUS_STRUCT_END_CHAR_AS_STRING;
       break;
     case OOBS_IFACE_TYPE_WIRELESS:
@@ -561,6 +567,7 @@ create_dbus_struct_from_ifaces_list (OobsObject      *object,
 	DBUS_TYPE_INT32_AS_STRING
 	DBUS_TYPE_INT32_AS_STRING
 	DBUS_TYPE_INT32_AS_STRING
+	DBUS_TYPE_STRING_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING

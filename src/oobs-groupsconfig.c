@@ -359,13 +359,14 @@ oobs_groups_config_update (OobsObject *object)
   OobsListIter     list_iter;
   GObject         *group;
   GHashTable      *hashtable;
+  guint            id;
 
   priv  = OOBS_GROUPS_CONFIG (object)->_priv;
   reply = _oobs_object_get_dbus_message (object);
   hashtable = g_hash_table_new_full (NULL, NULL,
 				     (GDestroyNotify) g_object_unref,
 				     (GDestroyNotify) g_list_free);
-  priv->id = 0;
+  id = 0;
 
   /* First of all, free the previous list */
   oobs_list_clear (priv->groups_list);
@@ -376,7 +377,7 @@ oobs_groups_config_update (OobsObject *object)
   while (dbus_message_iter_get_arg_type (&elem_iter) == DBUS_TYPE_STRUCT)
     {
       group = G_OBJECT (create_group_from_dbus_reply (object, reply,
-						      elem_iter, hashtable, &priv->id));
+						      elem_iter, hashtable, &id));
 
       oobs_list_append (priv->groups_list, &list_iter);
       oobs_list_set    (priv->groups_list, &list_iter, G_OBJECT (group));
@@ -384,6 +385,8 @@ oobs_groups_config_update (OobsObject *object)
 
       dbus_message_iter_next (&elem_iter);
     }
+
+  priv->id = id;
 
   dbus_message_iter_next (&iter);
   dbus_message_iter_get_basic (&iter, &priv->minimum_gid);

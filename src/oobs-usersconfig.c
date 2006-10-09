@@ -488,11 +488,12 @@ oobs_users_config_update (OobsObject *object)
   gchar           *str;
   GHashTable      *hashtable;
   gint             default_gid;
+  guint            id;
 
   priv  = OOBS_USERS_CONFIG (object)->_priv;
   reply = _oobs_object_get_dbus_message (object);
   hashtable = g_hash_table_new_full (NULL, NULL, g_object_unref, NULL);
-  priv->id = 0;
+  id = 0;
 
   /* First of all, free the previous configuration */
   free_configuration (OOBS_USERS_CONFIG (object));
@@ -503,7 +504,7 @@ oobs_users_config_update (OobsObject *object)
   while (dbus_message_iter_get_arg_type (&elem_iter) == DBUS_TYPE_STRUCT)
     {
       user = G_OBJECT (create_user_from_dbus_reply (object, reply,
-						    elem_iter, hashtable, &priv->id));
+						    elem_iter, hashtable, &id));
 
       oobs_list_append (priv->users_list, &list_iter);
       oobs_list_set    (priv->users_list, &list_iter, G_OBJECT (user));
@@ -511,6 +512,8 @@ oobs_users_config_update (OobsObject *object)
 
       dbus_message_iter_next (&elem_iter);
     }
+
+  priv->id = id;
 
   dbus_message_iter_next (&iter);
   priv->shells = utils_get_string_list_from_dbus_reply (reply, iter);

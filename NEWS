@@ -1,3 +1,23 @@
+Liboobs 0.6.0, 2006-10-06
+-----------------------------------------------
+
+Liboobs version 0.6.0 "Don't tell me what's in" has been released.
+
+Liboobs is a lightweight library that provides a GObject based interface to system-tools-backends. It's completely abstracted of the communication and authentication details, making it easy for applications to integrate with the system details.
+
+Changes since last release
+==========================
+* Handle better the situations where Liboobs can't get a DBusConnection (garnacho)
+* Fix supported platforms retrieving (garnacho)
+* Get/set the gateway properly for static interfaces (garnacho)
+* Code robustness improvements (garnacho)
+
+Downloading
+===========
+You can get it from :
+ftp://ftp.gnome.org/pub/GNOME/sources/liboobs/0.6/
+
+
 Liboobs 0.5.0, 2006-09-28
 -----------------------------------------------
 

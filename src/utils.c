@@ -91,8 +91,9 @@ utils_append_string (DBusMessageIter *iter, const gchar *str)
 const gchar*
 utils_get_string (DBusMessageIter *iter)
 {
-  gchar *str;
+  const gchar *str;
 
+  g_return_val_if_fail (dbus_message_iter_get_arg_type (iter) == DBUS_TYPE_STRING, NULL);
   dbus_message_iter_get_basic (iter, &str);
 
   if (str && *str)

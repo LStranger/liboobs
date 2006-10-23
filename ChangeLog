@@ -1,3 +1,8 @@
+2006-10-23  Carlos Garnacho  <carlosg@gnome.org>
+
+	* src/utils.c (utils_get_string): check that the iter contains a
+	string before trying to retrieve it.
+
 2006-10-09  Carlos Garnacho  <carlosg@gnome.org>
 
 	* src/oobs-usersconfig.c, oobs-groupsconfig.c: don't leave unused IDs.

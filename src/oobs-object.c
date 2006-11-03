@@ -77,7 +77,7 @@ static GQuark dbus_connection_quark;
 
 static guint object_signals [LAST_SIGNAL] = { 0 };
 
-G_DEFINE_TYPE (OobsObject, oobs_object, G_TYPE_OBJECT);
+G_DEFINE_ABSTRACT_TYPE (OobsObject, oobs_object, G_TYPE_OBJECT);
 
 static void
 oobs_object_class_init (OobsObjectClass *class)

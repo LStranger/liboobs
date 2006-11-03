@@ -47,7 +47,7 @@ enum
   PROP_PATH
 };
 
-G_DEFINE_TYPE (OobsShare, oobs_share, G_TYPE_OBJECT);
+G_DEFINE_ABSTRACT_TYPE (OobsShare, oobs_share, G_TYPE_OBJECT);
 
 static void
 oobs_share_class_init (OobsShareClass *class)

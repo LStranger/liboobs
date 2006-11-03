@@ -1,6 +1,7 @@
 2006-11-03  Carlos Garnacho  <carlosg@gnome.org>
 
 	* src/oobs-object.c:
+	* src/oobs-share.c:
 	* src/oobs-iface.c: convert to abstract classes.
 
 2006-10-23  Carlos Garnacho  <carlosg@gnome.org>

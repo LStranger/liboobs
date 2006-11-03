@@ -389,6 +389,7 @@ run_message_async (OobsObject          *object,
   async_data->data = data;
 
   dbus_pending_call_set_notify (call, async_message_cb, async_data, g_free);
+  dbus_pending_call_unref (call);
 }
 
 static DBusMessage*

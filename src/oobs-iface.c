@@ -57,7 +57,7 @@ enum {
   PROP_HWADDR
 };
 
-G_DEFINE_TYPE (OobsIface, oobs_iface, G_TYPE_OBJECT);
+G_DEFINE_ABSTRACT_TYPE (OobsIface, oobs_iface, G_TYPE_OBJECT);
 
 static void
 oobs_iface_class_init (OobsIfaceClass *class)

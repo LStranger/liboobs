@@ -460,6 +460,7 @@ create_dbus_struct_from_iface (DBusMessage     *message,
 
       g_free (address);
       g_free (netmask);
+      g_free (gateway);
     }
   else if (OOBS_IS_IFACE_PLIP (iface))
     {

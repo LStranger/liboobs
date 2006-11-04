@@ -70,6 +70,17 @@ OobsShellsConfig
 utils
 
 
+<!-- ##### ENUM OobsObjectResult ##### -->
+<para>
+
+</para>
+
+@OOBS_OBJECT_RESULT_OK: 
+@OOBS_OBJECT_RESULT_DENIED: 
+@OOBS_OBJECT_RESULT_NO_PLATFORM: 
+@OOBS_OBJECT_RESULT_MALFORMED: 
+@OOBS_OBJECT_RESULT_ERROR: 
+
 <!-- ##### FUNCTION oobs_service_get_role ##### -->
 <para>
 

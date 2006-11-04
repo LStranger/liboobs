@@ -216,7 +216,7 @@ oobs_iface_ethernet_set_property (GObject      *object,
       priv->network = g_value_dup_string (value);
       break;
     case PROP_BROADCAST:
-      g_free (priv->network);
+      g_free (priv->broadcast);
       priv->broadcast = g_value_dup_string (value);
       break;
     case PROP_CONFIGURATION_METHOD:

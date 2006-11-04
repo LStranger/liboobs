@@ -1,3 +1,10 @@
+2006-11-04  Carlos Garnacho  <carlosg@gnome.org>
+
+	* src/oobs-iface-ethernet.c (oobs_iface_ethernet_set_property): do not
+	mess with network address when setting gateway, stupid c&p.
+	* src/oobs-ifacesconfig.c (create_dbus_struct_from_iface): plug a
+	leak.
+
 2006-11-03  Carlos Garnacho  <carlosg@gnome.org>
 
 	* src/oobs-object.c:

@@ -48,6 +48,7 @@ OobsSession
 </para>
 
 @session: 
+@Returns: 
 
 
 <!-- ##### FUNCTION oobs_session_get_supported_platforms ##### -->
@@ -56,6 +57,7 @@ OobsSession
 </para>
 
 @session: 
+@platforms: 
 @Returns: 
 
 
@@ -65,6 +67,7 @@ OobsSession
 </para>
 
 @session: 
+@platform: 
 @Returns: 
 
 
@@ -75,5 +78,6 @@ OobsSession
 
 @session: 
 @platform: 
+@Returns: 
 
 

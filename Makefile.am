@@ -1,4 +1,4 @@
-SUBDIRS= doc src
+SUBDIRS= src doc
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = liboobs-1.pc

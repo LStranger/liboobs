@@ -1,3 +1,23 @@
+Liboobs 0.6.1, 2006-11-05
+-----------------------------------------------
+
+Liboobs version 0.6.1 "Silence" has been released.
+
+Liboobs is a lightweight library that provides a GObject based interface to system-tools-backends. It's completely abstracted of the communication and authentication details, making it easy for applications to integrate with the system details.
+
+Changes since last release
+==========================
+
+* Do not leave unused UIDs/GIDs (garnacho)
+* Make some classes abstract as they should (garnacho)
+* Plug some leaks (garnacho)
+* Do not mess with network address when setting gateway (garnacho)
+
+Downloading
+===========
+You can get it from :
+ftp://ftp.gnome.org/pub/GNOME/sources/liboobs/0.6/
+
 Liboobs 0.6.0, 2006-10-06
 -----------------------------------------------
 

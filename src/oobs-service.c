@@ -189,7 +189,7 @@ oobs_service_set_runlevel_configuration (OobsService          *service,
     }
 }
 
-gboolean
+void
 oobs_service_get_runlevel_configuration (OobsService          *service,
 					 OobsServicesRunlevel *runlevel,
 					 OobsServiceStatus    *status,
@@ -198,8 +198,8 @@ oobs_service_get_runlevel_configuration (OobsService          *service,
   OobsServicePrivate *priv;
   OobsServiceRunlevel *service_runlevel;
 
-  g_return_val_if_fail (OOBS_IS_SERVICE (service), FALSE);
-  g_return_val_if_fail (runlevel != NULL, FALSE);
+  g_return_if_fail (OOBS_IS_SERVICE (service));
+  g_return_if_fail (runlevel != NULL);
 
   priv = service->_priv;
 

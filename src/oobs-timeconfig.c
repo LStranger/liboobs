@@ -201,7 +201,7 @@ oobs_time_config_update (OobsObject *object)
   OobsTimeConfigPrivate *priv;
   DBusMessage *reply;
   DBusMessageIter iter;
-  gchar *timezone;
+  const gchar *timezone;
 
   priv  = OOBS_TIME_CONFIG (object)->_priv;
   reply = _oobs_object_get_dbus_message (object);

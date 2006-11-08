@@ -63,7 +63,7 @@ void oobs_service_set_runlevel_configuration     (OobsService          *service,
 						  OobsServicesRunlevel *runlevel,
 						  OobsServiceStatus     status,
 						  gint                  priority);
-gboolean oobs_service_get_runlevel_configuration (OobsService          *service,
+void oobs_service_get_runlevel_configuration     (OobsService          *service,
 						  OobsServicesRunlevel *runlevel,
 						  OobsServiceStatus    *status,
 						  gint                 *priority);

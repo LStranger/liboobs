@@ -134,7 +134,7 @@ create_dbus_struct_from_share (GObject         *share,
 			       DBusMessageIter *array_iter)
 {
   DBusMessageIter struct_iter, acl_iter, elem_iter;
-  gchar *path;
+  const gchar *path;
   GSList *acl;
   OobsShareAclElement *acl_element;
 

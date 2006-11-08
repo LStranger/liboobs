@@ -1,5 +1,14 @@
 2006-11-08  Kjartan Maraas  <kmaraas@gnome.org>
 
+	* src/oobs-nfsconfig.c: (create_dbus_struct_from_share):
+	* src/oobs-service.c: (oobs_service_get_runlevel_configuration):
+	* src/oobs-service.h:
+	* src/oobs-timeconfig.c: (oobs_time_config_update):
+	Fix a few more compiler warnings that slipped through the
+	first time.
+
+2006-11-08  Kjartan Maraas  <kmaraas@gnome.org>
+
 	* src/oobs-hostsconfig.c: (oobs_hosts_config_set_dns_servers),
 	(oobs_hosts_config_set_search_domains): Fix the rest of the
 	compiler warnings.

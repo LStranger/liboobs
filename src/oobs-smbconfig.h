@@ -63,6 +63,21 @@ OobsObject* oobs_smb_config_get          (OobsSession *session);
 
 OobsList*   oobs_smb_config_get_shares   (OobsSMBConfig *config);
 
+G_CONST_RETURN gchar* oobs_smb_config_get_workgroup      (OobsSMBConfig *config);
+void                  oobs_smb_config_set_workgroup      (OobsSMBConfig *config,
+							  const gchar   *workgroup);
+
+G_CONST_RETURN gchar* oobs_smb_config_get_description    (OobsSMBConfig *config);
+void                  oobs_smb_config_set_description    (OobsSMBConfig *config,
+							  const gchar   *description);
+
+gboolean              oobs_smb_config_get_is_wins_server (OobsSMBConfig *config);
+void                  oobs_smb_config_set_is_wins_server (OobsSMBConfig *config,
+							  gboolean       is_wins_server);
+
+G_CONST_RETURN gchar* oobs_smb_config_get_wins_server    (OobsSMBConfig *config);
+void                  oobs_smb_config_set_wins_server    (OobsSMBConfig *config,
+							  const gchar   *wins_server);
 
 G_END_DECLS
 

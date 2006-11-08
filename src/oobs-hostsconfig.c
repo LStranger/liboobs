@@ -26,6 +26,7 @@
 #include "oobs-list-private.h"
 #include "oobs-hostsconfig.h"
 #include "oobs-statichost.h"
+#include "utils.h"
 
 #define HOSTS_CONFIG_REMOTE_OBJECT "HostsConfig"
 #define OOBS_HOSTS_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_HOSTS_CONFIG, OobsHostsConfigPrivate))
@@ -456,7 +457,7 @@ oobs_hosts_config_set_dns_servers (OobsHostsConfig *config,
 {
   OobsHostsConfigPrivate *priv;
 
-  g_return_val_if_fail (OOBS_IS_HOSTS_CONFIG (config), NULL);
+  g_return_if_fail (OOBS_IS_HOSTS_CONFIG (config));
 
   priv = config->_priv;
 
@@ -504,7 +505,7 @@ oobs_hosts_config_set_search_domains (OobsHostsConfig *config,
 {
   OobsHostsConfigPrivate *priv;
 
-  g_return_val_if_fail (OOBS_IS_HOSTS_CONFIG (config), NULL);
+  g_return_if_fail (OOBS_IS_HOSTS_CONFIG (config));
 
   priv = config->_priv;
 

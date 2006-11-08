@@ -1,3 +1,9 @@
+2006-11-08  Kjartan Maraas  <kmaraas@gnome.org>
+
+	* src/oobs-hostsconfig.c: (oobs_hosts_config_set_dns_servers),
+	(oobs_hosts_config_set_search_domains): Fix the rest of the
+	compiler warnings.
+
 2006-11-08  Carlos Garnacho  <carlosg@gnome.org>
 
 	* src/oobs-smbconfig.h: added some missing function declarations.

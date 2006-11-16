@@ -191,6 +191,12 @@ connect_object_to_session (OobsObject *object)
   priv = OOBS_OBJECT (object)->_priv;
   connection = _oobs_session_get_connection_bus (priv->session);
 
+  if (!connection)
+    {
+      g_critical ("OobsSession object hasn't connected to the bus, cannot register OobsObject");
+      return;
+    }
+
   _oobs_session_register_object (priv->session, object);
   dbus_connection_add_filter (connection, changed_signal_filter, object, NULL);
 
@@ -306,8 +312,10 @@ run_message (OobsObject  *object,
   DBusMessage       *reply;
 
   priv = object->_priv;
-  g_return_val_if_fail (oobs_session_get_connected (priv->session), NULL);
   connection = _oobs_session_get_connection_bus (priv->session);
+
+  g_return_val_if_fail (oobs_session_get_connected (priv->session), NULL);
+  g_return_val_if_fail (connection != NULL, NULL);
 
   reply = dbus_connection_send_with_reply_and_block (connection, message, -1, &priv->dbus_error);
 
@@ -378,8 +386,11 @@ run_message_async (OobsObject          *object,
   DBusConnection *connection;
 
   priv = object->_priv;
-  g_return_if_fail (oobs_session_get_connected (priv->session));
   connection = _oobs_session_get_connection_bus (priv->session);
+
+  g_return_if_fail (oobs_session_get_connected (priv->session));
+  g_return_if_fail (connection != NULL);
+
   dbus_connection_send_with_reply (connection, message, &call, -1);
 
   async_data = g_new0 (OobsObjectAsyncCallbackData, 1);

@@ -290,6 +290,8 @@ oobs_session_get_platform (OobsSession  *session,
   g_return_val_if_fail (OOBS_IS_SESSION (session), OOBS_RESULT_ERROR);
 
   priv = session->_priv;
+  g_return_val_if_fail (priv->connection != NULL, OOBS_RESULT_ERROR);
+
   message = dbus_message_new_method_call (OOBS_DBUS_DESTINATION,
 					  PLATFORMS_PATH,
 					  PLATFORMS_INTERFACE,
@@ -351,6 +353,7 @@ oobs_session_set_platform (OobsSession *session,
   g_return_val_if_fail (platform != NULL, OOBS_RESULT_ERROR);
 
   priv = session->_priv;
+  g_return_val_if_fail (priv->connection != NULL, OOBS_RESULT_ERROR);
   dbus_error_init (&error);
 
   priv->platform = g_strdup (platform);
@@ -394,6 +397,8 @@ get_supported_platforms (OobsSession *session, GList **list)
   const gchar *str;
 
   priv = session->_priv;
+  g_return_val_if_fail (priv->connection != NULL, OOBS_RESULT_ERROR);
+
   message = dbus_message_new_method_call (OOBS_DBUS_DESTINATION,
 					  PLATFORMS_PATH,
 					  PLATFORMS_INTERFACE,

@@ -1,3 +1,8 @@
+2006-11-16  Carlos Garnacho  <carlosg@gnome.org>
+
+	* src/oobs-object.c, src/oobs-session.c: handle better the cases where
+	a DBusConnection couldn't be got. Fixes #362942.
+
 2006-11-08  Kjartan Maraas  <kmaraas@gnome.org>
 
 	* src/oobs-nfsconfig.c: (create_dbus_struct_from_share):

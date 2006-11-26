@@ -1,3 +1,8 @@
+2006-11-26  Carlos Garnacho  <carlosg@gnome.org>
+
+	* src/oobs-session.c (oobs_session_finalize): Do not close the
+	connection, it's owned by libdbus.
+
 2006-11-16  Carlos Garnacho  <carlosg@gnome.org>
 
 	* src/oobs-object.c, src/oobs-session.c: handle better the cases where

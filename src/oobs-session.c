@@ -141,10 +141,7 @@ oobs_session_finalize (GObject *object)
   priv    = session->_priv;
 
   if (priv)
-    {
-      unregister_objects_list (priv);
-      dbus_connection_unref (priv->connection);
-    }
+    unregister_objects_list (priv);
 
   if (G_OBJECT_CLASS (oobs_session_parent_class)->finalize)
     (* G_OBJECT_CLASS (oobs_session_parent_class)->finalize) (object);

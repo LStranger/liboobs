@@ -22,7 +22,23 @@ OobsObject
 
 </para>
 
-@parent: 
+
+<!-- ##### SIGNAL OobsObject::changed ##### -->
+<para>
+
+</para>
+
+@oobsobject: the object which received the signal.
+
+<!-- ##### ARG OobsObject:remote-object ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsObject:session ##### -->
+<para>
+
+</para>
 
 <!-- ##### USER_FUNCTION OobsObjectAsyncFunc ##### -->
 <para>

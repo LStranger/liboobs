@@ -30,7 +30,6 @@ OobsShareNFS
 
 </para>
 
-@parent: 
 
 <!-- ##### FUNCTION oobs_share_nfs_new ##### -->
 <para>

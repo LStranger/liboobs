@@ -22,7 +22,6 @@ OobsNTPConfig
 
 </para>
 
-@parent: 
 
 <!-- ##### FUNCTION oobs_ntp_config_get ##### -->
 <para>

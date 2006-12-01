@@ -22,7 +22,6 @@ OobsHostsConfig
 
 </para>
 
-@parent: 
 
 <!-- ##### FUNCTION oobs_hosts_config_get ##### -->
 <para>

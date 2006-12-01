@@ -54,7 +54,21 @@ OobsIfaceModem
 
 </para>
 
-@parent: 
+
+<!-- ##### ARG OobsIfaceModem:dial-type ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsIfaceModem:serial-port ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsIfaceModem:volume ##### -->
+<para>
+
+</para>
 
 <!-- ##### FUNCTION oobs_dial_type_get_type ##### -->
 <para>

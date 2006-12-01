@@ -32,7 +32,11 @@ OobsSession
 
 </para>
 
-@parent: 
+
+<!-- ##### ARG OobsSession:platform ##### -->
+<para>
+
+</para>
 
 <!-- ##### FUNCTION oobs_session_get ##### -->
 <para>

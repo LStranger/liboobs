@@ -37,7 +37,21 @@ OobsIfaceWireless
 
 </para>
 
-@parent: 
+
+<!-- ##### ARG OobsIfaceWireless:essid ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsIfaceWireless:key ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsIfaceWireless:key-type ##### -->
+<para>
+
+</para>
 
 <!-- ##### FUNCTION oobs_iface_wireless_get_type ##### -->
 <para>

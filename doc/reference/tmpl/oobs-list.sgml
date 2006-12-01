@@ -37,7 +37,11 @@ OobsList
 
 </para>
 
-@parent: 
+
+<!-- ##### ARG OobsList:contained-type ##### -->
+<para>
+
+</para>
 
 <!-- ##### FUNCTION oobs_list_get_iter_first ##### -->
 <para>

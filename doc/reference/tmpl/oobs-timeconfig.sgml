@@ -22,7 +22,16 @@ OobsTimeConfig
 
 </para>
 
-@parent: 
+
+<!-- ##### ARG OobsTimeConfig:timezone ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsTimeConfig:unix-time ##### -->
+<para>
+
+</para>
 
 <!-- ##### FUNCTION oobs_time_config_get ##### -->
 <para>

@@ -22,7 +22,6 @@ OobsNFSConfig
 
 </para>
 
-@parent: 
 
 <!-- ##### FUNCTION oobs_nfs_config_get ##### -->
 <para>

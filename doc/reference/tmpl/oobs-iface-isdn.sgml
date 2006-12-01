@@ -22,7 +22,51 @@ OobsIfaceISDN
 
 </para>
 
-@parent: 
+
+<!-- ##### ARG OobsIfaceISDN:default-gw ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsIfaceISDN:iface-section ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsIfaceISDN:login ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsIfaceISDN:password ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsIfaceISDN:peer-dns ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsIfaceISDN:peer-noauth ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsIfaceISDN:persistent ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsIfaceISDN:phone-number ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsIfaceISDN:phone-prefix ##### -->
+<para>
+
+</para>
 
 <!-- ##### FUNCTION oobs_iface_isdn_set_login ##### -->
 <para>

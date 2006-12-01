@@ -31,7 +31,11 @@ OobsService
 
 </para>
 
-@parent: 
+
+<!-- ##### ARG OobsService:name ##### -->
+<para>
+
+</para>
 
 <!-- ##### FUNCTION oobs_service_set_runlevel_configuration ##### -->
 <para>
@@ -53,7 +57,6 @@ OobsService
 @runlevel: 
 @status: 
 @priority: 
-@Returns: 
 
 
 <!-- ##### FUNCTION oobs_service_get_name ##### -->

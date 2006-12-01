@@ -22,7 +22,31 @@ OobsIface
 
 </para>
 
-@parent: 
+
+<!-- ##### ARG OobsIface:active ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsIface:auto ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsIface:configured ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsIface:device ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsIface:hardware-address ##### -->
+<para>
+
+</para>
 
 <!-- ##### FUNCTION oobs_iface_get_auto ##### -->
 <para>

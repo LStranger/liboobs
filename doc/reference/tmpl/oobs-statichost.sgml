@@ -22,7 +22,11 @@ OobsStaticHost
 
 </para>
 
-@parent: 
+
+<!-- ##### ARG OobsStaticHost:ip-address ##### -->
+<para>
+
+</para>
 
 <!-- ##### FUNCTION oobs_static_host_new ##### -->
 <para>

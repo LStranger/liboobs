@@ -40,7 +40,6 @@ OobsServicesConfig
 
 </para>
 
-@parent: 
 
 <!-- ##### FUNCTION oobs_services_config_get ##### -->
 <para>

@@ -41,7 +41,6 @@ OobsIfacesConfig
 
 </para>
 
-@parent: 
 
 <!-- ##### FUNCTION oobs_ifaces_config_get ##### -->
 <para>

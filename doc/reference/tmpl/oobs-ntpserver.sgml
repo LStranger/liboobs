@@ -22,7 +22,11 @@ OobsNTPServer
 
 </para>
 
-@parent: 
+
+<!-- ##### ARG OobsNTPServer:hostname ##### -->
+<para>
+
+</para>
 
 <!-- ##### FUNCTION oobs_ntp_server_new ##### -->
 <para>

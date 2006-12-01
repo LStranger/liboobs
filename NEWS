@@ -1,3 +1,23 @@
+Liboobs 2.17.3, 2006-11-30
+-----------------------------------------------
+
+Liboobs version 2.17.3 "no memory" has been released.
+
+Liboobs is a lightweight library that provides a GObject based interface to system-tools-backends. It's completely abstracted of the communication and authentication details, making it easy for applications to integrate with the system details.
+
+Changes since last release
+==========================
+
+* Fix a bunch of compiler warnings (Kjartan Maraas)
+* Fix a potential crasher in shares-admin nautilus extension (#362942, garnacho)
+* Fix an assert with DBus warnings enabled (garnacho)
+
+Downloading
+===========
+You can get it from :
+ftp://ftp.gnome.org/pub/GNOME/sources/liboobs/2.17/
+
+
 Liboobs 2.17.2, 2006-11-05
 -----------------------------------------------
 

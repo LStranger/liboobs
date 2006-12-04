@@ -7,7 +7,7 @@
 	(oobs_object_finalize): cancel all pending calls.
 	* oobs-session.[ch] (oobs_session_process_requests): added, blocks
 	until all pending messages in the session are processed.
-	* configure.in: bump revision number
+	* configure.in: bump revision number, bump version.
 
 2006-12-01  Carlos Garnacho  <carlosg@gnome.org>
 

@@ -76,6 +76,7 @@ OobsResult  oobs_object_update_async (OobsObject          *object,
 				      OobsObjectAsyncFunc  func,
 				      gpointer             data);
 
+void        oobs_object_process_requests (OobsObject *object);
 
 G_END_DECLS
 

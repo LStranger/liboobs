@@ -38,11 +38,13 @@ struct _OobsObjectPrivate
   gchar       *remote_object;
   gchar       *path;
   gchar       *method;
+
+  GList       *pending_calls;
 };
 
 struct _OobsObjectAsyncCallbackData
 {
-  GObject *object;
+  OobsObject *object;
   gboolean update;
   OobsObjectAsyncFunc func;
   gpointer data;
@@ -147,14 +149,16 @@ oobs_object_finalize (GObject *object)
   obj  = OOBS_OBJECT (object);
   priv = OOBS_OBJECT (object)->_priv;
 
-  if (priv)
-    {
-      _oobs_session_unregister_object (priv->session, obj);
+  /* Cancel all pending calls, they're going to be orphaned soon */
+  g_list_foreach (priv->pending_calls, (GFunc) dbus_pending_call_cancel, NULL);
+  g_list_foreach (priv->pending_calls, (GFunc) dbus_pending_call_unref, NULL);
+  g_list_free (priv->pending_calls);
 
-      g_free (priv->remote_object);
-      g_free (priv->path);
-      g_free (priv->method);
-    }
+  _oobs_session_unregister_object (priv->session, obj);
+
+  g_free (priv->remote_object);
+  g_free (priv->path);
+  g_free (priv->method);
 
   if (G_OBJECT_CLASS (oobs_object_parent_class)->finalize)
     (* G_OBJECT_CLASS (oobs_object_parent_class)->finalize) (object);
@@ -337,6 +341,7 @@ run_message (OobsObject  *object,
 static void
 async_message_cb (DBusPendingCall *pending_call, gpointer data)
 {
+  OobsObjectPrivate *priv;
   OobsObjectAsyncCallbackData *async_data;
   OobsResult result = OOBS_RESULT_MALFORMED_DATA;
   DBusMessage *reply;
@@ -366,11 +371,15 @@ async_message_cb (DBusPendingCall *pending_call, gpointer data)
 	result = OOBS_RESULT_OK;
     }
 
+  priv = async_data->object->_priv;
+  priv->pending_calls = g_list_remove (priv->pending_calls, pending_call);
+
   if (async_data->func)
     (* async_data->func) (OOBS_OBJECT (async_data->object), result, async_data->data);
 
   dbus_message_unref (reply);
   g_object_unref (async_data->object);
+  dbus_pending_call_unref (pending_call);
 }
 
 static void
@@ -394,13 +403,13 @@ run_message_async (OobsObject          *object,
   dbus_connection_send_with_reply (connection, message, &call, -1);
 
   async_data = g_new0 (OobsObjectAsyncCallbackData, 1);
-  async_data->object = g_object_ref (G_OBJECT (object));
+  async_data->object = g_object_ref (object);
   async_data->update = update;
   async_data->func = func;
   async_data->data = data;
 
   dbus_pending_call_set_notify (call, async_message_cb, async_data, g_free);
-  dbus_pending_call_unref (call);
+  priv->pending_calls = g_list_prepend (priv->pending_calls, call);
 }
 
 static DBusMessage*
@@ -586,4 +595,20 @@ oobs_object_update_async (OobsObject          *object,
   dbus_message_unref (message);
 
   return OOBS_RESULT_OK;
+}
+
+/**
+ * oobs_object_process_requests:
+ * @object: An #OobsObject
+ * 
+ * Blocks until all pending asynchronous requests to this object have been processed.
+ **/
+void
+oobs_object_process_requests (OobsObject *object)
+{
+  OobsObjectPrivate *priv;
+
+  g_return_if_fail (OOBS_IS_OBJECT (object));
+  priv = object->_priv;
+  g_list_foreach (priv->pending_calls, (GFunc) dbus_pending_call_block, NULL);
 }

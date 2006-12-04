@@ -1,3 +1,14 @@
+2006-12-04  Carlos Garnacho  <carlosg@gnome.org>
+
+	* oobs-object.[ch] (oobs_object_process_requests): added, blocks until
+	all pending messages are processed.
+	(async_message_cb) (run_message_async): maintain a list of pending 
+	calls.
+	(oobs_object_finalize): cancel all pending calls.
+	* oobs-session.[ch] (oobs_session_process_requests): added, blocks
+	until all pending messages in the session are processed.
+	* configure.in: bump revision number
+
 2006-12-01  Carlos Garnacho  <carlosg@gnome.org>
 
 	* Release 2.17.3

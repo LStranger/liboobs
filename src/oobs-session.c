@@ -489,6 +489,23 @@ oobs_session_get_supported_platforms (OobsSession  *session,
   return result;
 }
 
+/**
+ * oobs_session_process_requests:
+ * @session: An #OobsSession
+ * 
+ * Blocks until all pending asynchronous requests have been processed.
+ **/
+void
+oobs_session_process_requests (OobsSession *session)
+{
+  OobsSessionPrivate *priv;
+
+  g_return_if_fail (OOBS_IS_SESSION (session));
+
+  priv = session->_priv;
+  g_list_foreach (priv->session_objects, (GFunc) oobs_object_process_requests, NULL);
+}
+
 /* protected methods */
 DBusConnection*
 _oobs_session_get_connection_bus (OobsSession *session)

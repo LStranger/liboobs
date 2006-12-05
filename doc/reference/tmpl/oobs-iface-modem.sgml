@@ -70,22 +70,6 @@ OobsIfaceModem
 
 </para>
 
-<!-- ##### FUNCTION oobs_dial_type_get_type ##### -->
-<para>
-
-</para>
-
-@Returns: 
-
-
-<!-- ##### FUNCTION oobs_iface_modem_get_type ##### -->
-<para>
-
-</para>
-
-@Returns: 
-
-
 <!-- ##### FUNCTION oobs_iface_modem_set_serial_port ##### -->
 <para>
 
@@ -109,7 +93,7 @@ OobsIfaceModem
 
 </para>
 
-@modem: 
+@iface: 
 @volume: 
 
 
@@ -118,7 +102,7 @@ OobsIfaceModem
 
 </para>
 
-@modem: 
+@iface: 
 @Returns: 
 
 
@@ -127,7 +111,7 @@ OobsIfaceModem
 
 </para>
 
-@modem: 
+@iface: 
 @dial_type: 
 
 
@@ -136,7 +120,7 @@ OobsIfaceModem
 
 </para>
 
-@modem: 
+@iface: 
 @Returns: 
 
 

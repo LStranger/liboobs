@@ -71,7 +71,6 @@ OobsIfaceConfigurationMethod
 OOBS_TYPE_IFACE_CONFIGURATION_METHOD
 <TITLE>OobsIfaceEthernet</TITLE>
 OobsIfaceEthernet
-oobs_iface_ethernet_get_type
 oobs_iface_ethernet_get_ip_address
 oobs_iface_ethernet_set_ip_address
 oobs_iface_ethernet_get_network_mask
@@ -89,6 +88,7 @@ OobsIfaceEthernetClass
 OOBS_IFACE_ETHERNET
 OOBS_IS_IFACE_ETHERNET
 OOBS_TYPE_IFACE_ETHERNET
+oobs_iface_ethernet_get_type
 oobs_iface_configuration_method_get_type
 OOBS_IFACE_ETHERNET_CLASS
 OOBS_IS_IFACE_ETHERNET_CLASS
@@ -148,8 +148,6 @@ OOBS_TYPE_MODEM_VOLUME
 OOBS_TYPE_DIAL_TYPE
 <TITLE>OobsIfaceModem</TITLE>
 OobsIfaceModem
-oobs_dial_type_get_type
-oobs_iface_modem_get_type
 oobs_iface_modem_set_serial_port
 oobs_iface_modem_get_serial_port
 oobs_iface_modem_set_volume
@@ -162,6 +160,8 @@ OOBS_IFACE_MODEM
 OOBS_IS_IFACE_MODEM
 OOBS_TYPE_IFACE_MODEM
 oobs_modem_volume_get_type
+oobs_dial_type_get_type
+oobs_iface_modem_get_type
 OOBS_IFACE_MODEM_CLASS
 OOBS_IS_IFACE_MODEM_CLASS
 OOBS_IFACE_MODEM_GET_CLASS
@@ -192,19 +192,19 @@ OobsWirelessKeyType
 OOBS_TYPE_WIRELESS_KEY_TYPE
 <TITLE>OobsIfaceWireless</TITLE>
 OobsIfaceWireless
-oobs_iface_wireless_get_type
 oobs_iface_wireless_get_essid
 oobs_iface_wireless_set_essid
-oobs_iface_wireless_get_wep_key
-oobs_iface_wireless_set_wep_key
-oobs_iface_wireless_get_wep_key_type
-oobs_iface_wireless_set_wep_key_type
+oobs_iface_wireless_get_key
+oobs_iface_wireless_set_key
+oobs_iface_wireless_get_key_type
+oobs_iface_wireless_set_key_type
 <SUBSECTION Standard>
 OobsIfaceWirelessClass
 OOBS_IFACE_WIRELESS
 OOBS_IS_IFACE_WIRELESS
 OOBS_TYPE_IFACE_WIRELESS
 oobs_wireless_key_type_get_type
+oobs_iface_wireless_get_type
 OOBS_IFACE_WIRELESS_CLASS
 OOBS_IS_IFACE_WIRELESS_CLASS
 OOBS_IFACE_WIRELESS_GET_CLASS
@@ -337,7 +337,6 @@ OOBS_NTP_SERVER_GET_CLASS
 
 <SECTION>
 <FILE>oobs-object</FILE>
-OobsObjectResult
 <TITLE>OobsObject</TITLE>
 OobsObject
 OobsObjectAsyncFunc
@@ -345,6 +344,7 @@ oobs_object_commit
 oobs_object_commit_async
 oobs_object_update
 oobs_object_update_async
+oobs_object_process_requests
 <SUBSECTION Standard>
 OobsObjectClass
 OOBS_OBJECT
@@ -364,7 +364,6 @@ OobsService
 oobs_service_set_runlevel_configuration
 oobs_service_get_runlevel_configuration
 oobs_service_get_name
-oobs_service_get_role
 <SUBSECTION Standard>
 OobsServiceClass
 OOBS_SERVICE
@@ -399,6 +398,7 @@ OOBS_SERVICES_CONFIG_GET_CLASS
 
 <SECTION>
 <FILE>oobs-session</FILE>
+OobsResult
 OobsPlatform
 <TITLE>OobsSession</TITLE>
 OobsSession
@@ -407,8 +407,8 @@ oobs_session_commit
 oobs_session_get_supported_platforms
 oobs_session_get_platform
 oobs_session_set_platform
-oobs_session_set_autocommit_on_exit
-oobs_session_get_autocommit_on_exit
+oobs_session_get_connected
+oobs_session_process_requests
 <SUBSECTION Standard>
 OobsSessionClass
 OOBS_SESSION
@@ -446,7 +446,6 @@ OobsShareSMBFlags
 OOBS_TYPE_SHARE_SMB_FLAGS
 <TITLE>OobsShareSMB</TITLE>
 OobsShareSMB
-oobs_share_smb_flags_get_type
 oobs_share_smb_get_name
 oobs_share_smb_set_name
 oobs_share_smb_get_comment
@@ -459,6 +458,7 @@ OobsShareSMBClass
 OOBS_SHARE_SMB
 OOBS_IS_SHARE_SMB
 OOBS_TYPE_SHARE_SMB
+oobs_share_smb_flags_get_type
 oobs_share_smb_get_type
 OOBS_SHARE_SMB_CLASS
 OOBS_IS_SHARE_SMB_CLASS
@@ -488,6 +488,14 @@ OOBS_SHARE_GET_CLASS
 OobsSMBConfig
 oobs_smb_config_get
 oobs_smb_config_get_shares
+oobs_smb_config_get_description
+oobs_smb_config_set_description
+oobs_smb_config_get_is_wins_server
+oobs_smb_config_set_is_wins_server
+oobs_smb_config_get_wins_server
+oobs_smb_config_set_wins_server
+oobs_smb_config_get_workgroup
+oobs_smb_config_set_workgroup
 <SUBSECTION Standard>
 OobsSMBConfigClass
 OOBS_SMB_CONFIG

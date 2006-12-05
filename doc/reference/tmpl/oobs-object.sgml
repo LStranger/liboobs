@@ -25,7 +25,7 @@ OobsObject
 
 <!-- ##### SIGNAL OobsObject::changed ##### -->
 <para>
-
+The changed signal is emitted when the underlying configuration changes. This is just a notification, if you want to update it you will have to call oobs_object_update() or oobs_object_update_async() yourself.
 </para>
 
 @oobsobject: the object which received the signal.
@@ -42,12 +42,12 @@ OobsObject
 
 <!-- ##### USER_FUNCTION OobsObjectAsyncFunc ##### -->
 <para>
-
+Specifies the type of function passed to oobs_object_update_async() and oobs_object_commit_async().
 </para>
 
-@object: 
-@result: 
-@data: 
+@object: #OobsObject which was modified/updated.
+@result: #OobsResult defining the result of the operation.
+@data: data passed to the function.
 
 
 <!-- ##### FUNCTION oobs_object_commit ##### -->
@@ -88,5 +88,13 @@ OobsObject
 @func: 
 @data: 
 @Returns: 
+
+
+<!-- ##### FUNCTION oobs_object_process_requests ##### -->
+<para>
+
+</para>
+
+@object: 
 
 

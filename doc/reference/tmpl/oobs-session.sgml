@@ -17,6 +17,17 @@ OobsSession
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### ENUM OobsResult ##### -->
+<para>
+
+</para>
+
+@OOBS_RESULT_OK: 
+@OOBS_RESULT_ACCESS_DENIED: 
+@OOBS_RESULT_NO_PLATFORM: 
+@OOBS_RESULT_MALFORMED_DATA: 
+@OOBS_RESULT_ERROR: 
+
 <!-- ##### STRUCT OobsPlatform ##### -->
 <para>
 
@@ -83,5 +94,22 @@ OobsSession
 @session: 
 @platform: 
 @Returns: 
+
+
+<!-- ##### FUNCTION oobs_session_get_connected ##### -->
+<para>
+
+</para>
+
+@session: 
+@Returns: 
+
+
+<!-- ##### FUNCTION oobs_session_process_requests ##### -->
+<para>
+
+</para>
+
+@session: 
 
 

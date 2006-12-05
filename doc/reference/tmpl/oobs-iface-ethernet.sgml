@@ -69,14 +69,6 @@ OobsIfaceEthernet
 
 </para>
 
-<!-- ##### FUNCTION oobs_iface_ethernet_get_type ##### -->
-<para>
-
-</para>
-
-@Returns: 
-
-
 <!-- ##### FUNCTION oobs_iface_ethernet_get_ip_address ##### -->
 <para>
 

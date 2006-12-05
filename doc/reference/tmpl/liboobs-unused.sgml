@@ -81,6 +81,66 @@ utils
 @OOBS_OBJECT_RESULT_MALFORMED: 
 @OOBS_OBJECT_RESULT_ERROR: 
 
+<!-- ##### FUNCTION oobs_dial_type_get_type ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+<!-- ##### FUNCTION oobs_iface_ethernet_get_type ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+<!-- ##### FUNCTION oobs_iface_modem_get_type ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+<!-- ##### FUNCTION oobs_iface_wireless_get_type ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+<!-- ##### FUNCTION oobs_iface_wireless_get_wep_key ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+<!-- ##### FUNCTION oobs_iface_wireless_get_wep_key_type ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+<!-- ##### FUNCTION oobs_iface_wireless_set_wep_key ##### -->
+<para>
+
+</para>
+
+@iface: 
+@wep_key: 
+
+<!-- ##### FUNCTION oobs_iface_wireless_set_wep_key_type ##### -->
+<para>
+
+</para>
+
+@iface: 
+@key_type: 
+
 <!-- ##### FUNCTION oobs_service_get_role ##### -->
 <para>
 
@@ -104,6 +164,13 @@ utils
 
 @session: 
 @do_commit: 
+
+<!-- ##### FUNCTION oobs_share_smb_flags_get_type ##### -->
+<para>
+
+</para>
+
+@Returns: 
 
 <!-- ##### FUNCTION oobs_shell_get_path ##### -->
 <para>

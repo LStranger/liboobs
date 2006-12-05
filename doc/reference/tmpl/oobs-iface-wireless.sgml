@@ -53,14 +53,6 @@ OobsIfaceWireless
 
 </para>
 
-<!-- ##### FUNCTION oobs_iface_wireless_get_type ##### -->
-<para>
-
-</para>
-
-@Returns: 
-
-
 <!-- ##### FUNCTION oobs_iface_wireless_get_essid ##### -->
 <para>
 
@@ -79,7 +71,7 @@ OobsIfaceWireless
 @essid: 
 
 
-<!-- ##### FUNCTION oobs_iface_wireless_get_wep_key ##### -->
+<!-- ##### FUNCTION oobs_iface_wireless_get_key ##### -->
 <para>
 
 </para>
@@ -88,16 +80,16 @@ OobsIfaceWireless
 @Returns: 
 
 
-<!-- ##### FUNCTION oobs_iface_wireless_set_wep_key ##### -->
+<!-- ##### FUNCTION oobs_iface_wireless_set_key ##### -->
 <para>
 
 </para>
 
 @iface: 
-@wep_key: 
+@key: 
 
 
-<!-- ##### FUNCTION oobs_iface_wireless_get_wep_key_type ##### -->
+<!-- ##### FUNCTION oobs_iface_wireless_get_key_type ##### -->
 <para>
 
 </para>
@@ -106,7 +98,7 @@ OobsIfaceWireless
 @Returns: 
 
 
-<!-- ##### FUNCTION oobs_iface_wireless_set_wep_key_type ##### -->
+<!-- ##### FUNCTION oobs_iface_wireless_set_key_type ##### -->
 <para>
 
 </para>

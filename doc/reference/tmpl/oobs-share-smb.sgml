@@ -55,20 +55,12 @@ OobsShareSMB
 
 </para>
 
-<!-- ##### FUNCTION oobs_share_smb_flags_get_type ##### -->
-<para>
-
-</para>
-
-@Returns: 
-
-
 <!-- ##### FUNCTION oobs_share_smb_get_name ##### -->
 <para>
 
 </para>
 
-@Param1: 
+@share: 
 @Returns: 
 
 
@@ -77,8 +69,8 @@ OobsShareSMB
 
 </para>
 
-@Param1: 
-@Param2: 
+@share: 
+@name: 
 
 
 <!-- ##### FUNCTION oobs_share_smb_get_comment ##### -->
@@ -86,7 +78,7 @@ OobsShareSMB
 
 </para>
 
-@Param1: 
+@share: 
 @Returns: 
 
 
@@ -95,8 +87,8 @@ OobsShareSMB
 
 </para>
 
-@Param1: 
-@Param2: 
+@share: 
+@comment: 
 
 
 <!-- ##### FUNCTION oobs_share_smb_get_flags ##### -->
@@ -104,7 +96,7 @@ OobsShareSMB
 
 </para>
 
-@Param1: 
+@share: 
 @Returns: 
 
 
@@ -113,8 +105,8 @@ OobsShareSMB
 
 </para>
 
-@Param1: 
-@Param2: 
+@share: 
+@flags: 
 
 
 <!-- ##### FUNCTION oobs_share_smb_new ##### -->

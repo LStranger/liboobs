@@ -353,6 +353,14 @@ oobs_iface_set_configured (OobsIface *iface, gboolean is_configured)
   g_object_notify (G_OBJECT (iface), "configured");
 }
 
+/**
+ * oobs_iface_has_gateway:
+ * @iface: An #OobsIface.
+ * 
+ * Returns whether the interface has a defined gateway.
+ * 
+ * Return Value: #TRUE if the interface has a defined gateway.
+ **/
 gboolean
 oobs_iface_has_gateway (OobsIface *iface)
 {

@@ -665,6 +665,15 @@ oobs_ifaces_config_commit (OobsObject *object)
   create_dbus_struct_from_ifaces_list (object, message, &iter, priv->isdn_ifaces, OOBS_IFACE_TYPE_ISDN);
 }
 
+/**
+ * oobs_ifaces_config_get:
+ * @session: An #OobsSession.
+ * 
+ * Returns the #OobsIfacesConfig singleton, which represents
+ * the network interfaces and their configuration.
+ * 
+ * Return Value: the singleton #OobsIfacesConfig object.
+ **/
 OobsObject*
 oobs_ifaces_config_get (OobsSession *session)
 {
@@ -685,6 +694,16 @@ oobs_ifaces_config_get (OobsSession *session)
   return object;
 }
 
+/**
+ * oobs_ifaces_config_get_ifaces:
+ * @config: An #OobsIfacesConfig.
+ * @type: An #OobsIfaceType.
+ * 
+ * Returns an #OobsList containing the interfaces that match the
+ * type defined by @type.
+ * 
+ * Return Value: An #OobsList, you must not unref this object.
+ **/
 OobsList*
 oobs_ifaces_config_get_ifaces (OobsIfacesConfig *config,
 			       OobsIfaceType     type)

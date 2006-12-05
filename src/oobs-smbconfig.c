@@ -442,6 +442,15 @@ oobs_smb_config_get_shares (OobsSMBConfig *config)
   return priv->shares_list;
 }
 
+/**
+ * oobs_smb_config_get_workgroup:
+ * @config: An #OobsSMBConfig.
+ * 
+ * Returns the SMB workgroup for the host.
+ * 
+ * Return Value: A pointer to the workgroup as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_smb_config_get_workgroup (OobsSMBConfig *config)
 {
@@ -453,6 +462,14 @@ oobs_smb_config_get_workgroup (OobsSMBConfig *config)
   return priv->workgroup;
 }
 
+/**
+ * oobs_smb_config_set_workgroup:
+ * @config: An #OobsSMBConfig.
+ * @workgroup: a new SMB workgroup for the host.
+ * 
+ * Sets a new SMB workgroup for the host, overwriting the
+ * previous one.
+ **/
 void
 oobs_smb_config_set_workgroup (OobsSMBConfig *config,
 			       const gchar   *workgroup)
@@ -462,6 +479,15 @@ oobs_smb_config_set_workgroup (OobsSMBConfig *config,
   g_object_set (config, "workgroup", workgroup, NULL);
 }
 
+/**
+ * oobs_smb_config_get_description:
+ * @config: An #OobsSMBConfig.
+ * 
+ * Returns the SMB host description.
+ * 
+ * Return Value: A pointer to the host description as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_smb_config_get_description (OobsSMBConfig *config)
 {
@@ -473,6 +499,13 @@ oobs_smb_config_get_description (OobsSMBConfig *config)
   return priv->desc;
 }
 
+/**
+ * oobs_smb_config_set_description:
+ * @config: An #OobsSMBConfig.
+ * @description: a new host description.
+ * 
+ * Sets a new SMB host description, overwriting the previous one.
+ **/
 void
 oobs_smb_config_set_description (OobsSMBConfig *config,
 				 const gchar   *description)
@@ -482,6 +515,14 @@ oobs_smb_config_set_description (OobsSMBConfig *config,
   g_object_set (config, "description", description, NULL);
 }
 
+/**
+ * oobs_smb_config_get_is_wins_server:
+ * @config: An #OobsSMBConfig.
+ * 
+ * Returns whether the host is a WINS server for the network.
+ * 
+ * Return Value: #TRUE if the host is a WINS server.
+ **/
 gboolean
 oobs_smb_config_get_is_wins_server (OobsSMBConfig *config)
 {
@@ -493,6 +534,15 @@ oobs_smb_config_get_is_wins_server (OobsSMBConfig *config)
   return priv->is_wins_server;
 }
 
+/**
+ * oobs_smb_config_set_is_wins_server:
+ * @config: An #OobsSMBConfig.
+ * @is_wins_server: #TRUE if the host is the WINS server for the network.
+ * 
+ * Sets whether the host is a WINS server for the network. Note that there
+ * must be only one WINS server, so if there's already a WINS server in the
+ * network, there wouldn't be the need to set the host as another WINS server.
+ **/
 void
 oobs_smb_config_set_is_wins_server (OobsSMBConfig *config,
 				    gboolean       is_wins_server)
@@ -502,6 +552,15 @@ oobs_smb_config_set_is_wins_server (OobsSMBConfig *config,
   g_object_set (config, "is-wins-server", is_wins_server, NULL);
 }
 
+/**
+ * oobs_smb_config_get_wins_server:
+ * @config: An #OobsSMBConfig.
+ * 
+ * Returns the WINS server the host is using. 
+ * 
+ * Return Value: A pointer to the wins server as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_smb_config_get_wins_server (OobsSMBConfig *config)
 {
@@ -513,6 +572,14 @@ oobs_smb_config_get_wins_server (OobsSMBConfig *config)
   return priv->wins_server;
 }
 
+/**
+ * oobs_smb_config_set_wins_server:
+ * @config: An #OobsSMBConfig.
+ * @wins_server: a new WINS server.
+ * 
+ * Sets the WINS server that the host will use. This option is
+ * mutually exclusive with oobs_smb_config_set_is_wins_server().
+ **/
 void
 oobs_smb_config_set_wins_server (OobsSMBConfig *config,
 				 const gchar   *wins_server)

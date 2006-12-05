@@ -56,17 +56,17 @@ struct _OobsIfaceWirelessClass {
   void (*_oobs_padding2) (void);
 };
 
-GType oobs_wireless_key_type_get_type (void);
-GType oobs_iface_wireless_get_type (void);
+GType oobs_wireless_key_type_get_type ();
+GType oobs_iface_wireless_get_type ();
 
 G_CONST_RETURN gchar* oobs_iface_wireless_get_essid (OobsIfaceWireless *iface);
 void                  oobs_iface_wireless_set_essid (OobsIfaceWireless *iface, const gchar *essid);
 
-G_CONST_RETURN gchar* oobs_iface_wireless_get_wep_key (OobsIfaceWireless *iface);
-void                  oobs_iface_wireless_set_wep_key (OobsIfaceWireless *iface, const gchar *wep_key);
+G_CONST_RETURN gchar* oobs_iface_wireless_get_key (OobsIfaceWireless *iface);
+void                  oobs_iface_wireless_set_key (OobsIfaceWireless *iface, const gchar *key);
 
-OobsWirelessKeyType   oobs_iface_wireless_get_wep_key_type (OobsIfaceWireless *iface);
-void                  oobs_iface_wireless_set_wep_key_type (OobsIfaceWireless *iface, OobsWirelessKeyType key_type);
+OobsWirelessKeyType   oobs_iface_wireless_get_key_type (OobsIfaceWireless *iface);
+void                  oobs_iface_wireless_set_key_type (OobsIfaceWireless *iface, OobsWirelessKeyType key_type);
 
 
 G_END_DECLS

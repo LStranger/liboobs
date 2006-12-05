@@ -1,3 +1,12 @@
+2006-12-05  Carlos Garnacho  <carlosg@gnome.org>
+
+	* src/oobs-share-smb.h, oobs-iface-wireless.h, oobs-iface-modem.h,
+	oobs-iface-ethernet.h: define function prototypes correctly.
+	* src/oobs-iface-isdn.c, oobs-iface-modem.c, oobs-iface.c,
+	oobs-ifacesconfig.c, oobs-service.c, oobs-servicesconfig.c,
+	oobs-share-nfs.c, oob-share-smb.c, oobs-smbconfig.c, oobs-user.c,
+	oobs-usersconfig.c: Add API docs.
+
 2006-12-04  Carlos Garnacho  <carlosg@gnome.org>
 
 	* oobs-object.[ch] (oobs_object_process_requests): added, blocks until

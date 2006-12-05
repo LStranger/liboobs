@@ -608,6 +608,15 @@ oobs_users_config_commit (OobsObject *object)
     }
 }
 
+/**
+ * oobs_users_config_get:
+ * @session: An #OobsSession.
+ * 
+ * Returns the #OobsUsersConfig singleton, which represents
+ * the system users and their configuration.
+ * 
+ * Return Value: the singleton #OobsUsersConfig object.
+ **/
 OobsObject*
 oobs_users_config_get (OobsSession *session)
 {
@@ -628,6 +637,14 @@ oobs_users_config_get (OobsSession *session)
   return object;
 }
 
+/**
+ * oobs_users_config_get_users:
+ * @config: An #OobsUsersConfig.
+ * 
+ * Returns an #OobsList containing objects of type #OobsUser.
+ * 
+ * Return Value: an #OobsList containing the system users.
+ **/
 OobsList*
 oobs_users_config_get_users (OobsUsersConfig *config)
 {
@@ -641,6 +658,14 @@ oobs_users_config_get_users (OobsUsersConfig *config)
   return priv->users_list;
 }
 
+/**
+ * oobs_users_config_get_minimum_users_uid:
+ * @config: An #OobsUsersConfig.
+ * 
+ * Returns the default minimum UID for non-system users.
+ * 
+ * Return Value: minimum UID for non-system users.
+ **/
 uid_t
 oobs_users_config_get_minimum_users_uid (OobsUsersConfig *config)
 {
@@ -654,6 +679,13 @@ oobs_users_config_get_minimum_users_uid (OobsUsersConfig *config)
   return priv->minimum_uid;
 }
 
+/**
+ * oobs_users_config_set_minimum_users_uid:
+ * @config: An #OobsUsersConfig.
+ * @uid: new minimum UID for non-system users.
+ * 
+ * Sets the minimum UID for non-system users.
+ **/
 void
 oobs_users_config_set_minimum_users_uid (OobsUsersConfig *config, uid_t uid)
 {
@@ -663,6 +695,14 @@ oobs_users_config_set_minimum_users_uid (OobsUsersConfig *config, uid_t uid)
   g_object_set (G_OBJECT (config), "minimum-uid", uid, NULL);
 }
 
+/**
+ * oobs_users_config_get_maximum_users_uid:
+ * @config: An #OobsUsersConfig.
+ * 
+ * Returns the default maximum UID for non-system users.
+ * 
+ * Return Value: maximum UID for non-system users.
+ **/
 uid_t
 oobs_users_config_get_maximum_users_uid (OobsUsersConfig *config)
 {
@@ -676,6 +716,13 @@ oobs_users_config_get_maximum_users_uid (OobsUsersConfig *config)
   return priv->maximum_uid;
 }
 
+/**
+ * oobs_users_config_set_maximum_users_uid:
+ * @config: An #OobsUsersConfig.
+ * @uid: a new maximum UID for non-system users.
+ * 
+ * Sets the maximum UID for non-system users.
+ **/
 void
 oobs_users_config_set_maximum_users_uid (OobsUsersConfig *config, uid_t uid)
 {
@@ -685,6 +732,15 @@ oobs_users_config_set_maximum_users_uid (OobsUsersConfig *config, uid_t uid)
   g_object_set (G_OBJECT (config), "maximum-uid", uid, NULL);
 }
 
+/**
+ * oobs_users_config_get_default_shell:
+ * @config: An #OobsUsersConfig
+ * 
+ * Returns the default shell that will be used for new users.
+ * 
+ * Return Value: A pointer to the default shell as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_users_config_get_default_shell (OobsUsersConfig *config)
 {
@@ -698,6 +754,13 @@ oobs_users_config_get_default_shell (OobsUsersConfig *config)
   return priv->default_shell;
 }
 
+/**
+ * oobs_users_config_set_default_shell:
+ * @config: An #OobsUsersConfig
+ * @shell: new default shell for new users.
+ * 
+ * Sets a new default shell for new users, replacing the old one.
+ **/
 void
 oobs_users_config_set_default_shell (OobsUsersConfig *config, const gchar *shell)
 {
@@ -707,6 +770,16 @@ oobs_users_config_set_default_shell (OobsUsersConfig *config, const gchar *shell
   g_object_set (G_OBJECT (config), "default-shell", shell, NULL);
 }
 
+/**
+ * oobs_users_config_get_default_home_dir:
+ * @config: An #OobsUsersConfig.
+ * 
+ * Returns the default home directory prefix for new users. when new users
+ * are created a directory with the user login name is created in that prefix.
+ * 
+ * Return Value: A pointer to the default home directory prefix as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_users_config_get_default_home_dir (OobsUsersConfig *config)
 {
@@ -720,6 +793,13 @@ oobs_users_config_get_default_home_dir (OobsUsersConfig *config)
   return priv->default_home;
 }
 
+/**
+ * oobs_users_config_set_default_home_dir:
+ * @config: An #OobsIfacesConfig.
+ * @home_dir: new default home directory prefix.
+ * 
+ * Sets a new home directory prefix used for newly created users, replacing the old one.
+ **/
 void
 oobs_users_config_set_default_home_dir (OobsUsersConfig *config, const gchar *home_dir)
 {
@@ -729,6 +809,14 @@ oobs_users_config_set_default_home_dir (OobsUsersConfig *config, const gchar *ho
   g_object_set (G_OBJECT (config), "default-home", home_dir, NULL);
 }
 
+/**
+ * oobs_users_config_get_default_group:
+ * @config: An #OobsUsersConfig.
+ * 
+ * Returns an #OobsGroup defining the default group used for new users.
+ * 
+ * Return Value: An #OobsGroup, you must not unref this object.
+ **/
 OobsGroup*
 oobs_users_config_get_default_group (OobsUsersConfig *config)
 {
@@ -742,6 +830,15 @@ oobs_users_config_get_default_group (OobsUsersConfig *config)
   return priv->default_group;
 }
 
+/**
+ * oobs_users_config_get_available_shells:
+ * @config: An #OobsUsersConfig
+ * 
+ * Returns a #GList containing strings with paths to the available shells.
+ * 
+ * Return Value: a #GList containing strings, you must not free
+ * neither this list or its elements.
+ **/
 GList*
 oobs_users_config_get_available_shells (OobsUsersConfig *config)
 {

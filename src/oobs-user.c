@@ -383,6 +383,14 @@ oobs_user_constructor (GType                  type,
   return object;
 }
 
+/**
+ * oobs_user_new:
+ * @name: login name for the new user.
+ * 
+ * Returns a new user with the given login name.
+ * 
+ * Return Value: A newly allocated #OobsUser.
+ **/
 OobsUser*
 oobs_user_new (const gchar *name)
 {
@@ -391,6 +399,15 @@ oobs_user_new (const gchar *name)
 		       NULL);
 }
 
+/**
+ * oobs_user_get_login_name:
+ * @user: An #OobsUser.
+ * 
+ * Returns the login name of the user.
+ * 
+ * Return Value: A pointer to the login name as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_user_get_login_name (OobsUser *user)
 {
@@ -404,6 +421,13 @@ oobs_user_get_login_name (OobsUser *user)
   return priv->username;
 }
 
+/**
+ * oobs_user_set_login_name:
+ * @user: An #OobsUser.
+ * @login: a new login name for the user.
+ * 
+ * Sets a new login name for the user, overwriting the previous one.
+ **/
 void
 oobs_user_set_login_name (OobsUser *user, const gchar *login)
 {
@@ -415,6 +439,15 @@ oobs_user_set_login_name (OobsUser *user, const gchar *login)
   g_object_set (G_OBJECT (user), "name", login, NULL);
 }
 
+/**
+ * oobs_user_set_password:
+ * @user: An #OobsUser.
+ * @password: a new password for the user.
+ * 
+ * Sets a new password for the user. This password will be
+ * interpreted as clean text and encrypted internally, be careful
+ * deleting the passed string after using this function.
+ **/
 void
 oobs_user_set_password (OobsUser *user, const gchar *password)
 {
@@ -424,6 +457,14 @@ oobs_user_set_password (OobsUser *user, const gchar *password)
   g_object_set (G_OBJECT (user), "password", password, NULL);
 }
 
+/**
+ * oobs_user_set_crypted_password:
+ * @user: An #OobsUser.
+ * @crypted_password: a new crypted password.
+ * 
+ * Sets a new password for the user. This password will be
+ * considered to be already crypted.
+ **/
 void
 oobs_user_set_crypted_password (OobsUser *user, const gchar *crypted_password)
 {
@@ -433,6 +474,14 @@ oobs_user_set_crypted_password (OobsUser *user, const gchar *crypted_password)
   g_object_set (G_OBJECT (user), "crypted-password", crypted_password, NULL);
 }
 
+/**
+ * oobs_user_get_uid:
+ * @user: An #OobsUser.
+ * 
+ * Returns the UID for this user.
+ * 
+ * Return Value: user UID.
+ **/
 uid_t
 oobs_user_get_uid (OobsUser *user)
 {
@@ -446,6 +495,14 @@ oobs_user_get_uid (OobsUser *user)
   return priv->uid;
 }
 
+/**
+ * oobs_user_set_uid:
+ * @user: An #OobsUser.
+ * @uid: a new UID for the user.
+ * 
+ * Sets a new UID for the user. files formerly owned by the user
+ * will not be chowned to the new UID, be careful using this function.
+ **/
 void
 oobs_user_set_uid (OobsUser *user, uid_t uid)
 {
@@ -455,6 +512,16 @@ oobs_user_set_uid (OobsUser *user, uid_t uid)
   g_object_set (G_OBJECT (user), "uid", uid, NULL);
 }
 
+/**
+ * oobs_user_get_main_group:
+ * @user: An #OobsUser.
+ * 
+ * Returns the main group of this user.
+ * 
+ * Return Value: main group for the user. this value is owned
+ *               by the #OobsUser object, you do not have to
+ *               unref it.
+ **/
 OobsGroup*
 oobs_user_get_main_group (OobsUser *user)
 {
@@ -466,6 +533,14 @@ oobs_user_get_main_group (OobsUser *user)
   return priv->main_group;
 }
 
+/**
+ * oobs_user_set_main_group:
+ * @user: An #OobsUser.
+ * @main_group: an #OobsGroup, new main group for the user.
+ * 
+ * Sets the main group for the user, adds a reference to
+ * the new main group.
+ **/
 void
 oobs_user_set_main_group (OobsUser  *user,
 			  OobsGroup *main_group)
@@ -482,6 +557,15 @@ oobs_user_set_main_group (OobsUser  *user,
   priv->main_group = (main_group) ? g_object_ref (main_group) : NULL;
 }
 
+/**
+ * oobs_user_get_home_directory:
+ * @user: An #OobsUser.
+ * 
+ * Returns the home directory path of the user.
+ * 
+ * Return Value: A pointer to the home directory as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_user_get_home_directory (OobsUser *user)
 {
@@ -495,6 +579,14 @@ oobs_user_get_home_directory (OobsUser *user)
   return priv->homedir;
 }
 
+/**
+ * oobs_user_set_home_directory:
+ * @user: An #OobsUser.
+ * @home_directory: new home directory path for the user.
+ * 
+ * Sets a new home directory for the user. files stored in the previous
+ * home directory will not be moved, be careful using this function.
+ **/
 void
 oobs_user_set_home_directory (OobsUser *user, const gchar *home_directory)
 {
@@ -504,6 +596,15 @@ oobs_user_set_home_directory (OobsUser *user, const gchar *home_directory)
   g_object_set (G_OBJECT (user), "home-directory", home_directory, NULL);
 }
 
+/**
+ * oobs_user_get_shell:
+ * @user: An #OobsUser.
+ * 
+ * Returns the default shell used by the user.
+ * 
+ * Return Value: A pointer to the default shell as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_user_get_shell (OobsUser *user)
 {
@@ -517,6 +618,13 @@ oobs_user_get_shell (OobsUser *user)
   return priv->shell;
 }
 
+/**
+ * oobs_user_set_shell:
+ * @user: An #OobsUser.
+ * @shell: a new default shell for the user.
+ * 
+ * Sets a new default shell for the user.
+ **/
 void
 oobs_user_set_shell (OobsUser *user, const gchar *shell)
 {
@@ -526,6 +634,15 @@ oobs_user_set_shell (OobsUser *user, const gchar *shell)
   g_object_set (G_OBJECT (user), "shell", shell, NULL);
 }
 
+/**
+ * oobs_user_get_full_name:
+ * @user: An #OobsUser.
+ * 
+ * Returns the first GECOS field, usually the full name of the user.
+ * 
+ * Return Value: A pointer to the full name as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_user_get_full_name (OobsUser *user)
 {
@@ -539,6 +656,13 @@ oobs_user_get_full_name (OobsUser *user)
   return priv->full_name;
 }
 
+/**
+ * oobs_user_set_full_name:
+ * @user: An #OobsUser.
+ * @full_name: new full name for the user.
+ * 
+ * Sets a new full name for the user.
+ **/
 void
 oobs_user_set_full_name (OobsUser *user, const gchar *full_name)
 {
@@ -548,6 +672,15 @@ oobs_user_set_full_name (OobsUser *user, const gchar *full_name)
   g_object_set (G_OBJECT (user), "full-name", full_name, NULL);
 }
 
+/**
+ * oobs_user_get_room_number:
+ * @user: An #OobsUser.
+ * 
+ * Returns the second GECOS field, usually the room number.
+ * 
+ * Return Value: A pointer to the room number as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_user_get_room_number (OobsUser *user)
 {
@@ -561,6 +694,13 @@ oobs_user_get_room_number (OobsUser *user)
   return priv->room_no;
 }
 
+/**
+ * oobs_user_set_room_number:
+ * @user: An #OobsUser.
+ * @room_number: new room number for the user.
+ * 
+ * Sets a new room number for the user.
+ **/
 void
 oobs_user_set_room_number (OobsUser *user, const gchar *room_number)
 {
@@ -570,6 +710,15 @@ oobs_user_set_room_number (OobsUser *user, const gchar *room_number)
   g_object_set (G_OBJECT (user), "room-number", room_number, NULL);
 }
 
+/**
+ * oobs_user_get_work_phone_number:
+ * @user: An #OobsUser.
+ * 
+ * Returns the third GECOS field, usually the work phone number.
+ * 
+ * Return Value: A pointer to the work phone number as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_user_get_work_phone_number (OobsUser *user)
 {
@@ -583,6 +732,13 @@ oobs_user_get_work_phone_number (OobsUser *user)
   return priv->work_phone_no;
 }
 
+/**
+ * oobs_user_set_work_phone_number:
+ * @user: An #OobsUser.
+ * @phone_number: new work phone number for the user.
+ * 
+ * Sets a new work phone number for the user.
+ **/
 void
 oobs_user_set_work_phone_number (OobsUser *user, const gchar *phone_number)
 {
@@ -592,6 +748,15 @@ oobs_user_set_work_phone_number (OobsUser *user, const gchar *phone_number)
   g_object_set (G_OBJECT (user), "work-phone", phone_number, NULL);
 }
 
+/**
+ * oobs_user_get_home_phone_number:
+ * @user: An #OobsUser.
+ * 
+ * Returns the fourth GECOS field, usually the home phone number.
+ * 
+ * Return Value: A pointer to the home phone number as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_user_get_home_phone_number (OobsUser *user)
 {
@@ -605,6 +770,13 @@ oobs_user_get_home_phone_number (OobsUser *user)
   return priv->home_phone_no;
 }
 
+/**
+ * oobs_user_set_home_phone_number:
+ * @user: An #OobsUser.
+ * @phone_number: new home phone number for the user.
+ * 
+ * Sets a new home phone number for the user.
+ **/
 void
 oobs_user_set_home_phone_number (OobsUser *user, const gchar *phone_number)
 {
@@ -614,6 +786,15 @@ oobs_user_set_home_phone_number (OobsUser *user, const gchar *phone_number)
   g_object_set (G_OBJECT (user), "home-phone", phone_number, NULL);
 }
 
+/**
+ * oobs_user_get_other_data:
+ * @user: An #OobsUser.
+ * 
+ * Returns the fifth field of GECOS fields, reserved for additional data.
+ * 
+ * Return Value: A pointer to the fifth GECOS field as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_user_get_other_data (OobsUser *user)
 {
@@ -627,6 +808,13 @@ oobs_user_get_other_data (OobsUser *user)
   return priv->other_data;
 }
 
+/**
+ * oobs_user_set_other_data:
+ * @user: An #OobsUser.
+ * @data: data in the fifth GECOS field.
+ * 
+ * Sets the data in the fifth GECOS field.
+ **/
 void
 oobs_user_set_other_data (OobsUser *user, const gchar *data)
 {

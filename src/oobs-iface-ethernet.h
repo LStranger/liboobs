@@ -58,8 +58,8 @@ struct _OobsIfaceEthernetClass {
   void (*_oobs_padding2) (void);
 };
 
-GType oobs_iface_configuration_method_get_type (void);
-GType oobs_iface_ethernet_get_type (void);
+GType oobs_iface_configuration_method_get_type ();
+GType oobs_iface_ethernet_get_type ();
 
 G_CONST_RETURN gchar*   oobs_iface_ethernet_get_ip_address (OobsIfaceEthernet *iface);
 void           oobs_iface_ethernet_set_ip_address (OobsIfaceEthernet *iface, const gchar *address);

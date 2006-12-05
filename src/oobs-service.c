@@ -145,6 +145,15 @@ oobs_service_finalize (GObject *object)
     (* G_OBJECT_CLASS (oobs_service_parent_class)->finalize) (object);
 }
 
+/**
+ * oobs_service_get_name:
+ * @service: An #OobsService.
+ * 
+ * Returns the service name
+ * 
+ * Return Value: A pointer to the service name as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_service_get_name (OobsService *service)
 {
@@ -156,6 +165,15 @@ oobs_service_get_name (OobsService *service)
   return priv->name;
 }
 
+/**
+ * oobs_service_set_runlevel_configuration:
+ * @service: An #OobsService.
+ * @runlevel: A #OobsServicesRunlevel.
+ * @status: status for the service in the given runlevel
+ * @priority: priority for the service in the given runlevel.
+ *
+ * Sets the configuration of a service for a given runlevel.
+ **/
 void
 oobs_service_set_runlevel_configuration (OobsService          *service,
 					 OobsServicesRunlevel *runlevel,
@@ -189,6 +207,15 @@ oobs_service_set_runlevel_configuration (OobsService          *service,
     }
 }
 
+/**
+ * oobs_service_get_runlevel_configuration:
+ * @service: An #OobsService.
+ * @runlevel: An #OobsServiceRunlevel.
+ * @status: return value for the current service status.
+ * @priority: return value for the current service priority.
+ * 
+ * Gets the status and priority of a service in a given runlevel.
+ **/
 void
 oobs_service_get_runlevel_configuration (OobsService          *service,
 					 OobsServicesRunlevel *runlevel,

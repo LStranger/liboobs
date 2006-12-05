@@ -231,6 +231,13 @@ oobs_iface_modem_is_configured (OobsIface *iface)
 	  (* OOBS_IFACE_CLASS (oobs_iface_modem_parent_class)->is_configured) (iface));
 }
 
+/**
+ * oobs_iface_modem_set_serial_port:
+ * @iface: An #OobsIfaceModem.
+ * @serial_port: a new serial port for the interface.
+ * 
+ * Sets a serial port to connect with the modem device.
+ **/
 void
 oobs_iface_modem_set_serial_port (OobsIfaceModem *iface,
 				  const gchar    *serial_port)
@@ -240,6 +247,15 @@ oobs_iface_modem_set_serial_port (OobsIfaceModem *iface,
   g_object_set (G_OBJECT (iface), "serial-port", serial_port, NULL);
 }
 
+/**
+ * oobs_iface_modem_get_serial_port:
+ * @iface: An #OobsIfaceModem.
+ * 
+ * Returns the serial port used to communicate with the modem device.
+ * 
+ * Return Value: A pointer to the serial port as a string. This string
+ *               must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_iface_modem_get_serial_port (OobsIfaceModem *iface)
 {
@@ -251,6 +267,13 @@ oobs_iface_modem_get_serial_port (OobsIfaceModem *iface)
   return priv->serial_port;
 }
 
+/**
+ * oobs_iface_modem_set_volume:
+ * @iface: An #OobsIfaceModem.
+ * @volume: the modem volume.
+ * 
+ * Sets the modem volume.
+ **/
 void
 oobs_iface_modem_set_volume (OobsIfaceModem  *iface,
 			     OobsModemVolume  volume)
@@ -260,6 +283,14 @@ oobs_iface_modem_set_volume (OobsIfaceModem  *iface,
   g_object_set (G_OBJECT (iface), "volume", volume, NULL);
 }
 
+/**
+ * oobs_iface_modem_get_volume:
+ * @iface: An #OobsIfaceModem.
+ * 
+ * Returns the modem volume.
+ * 
+ * Return Value: the modem volume.
+ **/
 OobsModemVolume
 oobs_iface_modem_get_volume (OobsIfaceModem *iface)
 {
@@ -271,6 +302,13 @@ oobs_iface_modem_get_volume (OobsIfaceModem *iface)
   return priv->volume;
 }
 
+/**
+ * oobs_iface_modem_set_dial_type:
+ * @iface: An #OobsIfaceModem.
+ * @dial_type: dialing type for the modem connection.
+ * 
+ * Sets the dialing type for the modem connection.
+ **/
 void
 oobs_iface_modem_set_dial_type (OobsIfaceModem  *iface,
 				OobsDialType     dial_type)
@@ -280,6 +318,14 @@ oobs_iface_modem_set_dial_type (OobsIfaceModem  *iface,
   g_object_set (G_OBJECT (iface), "dial-type", dial_type, NULL);
 }
 
+/**
+ * oobs_iface_modem_get_dial_type:
+ * @iface: An #OobsIfaceModem.
+ * 
+ * Returns the dialing type for the modem connection.
+ * 
+ * Return Value: the dialing type.
+ **/
 OobsDialType
 oobs_iface_modem_get_dial_type (OobsIfaceModem *iface)
 {

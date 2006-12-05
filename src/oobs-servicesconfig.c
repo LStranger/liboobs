@@ -458,6 +458,16 @@ oobs_services_config_get_services (OobsServicesConfig *config)
   return priv->services_list;
 }
 
+/**
+ * oobs_services_config_get_runlevels:
+ * @config: An #OobsServicesConfig.
+ * 
+ * Returns a list of #OobsServicesRunlevel describing the available
+ * runlevels.
+ * 
+ * Return Value: list of runlevels. the list must be freed with
+ *               g_list_free ();
+ **/
 GList*
 oobs_services_config_get_runlevels (OobsServicesConfig *config)
 {
@@ -470,6 +480,16 @@ oobs_services_config_get_runlevels (OobsServicesConfig *config)
   return g_list_copy (priv->runlevels);
 }
 
+/**
+ * oobs_services_config_get_default_runlevel:
+ * @config: An #OobsServicesConfig.
+ * 
+ * Returns the current runlevel.
+ * 
+ * Return Value: An #OobsServicesRunlevel describing the current
+ *               runlevel. This value must not be freed, modified,
+ *               or stored.
+ **/
 G_CONST_RETURN OobsServicesRunlevel*
 oobs_services_config_get_default_runlevel (OobsServicesConfig *config)
 {

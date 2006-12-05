@@ -203,6 +203,15 @@ oobs_share_smb_get_property (GObject      *object,
     }
 }
 
+/**
+ * oobs_share_smb_get_name:
+ * @share: An #OobsShareSMB.
+ * 
+ * Returns the share name.
+ * 
+ * Return Value: A pointer to the share name as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_share_smb_get_name (OobsShareSMB *share)
 {
@@ -214,6 +223,13 @@ oobs_share_smb_get_name (OobsShareSMB *share)
   return priv->name;
 }
 
+/**
+ * oobs_share_smb_set_name:
+ * @share: An #OobsShareSMB.
+ * @name: new name for the share.
+ * 
+ * Sets a new name for the share, overwriting the previous one.
+ **/
 void
 oobs_share_smb_set_name (OobsShareSMB *share, const gchar *name)
 {
@@ -226,6 +242,15 @@ oobs_share_smb_set_name (OobsShareSMB *share, const gchar *name)
   g_object_notify (G_OBJECT (share), "name");
 }
 
+/**
+ * oobs_share_smb_get_comment:
+ * @share: An #OobsShareSMB.
+ * 
+ * Returns the comment for the share.
+ * 
+ * Return Value: A pointer to the share comment as a string. This
+ *               string must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_share_smb_get_comment (OobsShareSMB *share)
 {
@@ -237,6 +262,13 @@ oobs_share_smb_get_comment (OobsShareSMB *share)
   return priv->comment;
 }
 
+/**
+ * oobs_share_smb_set_comment:
+ * @share: An #OobsShareSMB.
+ * @comment: new comment for the share.
+ * 
+ * Sets a new comment for the share, overwriting the previous one.
+ **/
 void
 oobs_share_smb_set_comment (OobsShareSMB *share, const gchar *comment)
 {
@@ -249,6 +281,14 @@ oobs_share_smb_set_comment (OobsShareSMB *share, const gchar *comment)
   g_object_notify (G_OBJECT (share), "comment");
 }
 
+/**
+ * oobs_share_smb_get_flags:
+ * @share: An #OobsShareSMB.
+ * 
+ * Returns the options mask of the share.
+ * 
+ * Return Value: #OobsShareSMBFlags mask representing the share options.
+ **/
 OobsShareSMBFlags
 oobs_share_smb_get_flags (OobsShareSMB *share)
 {
@@ -260,6 +300,13 @@ oobs_share_smb_get_flags (OobsShareSMB *share)
   return priv->flags;
 }
 
+/**
+ * oobs_share_smb_set_flags:
+ * @share: An #OobsShareSMB.
+ * @flags: mask of options for the share.
+ * 
+ * Sets a new set of options for the share.
+ **/
 void
 oobs_share_smb_set_flags (OobsShareSMB *share, OobsShareSMBFlags flags)
 {
@@ -272,6 +319,17 @@ oobs_share_smb_set_flags (OobsShareSMB *share, OobsShareSMBFlags flags)
   g_object_notify (G_OBJECT (share), "flags");
 }
 
+/**
+ * oobs_share_smb_new:
+ * @path: folder path for the new share.
+ * @name: name for the new share.
+ * @comment: comment for the new share.
+ * @flags: options mask for the new share.
+ * 
+ * Creates a new #OobsShareSMB with the given settings.
+ * 
+ * Return Value: a newly allocated #OobsShareSMB.
+ **/
 OobsShare*
 oobs_share_smb_new (const gchar       *path,
 		    const gchar       *name,

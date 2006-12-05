@@ -74,11 +74,11 @@ GType oobs_iface_modem_get_type ();
 void                   oobs_iface_modem_set_serial_port (OobsIfaceModem *iface, const gchar *serial_port);
 G_CONST_RETURN gchar*  oobs_iface_modem_get_serial_port (OobsIfaceModem *iface);
 
-void                   oobs_iface_modem_set_volume (OobsIfaceModem  *modem, OobsModemVolume volume);
-OobsModemVolume        oobs_iface_modem_get_volume (OobsIfaceModem *modem);
+void                   oobs_iface_modem_set_volume (OobsIfaceModem  *iface, OobsModemVolume volume);
+OobsModemVolume        oobs_iface_modem_get_volume (OobsIfaceModem *iface);
 
-void                   oobs_iface_modem_set_dial_type (OobsIfaceModem  *modem, OobsDialType dial_type);
-OobsDialType           oobs_iface_modem_get_dial_type (OobsIfaceModem *modem);
+void                   oobs_iface_modem_set_dial_type (OobsIfaceModem  *iface, OobsDialType dial_type);
+OobsDialType           oobs_iface_modem_get_dial_type (OobsIfaceModem *iface);
 
 
 G_END_DECLS

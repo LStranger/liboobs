@@ -310,6 +310,14 @@ oobs_iface_isdn_is_configured (OobsIface *iface)
   return (priv->login && priv->phone_number);
 }
 
+/**
+ * oobs_iface_isdn_set_login:
+ * @iface: An #OobsIfaceISDN.
+ * @login: a new login for the ISDN connection.
+ * 
+ * Sets a new login for the ISDN connection, overwriting
+ * the previous one.
+ **/
 void
 oobs_iface_isdn_set_login (OobsIfaceISDN *iface,
 			   const gchar   *login)
@@ -319,6 +327,15 @@ oobs_iface_isdn_set_login (OobsIfaceISDN *iface,
   g_object_set (G_OBJECT (iface), "login", login, NULL);
 }
 
+/**
+ * oobs_iface_isdn_get_login:
+ * @iface: An #OobsIfaceISDN.
+ * 
+ * Returns the login used for this ISDN connection.
+ * 
+ * Return Value: A pointer to the login. This string must
+ *               not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_iface_isdn_get_login (OobsIfaceISDN *iface)
 {
@@ -330,6 +347,14 @@ oobs_iface_isdn_get_login (OobsIfaceISDN *iface)
   return priv->login;
 }
 
+/**
+ * oobs_iface_isdn_set_password:
+ * @iface: An #OobsIfaceISDN.
+ * @password: a new password for the ISDN connection.
+ * 
+ * Sets a new password for the ISDN connection, overwriting
+ * the previous one.
+ **/
 void
 oobs_iface_isdn_set_password (OobsIfaceISDN *iface,
 			      const gchar   *password)
@@ -339,6 +364,14 @@ oobs_iface_isdn_set_password (OobsIfaceISDN *iface,
   g_object_set (G_OBJECT (iface), "password", password, NULL);
 }
 
+/**
+ * oobs_iface_isdn_set_phone_number:
+ * @iface: An #OobsIfaceISDN.
+ * @phone_number: a new phone number for the ISDN connection.
+ *
+ * Sets a new phone number for the ISDN connection, overwriting
+ * the previous one.
+ **/
 void
 oobs_iface_isdn_set_phone_number (OobsIfaceISDN *iface,
 				  const gchar   *phone_number)
@@ -348,6 +381,15 @@ oobs_iface_isdn_set_phone_number (OobsIfaceISDN *iface,
   g_object_set (G_OBJECT (iface), "phone-number", phone_number, NULL);
 }
 
+/**
+ * oobs_iface_isdn_get_phone_number:
+ * @iface: An #OobsIfaceISDN.
+ * 
+ * Returns the phone number used for this ISDN connection.
+ * 
+ * Return Value: A pointer to the phone number. This string must
+ *               not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_iface_isdn_get_phone_number (OobsIfaceISDN *iface)
 {
@@ -359,6 +401,14 @@ oobs_iface_isdn_get_phone_number (OobsIfaceISDN *iface)
   return priv->phone_number;
 }
 
+/**
+ * oobs_iface_isdn_set_phone_prefix:
+ * @iface: An #OobsIfaceISDN.
+ * @phone_prefix: a new phone number prefix for the ISDN connection.
+ * 
+ * Sets a new phone number prefix for the ISDN connection,
+ * overwriting the previous one.
+ **/
 void
 oobs_iface_isdn_set_phone_prefix (OobsIfaceISDN *iface,
 				  const gchar   *phone_prefix)
@@ -368,6 +418,15 @@ oobs_iface_isdn_set_phone_prefix (OobsIfaceISDN *iface,
   g_object_set (G_OBJECT (iface), "phone-prefix", phone_prefix, NULL);
 }
 
+/**
+ * oobs_iface_isdn_get_phone_prefix:
+ * @iface: An #OobsIfaceISDN.
+ * 
+ * Returns the phone number prefix used for this ISDN connection.
+ * 
+ * Return Value: A pointer to the phone number prefix. This string
+ *               must not be freed, modified or stored.
+ **/
 G_CONST_RETURN gchar*
 oobs_iface_isdn_get_phone_prefix (OobsIfaceISDN *iface)
 {
@@ -379,6 +438,13 @@ oobs_iface_isdn_get_phone_prefix (OobsIfaceISDN *iface)
   return priv->dial_prefix;
 }
 
+/**
+ * oobs_iface_isdn_set_default_gateway:
+ * @iface: An #OobsIfaceISDN.
+ * @default_gw: #TRUE to make this interface the default gateway to Internet.
+ * 
+ * Sets whether the interface is the default gateway to internet.
+ **/
 void
 oobs_iface_isdn_set_default_gateway (OobsIfaceISDN *iface,
 				     gboolean       default_gw)
@@ -388,6 +454,14 @@ oobs_iface_isdn_set_default_gateway (OobsIfaceISDN *iface,
   g_object_set (G_OBJECT (iface), "default-gw", default_gw, NULL);
 }
 
+/**
+ * oobs_iface_isdn_get_default_gateway:
+ * @iface: An #OobsIfaceISDN.
+ * 
+ * Returns whether the interface is the default gateway to Internet.
+ * 
+ * Return Value: #TRUE if the interface is the default gateway.
+ **/
 gboolean
 oobs_iface_isdn_get_default_gateway (OobsIfaceISDN *iface)
 {
@@ -399,6 +473,13 @@ oobs_iface_isdn_get_default_gateway (OobsIfaceISDN *iface)
   return priv->default_gw;
 }
 
+/**
+ * oobs_iface_isdn_set_use_peer_dns:
+ * @iface: An #OobsIfaceISDN.
+ * @use_peer_dns: #TRUE to use DNS servers specified by the ISP.
+ * 
+ * Sets whether to use the DNS servers that the ISP specifies.
+ **/
 void
 oobs_iface_isdn_set_use_peer_dns (OobsIfaceISDN *iface,
 				  gboolean       use_peer_dns)
@@ -408,6 +489,15 @@ oobs_iface_isdn_set_use_peer_dns (OobsIfaceISDN *iface,
   g_object_set (G_OBJECT (iface), "peer-dns", use_peer_dns, NULL);
 }
 
+/**
+ * oobs_iface_isdn_get_use_peer_dns:
+ * @iface: An #OobsIfaceISDN.
+ * 
+ * Returns whether the DNS servers specified by the ISP
+ * will be used.
+ * 
+ * Return Value: #TRUE if the DNS servers will be used.
+ **/
 gboolean
 oobs_iface_isdn_get_use_peer_dns (OobsIfaceISDN *iface)
 {
@@ -419,6 +509,13 @@ oobs_iface_isdn_get_use_peer_dns (OobsIfaceISDN *iface)
   return priv->peerdns;
 }
 
+/**
+ * oobs_iface_isdn_set_persistent:
+ * @iface: An #OobsIfaceISDN.
+ * @persistent: #TRUE to try to reconnect if the connection fails.
+ * 
+ * Sets whether the interface will try to reconnect if the connection fails.
+ **/
 void
 oobs_iface_isdn_set_persistent (OobsIfaceISDN *iface,
 				gboolean       persistent)
@@ -428,6 +525,15 @@ oobs_iface_isdn_set_persistent (OobsIfaceISDN *iface,
   g_object_set (G_OBJECT (iface), "peersistent", persistent, NULL);
 }
 
+/**
+ * oobs_iface_isdn_get_persistent:
+ * @iface: An #OobsIfaceISDN.
+ * 
+ * Returns whether the interface will try to reconnect if the
+ * connection fails.
+ * 
+ * Return Value: #TRUE if the interface will try to reconnect.
+ **/
 gboolean
 oobs_iface_isdn_get_persistent (OobsIfaceISDN *iface)
 {
@@ -439,6 +545,13 @@ oobs_iface_isdn_get_persistent (OobsIfaceISDN *iface)
   return priv->persist;
 }
 
+/**
+ * oobs_iface_isdn_set_peer_noauth:
+ * @iface: An #OobsIfaceISDN.
+ * @use_peer_dns: #TRUE if the peer has to authenticate itself.
+ * 
+ * Sets whether the peer has to authenticate itself.
+ **/
 void
 oobs_iface_isdn_set_peer_noauth (OobsIfaceISDN *iface,
 				 gboolean       use_peer_dns)
@@ -448,6 +561,14 @@ oobs_iface_isdn_set_peer_noauth (OobsIfaceISDN *iface,
   g_object_set (G_OBJECT (iface), "peer-dns", use_peer_dns, NULL);
 }
 
+/**
+ * oobs_iface_isdn_get_peer_noauth:
+ * @iface: An #OobsIfaceISDN.
+ * 
+ * Returns whether the peer is required to authenticate itself.
+ * 
+ * Return Value: #TRUE if the peer is required to authenticate itself.
+ **/
 gboolean
 oobs_iface_isdn_get_peer_noauth (OobsIfaceISDN *iface)
 {

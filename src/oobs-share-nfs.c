@@ -89,6 +89,14 @@ oobs_share_nfs_finalize (GObject *object)
     (* G_OBJECT_CLASS (oobs_share_nfs_parent_class)->finalize) (object);
 }
 
+/**
+ * oobs_share_nfs_new:
+ * @path: share path.
+ * 
+ * Returns a new NFS share for the given path.
+ * 
+ * Return Value: A newly allocated #OobsShareNFS.
+ **/
 OobsShare*
 oobs_share_nfs_new (const gchar *path)
 {
@@ -97,6 +105,15 @@ oobs_share_nfs_new (const gchar *path)
 		       NULL);
 }
 
+/**
+ * oobs_share_nfs_add_acl_element:
+ * @share: An #OobsShareNFS.
+ * @element: Host in the share ACL.
+ * @read_only: Whether the share is read only for the element.
+ * 
+ * Adds an ACL entry for a host, @element may be a host name,
+ * an IP address or a combination in the form "IP address/Network mask".
+ **/
 void
 oobs_share_nfs_add_acl_element (OobsShareNFS *share,
 			       const gchar *element,

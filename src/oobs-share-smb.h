@@ -61,17 +61,22 @@ struct _OobsShareSMBClass {
 GType             oobs_share_smb_get_type (void);
 GType             oobs_share_smb_flags_get_type (void);
 
-G_CONST_RETURN gchar* oobs_share_smb_get_name    (OobsShareSMB*);
-void                  oobs_share_smb_set_name    (OobsShareSMB*, const gchar*);
+G_CONST_RETURN gchar* oobs_share_smb_get_name    (OobsShareSMB *share);
+void                  oobs_share_smb_set_name    (OobsShareSMB *share,
+						  const gchar  *name);
 
-G_CONST_RETURN gchar* oobs_share_smb_get_comment (OobsShareSMB*);
-void                  oobs_share_smb_set_comment (OobsShareSMB*, const gchar*);
+G_CONST_RETURN gchar* oobs_share_smb_get_comment (OobsShareSMB *share);
+void                  oobs_share_smb_set_comment (OobsShareSMB *share,
+						  const gchar  *comment);
 
-OobsShareSMBFlags oobs_share_smb_get_flags (OobsShareSMB*);
-void              oobs_share_smb_set_flags (OobsShareSMB*, OobsShareSMBFlags);
+OobsShareSMBFlags oobs_share_smb_get_flags (OobsShareSMB      *share);
+void              oobs_share_smb_set_flags (OobsShareSMB      *share,
+					    OobsShareSMBFlags  flags);
 
-OobsShare*        oobs_share_smb_new (const gchar *path, const gchar *name, const gchar *comment, OobsShareSMBFlags flags);
-
+OobsShare*        oobs_share_smb_new (const gchar       *path,
+				      const gchar       *name,
+				      const gchar       *comment,
+				      OobsShareSMBFlags  flags);
 
 G_END_DECLS
 

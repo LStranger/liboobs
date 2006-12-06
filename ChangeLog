@@ -1,3 +1,8 @@
+2006-12-06  Carlos Garnacho  <carlosg@gnome.org>
+
+	* src/oobs-timeconfig.c (real_set_time): initialize tm.tm_isdst to
+	avoid a conditional jump based on uninitialized values in mktime().
+
 2006-12-05  Carlos Garnacho  <carlosg@gnome.org>
 
 	* doc/reference/liboobs-sections.txt: updated.

@@ -483,18 +483,19 @@ real_set_time (OobsTimeConfig *config,
 	       gint            minute,
 	       gint            second)
 {
-  struct tm tm;
+  struct tm tm = { 0, };
   glong unix_time;
 
   g_return_if_fail (OOBS_IS_TIME_CONFIG (config));
   g_return_if_fail (date_is_sane (year, month, day, hour, minute, second));
 
-  tm.tm_year = year - 1900;
-  tm.tm_mon  = month;
-  tm.tm_mday = day;
-  tm.tm_hour = hour;
-  tm.tm_min  = minute;
-  tm.tm_sec  = second;
+  tm.tm_year  = year - 1900;
+  tm.tm_mon   = month;
+  tm.tm_mday  = day;
+  tm.tm_hour  = hour;
+  tm.tm_min   = minute;
+  tm.tm_sec   = second;
+  tm.tm_isdst = -1;
 
   if (use_utc)
     unix_time = get_utc_unix_time (&tm);

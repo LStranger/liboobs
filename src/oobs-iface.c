@@ -31,7 +31,6 @@ struct _OobsIfacePrivate
   gboolean  is_enabled;
   gboolean  explicitly_not_configured;
   gchar    *dev;
-  gchar    *hwaddr;
   gchar    *file;
 };
 
@@ -53,8 +52,7 @@ enum {
   PROP_AUTO,
   PROP_ENABLED,
   PROP_CONFIGURED,
-  PROP_DEV,
-  PROP_HWADDR
+  PROP_DEV
 };
 
 G_DEFINE_ABSTRACT_TYPE (OobsIface, oobs_iface, G_TYPE_OBJECT);
@@ -96,13 +94,6 @@ oobs_iface_class_init (OobsIfaceClass *class)
 							"Device name of the iface",
 							NULL,
 							G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
-  g_object_class_install_property (object_class,
-				   PROP_HWADDR,
-				   g_param_spec_string ("hardware-address",
-							"Iface hwaddr",
-							"MAC address of the iface",
-							NULL,
-							G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
   g_type_class_add_private (object_class,
 			    sizeof (OobsIfacePrivate));
 }
@@ -117,7 +108,6 @@ oobs_iface_init (OobsIface *iface)
   priv = OOBS_IFACE_GET_PRIVATE (iface);
 
   priv->dev = NULL;
-  priv->hwaddr = NULL;
   priv->file = NULL;
   priv->explicitly_not_configured = FALSE;
   iface->_priv = priv;
@@ -135,7 +125,6 @@ oobs_iface_finalize (GObject *object)
   if (priv)
     {
       g_free (priv->dev);
-      g_free (priv->hwaddr);
       g_free (priv->file);
     }
 
@@ -197,9 +186,6 @@ oobs_iface_get_property (GObject      *object,
       break;
     case PROP_DEV:
       g_value_set_string (value, priv->dev);
-      break;
-    case PROP_HWADDR:
-      g_value_set_string (value, priv->hwaddr);
       break;
     }
 }
@@ -293,18 +279,6 @@ oobs_iface_get_device_name (OobsIface *iface)
   priv = iface->_priv;
 
   return priv->dev;
-}
-
-G_CONST_RETURN gchar*
-oobs_iface_get_hwaddr (OobsIface *iface)
-{
-  OobsIfacePrivate *priv;
-
-  g_return_val_if_fail (OOBS_IS_IFACE (iface), FALSE);
-
-  priv = iface->_priv;
-
-  return priv->hwaddr;
 }
 
 /**

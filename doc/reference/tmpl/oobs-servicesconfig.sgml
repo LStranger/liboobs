@@ -2,7 +2,7 @@
 OobsServicesConfig
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Object that represents the configuration of services that start/stop during init/shutdown.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>

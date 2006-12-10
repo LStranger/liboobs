@@ -2,7 +2,7 @@
 OobsIfaceISDN
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Object that represents an individual ISDN interface.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>

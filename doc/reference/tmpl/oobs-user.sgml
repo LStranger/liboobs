@@ -2,7 +2,7 @@
 OobsUser
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Object that represents an individual user.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>

@@ -2,7 +2,7 @@
 OobsIfaceEthernet
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Object that represents an individual Ethernet interface.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>

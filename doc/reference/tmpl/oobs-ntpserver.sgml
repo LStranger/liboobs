@@ -2,7 +2,7 @@
 OobsNTPServer
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Object that represents an individual NTP server.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>

@@ -2,7 +2,7 @@
 OobsIface
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Base object for network interfaces.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
@@ -39,11 +39,6 @@ OobsIface
 </para>
 
 <!-- ##### ARG OobsIface:device ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG OobsIface:hardware-address ##### -->
 <para>
 
 </para>

@@ -2,7 +2,7 @@
 OobsIfaceModem
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Object that represents an individual modem interface.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>

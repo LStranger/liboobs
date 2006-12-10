@@ -2,7 +2,7 @@
 OobsTimeConfig
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Object that represents time and date configuration.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>

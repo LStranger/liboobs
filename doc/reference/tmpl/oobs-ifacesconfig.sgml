@@ -2,7 +2,7 @@
 OobsIfacesConfig
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Object that represents network interfaces configuration.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>

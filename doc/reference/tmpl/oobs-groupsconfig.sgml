@@ -2,7 +2,7 @@
 OobsGroupsConfig
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Object that represents groups configuration.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>

@@ -2,7 +2,7 @@
 OobsShareNFS
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Object that represents an individual NFS share.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>

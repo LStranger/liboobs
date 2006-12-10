@@ -70,6 +70,12 @@ OobsShellsConfig
 utils
 
 
+<!-- ##### ARG OobsIface:hardware-address ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### ENUM OobsObjectResult ##### -->
 <para>
 

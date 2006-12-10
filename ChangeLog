@@ -1,3 +1,12 @@
+2006-12-10  Carlos Garnacho  <carlosg@gnome.org>
+
+	* src/oobs-share-nfs.c: add missing documentation bits.
+	* src/oobs-iface.c (oobs_iface_get_hwaddr): removed, not used
+	anywhere...
+	* doc/reference/Makefile.am: ignore oobs.h
+	* doc/reference/tmpl/*sgml: add some descriptions.
+	* doc/reference/liboobs-docs.sgml: change index layout.
+
 2006-12-06  Carlos Garnacho  <carlosg@gnome.org>
 
 	* src/oobs-timeconfig.c (real_set_time): initialize tm.tm_isdst to

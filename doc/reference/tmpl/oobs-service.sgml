@@ -2,7 +2,7 @@
 OobsService
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Object that represents an individual init.d service.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>

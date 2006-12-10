@@ -133,6 +133,15 @@ oobs_share_nfs_add_acl_element (OobsShareNFS *share,
   priv->acl = g_slist_append (priv->acl, elem);
 }
 
+/**
+ * oobs_share_nfs_set_acl:
+ * @share: An #OobsShareNFS.
+ * @acl: A #GList of #OobsShareAclElement.
+ * 
+ * Overwrites the list of ACL entries for the share. The previous list and its
+ * contents will be free, so any merging will have to be done by hand.
+ * Alternatively, you can use oobs_share_nfs_add_acl_element().
+ **/
 void
 oobs_share_nfs_set_acl (OobsShareNFS *share, GSList *acl)
 {
@@ -149,6 +158,15 @@ oobs_share_nfs_set_acl (OobsShareNFS *share, GSList *acl)
   priv->acl = acl;
 }
 
+/**
+ * oobs_share_nfs_get_acl:
+ * @share: An #OobsShareNFS.
+ * 
+ * Returns the ACL defined for this share.
+ * 
+ * Return Value: A #GList containing #OobsShareAclElement structs,
+ *               this list must be freed with g_list_free().
+ **/
 GSList*
 oobs_share_nfs_get_acl (OobsShareNFS *share)
 {
@@ -158,5 +176,5 @@ oobs_share_nfs_get_acl (OobsShareNFS *share)
   g_return_val_if_fail (OOBS_IS_SHARE_NFS (share), NULL);
   priv = share->_priv;
 
-  return priv->acl;
+  return g_list_copy (priv->acl);
 }

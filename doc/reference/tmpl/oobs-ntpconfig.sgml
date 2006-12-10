@@ -2,7 +2,7 @@
 OobsNTPConfig
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Object that represents NTP configuration.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>

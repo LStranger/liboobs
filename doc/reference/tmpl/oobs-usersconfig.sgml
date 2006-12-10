@@ -2,7 +2,7 @@
 OobsUsersConfig
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Object that represents users configuration.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>

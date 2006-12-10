@@ -2,7 +2,7 @@
 OobsGroup
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Object that represents an individual group.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>

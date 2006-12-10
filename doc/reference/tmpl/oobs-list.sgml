@@ -2,11 +2,15 @@
 OobsList
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Object to deal with several configuration elements.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
+OobsList is a list object designed to store configuration elements. it provides "security" mechanisms to avoid elements corruption when i.e. underlying configuration is updated. OobsLists are created only by configuration objects, API users are only allowed to modify it.
+</para>
 
+<para>
+Some configuration objects (for example, #OobsServicesConfig) will provide a locked down list, users will be able to modify the contained elements, but not to add/delete elements, nor to modify the list element at that position with oobs_list_set().
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
@@ -26,11 +30,11 @@ OobsList
 
 <!-- ##### STRUCT OobsListIter ##### -->
 <para>
-
+OobsListIter is the element used to iterate through lists and to get/modify elements in it. Fields are not supposed to be modified by the user.
 </para>
 
-@stamp: 
-@data: 
+@stamp: stamp to catch invalid iterators.
+@data: iterator data.
 
 <!-- ##### STRUCT OobsList ##### -->
 <para>

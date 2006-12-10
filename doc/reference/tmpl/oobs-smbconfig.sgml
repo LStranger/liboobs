@@ -2,7 +2,7 @@
 OobsSMBConfig
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Object that represents SMB configuration.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>

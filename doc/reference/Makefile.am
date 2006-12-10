@@ -22,6 +22,7 @@ CFILE_GLOB=$(top_srcdir)/src/*.c
 
 # Header files to ignore when scanning.
 IGNORE_HFILES=	\
+	oobs.h			\
 	oobs-defines.h		\
 	oobs-list-private.h	\
 	oobs-object-private.h	\

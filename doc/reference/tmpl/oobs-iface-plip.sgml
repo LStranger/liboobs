@@ -2,7 +2,7 @@
 OobsIfacePlip
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Object that represents an individual PLIP interface.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>

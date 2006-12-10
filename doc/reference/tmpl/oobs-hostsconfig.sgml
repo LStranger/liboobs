@@ -2,7 +2,7 @@
 OobsHostsConfig
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Object that represents hosts resolution configuration.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>

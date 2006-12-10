@@ -2,16 +2,16 @@
 OobsObject
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Base object for all configuration objects.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+OobsObject is the base object for all Oobs*Config objects, contains all the necessary methods for updating/committing the configuration by using the passed #OobsSession.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
-
+#OobsSession, #OobsList
 </para>
 
 <!-- ##### SECTION Stability_Level ##### -->

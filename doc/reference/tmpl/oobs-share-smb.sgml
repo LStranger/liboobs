@@ -2,7 +2,7 @@
 OobsShareSMB
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Object that represents an individual SMB share.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>

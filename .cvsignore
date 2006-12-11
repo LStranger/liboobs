@@ -7,14 +7,18 @@ config.h
 config.h.in
 config.log
 config.status
+config.status.lineno
 config.sub
 configure
+depcomp
+gtk-doc.make
 install-sh
 liboobs-1.pc
 libtool
 ltmain.sh
 missing
 mkinstalldirs
+stamp-h1
 stamp-h
 stamp-h.in
 

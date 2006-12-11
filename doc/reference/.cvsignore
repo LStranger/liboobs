@@ -1,0 +1,11 @@
+Makefile
+Makefile.in
+html*
+liboobs-decl-list.txt
+liboobs-decl.txt
+liboobs-undocumented.txt
+liboobs-unused.txt
+liboobs.*
+*.stamp
+version.xml
+xml

@@ -88,15 +88,6 @@ Base object for network interfaces.
 @Returns: 
 
 
-<!-- ##### FUNCTION oobs_iface_get_hwaddr ##### -->
-<para>
-
-</para>
-
-@iface: 
-@Returns: 
-
-
 <!-- ##### FUNCTION oobs_iface_get_configured ##### -->
 <para>
 

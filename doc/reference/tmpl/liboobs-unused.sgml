@@ -101,6 +101,14 @@ utils
 
 @Returns: 
 
+<!-- ##### FUNCTION oobs_iface_get_hwaddr ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
 <!-- ##### FUNCTION oobs_iface_modem_get_type ##### -->
 <para>
 

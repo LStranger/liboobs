@@ -61,7 +61,6 @@ gboolean oobs_iface_get_active (OobsIface *iface);
 void     oobs_iface_set_active (OobsIface *iface, gboolean is_active);
 
 G_CONST_RETURN gchar* oobs_iface_get_device_name (OobsIface *iface);
-G_CONST_RETURN gchar* oobs_iface_get_hwaddr (OobsIface *iface);
 
 gboolean     oobs_iface_get_configured (OobsIface *iface);
 void         oobs_iface_set_configured (OobsIface *iface, gboolean is_configured);

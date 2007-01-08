@@ -1,3 +1,23 @@
+Liboobs 2.17.4, 2007-01-08
+-----------------------------------------------
+
+Liboobs version 2.17.4 "Omni" has been released.
+
+Liboobs is a lightweight library that provides a GObject based interface to system-tools-backends. It's completely abstracted of the communication and authentication details, making it easy for applications to integrate with the system details.
+
+Changes since last release
+==========================
+
+* add function to process all pending messages (garnacho)
+* add a bunch of API docs (garnacho)
+* avoid a conditional jump based on uninitialized values in OobsTimeConfig (garnacho)
+
+Downloading
+===========
+You can get it from :
+ftp://ftp.gnome.org/pub/GNOME/sources/liboobs/2.17/
+
+
 Liboobs 2.17.3, 2006-11-30
 -----------------------------------------------
 

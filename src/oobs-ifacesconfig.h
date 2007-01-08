@@ -73,6 +73,9 @@ OobsObject* oobs_ifaces_config_get          (OobsSession *session);
 OobsList*   oobs_ifaces_config_get_ifaces   (OobsIfacesConfig *config,
 					     OobsIfaceType     type);
 
+GList*      oobs_ifaces_config_get_available_configuration_methods (OobsIfacesConfig *config);
+GList*      oobs_ifaces_config_get_available_key_types             (OobsIfacesConfig *config);
+
 
 G_END_DECLS
 

@@ -17,21 +17,6 @@ Object that represents an individual Wireless interface.
 <!-- ##### SECTION Stability_Level ##### -->
 
 
-<!-- ##### ENUM OobsWirelessKeyType ##### -->
-<para>
-
-</para>
-
-@OOBS_WIRELESS_KEY_ASCII: 
-@OOBS_WIRELESS_KEY_HEXADECIMAL: 
-
-<!-- ##### MACRO OOBS_TYPE_WIRELESS_KEY_TYPE ##### -->
-<para>
-
-</para>
-
-
-
 <!-- ##### STRUCT OobsIfaceWireless ##### -->
 <para>
 

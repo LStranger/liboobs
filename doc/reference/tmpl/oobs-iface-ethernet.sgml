@@ -17,22 +17,6 @@ Object that represents an individual Ethernet interface.
 <!-- ##### SECTION Stability_Level ##### -->
 
 
-<!-- ##### ENUM OobsIfaceConfigurationMethod ##### -->
-<para>
-
-</para>
-
-@OOBS_METHOD_NONE: 
-@OOBS_METHOD_STATIC: 
-@OOBS_METHOD_DHCP: 
-
-<!-- ##### MACRO OOBS_TYPE_IFACE_CONFIGURATION_METHOD ##### -->
-<para>
-
-</para>
-
-
-
 <!-- ##### STRUCT OobsIfaceEthernet ##### -->
 <para>
 

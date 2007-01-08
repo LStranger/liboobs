@@ -1,3 +1,17 @@
+2007-01-09  Carlos Garnacho  <carlosg@gnome.org>
+
+	* src/oobs-ifacesconfig.[ch]
+	(oobs_ifaces_config_get_available_configuration_methods)
+	(oobs_ifaces_config_get_available_key_types): added, get an
+	extensiblee list of configuration types.
+	* src/oobs-iface-wireless.[ch]: (oobs_iface_wireless_[gs]et_key_type):
+	accept/return a string parameter.
+	* src/oobs-iface-ethernet.[ch]
+	(oobs_iface_ethernet_[gs]et_configuration_method): accept/return a
+	string parameter
+	* doc/reference/tmpl/*: update these docs.
+	* configure.in: bump current number
+
 2007-01-08  Carlos Garnacho  <carlosg@gnome.org>
 
 	* Release 2.17.4

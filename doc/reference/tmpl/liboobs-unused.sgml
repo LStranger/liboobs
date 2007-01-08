@@ -70,11 +70,32 @@ OobsShellsConfig
 utils
 
 
+<!-- ##### MACRO OOBS_TYPE_IFACE_CONFIGURATION_METHOD ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO OOBS_TYPE_WIRELESS_KEY_TYPE ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### ARG OobsIface:hardware-address ##### -->
 <para>
 
 </para>
 
+
+<!-- ##### ENUM OobsIfaceConfigurationMethod ##### -->
+<para>
+
+</para>
+
+@OOBS_METHOD_NONE: 
+@OOBS_METHOD_STATIC: 
+@OOBS_METHOD_DHCP: 
 
 <!-- ##### ENUM OobsObjectResult ##### -->
 <para>
@@ -86,6 +107,14 @@ utils
 @OOBS_OBJECT_RESULT_NO_PLATFORM: 
 @OOBS_OBJECT_RESULT_MALFORMED: 
 @OOBS_OBJECT_RESULT_ERROR: 
+
+<!-- ##### ENUM OobsWirelessKeyType ##### -->
+<para>
+
+</para>
+
+@OOBS_WIRELESS_KEY_ASCII: 
+@OOBS_WIRELESS_KEY_HEXADECIMAL: 
 
 <!-- ##### FUNCTION oobs_dial_type_get_type ##### -->
 <para>

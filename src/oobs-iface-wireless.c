@@ -30,7 +30,7 @@ struct _OobsIfaceWirelessPrivate
 {
   gchar *essid;
   gchar *key;
-  OobsWirelessKeyType key_type;
+  gchar *key_type;
 };
 
 static void oobs_iface_wireless_class_init (OobsIfaceWirelessClass *class);
@@ -53,25 +53,6 @@ enum {
   PROP_KEY_TYPE,
   PROP_KEY
 };
-
-GType
-oobs_wireless_key_type_get_type (void)
-{
-  static GType etype = 0;
-
-  if (!etype)
-    {
-      static const GEnumValue values[] =
-	{
-	  { OOBS_WIRELESS_KEY_ASCII,       "OOBS_WIRELESS_KEY_ASCII",       "ascii" },
-	  { OOBS_WIRELESS_KEY_HEXADECIMAL, "OOBS_WIRELESS_KEY_HEXADECIMAL", "hexadecimal" },
-	};
-
-      etype = g_enum_register_static ("OobsWirelessKeyType", values);
-    }
-
-  return etype;
-}
 
 G_DEFINE_TYPE (OobsIfaceWireless, oobs_iface_wireless, OOBS_TYPE_IFACE_ETHERNET);
 
@@ -97,12 +78,11 @@ oobs_iface_wireless_class_init (OobsIfaceWirelessClass *class)
 							G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
 				   PROP_KEY_TYPE,
-				   g_param_spec_enum ("key_type",
-						      "Iface key type",
-						      "key type",
-						      OOBS_TYPE_WIRELESS_KEY_TYPE,
-						      OOBS_WIRELESS_KEY_HEXADECIMAL,
-						      G_PARAM_READWRITE));
+				   g_param_spec_string ("key_type",
+							"Iface key type",
+							"key type",
+							NULL,
+							G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
 				   PROP_KEY,
 				   g_param_spec_string ("key",
@@ -125,6 +105,7 @@ oobs_iface_wireless_init (OobsIfaceWireless *iface)
 
   priv->essid = NULL;
   priv->key = NULL;
+  priv->key_type = NULL;
   iface->_priv = priv;
 }
 
@@ -141,6 +122,7 @@ oobs_iface_wireless_finalize (GObject *object)
     {
       g_free (priv->essid);
       g_free (priv->key);
+      g_free (priv->key_type);
     }
 
   if (G_OBJECT_CLASS (oobs_iface_wireless_parent_class)->finalize)
@@ -166,7 +148,8 @@ oobs_iface_wireless_set_property (GObject      *object,
       priv->essid = g_value_dup_string (value);
       break;
     case PROP_KEY_TYPE:
-      priv->key_type = g_value_get_enum (value);
+      g_free (priv->key_type);
+      priv->key_type = g_value_dup_string (value);
       break;
     case PROP_KEY:
       g_free (priv->key);
@@ -193,7 +176,7 @@ oobs_iface_wireless_get_property (GObject      *object,
       g_value_set_string (value, priv->essid);
       break;
     case PROP_KEY_TYPE:
-      g_value_set_enum (value, priv->key_type);
+      g_value_set_string (value, priv->key_type);
       break;
     case PROP_KEY:
       g_value_set_string (value, priv->key);
@@ -295,12 +278,12 @@ oobs_iface_wireless_set_key (OobsIfaceWireless *iface, const gchar *key)
  * 
  * Return Value: The key type.
  **/
-OobsWirelessKeyType
+G_CONST_RETURN gchar*
 oobs_iface_wireless_get_key_type (OobsIfaceWireless *iface)
 {
   OobsIfaceWirelessPrivate *priv;
 
-  g_return_val_if_fail (OOBS_IS_IFACE_WIRELESS (iface), OOBS_WIRELESS_KEY_ASCII);
+  g_return_val_if_fail (OOBS_IS_IFACE_WIRELESS (iface), NULL);
 
   priv = iface->_priv;
 
@@ -316,7 +299,7 @@ oobs_iface_wireless_get_key_type (OobsIfaceWireless *iface)
  **/
 void
 oobs_iface_wireless_set_key_type (OobsIfaceWireless   *iface,
-				  OobsWirelessKeyType  key_type)
+				  const gchar         *key_type)
 {
   g_return_if_fail (OOBS_IS_IFACE_WIRELESS (iface));
 

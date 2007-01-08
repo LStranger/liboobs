@@ -67,8 +67,6 @@ OOBS_HOSTS_CONFIG_GET_CLASS
 
 <SECTION>
 <FILE>oobs-iface-ethernet</FILE>
-OobsIfaceConfigurationMethod
-OOBS_TYPE_IFACE_CONFIGURATION_METHOD
 <TITLE>OobsIfaceEthernet</TITLE>
 OobsIfaceEthernet
 oobs_iface_ethernet_get_ip_address
@@ -89,7 +87,6 @@ OOBS_IFACE_ETHERNET
 OOBS_IS_IFACE_ETHERNET
 OOBS_TYPE_IFACE_ETHERNET
 oobs_iface_ethernet_get_type
-oobs_iface_configuration_method_get_type
 OOBS_IFACE_ETHERNET_CLASS
 OOBS_IS_IFACE_ETHERNET_CLASS
 OOBS_IFACE_ETHERNET_GET_CLASS
@@ -188,8 +185,6 @@ OOBS_IFACE_PLIP_GET_CLASS
 
 <SECTION>
 <FILE>oobs-iface-wireless</FILE>
-OobsWirelessKeyType
-OOBS_TYPE_WIRELESS_KEY_TYPE
 <TITLE>OobsIfaceWireless</TITLE>
 OobsIfaceWireless
 oobs_iface_wireless_get_essid
@@ -203,7 +198,6 @@ OobsIfaceWirelessClass
 OOBS_IFACE_WIRELESS
 OOBS_IS_IFACE_WIRELESS
 OOBS_TYPE_IFACE_WIRELESS
-oobs_wireless_key_type_get_type
 oobs_iface_wireless_get_type
 OOBS_IFACE_WIRELESS_CLASS
 OOBS_IS_IFACE_WIRELESS_CLASS
@@ -219,7 +213,6 @@ oobs_iface_set_auto
 oobs_iface_get_active
 oobs_iface_set_active
 oobs_iface_get_device_name
-oobs_iface_get_hwaddr
 oobs_iface_get_configured
 oobs_iface_set_configured
 oobs_iface_has_gateway
@@ -242,6 +235,8 @@ OOBS_TYPE_IFACE_TYPE
 OobsIfacesConfig
 oobs_ifaces_config_get
 oobs_ifaces_config_get_ifaces
+oobs_ifaces_config_get_available_configuration_methods
+oobs_ifaces_config_get_available_key_types
 <SUBSECTION Standard>
 OobsIfacesConfigClass
 OOBS_IFACES_CONFIG

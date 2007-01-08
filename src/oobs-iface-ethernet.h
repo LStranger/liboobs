@@ -26,14 +26,6 @@ G_BEGIN_DECLS
 #include <glib-object.h>
 #include "oobs-iface.h"
 
-typedef enum {
-  OOBS_METHOD_NONE,
-  OOBS_METHOD_STATIC,
-  OOBS_METHOD_DHCP
-} OobsIfaceConfigurationMethod;
-
-#define OOBS_TYPE_IFACE_CONFIGURATION_METHOD (oobs_iface_configuration_method_get_type ())
-
 #define OOBS_TYPE_IFACE_ETHERNET         (oobs_iface_ethernet_get_type())
 #define OOBS_IFACE_ETHERNET(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_IFACE_ETHERNET, OobsIfaceEthernet))
 #define OOBS_IFACE_ETHERNET_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c),    OOBS_TYPE_IFACE_ETHERNET, OobsIfaceEthernetClass))
@@ -58,7 +50,6 @@ struct _OobsIfaceEthernetClass {
   void (*_oobs_padding2) (void);
 };
 
-GType oobs_iface_configuration_method_get_type ();
 GType oobs_iface_ethernet_get_type ();
 
 G_CONST_RETURN gchar*   oobs_iface_ethernet_get_ip_address (OobsIfaceEthernet *iface);
@@ -76,9 +67,9 @@ void           oobs_iface_ethernet_set_network_address (OobsIfaceEthernet *iface
 G_CONST_RETURN gchar*   oobs_iface_ethernet_get_broadcast_address (OobsIfaceEthernet *iface);
 void           oobs_iface_ethernet_set_broadcast_address (OobsIfaceEthernet *iface, const gchar *address);
 
-OobsIfaceConfigurationMethod  oobs_iface_ethernet_get_configuration_method (OobsIfaceEthernet *iface);
-void  oobs_iface_ethernet_set_configuration_method (OobsIfaceEthernet *iface, OobsIfaceConfigurationMethod method);
-
+G_CONST_RETURN gchar*   oobs_iface_ethernet_get_configuration_method (OobsIfaceEthernet *iface);
+void                    oobs_iface_ethernet_set_configuration_method (OobsIfaceEthernet *iface,
+								      const gchar       *method);
 
 G_END_DECLS
 

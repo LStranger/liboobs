@@ -19,6 +19,8 @@
  */
 
 #include <glib-object.h>
+#include <string.h>
+#include "oobs-ifacesconfig.h"
 #include "oobs-iface-ethernet.h"
 #include "oobs-iface.h"
 
@@ -28,7 +30,8 @@ typedef struct _OobsIfaceEthernetPrivate OobsIfaceEthernetPrivate;
 
 struct _OobsIfaceEthernetPrivate
 {
-  OobsIfaceConfigurationMethod configuration_method;
+  OobsObject *config;
+  gchar *configuration_method;
 
   gchar *address;
   gchar *netmask;
@@ -65,26 +68,6 @@ enum {
 };
 
 G_DEFINE_TYPE (OobsIfaceEthernet, oobs_iface_ethernet, OOBS_TYPE_IFACE);
-
-GType
-oobs_iface_configuration_method_get_type (void)
-{
-  static GType etype = 0;
-
-  if (!etype)
-    {
-      static const GEnumValue values[] =
-	{
-	  { OOBS_METHOD_NONE,   "OOBS_METHOD_NONE",   "none" },
-	  { OOBS_METHOD_STATIC, "OOBS_METHOD_STATIC", "static" },
-	  { OOBS_METHOD_DHCP,   "OOBS_METHOD_DHCP",   "dhcp" },
-	};
-
-      etype = g_enum_register_static ("OobsIfaceConfigurationMethod", values);
-    }
-
-  return etype;
-}
 
 static void
 oobs_iface_ethernet_class_init (OobsIfaceEthernetClass *class)
@@ -136,12 +119,11 @@ oobs_iface_ethernet_class_init (OobsIfaceEthernetClass *class)
 							G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
 				   PROP_CONFIGURATION_METHOD,
-				   g_param_spec_enum ("config_method",
-						      "Iface configuration method",
-						      "Network configuration method for the iface",
-						      OOBS_TYPE_IFACE_CONFIGURATION_METHOD,
-						      OOBS_METHOD_NONE,
-						      G_PARAM_READWRITE));
+				   g_param_spec_string ("config_method",
+							"Iface configuration method",
+							"Network configuration method for the iface",
+							NULL,
+							G_PARAM_READWRITE));
   g_type_class_add_private (object_class,
 			    sizeof (OobsIfaceEthernetPrivate));
 }
@@ -150,16 +132,20 @@ static void
 oobs_iface_ethernet_init (OobsIfaceEthernet *iface)
 {
   OobsIfaceEthernetPrivate *priv;
+  OobsSession *session;
 
   g_return_if_fail (OOBS_IS_IFACE_ETHERNET (iface));
 
   priv = OOBS_IFACE_ETHERNET_GET_PRIVATE (iface);
+  session = oobs_session_get ();
 
+  priv->config  = oobs_ifaces_config_get (session);
   priv->address = NULL;
   priv->netmask = NULL;
   priv->gateway = NULL;
   priv->network = NULL;
   priv->broadcast = NULL;
+  priv->configuration_method = NULL;
   iface->_priv = priv;
 }
 
@@ -179,6 +165,7 @@ oobs_iface_ethernet_finalize (GObject *object)
       g_free (priv->gateway);
       g_free (priv->network);
       g_free (priv->broadcast);
+      g_free (priv->configuration_method);
     }
 
   if (G_OBJECT_CLASS (oobs_iface_ethernet_parent_class)->finalize)
@@ -220,7 +207,8 @@ oobs_iface_ethernet_set_property (GObject      *object,
       priv->broadcast = g_value_dup_string (value);
       break;
     case PROP_CONFIGURATION_METHOD:
-      priv->configuration_method = g_value_get_enum (value);
+      g_free (priv->configuration_method);
+      priv->configuration_method = g_value_dup_string (value);
       break;
     }
 }
@@ -255,7 +243,7 @@ oobs_iface_ethernet_get_property (GObject      *object,
       g_value_set_string (value, priv->broadcast);
       break;
     case PROP_CONFIGURATION_METHOD:
-      g_value_set_enum (value, priv->configuration_method);
+      g_value_set_string (value, priv->configuration_method);
       break;
     }
 }
@@ -264,23 +252,34 @@ static gboolean
 oobs_iface_ethernet_has_gateway (OobsIface *iface)
 {
   OobsIfaceEthernetPrivate *priv;
+  GList *methods = NULL;
 
   priv = OOBS_IFACE_ETHERNET (iface)->_priv;
-  
-  return ((priv->configuration_method == OOBS_METHOD_DHCP) ||
-	  (priv->gateway));
+  methods = oobs_ifaces_config_get_available_configuration_methods (OOBS_IFACES_CONFIG (priv->config));
+
+  /* assume that only the "static" configuration
+   * method needs setting a gateway by hand
+   */
+  return (priv->configuration_method &&
+	  ((strcmp (priv->configuration_method, "static") == 0 && priv->gateway) ||
+	   g_list_find_custom (methods, priv->configuration_method, (GCompareFunc) strcmp)));
 }
 
 static gboolean
 oobs_iface_ethernet_is_configured (OobsIface *iface)
 {
   OobsIfaceEthernetPrivate *priv;
+  GList *methods = NULL;
 
   priv = OOBS_IFACE_ETHERNET (iface)->_priv;
+  methods = oobs_ifaces_config_get_available_configuration_methods (OOBS_IFACES_CONFIG (priv->config));
 
-  return (priv->configuration_method == OOBS_METHOD_DHCP ||
-	  (priv->configuration_method == OOBS_METHOD_STATIC &&
-	   priv->address && priv->netmask));
+  /* assume that all supported configuration methods
+   * except "static" do not require aditional configuration
+   */
+  return (priv->configuration_method &&
+	  ((strcmp (priv->configuration_method, "static") == 0 && priv->address && priv->netmask) ||
+	   g_list_find_custom (methods, priv->configuration_method, (GCompareFunc) strcmp)));
 }
 
 /**
@@ -490,13 +489,14 @@ oobs_iface_ethernet_set_broadcast_address (OobsIfaceEthernet *iface,
  * Returns the configuration method for the interface.
  * 
  * Return Value: The configuration method that the interface uses.
+ * This value must not be modified nor freed.
  **/
-OobsIfaceConfigurationMethod
+G_CONST_RETURN gchar*
 oobs_iface_ethernet_get_configuration_method (OobsIfaceEthernet *iface)
 {
   OobsIfaceEthernetPrivate *priv;
 
-  g_return_val_if_fail (OOBS_IS_IFACE_ETHERNET (iface), OOBS_METHOD_NONE);
+  g_return_val_if_fail (OOBS_IS_IFACE_ETHERNET (iface), NULL);
   
   priv = iface->_priv;
 
@@ -506,17 +506,16 @@ oobs_iface_ethernet_get_configuration_method (OobsIfaceEthernet *iface)
 /**
  * oobs_iface_ethernet_set_configuration_method:
  * @iface: An #OobsIfaceEthernet.
- * @method: An #OobsIfaceConfigurationMethod.
+ * @method: A new configuration method for the interface, or %NULL.
  * 
- * Sets the configuration method that the interface will use.
+ * Sets the configuration method that the interface will use. The valid methods are
+ * provided by oobs_ifaces_config_get_available_configuration_methods().
  **/
 void
-oobs_iface_ethernet_set_configuration_method (OobsIfaceEthernet            *iface,
-					      OobsIfaceConfigurationMethod  method)
+oobs_iface_ethernet_set_configuration_method (OobsIfaceEthernet *iface,
+					      const gchar       *method)
 {
   g_return_if_fail (OOBS_IS_IFACE_ETHERNET (iface));
 
-  /* FIXME: should validate IP address */
-
-  g_object_set (G_OBJECT (iface), "configuration-method", method, NULL);
+  g_object_set (G_OBJECT (iface), "config-method", method, NULL);
 }

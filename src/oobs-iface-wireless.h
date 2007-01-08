@@ -26,12 +26,6 @@ G_BEGIN_DECLS
 #include "oobs-object.h"
 #include "oobs-iface-ethernet.h"
 
-typedef enum {
-  OOBS_WIRELESS_KEY_ASCII,
-  OOBS_WIRELESS_KEY_HEXADECIMAL
-} OobsWirelessKeyType;
-
-#define OOBS_TYPE_WIRELESS_KEY_TYPE      (oobs_wireless_key_type_get_type ())
 #define OOBS_TYPE_IFACE_WIRELESS         (oobs_iface_wireless_get_type())
 #define OOBS_IFACE_WIRELESS(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_IFACE_WIRELESS, OobsIfaceWireless))
 #define OOBS_IFACE_WIRELESS_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c),    OOBS_TYPE_IFACE_WIRELESS, OobsIfaceWirelessClass))
@@ -56,7 +50,6 @@ struct _OobsIfaceWirelessClass {
   void (*_oobs_padding2) (void);
 };
 
-GType oobs_wireless_key_type_get_type ();
 GType oobs_iface_wireless_get_type ();
 
 G_CONST_RETURN gchar* oobs_iface_wireless_get_essid (OobsIfaceWireless *iface);
@@ -65,8 +58,8 @@ void                  oobs_iface_wireless_set_essid (OobsIfaceWireless *iface, c
 G_CONST_RETURN gchar* oobs_iface_wireless_get_key (OobsIfaceWireless *iface);
 void                  oobs_iface_wireless_set_key (OobsIfaceWireless *iface, const gchar *key);
 
-OobsWirelessKeyType   oobs_iface_wireless_get_key_type (OobsIfaceWireless *iface);
-void                  oobs_iface_wireless_set_key_type (OobsIfaceWireless *iface, OobsWirelessKeyType key_type);
+G_CONST_RETURN gchar* oobs_iface_wireless_get_key_type (OobsIfaceWireless *iface);
+void                  oobs_iface_wireless_set_key_type (OobsIfaceWireless *iface, const gchar *key_type);
 
 
 G_END_DECLS

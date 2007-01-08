@@ -44,6 +44,9 @@ struct _OobsIfacesConfigPrivate
   OobsList *plip_ifaces;
   OobsList *modem_ifaces;
   OobsList *isdn_ifaces;
+
+  GList *available_config_methods;
+  GList *available_key_types;
 };
 
 static void oobs_ifaces_config_class_init (OobsIfacesConfigClass *class);
@@ -122,6 +125,12 @@ free_configuration (OobsIfacesConfig *config)
   oobs_list_clear (priv->plip_ifaces);
   oobs_list_clear (priv->modem_ifaces);
   oobs_list_clear (priv->isdn_ifaces);
+
+  g_list_foreach (priv->available_config_methods, (GFunc) g_free, NULL);
+  g_list_free (priv->available_config_methods);
+
+  g_list_foreach (priv->available_key_types, (GFunc) g_free, NULL);
+  g_list_free (priv->available_key_types);
 }
 
 static void
@@ -154,7 +163,6 @@ create_iface_from_message (DBusMessage     *message,
   GObject *iface = NULL; /* shut up gcc */
   DBusMessageIter struct_iter;
   const gchar *dev;
-  gint key_type;
   gboolean active, is_auto;
 
   dbus_message_iter_recurse (iter, &struct_iter);
@@ -186,8 +194,7 @@ create_iface_from_message (DBusMessage     *message,
 
   if (OOBS_IS_IFACE_ETHERNET (iface))
     {
-      const gchar *address, *netmask, *gateway;
-      gint config_method;
+      const gchar *address, *netmask, *gateway, *config_method;
 
       dbus_message_iter_get_basic (&struct_iter, &is_auto);
       dbus_message_iter_next (&struct_iter);
@@ -195,7 +202,7 @@ create_iface_from_message (DBusMessage     *message,
       dbus_message_iter_get_basic (&struct_iter, &active);
       dbus_message_iter_next (&struct_iter);
 
-      dbus_message_iter_get_basic (&struct_iter, &config_method);
+      /* This value is deprecated */
       dbus_message_iter_next (&struct_iter);
 
       address = utils_get_string (&struct_iter);
@@ -217,21 +224,22 @@ create_iface_from_message (DBusMessage     *message,
 		    "ip-address", address,
 		    "ip-mask", netmask,
 		    "gateway-address", gateway,
-		    /* FIXME: can pass config_method like that? */
-		    "config-method", config_method,
 		    NULL);
 
       if (type == OOBS_IFACE_TYPE_WIRELESS)
 	{
-	  const gchar *essid, *key;
+	  const gchar *essid, *key, *key_type;
 
 	  essid = utils_get_string (&struct_iter);
 	  dbus_message_iter_next (&struct_iter);
 
-	  dbus_message_iter_get_basic (&struct_iter, &key_type);
+	  /* This value is deprecated */
 	  dbus_message_iter_next (&struct_iter);
 
 	  key = utils_get_string (&struct_iter);
+	  dbus_message_iter_next (&struct_iter);
+
+	  key_type = utils_get_string (&struct_iter);
 	  dbus_message_iter_next (&struct_iter);
 
 	  g_object_set (iface,
@@ -240,6 +248,10 @@ create_iface_from_message (DBusMessage     *message,
 			"key", key,
 			NULL);
 	}
+
+      config_method = utils_get_string (&struct_iter);
+      dbus_message_iter_next (&struct_iter);
+      g_object_set (iface, "config-method", config_method, NULL);
     }
   else if (OOBS_IS_IFACE_PLIP (iface))
     {
@@ -392,6 +404,12 @@ oobs_ifaces_config_update (OobsObject *object)
 
   dbus_message_iter_next (&iter);
   create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_ISDN, priv->isdn_ifaces);
+
+  dbus_message_iter_next (&iter);
+  priv->available_config_methods = utils_get_string_list_from_dbus_reply (reply, iter);
+
+  dbus_message_iter_next (&iter);
+  priv->available_key_types = utils_get_string_list_from_dbus_reply (reply, iter);
 }
 
 static void
@@ -732,4 +750,44 @@ oobs_ifaces_config_get_ifaces (OobsIfacesConfig *config,
       g_critical ("Unknown interface type");
       return NULL;
     }
+}
+
+/**
+ * oobs_ifaces_config_get_available_configuration_methods:
+ * @config: An #OobsIfaceConfig.
+ * 
+ * Retrieves the list of available configuration methods for ethernet
+ * based interfaces.
+ * 
+ * Return Value: A #GList of strings. This must not be modified or freed.
+ **/
+GList*
+oobs_ifaces_config_get_available_configuration_methods (OobsIfacesConfig *config)
+{
+  OobsIfacesConfigPrivate *priv;
+
+  g_return_val_if_fail (OOBS_IS_IFACES_CONFIG (config), NULL);
+
+  priv = config->_priv;
+  return priv->available_config_methods;
+}
+
+/**
+ * oobs_ifaces_config_get_available_key_types:
+ * @config: An #OobsIfaceConfig.
+ * 
+ * Retrieves the list of available key types methods for wireless
+ * interfaces.
+ * 
+ * Return Value: A #GList of strings. This must not be modified or freed.
+ **/
+GList*
+oobs_ifaces_config_get_available_key_types (OobsIfacesConfig *config)
+{
+  OobsIfacesConfigPrivate *priv;
+
+  g_return_val_if_fail (OOBS_IS_IFACES_CONFIG (config), NULL);
+
+  priv = config->_priv;
+  return priv->available_key_types;
 }

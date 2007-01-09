@@ -1,3 +1,22 @@
+Liboobs 2.17.5, 2007-01-09
+-----------------------------------------------
+
+Liboobs version 2.17.5 "Nihil" has been released.
+
+Liboobs is a lightweight library that provides a GObject based interface to system-tools-backends. It's completely abstracted of the communication and authentication details, making it easy for applications to integrate with the system details.
+
+Changes since last release
+==========================
+
+* update minimum s-t-b to 2.1.2
+* add support for extensible lists of configuration methods and key types, this way individual distributions may add their own support without affecting others (garnacho)
+
+Downloading
+===========
+You can get it from :
+ftp://ftp.gnome.org/pub/GNOME/sources/liboobs/2.17/
+
+
 Liboobs 2.17.4, 2007-01-08
 -----------------------------------------------
 

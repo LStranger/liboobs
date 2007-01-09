@@ -436,8 +436,8 @@ create_dbus_struct_from_iface (DBusMessage     *message,
 
   if (OOBS_IS_IFACE_ETHERNET (iface))
     {
-      gchar *address, *netmask, *gateway;
-      gint config_method;
+      gchar *address, *netmask, *gateway, *config_method;
+      gint pad = 0;
 
       g_object_get (G_OBJECT (iface),
 		    "ip-address", &address,
@@ -446,8 +446,8 @@ create_dbus_struct_from_iface (DBusMessage     *message,
 		    "config-method", &config_method,
 		    NULL);
 
-      /* FIXME: can pass config_method like that? */
-      dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &config_method);
+      /* This field is deprecated */
+      dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &pad);
       utils_append_string (&iter, (configured) ? address : NULL);
       utils_append_string (&iter, (configured) ? netmask : NULL);
 
@@ -459,8 +459,7 @@ create_dbus_struct_from_iface (DBusMessage     *message,
 
       if (OOBS_IS_IFACE_WIRELESS (iface))
 	{
-	  gchar *essid, *key;
-	  gint key_type;
+	  gchar *essid, *key, *key_type;
 
 	  g_object_get (G_OBJECT (iface),
 			"essid", &essid,
@@ -469,16 +468,23 @@ create_dbus_struct_from_iface (DBusMessage     *message,
 			NULL);
 
 	  utils_append_string (&iter, (configured) ? essid : NULL);
-	  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &key_type);
-	  utils_append_string (&iter, (configured) ? key : NULL);
 
+	  /* This field is deprecated */
+	  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &pad);
+	  utils_append_string (&iter, (configured) ? key : NULL);
+	  utils_append_string (&iter, (configured) ? key_type : NULL);
+
+	  g_free (key_type);
 	  g_free (essid);
 	  g_free (key);
 	}
 
+      utils_append_string (&iter, (configured) ? config_method : NULL);
+
       g_free (address);
       g_free (netmask);
       g_free (gateway);
+      g_free (config_method);
     }
   else if (OOBS_IS_IFACE_PLIP (iface))
     {
@@ -577,6 +583,7 @@ create_dbus_struct_from_ifaces_list (OobsObject      *object,
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
+	DBUS_TYPE_STRING_AS_STRING
 	DBUS_STRUCT_END_CHAR_AS_STRING;
       break;
     case OOBS_IFACE_TYPE_WIRELESS:
@@ -593,6 +600,8 @@ create_dbus_struct_from_ifaces_list (OobsObject      *object,
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_TYPE_INT32_AS_STRING
+	DBUS_TYPE_STRING_AS_STRING
+	DBUS_TYPE_STRING_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_STRUCT_END_CHAR_AS_STRING;
       break;

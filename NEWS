@@ -1,3 +1,21 @@
+Liboobs 2.17.90.1, 2007-01-23
+-----------------------------------------------
+
+Liboobs version 2.17.90.1 "Prelude" has been released.
+
+Liboobs is a lightweight library that provides a GObject based interface to system-tools-backends. It's completely abstracted of the communication and authentication details, making it easy for applications to integrate with the system details.
+
+Changes since last release
+==========================
+
+* reduce some dubious g_critical()'s to g_warning()'s
+
+Downloading
+===========
+You can get it from :
+ftp://ftp.gnome.org/pub/GNOME/sources/liboobs/2.17/
+
+
 Liboobs 2.17.90, 2007-01-22
 -----------------------------------------------
 

@@ -197,7 +197,7 @@ connect_object_to_session (OobsObject *object)
 
   if (!connection)
     {
-      g_critical ("OobsSession object hasn't connected to the bus, cannot register OobsObject");
+      g_warning ("OobsSession object hasn't connected to the bus, cannot register OobsObject");
       return;
     }
 
@@ -328,7 +328,7 @@ run_message (OobsObject  *object,
       if (dbus_error_has_name (&priv->dbus_error, DBUS_ERROR_ACCESS_DENIED))
 	*result = OOBS_RESULT_ACCESS_DENIED;
       else
-	g_critical ("There was an unknown error communicating with the backends: %s", priv->dbus_error.message);
+	g_warning ("There was an unknown error communicating with the backends: %s", priv->dbus_error.message);
 
       dbus_error_free (&priv->dbus_error);
       return NULL;

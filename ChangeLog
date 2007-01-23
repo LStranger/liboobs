@@ -1,3 +1,8 @@
+2007-01-23  Carlos Garnacho  <carlosg@gnome.org>
+
+	* src/oobs-object.c: reduce some dubious g_critical()'s to
+	g_warning()'s.
+
 2007-01-22  Carlos Garnacho  <carlosg@gnome.org>
 
 	* Release 2.17.90

@@ -176,5 +176,5 @@ oobs_share_nfs_get_acl (OobsShareNFS *share)
   g_return_val_if_fail (OOBS_IS_SHARE_NFS (share), NULL);
   priv = share->_priv;
 
-  return g_list_copy (priv->acl);
+  return g_slist_copy (priv->acl);
 }

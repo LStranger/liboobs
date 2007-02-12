@@ -1,3 +1,7 @@
+2007-02-12  Carlos Garnacho  <carlosg@gnome.org>
+
+	* Release 2.17.91
+
 2007-02-11  Carlos Garnacho  <carlosg@gnome.org>
 
 	* src/oobs-share-nfs.c (oobs_share_nfs_get_acl): do not mess GLists

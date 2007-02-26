@@ -22,16 +22,7 @@ Object that represents groups configuration.
 
 </para>
 
-
-<!-- ##### ARG OobsGroupsConfig:maximum-gid ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG OobsGroupsConfig:minimum-gid ##### -->
-<para>
-
-</para>
+@parent: 
 
 <!-- ##### FUNCTION oobs_groups_config_get ##### -->
 <para>

@@ -40,6 +40,7 @@ Object that represents the configuration of services that start/stop during init
 
 </para>
 
+@parent: 
 
 <!-- ##### FUNCTION oobs_services_config_get ##### -->
 <para>

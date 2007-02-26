@@ -22,36 +22,7 @@ Object that represents users configuration.
 
 </para>
 
-
-<!-- ##### ARG OobsUsersConfig:default-group ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG OobsUsersConfig:default-home ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG OobsUsersConfig:default-shell ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG OobsUsersConfig:maximum-uid ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG OobsUsersConfig:minimum-uid ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG OobsUsersConfig:use-md5 ##### -->
-<para>
-
-</para>
+@parent: 
 
 <!-- ##### FUNCTION oobs_users_config_get ##### -->
 <para>

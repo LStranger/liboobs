@@ -22,11 +22,7 @@ Object that represents an individual NTP server.
 
 </para>
 
-
-<!-- ##### ARG OobsNTPServer:hostname ##### -->
-<para>
-
-</para>
+@parent: 
 
 <!-- ##### FUNCTION oobs_ntp_server_new ##### -->
 <para>

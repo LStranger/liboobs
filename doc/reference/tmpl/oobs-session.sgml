@@ -43,11 +43,7 @@ Represents a platform where system-tools-backends may run.
 
 </para>
 
-
-<!-- ##### ARG OobsSession:platform ##### -->
-<para>
-
-</para>
+@parent: 
 
 <!-- ##### FUNCTION oobs_session_get ##### -->
 <para>

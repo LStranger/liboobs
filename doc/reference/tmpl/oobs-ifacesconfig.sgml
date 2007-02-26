@@ -41,6 +41,7 @@ Object that represents network interfaces configuration.
 
 </para>
 
+@parent: 
 
 <!-- ##### FUNCTION oobs_ifaces_config_get ##### -->
 <para>

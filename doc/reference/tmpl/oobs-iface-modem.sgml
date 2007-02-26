@@ -54,21 +54,7 @@ Object that represents an individual modem interface.
 
 </para>
 
-
-<!-- ##### ARG OobsIfaceModem:dial-type ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG OobsIfaceModem:serial-port ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG OobsIfaceModem:volume ##### -->
-<para>
-
-</para>
+@parent: 
 
 <!-- ##### FUNCTION oobs_iface_modem_set_serial_port ##### -->
 <para>

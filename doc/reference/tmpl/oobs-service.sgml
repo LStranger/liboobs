@@ -31,11 +31,7 @@ Object that represents an individual init.d service.
 
 </para>
 
-
-<!-- ##### ARG OobsService:name ##### -->
-<para>
-
-</para>
+@parent: 
 
 <!-- ##### FUNCTION oobs_service_set_runlevel_configuration ##### -->
 <para>

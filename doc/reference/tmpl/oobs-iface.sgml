@@ -22,26 +22,7 @@ Base object for network interfaces.
 
 </para>
 
-
-<!-- ##### ARG OobsIface:active ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG OobsIface:auto ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG OobsIface:configured ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG OobsIface:device ##### -->
-<para>
-
-</para>
+@parent: 
 
 <!-- ##### FUNCTION oobs_iface_get_auto ##### -->
 <para>

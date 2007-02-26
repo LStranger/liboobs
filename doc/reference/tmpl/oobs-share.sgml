@@ -22,11 +22,7 @@ Base object for shared folders.
 
 </para>
 
-
-<!-- ##### ARG OobsShare:path ##### -->
-<para>
-
-</para>
+@parent: 
 
 <!-- ##### FUNCTION oobs_share_get_path ##### -->
 <para>

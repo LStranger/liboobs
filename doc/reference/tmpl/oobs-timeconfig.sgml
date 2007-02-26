@@ -22,16 +22,7 @@ Object that represents time and date configuration.
 
 </para>
 
-
-<!-- ##### ARG OobsTimeConfig:timezone ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG OobsTimeConfig:unix-time ##### -->
-<para>
-
-</para>
+@parent: 
 
 <!-- ##### FUNCTION oobs_time_config_get ##### -->
 <para>

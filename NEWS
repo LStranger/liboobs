@@ -1,3 +1,21 @@
+Liboobs 2.18.0, 2007-03-12
+-----------------------------------------------
+
+Liboobs version 2.18.0 "As the wind blows" has been released.
+
+Liboobs is a lightweight library that provides a GObject based interface to system-tools-backends. It's completely abstracted of the communication and authentication details, making it easy for applications to integrate with the system details.
+
+Changes since last release
+==========================
+
+* Zero
+
+Downloading
+===========
+You can get it from :
+ftp://ftp.gnome.org/pub/GNOME/sources/liboobs/2.18/
+
+
 Liboobs 2.17.92, 2007-02-12
 -----------------------------------------------
 

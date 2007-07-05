@@ -1,4 +1,4 @@
-2007-06-05  Carlos Garnacho  <carlosg@gnome.org>
+2007-07-05  Carlos Garnacho  <carlosg@gnome.org>
 
 	* src/oobs-object.c (run_message) (run_message_async) avoid critical
 	warnings when there is no connection with the bus.

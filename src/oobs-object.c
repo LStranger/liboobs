@@ -316,11 +316,14 @@ run_message (OobsObject  *object,
   DBusMessage       *reply;
 
   priv = object->_priv;
+
+  if (!oobs_session_get_connected (priv->session))
+    {
+      g_warning ("could send message, OobsSession hasn't connected to the bus");
+      return NULL;
+    }
+
   connection = _oobs_session_get_connection_bus (priv->session);
-
-  g_return_val_if_fail (oobs_session_get_connected (priv->session), NULL);
-  g_return_val_if_fail (connection != NULL, NULL);
-
   reply = dbus_connection_send_with_reply_and_block (connection, message, -1, &priv->dbus_error);
 
   if (dbus_error_is_set (&priv->dbus_error))
@@ -395,11 +398,14 @@ run_message_async (OobsObject          *object,
   DBusConnection *connection;
 
   priv = object->_priv;
+
+  if (!oobs_session_get_connected (priv->session))
+    {
+      g_warning ("could not send message, OobsSession hasn't connected to the bus");
+      return;
+    }
+
   connection = _oobs_session_get_connection_bus (priv->session);
-
-  g_return_if_fail (oobs_session_get_connected (priv->session));
-  g_return_if_fail (connection != NULL);
-
   dbus_connection_send_with_reply (connection, message, &call, -1);
 
   async_data = g_new0 (OobsObjectAsyncCallbackData, 1);
@@ -559,7 +565,7 @@ oobs_object_update (OobsObject *object)
       result = update_object_from_message (object, reply);
       dbus_message_unref (reply);
     }
-      
+
   dbus_message_unref (message);
   return result;
 }

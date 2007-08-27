@@ -68,6 +68,7 @@ struct _OobsIfacesConfigClass
 };
 
 GType       oobs_ifaces_config_get_type     (void);
+GType       oobs_iface_type_get_type        (void);
 
 OobsObject* oobs_ifaces_config_get          (OobsSession *session);
 OobsList*   oobs_ifaces_config_get_ifaces   (OobsIfacesConfig *config,

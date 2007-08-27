@@ -74,6 +74,7 @@ oobs_iface_type_get_type (void)
 	  { OOBS_IFACE_TYPE_PLIP,     "OOBS_IFACE_TYPE_PLIP",     "parallel" },
 	  { OOBS_IFACE_TYPE_MODEM,    "OOBS_IFACE_TYPE_MODEM",    "modem" },
 	  { OOBS_IFACE_TYPE_ISDN,     "OOBS_IFACE_TYPE_ISDN",     "isdn" },
+ 	  { 0, NULL, NULL }
 	};
 
       etype = g_enum_register_static ("OobsIfaceType", values);

@@ -60,6 +60,7 @@ struct _OobsListIter
 };
 
 GType      oobs_list_get_type       (void);
+GType      oobs_list_iter_get_type  (void);
 
 gboolean   oobs_list_get_iter_first (OobsList *list, OobsListIter *iter);
 gboolean   oobs_list_iter_next      (OobsList *list, OobsListIter *iter);

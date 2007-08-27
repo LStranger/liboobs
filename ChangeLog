@@ -1,3 +1,14 @@
+2007-08-27  John Finlay  <finlay@moeraki.com>
+
+	* src/oobs-list.h (oobs_list_iter_get_type): 
+	* src/oobs-ifacesconfig.h (oobs_iface_type_get_type): Add GType
+	declarations
+
+	* src/oobs-iface-modem.c (oobs_modem_volume_get_type) 
+	(oobs_dial_type_get_type): 
+	* src/oobs-ifacesconfig.c (oobs_iface_type_get_type): Add missing
+	null values entries.
+
 2007-07-10  Carlos Garnacho  <carlosg@gnome.org>
 
 	* Release 2.19.0

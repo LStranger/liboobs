@@ -71,7 +71,8 @@ oobs_modem_volume_get_type (void)
           { OOBS_MODEM_VOLUME_SILENT, "OOBS_MODEM_VOLUME_SILENT", "silent" },
           { OOBS_MODEM_VOLUME_LOW,    "OOBS_MODEM_VOLUME_LOW",    "low" },
           { OOBS_MODEM_VOLUME_MEDIUM, "OOBS_MODEM_VOLUME_MEDIUM", "medium" },
-          { OOBS_MODEM_VOLUME_LOUD,   "OOBS_MODEM_VOLUME_LOUD",   "loud" }
+          { OOBS_MODEM_VOLUME_LOUD,   "OOBS_MODEM_VOLUME_LOUD",   "loud" },
+          { 0, NULL, NULL }
         };
 
       etype = g_enum_register_static ("OobsModemVolume", values);
@@ -90,7 +91,8 @@ oobs_dial_type_get_type (void)
       static const GEnumValue values[] =
         {
 	  { OOBS_DIAL_TYPE_TONES,  "OOBS_DIAL_TYPE_TONES",  "tones" },
-	  { OOBS_DIAL_TYPE_PULSES, "OOBS_DIAL_TYPE_PULSES", "pulses" }
+	  { OOBS_DIAL_TYPE_PULSES, "OOBS_DIAL_TYPE_PULSES", "pulses" },
+ 	  { 0, NULL, NULL }
         };
 
       etype = g_enum_register_static ("OobsDialType", values);

@@ -1,11 +1,7 @@
 WHAT IS LIBOOBS?
 ================
 
-Author: Carlos Garnacho  <carlosg@gnome.org>
-
 Liboobs is a wrapping library to the System Tools Backends, it will provide easy to access GObjects to system configuration details, like users, groups and network interfaces, it will handle sessions with the backend and data consistency too
-
-To compile, you will need system-tools-backends 2.0 and DBus >= 0.31
 
 WHERE DOES THIS WEIRD NAME COME FROM?
 =====================================

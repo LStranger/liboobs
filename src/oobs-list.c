@@ -285,7 +285,7 @@ oobs_list_remove (OobsList *list, OobsListIter *iter)
 
   iter->data = next;
 
-  return (iter->data != NULL);
+  return TRUE;
 }
 
 /**

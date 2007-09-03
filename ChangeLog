@@ -1,5 +1,9 @@
 2007-09-03  Carlos Garnacho  <carlosg@gnome.org>
 
+	* Release 2.19.92
+
+2007-09-03  Carlos Garnacho  <carlosg@gnome.org>
+
 	* configure.in, autogen.sh, doc/reference/Makefile.am: s/src/oobs/ to
 	be more friendly to the type scanner in docs.
 	* doc/reference/liboobs.types: fill in the types in liboobs.

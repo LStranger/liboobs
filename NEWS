@@ -1,3 +1,24 @@
+Liboobs 2.19.92, 2007-09-03
+-----------------------------------------------
+
+Liboobs version 2.19.92 "Angels fall" has been released.
+
+Liboobs is a lightweight library that provides a GObject based interface to system-tools-backends. It's completely abstracted of the communication and authentication details, making it easy for applications to integrate with the system details.
+
+Changes since last release
+==========================
+
+- make oobs_list_remove() return the correct value when removing the last element in the list (John Finlay)
+- scan correctly for liboobs types when building the docs (garnacho)
+
+Thanks to anyone involved!
+
+Downloading
+===========
+You can get it from :
+ftp://ftp.gnome.org/pub/GNOME/sources/liboobs/2.19/
+
+
 Liboobs 2.19.91, 2007-08-28
 -----------------------------------------------
 

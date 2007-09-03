@@ -22,7 +22,61 @@ Object that represents an individual user.
 
 </para>
 
-@parent: 
+
+<!-- ##### ARG OobsUser:crypted-password ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsUser:full-name ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsUser:home-directory ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsUser:home-phone ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsUser:name ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsUser:other-data ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsUser:password ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsUser:room-number ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsUser:shell ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsUser:uid ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsUser:work-phone ##### -->
+<para>
+
+</para>
 
 <!-- ##### FUNCTION oobs_user_new ##### -->
 <para>

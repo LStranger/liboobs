@@ -22,7 +22,16 @@ Object that represents an individual PLIP interface.
 
 </para>
 
-@parent: 
+
+<!-- ##### ARG OobsIfacePlip:address ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsIfacePlip:remote-address ##### -->
+<para>
+
+</para>
 
 <!-- ##### FUNCTION oobs_iface_plip_get_address ##### -->
 <para>

@@ -22,7 +22,26 @@ Object that represents an individual group.
 
 </para>
 
-@parent: 
+
+<!-- ##### ARG OobsGroup:crypted-password ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsGroup:gid ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsGroup:name ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsGroup:password ##### -->
+<para>
+
+</para>
 
 <!-- ##### FUNCTION oobs_group_new ##### -->
 <para>

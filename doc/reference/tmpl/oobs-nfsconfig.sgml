@@ -22,7 +22,6 @@ Object that represents NFS configuration.
 
 </para>
 
-@parent: 
 
 <!-- ##### FUNCTION oobs_nfs_config_get ##### -->
 <para>

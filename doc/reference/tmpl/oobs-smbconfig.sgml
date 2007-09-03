@@ -22,7 +22,26 @@ Object that represents SMB configuration.
 
 </para>
 
-@parent: 
+
+<!-- ##### ARG OobsSMBConfig:description ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsSMBConfig:is-wins-server ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsSMBConfig:wins-server ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsSMBConfig:workgroup ##### -->
+<para>
+
+</para>
 
 <!-- ##### FUNCTION oobs_smb_config_get ##### -->
 <para>

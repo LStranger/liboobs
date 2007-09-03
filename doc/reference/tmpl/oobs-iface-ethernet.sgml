@@ -22,7 +22,36 @@ Object that represents an individual Ethernet interface.
 
 </para>
 
-@parent: 
+
+<!-- ##### ARG OobsIfaceEthernet:broadcast-address ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsIfaceEthernet:config-method ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsIfaceEthernet:gateway-address ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsIfaceEthernet:ip-address ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsIfaceEthernet:ip-mask ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsIfaceEthernet:network-address ##### -->
+<para>
+
+</para>
 
 <!-- ##### FUNCTION oobs_iface_ethernet_get_ip_address ##### -->
 <para>

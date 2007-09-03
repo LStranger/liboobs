@@ -22,7 +22,23 @@ OobsObject is the base object for all Oobs*Config objects, contains all the nece
 
 </para>
 
-@parent: 
+
+<!-- ##### SIGNAL OobsObject::changed ##### -->
+<para>
+The changed signal is emitted when the underlying configuration changes. This is just a notification, if you want to update it you will have to call oobs_object_update() or oobs_object_update_async() yourself.
+</para>
+
+@oobsobject: the object which received the signal.
+
+<!-- ##### ARG OobsObject:remote-object ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsObject:session ##### -->
+<para>
+
+</para>
 
 <!-- ##### USER_FUNCTION OobsObjectAsyncFunc ##### -->
 <para>

@@ -30,7 +30,6 @@ Object that represents an individual NFS share.
 
 </para>
 
-@parent: 
 
 <!-- ##### FUNCTION oobs_share_nfs_new ##### -->
 <para>

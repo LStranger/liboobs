@@ -22,7 +22,11 @@ Object that represents an individual static host settings.
 
 </para>
 
-@parent: 
+
+<!-- ##### ARG OobsStaticHost:ip-address ##### -->
+<para>
+
+</para>
 
 <!-- ##### FUNCTION oobs_static_host_new ##### -->
 <para>

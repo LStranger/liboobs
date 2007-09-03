@@ -39,7 +39,21 @@ Object that represents an individual SMB share.
 
 </para>
 
-@parent: 
+
+<!-- ##### ARG OobsShareSMB:comment ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsShareSMB:flags ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG OobsShareSMB:name ##### -->
+<para>
+
+</para>
 
 <!-- ##### FUNCTION oobs_share_smb_get_name ##### -->
 <para>

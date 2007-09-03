@@ -7,11 +7,11 @@ test -z "$srcdir" && srcdir=.
 PKG_NAME="Liboobs"
 
 (test -f $srcdir/configure.in \
- && test -f $srcdir/src/oobs-session.c) || {
+ && test -f $srcdir/oobs/oobs-session.c) || {
     echo -n "**Error**: Directory "\`$srcdir\'" does not look like the"
     echo " top-level directory"
     echo ""
-    echo "Perhaps you need to \"cvs -z3 co liboobs\" in \"..\" ?"
+    echo "Perhaps you need to \"svn co liboobs\" in \"..\" ?"
     echo
     exit 1
 }

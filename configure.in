@@ -1,6 +1,6 @@
 AC_PREREQ(2.52)
 AC_INIT(liboobs, 2.19.91)
-AC_CONFIG_SRCDIR(src/oobs-session.c)
+AC_CONFIG_SRCDIR(oobs/oobs-session.c)
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
 
 AM_CONFIG_HEADER(config.h)
@@ -63,7 +63,7 @@ Makefile
 doc/Makefile
 doc/reference/Makefile
 doc/reference/version.xml
-src/Makefile
+oobs/Makefile
 liboobs-1.pc
 ])
 

@@ -41,7 +41,11 @@ OobsListIter is the element used to iterate through lists and to get/modify elem
 
 </para>
 
-@parent: 
+
+<!-- ##### ARG OobsList:contained-type ##### -->
+<para>
+
+</para>
 
 <!-- ##### FUNCTION oobs_list_get_iter_first ##### -->
 <para>

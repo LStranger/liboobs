@@ -1,5 +1,11 @@
 2007-09-03  Carlos Garnacho  <carlosg@gnome.org>
 
+	* configure.in, autogen.sh, doc/reference/Makefile.am: s/src/oobs/ to
+	be more friendly to the type scanner in docs.
+	* doc/reference/liboobs.types: fill in the types in liboobs.
+
+2007-09-03  Carlos Garnacho  <carlosg@gnome.org>
+
 	* src/oobs-list.c (oobs_list_remove): do not return FALSE if
 	iter->data is NULL, that's valid when removing the last item in the
 	list (#472460, John Finlay <finlay@moeraki.com>)

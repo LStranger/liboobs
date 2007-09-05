@@ -595,8 +595,8 @@ oobs_users_config_commit (OobsObject *object)
   dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32,  &priv->use_md5);
   dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32,  &priv->minimum_uid);
   dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32,  &priv->maximum_uid);
-  dbus_message_iter_append_basic (&iter, DBUS_TYPE_STRING, &priv->default_home);
-  dbus_message_iter_append_basic (&iter, DBUS_TYPE_STRING, &priv->default_shell);
+  utils_append_string (&iter, priv->default_home);
+  utils_append_string (&iter, priv->default_shell);
 
   default_gid = (priv->default_group) ? oobs_group_get_gid (priv->default_group) : -1;
   dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &default_gid);

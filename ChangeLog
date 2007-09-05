@@ -1,3 +1,8 @@
+2007-09-05  Carlos Garnacho  <carlosg@gnome.org>
+
+	* oobs/oobs-usersconfig.c (oobs_users_config_commit): use
+	utils_append_string() with two missing strings. Fixes #425062.
+
 2007-09-03  Carlos Garnacho  <carlosg@gnome.org>
 
 	* Release 2.19.92

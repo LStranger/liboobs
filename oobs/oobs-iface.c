@@ -48,12 +48,19 @@ static void oobs_iface_get_property (GObject      *object,
 				     GParamSpec   *pspec);
 
 enum {
+  STATE_CHANGED,
+  LAST_SIGNAL
+};
+
+enum {
   PROP_0,
   PROP_AUTO,
   PROP_ENABLED,
   PROP_CONFIGURED,
   PROP_DEV
 };
+
+static guint signals [LAST_SIGNAL] = { 0 };
 
 G_DEFINE_ABSTRACT_TYPE (OobsIface, oobs_iface, G_TYPE_OBJECT);
 
@@ -94,6 +101,15 @@ oobs_iface_class_init (OobsIfaceClass *class)
 							"Device name of the iface",
 							NULL,
 							G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+
+  signals [STATE_CHANGED] = g_signal_new ("state-changed",
+					  G_OBJECT_CLASS_TYPE (object_class),
+					  G_SIGNAL_RUN_LAST,
+					  G_STRUCT_OFFSET (OobsIfaceClass, state_changed),
+					  NULL, NULL,
+					  g_cclosure_marshal_VOID__VOID,
+					  G_TYPE_NONE, 0);
+
   g_type_class_add_private (object_class,
 			    sizeof (OobsIfacePrivate));
 }

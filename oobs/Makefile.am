@@ -43,6 +43,7 @@ oobsinclude_HEADERS= 	\
 	oobs-result.h
 
 oobs_private_headers = 	\
+	iface-state-monitor.h		\
 	oobs-defines.h			\
 	oobs-groupsconfig-private.h	\
 	oobs-list-private.h		\
@@ -80,6 +81,12 @@ liboobs_1_la_SOURCES = \
 	oobs-ifacesconfig.c		\
 	oobs-service.c			\
 	oobs-servicesconfig.c
+
+if HAVE_RTNETLINK
+liboobs_1_la_SOURCES += iface-state-monitor-linux.c
+else
+liboobs_1_la_SOURCES += iface-state-monitor-dummy.c
+endif
 
 liboobs_1_la_LIBADD= $(OOBS_LIBS)
 liboobs_1_la_LDFLAGS= $(libtool_opts)

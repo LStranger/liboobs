@@ -1,5 +1,16 @@
 2007-09-13  Carlos Garnacho  <carlosg@gnome.org>
 
+	Added iface state monitoring.
+
+	* oobs/iface-state-monitor.h: Added.
+	* oobs/iface-state-monitor-linux.c: Added Linux implementation.
+	* oobs/iface-state-monitor-dummy.c: Added dummy implementation.
+	* oobs/oobs-ifacesconfig.c: connect to iface state monitoring.
+	* oobs/oobs-iface.[ch]: add ::state-changed signal.
+	* configure.in, oobs/Makefile.am: autofoo bar.
+
+2007-09-13  Carlos Garnacho  <carlosg@gnome.org>
+
 	* oobs/oobs-user.[ch] (oobs_user_get_active): new API, returns whether
 	a user is currently logged in the computer or not by using utmp.
 

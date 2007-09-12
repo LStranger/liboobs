@@ -29,6 +29,7 @@
 #include "oobs-iface-plip.h"
 #include "oobs-iface-modem.h"
 #include "oobs-iface-isdn.h"
+#include "iface-state-monitor.h"
 #include "utils.h"
 
 #define IFACES_CONFIG_REMOTE_OBJECT "IfacesConfig"
@@ -47,6 +48,8 @@ struct _OobsIfacesConfigPrivate
 
   GList *available_config_methods;
   GList *available_key_types;
+
+  GHashTable *ifaces;
 };
 
 static void oobs_ifaces_config_class_init (OobsIfacesConfigClass *class);
@@ -98,6 +101,26 @@ oobs_ifaces_config_class_init (OobsIfacesConfigClass *class)
 }
 
 static void
+oobs_ifaces_config_iface_monitor (OobsIfacesConfig *config,
+				  const gchar      *iface_name,
+				  gboolean          iface_active)
+{
+  OobsIfacesConfigPrivate *priv;
+  OobsIface *iface;
+
+  priv = config->_priv;
+  iface = g_hash_table_lookup (priv->ifaces, iface_name);
+
+  g_return_if_fail (OOBS_IS_IFACE (iface));
+
+  if (iface_active != oobs_iface_get_active (iface))
+    {
+      oobs_iface_set_active (iface, iface_active);
+      g_signal_emit_by_name (iface, "state-changed");
+    }
+}
+
+static void
 oobs_ifaces_config_init (OobsIfacesConfig *config)
 {
   OobsIfacesConfigPrivate *priv;
@@ -111,6 +134,8 @@ oobs_ifaces_config_init (OobsIfacesConfig *config)
   priv->modem_ifaces = _oobs_list_new (OOBS_TYPE_IFACE_MODEM);
   priv->isdn_ifaces = _oobs_list_new (OOBS_TYPE_IFACE_ISDN);
   config->_priv = priv;
+
+  iface_state_monitor_init (config, oobs_ifaces_config_iface_monitor);
 }
 
 static void
@@ -132,6 +157,12 @@ free_configuration (OobsIfacesConfig *config)
 
   g_list_foreach (priv->available_key_types, (GFunc) g_free, NULL);
   g_list_free (priv->available_key_types);
+
+  if (priv->ifaces)
+    {
+      g_hash_table_destroy (priv->ifaces);
+      priv->ifaces = NULL;
+    }
 }
 
 static void
@@ -355,11 +386,13 @@ static void
 create_ifaces_list (DBusMessage     *reply,
 		    DBusMessageIter *iter,
 		    OobsIfaceType    type,
-		    OobsList        *list)
+		    OobsList        *list,
+		    GHashTable      *ifaces)
 {
   GObject *iface;
   OobsListIter list_iter;
   DBusMessageIter elem_iter;
+  const gchar *name;
 
   dbus_message_iter_recurse (iter, &elem_iter);
 
@@ -369,8 +402,11 @@ create_ifaces_list (DBusMessage     *reply,
 
       oobs_list_append (list, &list_iter);
       oobs_list_set (list, &list_iter, iface);
-      g_object_unref (iface);
 
+      name = oobs_iface_get_device_name (OOBS_IFACE (iface));
+      g_hash_table_insert (ifaces, (gpointer) name, iface);
+
+      g_object_unref (iface);
       dbus_message_iter_next (&elem_iter);
     }
 }
@@ -388,23 +424,25 @@ oobs_ifaces_config_update (OobsObject *object)
   /* First of all, free the previous configuration */
   free_configuration (OOBS_IFACES_CONFIG (object));
 
+  priv->ifaces = g_hash_table_new (g_str_hash, g_str_equal);
+
   dbus_message_iter_init (reply, &iter);
-  create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_ETHERNET, priv->ethernet_ifaces);
+  create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_ETHERNET, priv->ethernet_ifaces, priv->ifaces);
 
   dbus_message_iter_next (&iter);
-  create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_WIRELESS, priv->wireless_ifaces);
+  create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_WIRELESS, priv->wireless_ifaces, priv->ifaces);
 
   dbus_message_iter_next (&iter);
-  create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_IRLAN, priv->irlan_ifaces);
+  create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_IRLAN, priv->irlan_ifaces, priv->ifaces);
 
   dbus_message_iter_next (&iter);
-  create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_PLIP, priv->plip_ifaces);
+  create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_PLIP, priv->plip_ifaces, priv->ifaces);
 
   dbus_message_iter_next (&iter);
-  create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_MODEM, priv->modem_ifaces);
+  create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_MODEM, priv->modem_ifaces, priv->ifaces);
 
   dbus_message_iter_next (&iter);
-  create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_ISDN, priv->isdn_ifaces);
+  create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_ISDN, priv->isdn_ifaces, priv->ifaces);
 
   dbus_message_iter_next (&iter);
   priv->available_config_methods = utils_get_string_list_from_dbus_reply (reply, iter);

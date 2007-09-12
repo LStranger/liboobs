@@ -46,9 +46,10 @@ struct _OobsIfaceClass {
   GObjectClass parent_class;
 
   gboolean (*is_configured) (OobsIface*);
-  gboolean (*has_gateway) (OobsIface*);
-  void (*_oobs_padding1) (void);
-  void (*_oobs_padding2) (void);
+  gboolean (*has_gateway)   (OobsIface*);
+  void     (*state_changed) (OobsIface *iface);
+
+  void     (*_oobs_padding2) (void);
 };
 
 GType oobs_iface_get_type (void);

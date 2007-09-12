@@ -1,3 +1,8 @@
+2007-09-13  Carlos Garnacho  <carlosg@gnome.org>
+
+	* oobs/oobs-user.[ch] (oobs_user_get_active): new API, returns whether
+	a user is currently logged in the computer or not by using utmp.
+
 2007-09-05  Carlos Garnacho  <carlosg@gnome.org>
 
 	* oobs/oobs-usersconfig.c (oobs_users_config_commit): use

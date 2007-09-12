@@ -23,6 +23,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <crypt.h>
+#include <utmp.h>
 
 #include "oobs-usersconfig.h"
 #include "oobs-usersconfig-private.h"
@@ -30,7 +32,6 @@
 #include "oobs-group.h"
 #include "oobs-defines.h"
 #include "utils.h"
-#include <crypt.h>
 
 #define OOBS_USER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_USER, OobsUserPrivate))
 
@@ -84,7 +85,8 @@ enum
   PROP_ROOM_NO,
   PROP_WORK_PHONE_NO,
   PROP_HOME_PHONE_NO,
-  PROP_OTHER_DATA
+  PROP_OTHER_DATA,
+  PROP_ACTIVE
 };
 
 G_DEFINE_TYPE (OobsUser, oobs_user, G_TYPE_OBJECT);
@@ -176,6 +178,13 @@ oobs_user_class_init (OobsUserClass *class)
 							"Aditional data for the user",
 							NULL,
 							G_PARAM_READWRITE));
+  g_object_class_install_property (object_class,
+				   PROP_OTHER_DATA,
+				   g_param_spec_boolean ("active",
+							 "Active",
+							 "Whether the user is active",
+							 FALSE,
+							 G_PARAM_READABLE));
   g_type_class_add_private (object_class,
 			    sizeof (OobsUserPrivate));
 }
@@ -329,6 +338,9 @@ oobs_user_get_property (GObject      *object,
       break;
     case PROP_OTHER_DATA:
       g_value_set_string (value, priv->other_data);
+      break;
+    case PROP_ACTIVE:
+      g_value_set_boolean (value, oobs_user_get_active (user));
       break;
     }
 }
@@ -822,4 +834,35 @@ oobs_user_set_other_data (OobsUser *user, const gchar *data)
   g_return_if_fail (OOBS_IS_USER (user));
 
   g_object_set (G_OBJECT (user), "other-data", data, NULL);
+}
+
+/**
+ * oobs_user_get_active:
+ * @user: An #OobsUser
+ *
+ * Returns whether the use is currently logged in the system.
+ *
+ * Return Value: #TRUE if the user is logged in the system.
+ **/
+gboolean
+oobs_user_get_active (OobsUser *user)
+{
+  struct utmp *entry;
+  const gchar *login;
+  gboolean match = FALSE;
+
+  g_return_val_if_fail (OOBS_IS_USER (user), FALSE);
+
+  login = oobs_user_get_login_name (user);
+
+  while (!match && (entry = getutent ()) != NULL)
+    {
+      match = (entry->ut_type == USER_PROCESS &&
+	       strcmp (entry->ut_user, login) == 0);
+    }
+
+  /* close utmp */
+  endutent ();
+
+  return match;
 }

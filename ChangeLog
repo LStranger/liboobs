@@ -1,5 +1,9 @@
 2007-09-13  Carlos Garnacho  <carlosg@gnome.org>
 
+	* configure.in: bump version number.
+
+2007-09-13  Carlos Garnacho  <carlosg@gnome.org>
+
 	Added iface state monitoring.
 
 	* oobs/iface-state-monitor.h: Added.

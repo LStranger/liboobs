@@ -111,6 +111,9 @@ oobs_ifaces_config_iface_monitor (OobsIfacesConfig *config,
   priv = config->_priv;
   iface = g_hash_table_lookup (priv->ifaces, iface_name);
 
+  if (!iface)
+    return;
+
   g_return_if_fail (OOBS_IS_IFACE (iface));
 
   if (iface_active != oobs_iface_get_active (iface))

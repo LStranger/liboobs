@@ -1,3 +1,8 @@
+2007-09-14  Carlos Garnacho  <carlosg@gnome.org>
+
+	* oobs/oobs-ifacesconfig.c (oobs_ifaces_config_iface_monitor): Do not
+	g_return_if_fail() if iface is NULL, that's legal.
+
 2007-09-13  Carlos Garnacho  <carlosg@gnome.org>
 
 	* configure.in: bump version number.

@@ -1,3 +1,23 @@
+Liboobs 2.20.0, 2007-09-14
+-----------------------------------------------
+
+Liboobs version 2.20.0 "Because of who you are" has been released.
+
+Liboobs is a lightweight library that provides a GObject based interface to system-tools-backends. It's completely abstracted of the communication and authentication details, making it easy for applications to integrate with the system details.
+
+Changes since last release
+==========================
+
+- Fix #425062: crash in Users and Groups: trying to add a user (garnacho)
+
+Thanks to anyone involved!
+
+Downloading
+===========
+You can get it from :
+ftp://ftp.gnome.org/pub/GNOME/sources/liboobs/2.20/
+
+
 Liboobs 2.19.92, 2007-09-03
 -----------------------------------------------
 

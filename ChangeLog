@@ -1,3 +1,7 @@
+2007-09-14  Carlos Garnacho  <carlosg@gnome.org>
+
+	* Release 2.20.0
+
 2007-09-05  Carlos Garnacho  <carlosg@gnome.org>
 
 	* oobs/oobs-usersconfig.c (oobs_users_config_commit): use

@@ -45,13 +45,13 @@ utils_create_dbus_array_from_string_list (GList           *list,
 
 GList*
 utils_get_string_list_from_dbus_reply (DBusMessage     *reply,
-				       DBusMessageIter  iter)
+				       DBusMessageIter *iter)
 {
   DBusMessageIter elem_iter;
   GList *l = NULL;
   gchar *elem;
 
-  dbus_message_iter_recurse (&iter, &elem_iter);
+  dbus_message_iter_recurse (iter, &elem_iter);
 
   while (dbus_message_iter_get_arg_type (&elem_iter) == DBUS_TYPE_STRING)
     {
@@ -59,6 +59,8 @@ utils_get_string_list_from_dbus_reply (DBusMessage     *reply,
       l = g_list_prepend (l, g_strdup (elem));
       dbus_message_iter_next (&elem_iter);
     }
+
+  dbus_message_iter_next (iter);
 
   return g_list_reverse (l);
 }
@@ -88,16 +90,61 @@ utils_append_string (DBusMessageIter *iter, const gchar *str)
   dbus_message_iter_append_basic (iter, DBUS_TYPE_STRING, (str) ? &str : &empty_str); 
 }
 
-const gchar*
+void
+utils_append_int (DBusMessageIter *iter, gint value)
+{
+  dbus_message_iter_append_basic (iter, DBUS_TYPE_INT32, &value);
+}
+
+void
+utils_append_uint (DBusMessageIter *iter, guint value)
+{
+  dbus_message_iter_append_basic (iter, DBUS_TYPE_UINT32, &value);
+}
+
+static void
+utils_get_basic (DBusMessageIter *iter,
+		 gint             type,
+		 gpointer         value)
+{
+  if (G_UNLIKELY (dbus_message_iter_get_arg_type (iter) != type))
+    {
+      g_critical ("Different type while parsing message, found %c, expecting %c\n",
+		  dbus_message_iter_get_arg_type (iter), type);
+      g_assert_not_reached ();
+    }
+
+  dbus_message_iter_get_basic (iter, value);
+  dbus_message_iter_next (iter);
+}
+
+G_CONST_RETURN gchar*
 utils_get_string (DBusMessageIter *iter)
 {
   const gchar *str;
 
-  g_return_val_if_fail (dbus_message_iter_get_arg_type (iter) == DBUS_TYPE_STRING, NULL);
-  dbus_message_iter_get_basic (iter, &str);
+  utils_get_basic (iter, DBUS_TYPE_STRING, &str);
 
   if (str && *str)
     return str;
 
   return NULL;
+}
+
+gint
+utils_get_int (DBusMessageIter *iter)
+{
+  gint value = 0;
+
+  utils_get_basic (iter, DBUS_TYPE_INT32, &value);
+  return value;
+}
+
+guint
+utils_get_uint (DBusMessageIter *iter)
+{
+  guint value = 0;
+
+  utils_get_basic (iter, DBUS_TYPE_UINT32, &value);
+  return value;
 }

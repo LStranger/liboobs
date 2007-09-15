@@ -206,7 +206,7 @@ create_share_from_dbus_reply (OobsObject      *object,
 			      DBusMessageIter  struct_iter)
 {
   DBusMessageIter iter;
-  gchar *name, *comment, *path;
+  const gchar *name, *comment, *path;
   OobsShareSMBFlags flags;
   gboolean value;
 
@@ -217,35 +217,25 @@ create_share_from_dbus_reply (OobsObject      *object,
 
   dbus_message_iter_recurse (&struct_iter, &iter);
 
-  dbus_message_iter_get_basic (&iter, &name);
-  dbus_message_iter_next (&iter);
-
-  dbus_message_iter_get_basic (&iter, &path);
-  dbus_message_iter_next (&iter);
-  
-  dbus_message_iter_get_basic (&iter, &comment);
-  dbus_message_iter_next (&iter);
-
-  dbus_message_iter_get_basic (&iter, &value);
-  dbus_message_iter_next (&iter);
+  name = utils_get_string (&iter);
+  path = utils_get_string (&iter);
+  comment = utils_get_string (&iter);
+  value = utils_get_int (&iter);
 
   if (value)
     flags |= OOBS_SHARE_SMB_ENABLED;
 
-  dbus_message_iter_get_basic (&iter, &value);
-  dbus_message_iter_next (&iter);
+  value = utils_get_int (&iter);
 
   if (value)
     flags |= OOBS_SHARE_SMB_BROWSABLE;
-  
-  dbus_message_iter_get_basic (&iter, &value);
-  dbus_message_iter_next (&iter);
+
+  value = utils_get_int (&iter);
 
   if (value)
     flags |= OOBS_SHARE_SMB_PUBLIC;
-  
-  dbus_message_iter_get_basic (&iter, &value);
-  dbus_message_iter_next (&iter);
+
+  value = utils_get_int (&iter);
 
   if (value)
     flags |= OOBS_SHARE_SMB_WRITABLE;
@@ -261,7 +251,6 @@ oobs_smb_config_update (OobsObject *object)
   DBusMessageIter   iter, array_iter;
   OobsListIter      list_iter;
   OobsShare        *share;
-  const gchar      *str;
 
   priv  = OOBS_SMB_CONFIG (object)->_priv;
   reply = _oobs_object_get_dbus_message (object);
@@ -288,20 +277,10 @@ oobs_smb_config_update (OobsObject *object)
       dbus_message_iter_next (&array_iter);
     }
 
-  str = utils_get_string (&iter);
-  priv->workgroup = g_strdup (str);
-  dbus_message_iter_next (&iter);
-
-  str = utils_get_string (&iter);
-  priv->desc = g_strdup (str);
-  dbus_message_iter_next (&iter);
-
-  dbus_message_iter_get_basic (&iter, &priv->is_wins_server);
-  dbus_message_iter_next (&iter);
-
-  str = utils_get_string (&iter);
-  priv->wins_server = g_strdup (str);
-  dbus_message_iter_next (&iter);
+  priv->workgroup = g_strdup (utils_get_string (&iter));
+  priv->desc = g_strdup (utils_get_string (&iter));
+  priv->is_wins_server = utils_get_int (&iter);
+  priv->wins_server = g_strdup (utils_get_string (&iter));
 }
 
 static void

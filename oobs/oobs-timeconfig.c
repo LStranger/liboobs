@@ -211,7 +211,7 @@ oobs_time_config_update (OobsObject *object)
 
   /* FIXME: skip time & date settings, at the moment
    * we rely on the local configuration, this has
-   * to change when we allow remote configuration
+   * to change if/when we allow remote configuration
    */
   dbus_message_iter_init (reply, &iter);
   dbus_message_iter_next (&iter);
@@ -241,12 +241,12 @@ oobs_time_config_commit (OobsObject *object)
 				 &hour, &minute, &second);
 
   dbus_message_iter_init_append (message, &iter);
-  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &year);
-  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &month);
-  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &day);
-  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &hour);
-  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &minute);
-  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &second);
+  utils_append_int (&iter, year);
+  utils_append_int (&iter, month);
+  utils_append_int (&iter, day);
+  utils_append_int (&iter, hour);
+  utils_append_int (&iter, minute);
+  utils_append_int (&iter, second);
 
   utils_append_string (&iter, priv->timezone);
 

@@ -203,7 +203,8 @@ create_iface_from_message (DBusMessage     *message,
   dbus_message_iter_recurse (iter, &struct_iter);
 
   dev = utils_get_string (&struct_iter);
-  dbus_message_iter_next (&struct_iter);
+  active = utils_get_int (&struct_iter);
+  is_auto = utils_get_int (&struct_iter);
 
   switch (type)
     {
@@ -231,27 +232,17 @@ create_iface_from_message (DBusMessage     *message,
     {
       const gchar *address, *netmask, *gateway, *config_method;
 
-      dbus_message_iter_get_basic (&struct_iter, &is_auto);
-      dbus_message_iter_next (&struct_iter);
-
-      dbus_message_iter_get_basic (&struct_iter, &active);
-      dbus_message_iter_next (&struct_iter);
-
       /* This value is deprecated */
       dbus_message_iter_next (&struct_iter);
 
       address = utils_get_string (&struct_iter);
-      dbus_message_iter_next (&struct_iter);
-
       netmask = utils_get_string (&struct_iter);
-      dbus_message_iter_next (&struct_iter);
 
       /* FIXME: missing network and broadcast */
       dbus_message_iter_next (&struct_iter);
       dbus_message_iter_next (&struct_iter);
 
       gateway = utils_get_string (&struct_iter);
-      dbus_message_iter_next (&struct_iter);
 
       g_object_set (iface,
 		    "auto", is_auto,
@@ -266,16 +257,12 @@ create_iface_from_message (DBusMessage     *message,
 	  const gchar *essid, *key, *key_type;
 
 	  essid = utils_get_string (&struct_iter);
-	  dbus_message_iter_next (&struct_iter);
 
 	  /* This value is deprecated */
 	  dbus_message_iter_next (&struct_iter);
 
 	  key = utils_get_string (&struct_iter);
-	  dbus_message_iter_next (&struct_iter);
-
 	  key_type = utils_get_string (&struct_iter);
-	  dbus_message_iter_next (&struct_iter);
 
 	  g_object_set (iface,
 			"essid", essid,
@@ -285,24 +272,14 @@ create_iface_from_message (DBusMessage     *message,
 	}
 
       config_method = utils_get_string (&struct_iter);
-      dbus_message_iter_next (&struct_iter);
       g_object_set (iface, "config-method", config_method, NULL);
     }
   else if (OOBS_IS_IFACE_PLIP (iface))
     {
       const gchar *address, *remote_address;
 
-      dbus_message_iter_get_basic (&struct_iter, &is_auto);
-      dbus_message_iter_next (&struct_iter);
-
-      dbus_message_iter_get_basic (&struct_iter, &active);
-      dbus_message_iter_next (&struct_iter);
-
       address = utils_get_string (&struct_iter);
-      dbus_message_iter_next (&struct_iter);
-
       remote_address = utils_get_string (&struct_iter);
-      dbus_message_iter_next (&struct_iter);
 
       g_object_set (iface,
 		    "auto", is_auto,
@@ -316,17 +293,8 @@ create_iface_from_message (DBusMessage     *message,
       const gchar *phone_number, *phone_prefix, *login, *password;
       gboolean default_gw, peer_dns, persistent, noauth;
 
-      dbus_message_iter_get_basic (&struct_iter, &is_auto);
-      dbus_message_iter_next (&struct_iter);
-
-      dbus_message_iter_get_basic (&struct_iter, &active);
-      dbus_message_iter_next (&struct_iter);
-
       phone_number = utils_get_string (&struct_iter);
-      dbus_message_iter_next (&struct_iter);
-
       phone_prefix = utils_get_string (&struct_iter);
-      dbus_message_iter_next (&struct_iter);
 
       if (OOBS_IS_IFACE_MODEM (iface))
 	{
@@ -334,13 +302,8 @@ create_iface_from_message (DBusMessage     *message,
 	  gint volume, dial_type;
 
 	  serial_port = utils_get_string (&struct_iter);
-	  dbus_message_iter_next (&struct_iter);
-
-	  dbus_message_iter_get_basic (&struct_iter, &volume);
-	  dbus_message_iter_next (&struct_iter);
-
-	  dbus_message_iter_get_basic (&struct_iter, &dial_type);
-	  dbus_message_iter_next (&struct_iter);
+	  volume = utils_get_int (&struct_iter);
+	  dial_type = utils_get_int (&struct_iter);
 
 	  g_object_set (iface,
 			"serial-port", serial_port,
@@ -350,22 +313,12 @@ create_iface_from_message (DBusMessage     *message,
 	}
 
       login = utils_get_string (&struct_iter);
-      dbus_message_iter_next (&struct_iter);
-
       password = utils_get_string (&struct_iter);
-      dbus_message_iter_next (&struct_iter);
 
-      dbus_message_iter_get_basic (&struct_iter, &default_gw);
-      dbus_message_iter_next (&struct_iter);
-
-      dbus_message_iter_get_basic (&struct_iter, &peer_dns);
-      dbus_message_iter_next (&struct_iter);
-
-      dbus_message_iter_get_basic (&struct_iter, &persistent);
-      dbus_message_iter_next (&struct_iter);
-
-      dbus_message_iter_get_basic (&struct_iter, &noauth);
-      dbus_message_iter_next (&struct_iter);
+      default_gw = utils_get_int (&struct_iter);
+      peer_dns = utils_get_int (&struct_iter);
+      persistent = utils_get_int (&struct_iter);
+      noauth = utils_get_int (&struct_iter);
 
       g_object_set (iface,
 		    "auto", is_auto,
@@ -412,6 +365,8 @@ create_ifaces_list (DBusMessage     *reply,
       g_object_unref (iface);
       dbus_message_iter_next (&elem_iter);
     }
+
+  dbus_message_iter_next (iter);
 }
 
 static void
@@ -430,28 +385,16 @@ oobs_ifaces_config_update (OobsObject *object)
   priv->ifaces = g_hash_table_new (g_str_hash, g_str_equal);
 
   dbus_message_iter_init (reply, &iter);
+
   create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_ETHERNET, priv->ethernet_ifaces, priv->ifaces);
-
-  dbus_message_iter_next (&iter);
   create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_WIRELESS, priv->wireless_ifaces, priv->ifaces);
-
-  dbus_message_iter_next (&iter);
   create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_IRLAN, priv->irlan_ifaces, priv->ifaces);
-
-  dbus_message_iter_next (&iter);
   create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_PLIP, priv->plip_ifaces, priv->ifaces);
-
-  dbus_message_iter_next (&iter);
   create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_MODEM, priv->modem_ifaces, priv->ifaces);
-
-  dbus_message_iter_next (&iter);
   create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_ISDN, priv->isdn_ifaces, priv->ifaces);
 
-  dbus_message_iter_next (&iter);
-  priv->available_config_methods = utils_get_string_list_from_dbus_reply (reply, iter);
-
-  dbus_message_iter_next (&iter);
-  priv->available_key_types = utils_get_string_list_from_dbus_reply (reply, iter);
+  priv->available_config_methods = utils_get_string_list_from_dbus_reply (reply, &iter);
+  priv->available_key_types = utils_get_string_list_from_dbus_reply (reply, &iter);
 }
 
 static void
@@ -473,13 +416,12 @@ create_dbus_struct_from_iface (DBusMessage     *message,
   dbus_message_iter_open_container (array_iter, DBUS_TYPE_STRUCT, NULL, &iter);
 
   utils_append_string (&iter, dev);
-  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &active);
-  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &is_auto);
+  utils_append_int (&iter, active);
+  utils_append_int (&iter, is_auto);
 
   if (OOBS_IS_IFACE_ETHERNET (iface))
     {
       gchar *address, *netmask, *gateway, *config_method;
-      gint pad = 0;
 
       g_object_get (G_OBJECT (iface),
 		    "ip-address", &address,
@@ -489,7 +431,7 @@ create_dbus_struct_from_iface (DBusMessage     *message,
 		    NULL);
 
       /* This field is deprecated */
-      dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &pad);
+      utils_append_int (&iter, 0);
       utils_append_string (&iter, (configured) ? address : NULL);
       utils_append_string (&iter, (configured) ? netmask : NULL);
 
@@ -512,7 +454,7 @@ create_dbus_struct_from_iface (DBusMessage     *message,
 	  utils_append_string (&iter, (configured) ? essid : NULL);
 
 	  /* This field is deprecated */
-	  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &pad);
+	  utils_append_int (&iter, 0);
 	  utils_append_string (&iter, (configured) ? key : NULL);
 	  utils_append_string (&iter, (configured) ? key_type : NULL);
 
@@ -574,18 +516,18 @@ create_dbus_struct_from_iface (DBusMessage     *message,
 			NULL);
 
 	  utils_append_string (&iter, (configured) ? serial_port : NULL);
-	  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &volume);
-	  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &dial_type);
+	  utils_append_int (&iter, volume);
+	  utils_append_int (&iter, dial_type);
 
 	  g_free (serial_port);
 	}
 
       utils_append_string (&iter, (configured) ? login : NULL);
       utils_append_string (&iter, (configured) ? password : NULL);
-      dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &default_gw);
-      dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &peer_dns);
-      dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &persistent);
-      dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &noauth);
+      utils_append_int (&iter, default_gw);
+      utils_append_int (&iter, peer_dns);
+      utils_append_int (&iter, persistent);
+      utils_append_int (&iter, noauth);
 
       g_free (phone_number);
       g_free (prefix);

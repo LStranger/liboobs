@@ -270,52 +270,33 @@ create_user_from_dbus_reply (OobsObject      *object,
   DBusMessageIter iter, gecos_iter;
   int    uid, gid;
   guint  id;
-  gchar *login, *passwd, *home, *shell;
-  gchar *name, *room_number, *work_phone, *home_phone, *other_data;
+  const gchar *login, *passwd, *home, *shell;
+  const gchar *name, *room_number, *work_phone, *home_phone, *other_data;
 
   dbus_message_iter_recurse (&struct_iter, &iter);
 
   dbus_message_iter_get_basic (&iter, &id);
-  dbus_message_iter_next (&iter);
 
-  dbus_message_iter_get_basic (&iter, &login);
-  dbus_message_iter_next (&iter);
-  
-  dbus_message_iter_get_basic (&iter, &passwd);
-  dbus_message_iter_next (&iter);
-
-  dbus_message_iter_get_basic (&iter, &uid);
-  dbus_message_iter_next (&iter);
-
-  dbus_message_iter_get_basic (&iter, &gid);
-  dbus_message_iter_next (&iter);
+  id = utils_get_uint (&iter);
+  login = utils_get_string (&iter);
+  passwd = utils_get_string (&iter);
+  uid = utils_get_int (&iter);
+  gid = utils_get_int (&iter);
 
   /* GECOS fields */
   dbus_message_iter_recurse (&iter, &gecos_iter);
 
-  dbus_message_iter_get_basic (&gecos_iter, &name);
-  dbus_message_iter_next (&gecos_iter);
-
-  dbus_message_iter_get_basic (&gecos_iter, &room_number);
-  dbus_message_iter_next (&gecos_iter);
-
-  dbus_message_iter_get_basic (&gecos_iter, &work_phone);
-  dbus_message_iter_next (&gecos_iter);
-
-  dbus_message_iter_get_basic (&gecos_iter, &home_phone);
-  dbus_message_iter_next (&gecos_iter);
-
-  dbus_message_iter_get_basic (&gecos_iter, &other_data);
-  dbus_message_iter_next (&gecos_iter);
+  name = utils_get_string (&gecos_iter);
+  room_number = utils_get_string (&gecos_iter);
+  work_phone = utils_get_string (&gecos_iter);
+  home_phone = utils_get_string (&gecos_iter);
+  other_data = utils_get_string (&gecos_iter);
   /* end of GECOS fields */
 
   dbus_message_iter_next (&iter);
 
-  dbus_message_iter_get_basic (&iter, &home);
-  dbus_message_iter_next (&iter);
-
-  dbus_message_iter_get_basic (&iter, &shell);
-  dbus_message_iter_next (&iter);
+  home = utils_get_string (&iter);
+  shell = utils_get_string (&iter);
 
   user = g_object_new (OOBS_TYPE_USER,
 		       "name", login,
@@ -373,12 +354,12 @@ create_dbus_struct_from_user (OobsUser        *user,
 
   dbus_message_iter_open_container (array_iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
 
-  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_UINT32,  &user->id);
+  utils_append_uint (&struct_iter, user->id);
   utils_append_string (&struct_iter, login);
   utils_append_string (&struct_iter, password);
-  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_INT32,  &uid);
-  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_INT32,  &gid);
-  
+  utils_append_int (&struct_iter, uid);
+  utils_append_int (&struct_iter, gid);
+
   dbus_message_iter_open_container (&struct_iter, DBUS_TYPE_ARRAY, DBUS_TYPE_STRING_AS_STRING, &data_iter);
 
   /* GECOS fields */
@@ -485,7 +466,6 @@ oobs_users_config_update (OobsObject *object)
   DBusMessageIter  iter, elem_iter;
   OobsListIter     list_iter;
   GObject         *user;
-  gchar           *str;
   GHashTable      *hashtable;
   gint             default_gid;
   guint            id;
@@ -516,27 +496,15 @@ oobs_users_config_update (OobsObject *object)
   priv->id = id;
 
   dbus_message_iter_next (&iter);
-  priv->shells = utils_get_string_list_from_dbus_reply (reply, iter);
+  priv->shells = utils_get_string_list_from_dbus_reply (reply, &iter);
 
-  dbus_message_iter_next (&iter);
-  dbus_message_iter_get_basic (&iter, &priv->use_md5);
+  priv->use_md5 = utils_get_int (&iter);
+  priv->minimum_uid = utils_get_int (&iter);
+  priv->maximum_uid = utils_get_int (&iter);
 
-  dbus_message_iter_next (&iter);
-  dbus_message_iter_get_basic (&iter, &priv->minimum_uid);
-
-  dbus_message_iter_next (&iter);
-  dbus_message_iter_get_basic (&iter, &priv->maximum_uid);
-
-  dbus_message_iter_next (&iter);
-  dbus_message_iter_get_basic (&iter, &str);
-  priv->default_home = g_strdup (str);
-
-  dbus_message_iter_next (&iter);
-  dbus_message_iter_get_basic (&iter, &str);
-  priv->default_shell = g_strdup (str);
-
-  dbus_message_iter_next (&iter);
-  dbus_message_iter_get_basic (&iter, &default_gid);
+  priv->default_home = g_strdup (utils_get_string (&iter));
+  priv->default_shell = g_strdup (utils_get_string (&iter));
+  default_gid = utils_get_int (&iter);
 
   /* last of all, query the groups now that the list is generated */
   query_groups (OOBS_USERS_CONFIG (object), hashtable, default_gid);
@@ -592,14 +560,14 @@ oobs_users_config_commit (OobsObject *object)
   dbus_message_iter_close_container (&iter, &array_iter);
 
   utils_create_dbus_array_from_string_list (priv->shells, message, &iter);
-  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32,  &priv->use_md5);
-  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32,  &priv->minimum_uid);
-  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32,  &priv->maximum_uid);
+  utils_append_int (&iter, priv->use_md5);
+  utils_append_int (&iter, priv->minimum_uid);
+  utils_append_int (&iter, priv->maximum_uid);
   utils_append_string (&iter, priv->default_home);
   utils_append_string (&iter, priv->default_shell);
 
   default_gid = (priv->default_group) ? oobs_group_get_gid (priv->default_group) : -1;
-  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &default_gid);
+  utils_append_int (&iter, default_gid);
 
   if (!correct)
     {

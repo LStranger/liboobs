@@ -27,10 +27,16 @@ G_BEGIN_DECLS
 #include <glib.h>
 
 void   utils_create_dbus_array_from_string_list (GList *list, DBusMessage *message, DBusMessageIter *iter);
-GList *utils_get_string_list_from_dbus_reply    (DBusMessage *reply, DBusMessageIter iter);
+GList *utils_get_string_list_from_dbus_reply    (DBusMessage *reply, DBusMessageIter *iter);
 gchar *utils_get_random_string                  (gint len);
+
 void   utils_append_string                      (DBusMessageIter *iter, const gchar *str);
-const gchar* utils_get_string                   (DBusMessageIter *iter);
+void   utils_append_int                         (DBusMessageIter *iter, gint value);
+void   utils_append_uint                        (DBusMessageIter *iter, guint value);
+
+G_CONST_RETURN gchar* utils_get_string          (DBusMessageIter *iter);
+gint  utils_get_int                             (DBusMessageIter *iter);
+guint utils_get_uint                            (DBusMessageIter *iter);
 
 G_END_DECLS
 

@@ -187,25 +187,18 @@ create_group_from_dbus_reply (OobsObject      *object,
   DBusMessageIter iter;
   int      gid;
   guint    id;
-  gchar   *groupname, *passwd;
+  const gchar *groupname, *passwd;
   GList   *users;
   OobsGroup *group;
 
   dbus_message_iter_recurse (&struct_iter, &iter);
 
-  dbus_message_iter_get_basic (&iter, &id);
-  dbus_message_iter_next (&iter);
+  id = utils_get_uint (&iter);
+  groupname = utils_get_string (&iter);
+  passwd = utils_get_string (&iter);
+  gid = utils_get_int (&iter);
 
-  dbus_message_iter_get_basic (&iter, &groupname);
-  dbus_message_iter_next (&iter);
-  
-  dbus_message_iter_get_basic (&iter, &passwd);
-  dbus_message_iter_next (&iter);
-
-  dbus_message_iter_get_basic (&iter, &gid);
-  dbus_message_iter_next (&iter);
-
-  users = utils_get_string_list_from_dbus_reply (reply, iter);
+  users = utils_get_string_list_from_dbus_reply (reply, &iter);
 
   group = g_object_new (OOBS_TYPE_GROUP,
 			"name", groupname,
@@ -266,10 +259,10 @@ create_dbus_struct_from_group (GObject         *group,
 
   dbus_message_iter_open_container (array_iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
 
-  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_UINT32,  &(OOBS_GROUP(group)->id));
+  utils_append_uint (&struct_iter, OOBS_GROUP (group)->id);
   utils_append_string (&struct_iter, groupname);
   utils_append_string (&struct_iter, passwd);
-  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_INT32,  &gid);
+  utils_append_int (&struct_iter, gid);
 
   utils_create_dbus_array_from_string_list (users, message, &struct_iter);
 
@@ -389,10 +382,9 @@ oobs_groups_config_update (OobsObject *object)
   priv->id = id;
 
   dbus_message_iter_next (&iter);
-  dbus_message_iter_get_basic (&iter, &priv->minimum_gid);
 
-  dbus_message_iter_next (&iter);
-  dbus_message_iter_get_basic (&iter, &priv->maximum_gid);
+  priv->minimum_gid = utils_get_int (&iter);
+  priv->maximum_gid = utils_get_int (&iter);
 
   /* last of all, query the groups now that the list is generated */
   query_users (OOBS_GROUPS_CONFIG (object), hashtable);

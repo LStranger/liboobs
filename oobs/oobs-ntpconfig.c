@@ -26,6 +26,7 @@
 #include "oobs-ntpconfig.h"
 #include "oobs-list-private.h"
 #include "oobs-ntpserver.h"
+#include "utils.h"
 
 #define NTP_CONFIG_REMOTE_OBJECT "NTPConfig"
 #define OOBS_NTP_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_NTP_CONFIG, OobsNTPConfigPrivate))
@@ -100,7 +101,7 @@ oobs_ntp_config_update (OobsObject *object)
   DBusMessageIter  iter, elem_iter;
   OobsListIter     list_iter;
   GObject         *ntp_server;
-  gchar           *server;
+  const gchar     *server;
 
   g_return_if_fail (OOBS_IS_NTP_CONFIG (object));
 
@@ -115,14 +116,12 @@ oobs_ntp_config_update (OobsObject *object)
 
   while (dbus_message_iter_get_arg_type (&elem_iter) == DBUS_TYPE_STRING)
     {
-      dbus_message_iter_get_basic (&elem_iter, &server);
+      server = utils_get_string (&elem_iter);
       ntp_server = G_OBJECT (oobs_ntp_server_new (server));
 
       oobs_list_append (priv->servers_list, &list_iter);
       oobs_list_set    (priv->servers_list, &list_iter, G_OBJECT (ntp_server));
       g_object_unref   (ntp_server);
-
-      dbus_message_iter_next (&elem_iter);
     }
 }
 
@@ -152,7 +151,7 @@ oobs_ntp_config_commit (OobsObject *object)
       ntp_server = oobs_list_get (priv->servers_list, &list_iter);
       hostname = oobs_ntp_server_get_hostname (OOBS_NTP_SERVER (ntp_server));
 
-      dbus_message_iter_append_basic (&array_iter, DBUS_TYPE_STRING, &hostname);
+      utils_append_string (&array_iter, hostname);
       g_object_unref (ntp_server);
       valid = oobs_list_iter_next (priv->servers_list, &list_iter);
     }

@@ -143,16 +143,13 @@ create_static_host_from_dbus_reply (DBusMessage     *reply,
 				    DBusMessageIter  iter)
 {
   DBusMessageIter elem_iter;
-  gchar *ip_address;
+  const gchar *ip_address;
   GList *aliases;
 
   dbus_message_iter_recurse (&iter, &elem_iter);
 
-  dbus_message_iter_get_basic (&elem_iter, &ip_address);
-  dbus_message_iter_next (&elem_iter);
-
-  aliases = utils_get_string_list_from_dbus_reply (reply, elem_iter);
-  dbus_message_iter_next (&elem_iter);
+  ip_address = utils_get_string (&elem_iter);
+  aliases = utils_get_string_list_from_dbus_reply (reply, &elem_iter);
 
   return oobs_static_host_new (ip_address, aliases);
 }
@@ -208,7 +205,6 @@ oobs_hosts_config_update (OobsObject *object)
   OobsHostsConfigPrivate *priv;
   DBusMessage *reply;
   DBusMessageIter iter;
-  gchar *str;
 
   priv = OOBS_HOSTS_CONFIG (object)->_priv;
   reply = _oobs_object_get_dbus_message (object);
@@ -218,23 +214,14 @@ oobs_hosts_config_update (OobsObject *object)
 
   dbus_message_iter_init (reply, &iter);
 
-  dbus_message_iter_get_basic (&iter, &str);
-  priv->hostname = g_strdup (str);
-  dbus_message_iter_next (&iter);
-
-  /* FIXME: use NULL with empty string? */
-  dbus_message_iter_get_basic (&iter, &str);
-  priv->domain = g_strdup (str);
-  dbus_message_iter_next (&iter);
+  priv->hostname = g_strdup (utils_get_string (&iter));
+  priv->domain = g_strdup (utils_get_string (&iter));
 
   get_static_hosts_list_from_dbus_reply (object, reply, iter);
   dbus_message_iter_next (&iter);
 
-  priv->dns_list = utils_get_string_list_from_dbus_reply (reply, iter);
-  dbus_message_iter_next (&iter);
-
-  priv->search_domains_list = utils_get_string_list_from_dbus_reply (reply, iter);
-  dbus_message_iter_next (&iter);
+  priv->dns_list = utils_get_string_list_from_dbus_reply (reply, &iter);
+  priv->search_domains_list = utils_get_string_list_from_dbus_reply (reply, &iter);
 }
 
 static void
@@ -254,7 +241,7 @@ oobs_hosts_config_commit (OobsObject *object)
 
   utils_append_string (&iter, priv->hostname);
   utils_append_string (&iter, priv->domain);
-  
+
   dbus_message_iter_open_container (&iter,
 				    DBUS_TYPE_ARRAY,
 				    DBUS_STRUCT_BEGIN_CHAR_AS_STRING

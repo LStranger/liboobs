@@ -29,6 +29,7 @@
 #include "oobs-nfsconfig.h"
 #include "oobs-share.h"
 #include "oobs-share-nfs.h"
+#include "utils.h"
 
 #define NFS_CONFIG_REMOTE_OBJECT "NFSConfig"
 #define OOBS_NFS_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_NFS_CONFIG, OobsNFSConfigPrivate))
@@ -100,13 +101,12 @@ create_share_from_dbus_reply (OobsObject      *object,
 {
   DBusMessageIter iter, array_iter, client_iter;
   OobsShare *share;
-  gchar *path, *pattern;
+  const gchar *path, *pattern;
   gboolean rw;
 
   dbus_message_iter_recurse (&struct_iter, &iter);
 
-  dbus_message_iter_get_basic (&iter, &path);
-  dbus_message_iter_next (&iter);
+  path = utils_get_string (&iter);
 
   share = oobs_share_nfs_new (path);
   dbus_message_iter_recurse (&iter, &array_iter);
@@ -115,11 +115,8 @@ create_share_from_dbus_reply (OobsObject      *object,
     {
       dbus_message_iter_recurse (&array_iter, &client_iter);
 
-      dbus_message_iter_get_basic (&client_iter, &pattern);
-      dbus_message_iter_next (&client_iter);
-      
-      dbus_message_iter_get_basic (&client_iter, &rw);
-      dbus_message_iter_next (&client_iter);
+      pattern = utils_get_string (&client_iter);
+      rw = utils_get_int (&client_iter);
 
       oobs_share_nfs_add_acl_element (OOBS_SHARE_NFS (share), pattern, rw);
       dbus_message_iter_next (&array_iter);
@@ -156,8 +153,8 @@ create_dbus_struct_from_share (GObject         *share,
       acl_element = (OobsShareAclElement*) acl->data;
 
       dbus_message_iter_open_container  (&acl_iter, DBUS_TYPE_STRUCT, NULL, &elem_iter);
-      dbus_message_iter_append_basic    (&elem_iter, DBUS_TYPE_STRING, &acl_element->element);
-      dbus_message_iter_append_basic    (&elem_iter, DBUS_TYPE_INT32,  &acl_element->read_only);
+      utils_append_string (&elem_iter, acl_element->element);
+      utils_append_int (&elem_iter, acl_element->read_only);
       dbus_message_iter_close_container (&acl_iter, &elem_iter);
       acl = acl->next;
     }

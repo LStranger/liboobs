@@ -1,3 +1,18 @@
+2007-09-15  Carlos Garnacho  <carlosg@gnome.org>
+
+	* utils.[ch] (utils_append_int) (utils_append_uint): Added.
+	(utils_get_string_list_from_dbus_reply): move the iter forward after
+	parsing.
+	(utils_get_basic) (utils_get_int) (utils_get_uint) (utils_get_string):
+	New/improved helpers to get data from the DBusMessage, with type
+	checking, and moving the iter forward to lessen the message parsing 
+	code.
+
+	* oobs-groupsconfig.c, oobs-hostsconfig.c, oobs-ifacesconfig.c,
+	oobs-nfsconfig.c, oobs-ntpconfig.c, oobs-servicesconfig.c,
+	oobs-smbconfig.c, oobs-timeconfig.c, oobs-usersconfig.c: Use improved
+	parsing helpers.
+
 2007-09-14  Carlos Garnacho  <carlosg@gnome.org>
 
 	* oobs/oobs-ifacesconfig.c (oobs_ifaces_config_iface_monitor): Do not

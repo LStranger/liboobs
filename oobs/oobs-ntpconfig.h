@@ -26,7 +26,6 @@ G_BEGIN_DECLS
 #include <glib-object.h>
 #include "oobs-object.h"
 #include "oobs-list.h"
-#include "oobs-session.h"
 
 #define OOBS_TYPE_NTP_CONFIG         (oobs_ntp_config_get_type ())
 #define OOBS_NTP_CONFIG(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_NTP_CONFIG, OobsNTPConfig))
@@ -58,7 +57,7 @@ struct _OobsNTPConfigClass
 
 GType       oobs_ntp_config_get_type     (void);
 
-OobsObject* oobs_ntp_config_get          (OobsSession *session);
+OobsObject* oobs_ntp_config_get          (void);
 OobsList*   oobs_ntp_config_get_servers  (OobsNTPConfig *config);
 
 

@@ -678,7 +678,6 @@ oobs_ifaces_config_commit (OobsObject *object)
 
 /**
  * oobs_ifaces_config_get:
- * @session: An #OobsSession.
  * 
  * Returns the #OobsIfacesConfig singleton, which represents
  * the network interfaces and their configuration.
@@ -686,12 +685,9 @@ oobs_ifaces_config_commit (OobsObject *object)
  * Return Value: the singleton #OobsIfacesConfig object.
  **/
 OobsObject*
-oobs_ifaces_config_get (OobsSession *session)
+oobs_ifaces_config_get (void)
 {
-  g_return_val_if_fail (OOBS_IS_SESSION (session), NULL);
-
   return g_object_new (OOBS_TYPE_IFACES_CONFIG,
-		       "session", session,
 		       "remote-object", IFACES_CONFIG_REMOTE_OBJECT,
 		       NULL);
 }

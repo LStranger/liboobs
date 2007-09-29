@@ -66,6 +66,9 @@ static void oobs_object_get_property (GObject       *object,
 				      guint          prop_id,
 				      GValue        *value,
 				      GParamSpec    *pspec);
+
+static void connect_object_to_session (OobsObject *object);
+
 enum
 {
   CHANGED,
@@ -75,7 +78,6 @@ enum
 enum
 {
   PROP_0,
-  PROP_SESSION,
   PROP_REMOTE_OBJECT
 };
 
@@ -102,13 +104,6 @@ oobs_object_class_init (OobsObjectClass *class)
   dbus_connection_quark = g_quark_from_static_string ("oobs-dbus-connection");
 
   g_object_class_install_property (object_class,
-				   PROP_SESSION,
-				   g_param_spec_object ("session",
-							"Session to connect to",
-							"Holds the OobsSession that the object will use",
-							OOBS_TYPE_SESSION,
-							G_PARAM_READWRITE));
-  g_object_class_install_property (object_class,
 				   PROP_REMOTE_OBJECT,
 				   g_param_spec_string ("remote-object",
 							"Remote object to deal with",
@@ -134,7 +129,7 @@ oobs_object_init (OobsObject *object)
   OobsObjectPrivate *priv;
 
   priv = OOBS_OBJECT_GET_PRIVATE (object);
-  priv->session = NULL;
+  priv->session = oobs_session_get ();
   priv->remote_object = NULL;
   dbus_error_init (&priv->dbus_error);
 
@@ -189,6 +184,7 @@ oobs_object_constructor (GType                  type,
 									   n_construct_properties,
 									   construct_params);
       g_hash_table_insert (type_table, GINT_TO_POINTER (type), object);
+      connect_object_to_session (OOBS_OBJECT (object));
     }
 
   return object;
@@ -263,15 +259,6 @@ oobs_object_set_property (GObject      *object,
 
   switch (prop_id)
     {
-    case PROP_SESSION:
-      if (priv->session)
-	_oobs_session_unregister_object (priv->session, obj);
-
-      priv->session = g_value_get_object (value);
-
-      if (priv->session)
-	connect_object_to_session (obj);
-      break;
     case PROP_REMOTE_OBJECT:
       priv->remote_object = g_value_dup_string (value);
       priv->path   = g_strconcat (OOBS_DBUS_PATH_PREFIX, "/", priv->remote_object, NULL);
@@ -286,18 +273,10 @@ oobs_object_get_property (GObject      *object,
 			  GValue       *value,
 			  GParamSpec   *pspec)
 {
-  OobsObject *obj;
-  OobsObjectPrivate *priv;
-
-  g_return_if_fail (OOBS_IS_OBJECT (object));
-
-  obj  = OOBS_OBJECT (object);
-  priv = obj->_priv;
-
   switch (prop_id)
     {
-    case PROP_SESSION:
-      g_value_set_object (value, G_OBJECT (priv->session));
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
 }

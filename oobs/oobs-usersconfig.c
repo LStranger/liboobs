@@ -435,14 +435,9 @@ query_groups (OobsUsersConfig *users_config,
 	      gint             default_gid)
 {
   OobsObject *groups_config;
-  OobsSession *session;
   OobsGroup *group;
 
-  g_object_get (G_OBJECT (users_config),
-		"session", &session,
-		NULL);
-
-  groups_config = oobs_groups_config_get (session);
+  groups_config = oobs_groups_config_get ();
   g_hash_table_foreach (hashtable, (GHFunc) query_groups_foreach, groups_config);
 
   /* get the default group */
@@ -454,8 +449,6 @@ query_groups (OobsUsersConfig *users_config,
       if (group)
 	g_object_unref (group);
     }
-
-  g_object_unref (session);
 }
 
 static void
@@ -578,7 +571,6 @@ oobs_users_config_commit (OobsObject *object)
 
 /**
  * oobs_users_config_get:
- * @session: An #OobsSession.
  * 
  * Returns the #OobsUsersConfig singleton, which represents
  * the system users and their configuration.
@@ -586,13 +578,10 @@ oobs_users_config_commit (OobsObject *object)
  * Return Value: the singleton #OobsUsersConfig object.
  **/
 OobsObject*
-oobs_users_config_get (OobsSession *session)
+oobs_users_config_get (void)
 {
-  g_return_val_if_fail (OOBS_IS_SESSION (session), NULL);
-
   return g_object_new (OOBS_TYPE_USERS_CONFIG,
 		       "remote-object", USERS_CONFIG_REMOTE_OBJECT,
-		       "session",       session,
 		       NULL);
 }
 

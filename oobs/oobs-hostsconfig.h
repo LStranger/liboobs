@@ -25,7 +25,6 @@ G_BEGIN_DECLS
 
 #include "oobs-object.h"
 #include "oobs-list.h"
-#include "oobs-session.h"
 
 #define OOBS_TYPE_HOSTS_CONFIG         (oobs_hosts_config_get_type ())
 #define OOBS_HOSTS_CONFIG(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_HOSTS_CONFIG, OobsHostsConfig))
@@ -57,7 +56,7 @@ struct _OobsHostsConfigClass
 
 GType       oobs_hosts_config_get_type     (void);
 
-OobsObject* oobs_hosts_config_get          (OobsSession *session);
+OobsObject* oobs_hosts_config_get          (void);
 
 G_CONST_RETURN gchar*  oobs_hosts_config_get_hostname   (OobsHostsConfig *config);
 void                   oobs_hosts_config_set_hostname   (OobsHostsConfig *config,

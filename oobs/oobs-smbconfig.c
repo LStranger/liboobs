@@ -373,7 +373,6 @@ oobs_smb_config_commit (OobsObject *object)
 
 /**
  * oobs_smb_config_get:
- * @session: An #OobsSession.
  * 
  * Returns the #OobsSMBConfig singleton, which represents
  * the SMB system configuration.
@@ -381,13 +380,10 @@ oobs_smb_config_commit (OobsObject *object)
  * Return Value: the singleton #OobsSMBConfig object.
  **/
 OobsObject*
-oobs_smb_config_get (OobsSession *session)
+oobs_smb_config_get (void)
 {
-  g_return_val_if_fail (OOBS_IS_SESSION (session), NULL);
-
   return g_object_new (OOBS_TYPE_SMB_CONFIG,
 		       "remote-object", SMB_CONFIG_REMOTE_OBJECT,
-		       "session",       session,
 		       NULL);
 }
 

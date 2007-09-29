@@ -26,7 +26,6 @@ G_BEGIN_DECLS
 #include <glib-object.h>
 #include "oobs-object.h"
 #include "oobs-list.h"
-#include "oobs-session.h"
 #include "oobs-share.h"
 
 #define OOBS_TYPE_NFS_CONFIG         (oobs_nfs_config_get_type ())
@@ -59,7 +58,7 @@ struct _OobsNFSConfigClass
 
 GType       oobs_nfs_config_get_type     (void);
 
-OobsObject* oobs_nfs_config_get          (OobsSession *session);
+OobsObject* oobs_nfs_config_get          (void);
 
 OobsList*   oobs_nfs_config_get_shares   (OobsNFSConfig *config);
 

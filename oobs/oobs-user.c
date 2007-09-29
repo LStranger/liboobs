@@ -193,14 +193,11 @@ static void
 oobs_user_init (OobsUser *user)
 {
   OobsUserPrivate *priv;
-  OobsSession *session;
 
   g_return_if_fail (OOBS_IS_USER (user));
 
-  session = oobs_session_get ();
-
   priv = OOBS_USER_GET_PRIVATE (user);
-  priv->config        = oobs_users_config_get (session);
+  priv->config        = oobs_users_config_get ();
   priv->username      = NULL;
   priv->password      = NULL;
   priv->homedir       = NULL;

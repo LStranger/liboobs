@@ -258,7 +258,6 @@ oobs_time_config_commit (OobsObject *object)
 
 /**
  * oobs_time_config_get:
- * @session: An #OobsSession.
  * 
  * Returns the #OobsTimeConfig singleton, this object
  * represents the date and time configuration.
@@ -266,13 +265,10 @@ oobs_time_config_commit (OobsObject *object)
  * Return Value: the singleton #OobsTimeConfig.
  **/
 OobsObject*
-oobs_time_config_get (OobsSession *session)
+oobs_time_config_get (void)
 {
-  g_return_val_if_fail (OOBS_IS_SESSION (session), NULL);
-
   return g_object_new (OOBS_TYPE_TIME_CONFIG,
 		       "remote-object", TIME_CONFIG_REMOTE_OBJECT,
-		       "session",       session,
 		       NULL);
 }
 

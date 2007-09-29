@@ -6,7 +6,7 @@ Base object for all configuration objects.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-OobsObject is the base object for all Oobs*Config objects, contains all the necessary methods for updating/committing the configuration by using the passed #OobsSession.
+OobsObject is the base object for all Oobs*Config objects, contains all the necessary methods for updating/committing the configuration. Initially the returned object is empty, you will have to call oobs_object_update() or oobs_object_update_async() yourself.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->

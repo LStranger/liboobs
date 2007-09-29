@@ -239,7 +239,6 @@ oobs_nfs_config_commit (OobsObject *object)
 
 /**
  * oobs_nfs_config_get:
- * @session: An #OobsSession.
  * 
  * Returns the #OobsNFSConfig singleton, which represents
  * the NFS system configuration.
@@ -247,13 +246,10 @@ oobs_nfs_config_commit (OobsObject *object)
  * Return Value: the singleton #OobsNFSConfig object.
  **/
 OobsObject*
-oobs_nfs_config_get (OobsSession *session)
+oobs_nfs_config_get (void)
 {
-  g_return_val_if_fail (OOBS_IS_SESSION (session), NULL);
-
   return g_object_new (OOBS_TYPE_NFS_CONFIG,
 		       "remote-object", NFS_CONFIG_REMOTE_OBJECT,
-		       "session",       session,
 		       NULL);
 }
 

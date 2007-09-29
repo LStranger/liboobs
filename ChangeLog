@@ -1,5 +1,16 @@
 2007-09-29  Carlos Garnacho  <carlosg@gnome.org>
 
+	* oobs/oobs-object.c: remove "session" property. get it through
+	oobs_session_get() instead.
+	* oobs/oobs-session.c: update objects unregistering.
+	* oobs/oobs-*config.[ch]: remove the OobsSession argument to object 
+	getters.
+	* oobs/oobs-user.c, oobs/oobs-group.c, oobs/oobs-iface-ethernet: 
+	update callers.
+	* doc/reference/tmpl/oobs-object.sgml: update docs.
+
+2007-09-29  Carlos Garnacho  <carlosg@gnome.org>
+
 	* oobs/oobs-object.c, oobs-session.c: implement singletons properly, 
 	allow subclassing for the OobsObject class.
 	* oobs/*config.c: remove singleton implementation from *_config_get(),

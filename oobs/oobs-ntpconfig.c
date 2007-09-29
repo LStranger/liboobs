@@ -161,7 +161,6 @@ oobs_ntp_config_commit (OobsObject *object)
 
 /**
  * oobs_ntp_config_get:
- * @session: An #OobsSession.
  * 
  * Returns the #OobsNTPConfig singleton, which represents
  * the NTP (Network time servers) system configuration.
@@ -169,13 +168,10 @@ oobs_ntp_config_commit (OobsObject *object)
  * Return Value: the singleton #OobsNTPConfig object.
  **/
 OobsObject*
-oobs_ntp_config_get (OobsSession *session)
+oobs_ntp_config_get (void)
 {
-  g_return_val_if_fail (OOBS_IS_SESSION (session), NULL);
-
   return g_object_new (OOBS_TYPE_NTP_CONFIG,
 		       "remote-object", NTP_CONFIG_REMOTE_OBJECT,
-		       "session",       session,
 		       NULL);
 }
 

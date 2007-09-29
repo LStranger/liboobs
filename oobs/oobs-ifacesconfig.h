@@ -25,7 +25,6 @@ G_BEGIN_DECLS
 
 #include <glib-object.h>
 #include "oobs-object.h"
-#include "oobs-session.h"
 #include "oobs-list.h"
 
 typedef enum {
@@ -70,7 +69,7 @@ struct _OobsIfacesConfigClass
 GType       oobs_ifaces_config_get_type     (void);
 GType       oobs_iface_type_get_type        (void);
 
-OobsObject* oobs_ifaces_config_get          (OobsSession *session);
+OobsObject* oobs_ifaces_config_get          (void);
 OobsList*   oobs_ifaces_config_get_ifaces   (OobsIfacesConfig *config,
 					     OobsIfaceType     type);
 

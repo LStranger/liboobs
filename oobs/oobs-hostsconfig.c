@@ -273,7 +273,6 @@ oobs_hosts_config_commit (OobsObject *object)
 
 /**
  * oobs_hosts_config_get:
- * @session: An #OobsSession.
  * 
  * Returns the #OobsHostsConfig singleton, this object
  * represents the hosts resolution configuration.
@@ -281,13 +280,10 @@ oobs_hosts_config_commit (OobsObject *object)
  * Return Value: the singleton #OobsHostsConfig.
  **/
 OobsObject*
-oobs_hosts_config_get (OobsSession *session)
+oobs_hosts_config_get (void)
 {
-  g_return_val_if_fail (OOBS_IS_SESSION (session), NULL);
-
   return g_object_new (OOBS_TYPE_HOSTS_CONFIG,
 		       "remote-object", HOSTS_CONFIG_REMOTE_OBJECT,
-		       "session",       session,
 		       NULL);
 }
 

@@ -132,14 +132,12 @@ static void
 oobs_iface_ethernet_init (OobsIfaceEthernet *iface)
 {
   OobsIfaceEthernetPrivate *priv;
-  OobsSession *session;
 
   g_return_if_fail (OOBS_IS_IFACE_ETHERNET (iface));
 
   priv = OOBS_IFACE_ETHERNET_GET_PRIVATE (iface);
-  session = oobs_session_get ();
 
-  priv->config  = oobs_ifaces_config_get (session);
+  priv->config  = oobs_ifaces_config_get ();
   priv->address = NULL;
   priv->netmask = NULL;
   priv->gateway = NULL;

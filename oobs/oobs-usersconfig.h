@@ -27,7 +27,6 @@ G_BEGIN_DECLS
 #include <glib-object.h>
 #include "oobs-object.h"
 #include "oobs-list.h"
-#include "oobs-session.h"
 #include "oobs-group.h"
 
 #define OOBS_TYPE_USERS_CONFIG         (oobs_users_config_get_type ())
@@ -60,7 +59,7 @@ struct _OobsUsersConfigClass
 
 GType       oobs_users_config_get_type     (void);
 
-OobsObject* oobs_users_config_get          (OobsSession *session);
+OobsObject* oobs_users_config_get          (void);
 OobsList*   oobs_users_config_get_users    (OobsUsersConfig *config);
 
 uid_t       oobs_users_config_get_minimum_users_uid (OobsUsersConfig *config);

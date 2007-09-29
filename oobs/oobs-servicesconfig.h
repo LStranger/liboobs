@@ -25,7 +25,6 @@ G_BEGIN_DECLS
 
 #include "oobs-object.h"
 #include "oobs-list.h"
-#include "oobs-session.h"
 
 #define OOBS_TYPE_SERVICES_CONFIG         (oobs_services_config_get_type ())
 #define OOBS_SERVICES_CONFIG(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_SERVICES_CONFIG, OobsServicesConfig))
@@ -72,7 +71,7 @@ struct _OobsServicesConfigClass
 
 GType       oobs_services_config_get_type      (void);
 
-OobsObject* oobs_services_config_get           (OobsSession *session);
+OobsObject* oobs_services_config_get           (void);
 OobsList*   oobs_services_config_get_services  (OobsServicesConfig *config);
 
 GList*      oobs_services_config_get_runlevels (OobsServicesConfig *config);

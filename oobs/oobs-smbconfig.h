@@ -26,7 +26,6 @@ G_BEGIN_DECLS
 #include <glib-object.h>
 #include "oobs-object.h"
 #include "oobs-list.h"
-#include "oobs-session.h"
 #include "oobs-share.h"
 
 #define OOBS_TYPE_SMB_CONFIG         (oobs_smb_config_get_type ())
@@ -59,7 +58,7 @@ struct _OobsSMBConfigClass
 
 GType       oobs_smb_config_get_type     (void);
 
-OobsObject* oobs_smb_config_get          (OobsSession *session);
+OobsObject* oobs_smb_config_get          (void);
 
 OobsList*   oobs_smb_config_get_shares   (OobsSMBConfig *config);
 

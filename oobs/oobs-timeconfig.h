@@ -26,7 +26,6 @@ G_BEGIN_DECLS
 
 #include <glib-object.h>
 #include "oobs-object.h"
-#include "oobs-session.h"
 
 #define OOBS_TYPE_TIME_CONFIG         (oobs_time_config_get_type ())
 #define OOBS_TIME_CONFIG(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_TIME_CONFIG, OobsTimeConfig))
@@ -58,7 +57,7 @@ struct _OobsTimeConfigClass
 
 GType       oobs_time_config_get_type      (void);
 
-OobsObject* oobs_time_config_get           (OobsSession *session);
+OobsObject* oobs_time_config_get           (void);
 
 glong       oobs_time_config_get_unix_time (OobsTimeConfig *config);
 void        oobs_time_config_set_unix_time (OobsTimeConfig *config, glong unix_time);

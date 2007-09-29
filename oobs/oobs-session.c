@@ -115,16 +115,8 @@ oobs_session_init (OobsSession *session)
 static void
 unregister_object_node (OobsSessionPrivate *priv, GList *node)
 {
-  priv->session_objects = g_list_remove_link (priv->session_objects, node);
-
-  /* FIXME: This sucks a bit, there must be a way for getting the OobsObjects notified
-   * of the session finalizing after the actual finalize (unlike g_object_weak_ref)
-   */
-  g_object_set   (G_OBJECT (node->data),
-		  "session", NULL,
-		  NULL);
   g_object_unref (G_OBJECT (node->data));
-  g_list_free_1  (node);
+  priv->session_objects = g_list_delete_link (priv->session_objects, node);
 }
 
 static void

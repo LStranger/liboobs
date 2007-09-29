@@ -25,7 +25,6 @@ G_BEGIN_DECLS
 
 #include "oobs-object.h"
 #include "oobs-list.h"
-#include "oobs-session.h"
 
 #define OOBS_TYPE_GROUPS_CONFIG         (oobs_groups_config_get_type ())
 #define OOBS_GROUPS_CONFIG(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_GROUPS_CONFIG, OobsGroupsConfig))
@@ -57,7 +56,7 @@ struct _OobsGroupsConfigClass
 
 GType       oobs_groups_config_get_type     (void);
 
-OobsObject* oobs_groups_config_get          (OobsSession *session);
+OobsObject* oobs_groups_config_get          (void);
 OobsList*   oobs_groups_config_get_groups   (OobsGroupsConfig *config);
 
 

@@ -118,19 +118,16 @@ oobs_group_init (OobsGroup *group)
 {
   OobsGroupPrivate *priv;
   OobsObject *users_config;
-  OobsSession *session;
 
   g_return_if_fail (OOBS_IS_GROUP (group));
 
-  session = oobs_session_get ();
-
   priv = OOBS_GROUP_GET_PRIVATE (group);
-  priv->config    = oobs_groups_config_get (session);
+  priv->config    = oobs_groups_config_get ();
   priv->groupname = NULL;
   priv->password  = NULL;
   priv->users     = NULL;
 
-  users_config = oobs_users_config_get (oobs_session_get ());
+  users_config = oobs_users_config_get ();
   g_object_get (users_config, "use-md5", &priv->use_md5, NULL);
   group->_priv = priv;
 }

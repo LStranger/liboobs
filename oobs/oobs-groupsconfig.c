@@ -324,15 +324,9 @@ query_users (OobsGroupsConfig *groups_config,
 	      GHashTable      *hashtable)
 {
   OobsObject *users_config;
-  OobsSession *session;
 
-  g_object_get (G_OBJECT (groups_config),
-		"session", &session,
-		NULL);
-
-  users_config = oobs_users_config_get (session);
+  users_config = oobs_users_config_get ();
   g_hash_table_foreach (hashtable, (GHFunc) query_users_foreach, users_config);
-  g_object_unref (session);
 }
 
 static void
@@ -434,7 +428,6 @@ oobs_groups_config_commit (OobsObject *object)
 
 /**
  * oobs_groups_config_get:
- * @session: An #OobsSession.
  * 
  * Returns the #OobsGroupsConfig singleton, which
  * represents the groups configuration.
@@ -442,13 +435,10 @@ oobs_groups_config_commit (OobsObject *object)
  * Return Value: the singleton #OobsGoupsConfig
  **/
 OobsObject*
-oobs_groups_config_get (OobsSession *session)
+oobs_groups_config_get (void)
 {
-  g_return_val_if_fail (OOBS_IS_SESSION (session), NULL);
-
   return g_object_new (OOBS_TYPE_GROUPS_CONFIG,
 		       "remote-object", GROUPS_CONFIG_REMOTE_OBJECT,
-		       "session",       session,
 		       NULL);
 }
 

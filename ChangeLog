@@ -1,5 +1,10 @@
 2007-09-29  Carlos Garnacho  <carlosg@gnome.org>
 
+	* oobs/utils.[ch] (utils_dup_string): Added.
+	* oobs/oobs-session.c: use it to get the platform list
+
+2007-09-29  Carlos Garnacho  <carlosg@gnome.org>
+
 	* oobs/oobs-object.c: remove "session" property. get it through
 	oobs_session_get() instead.
 	* oobs/oobs-session.c: update objects unregistering.

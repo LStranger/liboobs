@@ -131,6 +131,12 @@ utils_get_string (DBusMessageIter *iter)
   return NULL;
 }
 
+gchar *
+utils_dup_string (DBusMessageIter *iter)
+{
+  return g_strdup (utils_get_string (iter));
+}
+
 gint
 utils_get_int (DBusMessageIter *iter)
 {

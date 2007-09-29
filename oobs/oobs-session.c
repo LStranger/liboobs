@@ -319,8 +319,7 @@ oobs_session_get_platform (OobsSession  *session,
     }
 
   dbus_message_iter_init (reply, &iter);
-  str = utils_get_string (&iter);
-  priv->platform = (str) ? g_strdup (str) : NULL;
+  priv->platform = utils_dup_string (&iter);
 
   if (platform)
     *platform = priv->platform;
@@ -430,22 +429,12 @@ get_supported_platforms (OobsSession *session, GList **list)
       platform = g_new0 (OobsPlatform, 1);
       dbus_message_iter_recurse (&list_iter, &iter);
 
-      str = utils_get_string (&iter);
-      platform->name = g_strdup (str);
-      dbus_message_iter_next (&iter);
-
-      str = utils_get_string (&iter);
-      platform->version = g_strdup (str);
-      dbus_message_iter_next (&iter);
-	  
-      str = utils_get_string (&iter);
-      platform->codename = g_strdup (str);
-      dbus_message_iter_next (&iter);
-
-      str = utils_get_string (&iter);
-      platform->id = g_strdup (str);
-
+      platform->name = utils_dup_string (&iter);
+      platform->version = utils_dup_string (&iter);
+      platform->codename = utils_dup_string (&iter);
+      platform->id = utils_dup_string (&iter);
       platforms = g_list_prepend (platforms, platform);
+
       dbus_message_iter_next (&list_iter);
     }
 

@@ -35,6 +35,7 @@ void   utils_append_int                         (DBusMessageIter *iter, gint val
 void   utils_append_uint                        (DBusMessageIter *iter, guint value);
 
 G_CONST_RETURN gchar* utils_get_string          (DBusMessageIter *iter);
+gchar *               utils_dup_string          (DBusMessageIter *iter);
 gint  utils_get_int                             (DBusMessageIter *iter);
 guint utils_get_uint                            (DBusMessageIter *iter);
 

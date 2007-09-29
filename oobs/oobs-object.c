@@ -54,6 +54,10 @@ static void oobs_object_class_init (OobsObjectClass *class);
 static void oobs_object_init       (OobsObject      *object);
 static void oobs_object_finalize   (GObject         *object);
 
+static GObject * oobs_object_constructor (GType                  type,
+					  guint                  n_construct_properties,
+					  GObjectConstructParam *construct_params);
+
 static void oobs_object_set_property (GObject       *object,
 				      guint          prop_id,
 				      const GValue  *value,
@@ -86,6 +90,7 @@ oobs_object_class_init (OobsObjectClass *class)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (class);
 
+  object_class->constructor  = oobs_object_constructor;
   object_class->get_property = oobs_object_get_property;
   object_class->set_property = oobs_object_set_property;
   object_class->finalize     = oobs_object_finalize;
@@ -128,8 +133,6 @@ oobs_object_init (OobsObject *object)
 {
   OobsObjectPrivate *priv;
 
-  g_return_if_fail (OOBS_IS_OBJECT (object));
-
   priv = OOBS_OBJECT_GET_PRIVATE (object);
   priv->session = NULL;
   priv->remote_object = NULL;
@@ -162,6 +165,33 @@ oobs_object_finalize (GObject *object)
 
   if (G_OBJECT_CLASS (oobs_object_parent_class)->finalize)
     (* G_OBJECT_CLASS (oobs_object_parent_class)->finalize) (object);
+}
+
+static GObject *
+oobs_object_constructor (GType                  type,
+			 guint                  n_construct_properties,
+			 GObjectConstructParam *construct_params)
+{
+  static GHashTable *type_table;
+  GObject *object;
+
+  /* objects that inherit from OobsObject have to be
+   * singletons, keep a hash table with references to them
+   */
+  if (!type_table)
+    type_table = g_hash_table_new (g_direct_hash, g_direct_equal);
+
+  object = g_hash_table_lookup (type_table, GINT_TO_POINTER (type));
+
+  if (!object)
+    {
+      object = (* G_OBJECT_CLASS (oobs_object_parent_class)->constructor) (type,
+									   n_construct_properties,
+									   construct_params);
+      g_hash_table_insert (type_table, GINT_TO_POINTER (type), object);
+    }
+
+  return object;
 }
 
 static DBusHandlerResult

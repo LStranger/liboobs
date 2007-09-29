@@ -50,6 +50,10 @@ static void oobs_session_class_init (OobsSessionClass *class);
 static void oobs_session_init       (OobsSession      *session);
 static void oobs_session_finalize   (GObject         *object);
 
+static GObject * oobs_session_constructor (GType                  type,
+					   guint                  n_construct_properties,
+					   GObjectConstructParam *construct_params);
+
 static void oobs_session_set_property (GObject      *object,
 				       guint         prop_id,
 				       const GValue *value,
@@ -71,6 +75,7 @@ oobs_session_class_init (OobsSessionClass *class)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (class);
 
+  object_class->constructor  = oobs_session_constructor;
   object_class->set_property = oobs_session_set_property;
   object_class->get_property = oobs_session_get_property;
   object_class->finalize     = oobs_session_finalize;
@@ -147,6 +152,20 @@ oobs_session_finalize (GObject *object)
     (* G_OBJECT_CLASS (oobs_session_parent_class)->finalize) (object);
 }
 
+static GObject *
+oobs_session_constructor (GType                  type,
+			  guint                  n_construct_properties,
+			  GObjectConstructParam *construct_params)
+{
+  static GObject *session = NULL;
+
+  if (!session)
+    session = (* G_OBJECT_CLASS (oobs_session_parent_class)->constructor) (type,
+									   n_construct_properties,
+									   construct_params);
+  return session;
+}
+
 static void
 oobs_session_set_property (GObject      *object,
 			   guint         prop_id,
@@ -200,12 +219,7 @@ oobs_session_get_property (GObject      *object,
 OobsSession*
 oobs_session_get (void)
 {
-  static OobsSession *session = NULL;
-
-  if (!session)
-    session = g_object_new (OOBS_TYPE_SESSION, NULL);
-
-  return session;
+  return g_object_new (OOBS_TYPE_SESSION, NULL);
 }
 
 /**

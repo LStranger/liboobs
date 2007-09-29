@@ -1,3 +1,13 @@
+2007-09-29  Carlos Garnacho  <carlosg@gnome.org>
+
+	* oobs/oobs-object.c, oobs-session.c: implement singletons properly, 
+	allow subclassing for the OobsObject class.
+	* oobs/*config.c: remove singleton implementation from *_config_get(),
+	do not update config there either, we'll let API users choose whether
+	to update config synchronously or asynchronously after objects
+	initialization.
+	* configure.in: bump current, this is a behavior change.
+
 2007-09-15  Carlos Garnacho  <carlosg@gnome.org>
 
 	* utils.[ch] (utils_append_int) (utils_append_uint): Added.

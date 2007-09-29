@@ -444,22 +444,12 @@ oobs_groups_config_commit (OobsObject *object)
 OobsObject*
 oobs_groups_config_get (OobsSession *session)
 {
-  static OobsObject *object = NULL;
-
-  g_return_val_if_fail (session != NULL, NULL);
   g_return_val_if_fail (OOBS_IS_SESSION (session), NULL);
 
-  if (!object)
-    {
-      object = g_object_new (OOBS_TYPE_GROUPS_CONFIG,
-			     "remote-object", GROUPS_CONFIG_REMOTE_OBJECT,
-			     "session",       session,
-			     NULL);
-
-      oobs_object_update (object);
-    }
-
-  return object;
+  return g_object_new (OOBS_TYPE_GROUPS_CONFIG,
+		       "remote-object", GROUPS_CONFIG_REMOTE_OBJECT,
+		       "session",       session,
+		       NULL);
 }
 
 /**

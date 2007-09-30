@@ -20,6 +20,8 @@
 
 #include <dbus/dbus.h>
 #include <glib-object.h>
+#include <hal/libhal.h>
+#include "oobs-session-private.h"
 #include "oobs-list-private.h"
 #include "oobs-object-private.h"
 #include "oobs-ifacesconfig.h"
@@ -31,6 +33,7 @@
 #include "oobs-iface-isdn.h"
 #include "iface-state-monitor.h"
 #include "utils.h"
+#include "config.h"
 
 #define IFACES_CONFIG_REMOTE_OBJECT "IfacesConfig"
 #define OOBS_IFACES_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_IFACES_CONFIG, OobsIfacesConfigPrivate))
@@ -50,6 +53,11 @@ struct _OobsIfacesConfigPrivate
   GList *available_key_types;
 
   GHashTable *ifaces;
+
+#ifdef HAVE_HAL
+  LibHalContext *hal_context;
+  GHashTable    *devices;
+#endif
 };
 
 static void oobs_ifaces_config_class_init (OobsIfacesConfigClass *class);
@@ -123,12 +131,113 @@ oobs_ifaces_config_iface_monitor (OobsIfacesConfig *config,
     }
 }
 
+#ifdef HAVE_HAL
+
+static void
+hal_context_device_added (LibHalContext *context,
+			  const gchar   *udi)
+{
+  OobsIfacesConfig *config;
+  OobsIfacesConfigPrivate *priv;
+
+  config = libhal_ctx_get_user_data (context);
+  priv = OOBS_IFACES_CONFIG_GET_PRIVATE (config);
+
+  g_return_if_fail (OOBS_IS_IFACES_CONFIG (config));
+
+  if (libhal_device_query_capability (context, udi, "net", NULL))
+    {
+      g_hash_table_insert (priv->devices, g_strdup (udi), GINT_TO_POINTER (TRUE));
+      g_signal_emit_by_name (config, "changed");
+    }
+}
+
+static void
+hal_context_device_removed (LibHalContext *context,
+			    const gchar   *udi)
+{
+  OobsIfacesConfig *config;
+  OobsIfacesConfigPrivate *priv;
+
+  config = libhal_ctx_get_user_data (context);
+  priv = OOBS_IFACES_CONFIG_GET_PRIVATE (config);
+
+  g_return_if_fail (OOBS_IS_IFACES_CONFIG (config));
+
+  if (g_hash_table_lookup (priv->devices, udi))
+    {
+      g_hash_table_remove (priv->devices, udi);
+      g_signal_emit_by_name (config, "changed");
+    }
+}
+
+static GHashTable*
+hal_context_get_initial_devices (LibHalContext *context)
+{
+  GHashTable *devices;
+  gint i, n_devices;
+  gchar **udis;
+
+  devices = g_hash_table_new_full (g_str_hash, g_str_equal,
+				   (GDestroyNotify) g_free, NULL);
+
+  udis = libhal_find_device_by_capability (context, "net", &n_devices, NULL);
+
+  for (i = 0; i < n_devices; i++)
+    g_hash_table_insert (devices, g_strdup (udis[i]), GINT_TO_POINTER (TRUE));
+
+  libhal_free_string_array (udis);
+
+  return devices;
+}
+
+static void
+init_hal_context (OobsIfacesConfig *config)
+{
+  OobsIfacesConfigPrivate *priv;
+  OobsSession *session;
+  DBusConnection *connection;
+  DBusError error;
+
+  priv = OOBS_IFACES_CONFIG_GET_PRIVATE (config);
+
+  dbus_error_init (&error);
+  session = oobs_session_get ();
+  connection = _oobs_session_get_connection_bus (session);
+
+  priv->hal_context = libhal_ctx_new ();
+  libhal_ctx_set_dbus_connection (priv->hal_context, connection);
+
+  libhal_ctx_set_user_data (priv->hal_context, config);
+
+  libhal_ctx_set_device_added (priv->hal_context,
+			       hal_context_device_added);
+  libhal_ctx_set_device_removed (priv->hal_context,
+			       hal_context_device_removed);
+
+  libhal_ctx_init (priv->hal_context, &error);
+
+  if (dbus_error_is_set (&error))
+    {
+      g_warning (error.message);
+      return;
+    }
+
+  priv->devices = hal_context_get_initial_devices (priv->hal_context);
+}
+
+#endif
+
 static void
 oobs_ifaces_config_init (OobsIfacesConfig *config)
 {
   OobsIfacesConfigPrivate *priv;
 
   priv = OOBS_IFACES_CONFIG_GET_PRIVATE (config);
+
+#ifdef HAVE_HAL
+  init_hal_context (config);
+#endif
 
   priv->ethernet_ifaces = _oobs_list_new (OOBS_TYPE_IFACE_ETHERNET);
   priv->wireless_ifaces = _oobs_list_new (OOBS_TYPE_IFACE_WIRELESS);
@@ -184,6 +293,10 @@ oobs_ifaces_config_finalize (GObject *object)
       g_object_unref (priv->plip_ifaces);
       g_object_unref (priv->modem_ifaces);
       g_object_unref (priv->isdn_ifaces);
+
+#ifdef HAVE_HAL
+      libhal_ctx_free (priv->hal_context);
+#endif
     }
 
   if (G_OBJECT_CLASS (oobs_ifaces_config_parent_class)->finalize)

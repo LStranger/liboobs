@@ -1,7 +1,8 @@
 INCLUDES = \
 	-Wall \
 	-DG_LOG_DOMAIN=\"Liboobs\" \
-	$(OOBS_CFLAGS)
+	$(OOBS_CFLAGS) \
+	$(HAL_CFLAGS)
 
 libtool_opts = \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
@@ -88,7 +89,7 @@ else
 liboobs_1_la_SOURCES += iface-state-monitor-dummy.c
 endif
 
-liboobs_1_la_LIBADD= $(OOBS_LIBS)
+liboobs_1_la_LIBADD= $(OOBS_LIBS) $(HAL_LIBS)
 liboobs_1_la_LDFLAGS= $(libtool_opts)
 
 EXTRA_DIST= $(oobs_private_headers)

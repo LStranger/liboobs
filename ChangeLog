@@ -1,3 +1,13 @@
+2007-09-30  Carlos Garnacho  <carlosg@gnome.org>
+
+	Add optional HAL support to OobsIfacesConfig.
+
+	* configure.in, oobs/Makefile.am: add autofoo.
+	* oobs/oobs-ifacesconfig.c (hal_context_device_added)
+	(hal_context_device_removed) (hal_context_get_initial_devices)
+	(init_hal_context): Added, emit ::changed when a network device has
+	been added/removed.
+
 2007-09-29  Carlos Garnacho  <carlosg@gnome.org>
 
 	* oobs/utils.[ch] (utils_dup_string): Added.

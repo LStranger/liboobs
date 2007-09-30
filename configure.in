@@ -30,6 +30,7 @@ AC_SUBST(LT_AGE)
 GLIB_REQUIRED=2.6.0
 DBUS_REQUIRED=0.70
 STB_REQUIRED=2.1.2
+HAL_REQUIRED=0.5.9
 
 dnl set gettext stuff
 
@@ -55,6 +56,18 @@ OOBS_CFLAGS="-DDBUS_API_SUBJECT_TO_CHANGE $OOBS_CFLAGS"
 AC_SUBST(OOBS_LIBS)
 AC_SUBST(OOBS_CFLAGS)
 
+dnl =====================================================
+dnl HAL detection
+dnl =====================================================
+PKG_CHECK_MODULES(HAL, hal >= $HAL_REQUIRED, have_hal=yes, have_hal=no)
+
+if test "$have_hal" = "yes"; then
+  AC_DEFINE(HAVE_HAL, [1], [whether HAL was found])
+fi
+
+AC_SUBST(HAL_LIBS)
+AC_SUBST(HAL_CFLAGS)
+
 AC_CHECK_LIB(crypt, crypt, , [AC_MSG_ERROR(crypt library is required.)])
 AC_CHECK_HEADER(crypt.h, AC_DEFINE(HAVE_CRYPT_H, "", [whether it has crypt function]))
 
@@ -79,5 +92,7 @@ liboobs-1.pc
 ])
 
 echo "configuration:
+        use netlink: ${have_rtnetlink}
+        use HAL:     ${have_hal}
         doc build:   ${enable_gtk_doc}
 "

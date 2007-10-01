@@ -1,3 +1,11 @@
+2007-10-01  Carlos Garnacho  <carlosg@gnome.org>
+
+	* oobs/oobs-session.c (unregister_object_node): remove the registered
+	objects node from the list before unreferencing the object to avoid
+	recursing there.
+	(oobs_session_get_platform) (get_supported_platforms): remove unused
+	vars.
+
 2007-09-30  Carlos Garnacho  <carlosg@gnome.org>
 
 	Add optional HAL support to OobsIfacesConfig.

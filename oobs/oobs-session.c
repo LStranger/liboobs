@@ -115,8 +115,10 @@ oobs_session_init (OobsSession *session)
 static void
 unregister_object_node (OobsSessionPrivate *priv, GList *node)
 {
+  priv->session_objects = g_list_remove_link (priv->session_objects, node);
+
   g_object_unref (G_OBJECT (node->data));
-  priv->session_objects = g_list_delete_link (priv->session_objects, node);
+  g_list_free_1 (node);
 }
 
 static void
@@ -287,7 +289,6 @@ oobs_session_get_platform (OobsSession  *session,
   DBusMessage *message, *reply;
   DBusMessageIter iter;
   OobsResult result;
-  const gchar *str;
 
   g_return_val_if_fail (OOBS_IS_SESSION (session), OOBS_RESULT_ERROR);
 
@@ -395,7 +396,6 @@ get_supported_platforms (OobsSession *session, GList **list)
   OobsPlatform *platform;
   OobsResult result;
   GList *platforms = NULL;
-  const gchar *str;
 
   priv = session->_priv;
   g_return_val_if_fail (priv->connection != NULL, OOBS_RESULT_ERROR);

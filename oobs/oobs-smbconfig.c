@@ -302,21 +302,21 @@ create_dbus_struct_from_share (GObject         *share,
 
   dbus_message_iter_open_container (iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
 
-  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_STRING, &name);
-  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_STRING, &path);
-  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_STRING, &comment);
+  utils_append_string (&struct_iter, name);
+  utils_append_string (&struct_iter, path);
+  utils_append_string (&struct_iter, comment);
 
   value = (flags & OOBS_SHARE_SMB_ENABLED);
-  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_INT32, &value);
-  
+  utils_append_int (&struct_iter, value);
+
   value = (flags & OOBS_SHARE_SMB_BROWSABLE);
-  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_INT32, &value);
+  utils_append_int (&struct_iter, value);
 
   value = (flags & OOBS_SHARE_SMB_PUBLIC);
-  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_INT32, &value);
+  utils_append_int (&struct_iter, value);
 
   value = (flags & OOBS_SHARE_SMB_WRITABLE);
-  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_INT32, &value);
+  utils_append_int (&struct_iter, value);
 
   dbus_message_iter_close_container (iter, &struct_iter);
 
@@ -367,7 +367,7 @@ oobs_smb_config_commit (OobsObject *object)
 
   utils_append_string (&iter, priv->workgroup);
   utils_append_string (&iter, priv->desc);
-  dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &priv->is_wins_server);
+  utils_append_int (&iter, priv->is_wins_server);
   utils_append_string (&iter, priv->wins_server);
 }
 

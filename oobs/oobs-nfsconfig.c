@@ -139,7 +139,7 @@ create_dbus_struct_from_share (GObject         *share,
   acl = oobs_share_nfs_get_acl (OOBS_SHARE_NFS (share));
 
   dbus_message_iter_open_container (array_iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
-  dbus_message_iter_append_basic (&struct_iter, DBUS_TYPE_STRING, &path);
+  utils_append_string (&struct_iter, path);
 
   dbus_message_iter_open_container (&struct_iter,
 				    DBUS_TYPE_ARRAY,

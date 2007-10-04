@@ -275,8 +275,6 @@ create_user_from_dbus_reply (OobsObject      *object,
 
   dbus_message_iter_recurse (&struct_iter, &iter);
 
-  dbus_message_iter_get_basic (&iter, &id);
-
   id = utils_get_uint (&iter);
   login = utils_get_string (&iter);
   passwd = utils_get_string (&iter);

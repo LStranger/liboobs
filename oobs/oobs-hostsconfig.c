@@ -165,9 +165,9 @@ create_dbus_struct_from_static_host (OobsStaticHost  *host,
 
   ip_address = oobs_static_host_get_ip_address (host);
   aliases = oobs_static_host_get_aliases (host);
-  
+
   dbus_message_iter_open_container (iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
-  dbus_message_iter_append_basic   (&struct_iter, DBUS_TYPE_STRING, &ip_address);
+  utils_append_string (&struct_iter, ip_address);
   utils_create_dbus_array_from_string_list (aliases, message, &struct_iter);
   dbus_message_iter_close_container (iter, &struct_iter);
 

@@ -1,3 +1,9 @@
+2007-10-05  Carlos Garnacho  <carlosg@gnome.org>
+
+	* oobs/oobs-hostsconfig.c, oobs-nfsconfig.c, oobs-smbconfig.c: Use
+	dbus helper functions in some missing places.
+	* oobs/oobs-usersconfig.c: remove a harmless typo.
+
 2007-10-01  Carlos Garnacho  <carlosg@gnome.org>
 
 	* oobs/oobs-session.c (unregister_object_node): remove the registered

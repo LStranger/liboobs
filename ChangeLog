@@ -1,3 +1,9 @@
+2007-10-06  Carlos Garnacho  <carlosg@gnome.org>
+
+	* oobs/oobs-object.[ch] (oobs_object_has_updated): Added, in previous
+	versions this was always true, since oobs_*_config_get() updated the
+	object, but it no longer does.
+
 2007-10-05  Carlos Garnacho  <carlosg@gnome.org>
 
 	* oobs/oobs-hostsconfig.c, oobs-nfsconfig.c, oobs-smbconfig.c: Use

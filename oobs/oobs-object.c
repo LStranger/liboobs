@@ -40,6 +40,8 @@ struct _OobsObjectPrivate
   gchar       *method;
 
   GList       *pending_calls;
+
+  guint        updated : 1;
 };
 
 struct _OobsObjectAsyncCallbackData
@@ -298,6 +300,7 @@ static OobsResult
 update_object_from_message (OobsObject  *object,
 			    DBusMessage *message)
 {
+  OobsObjectPrivate *priv;
   OobsObjectClass *class;
 
   class = OOBS_OBJECT_GET_CLASS (object);
@@ -311,6 +314,9 @@ update_object_from_message (OobsObject  *object,
   g_object_set_qdata (G_OBJECT (object), dbus_connection_quark, message);
   class->update (object);
   g_object_steal_qdata (G_OBJECT (object), dbus_connection_quark);
+
+  priv = object->_priv;
+  priv->updated = TRUE;
 
   return OOBS_RESULT_OK;
 }
@@ -626,4 +632,24 @@ oobs_object_process_requests (OobsObject *object)
   g_return_if_fail (OOBS_IS_OBJECT (object));
   priv = object->_priv;
   g_list_foreach (priv->pending_calls, (GFunc) dbus_pending_call_block, NULL);
+}
+
+/**
+ * oobs_object_has_updated:
+ * @object: An #OobsObject
+ *
+ * Returns whether the object has been updated since its creation.
+ * see oobs_object_update() and oobs_object_update_async().
+ *
+ * Return Value: #TRUE if the object has been updated.
+ **/
+gboolean
+oobs_object_has_updated (OobsObject *object)
+{
+  OobsObjectPrivate *priv;
+
+  g_return_val_if_fail (OOBS_IS_OBJECT (object), FALSE);
+
+  priv = object->_priv;
+  return priv->updated;
 }

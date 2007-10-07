@@ -66,6 +66,7 @@ gid_t      oobs_group_get_gid      (OobsGroup *group);
 void       oobs_group_set_gid      (OobsGroup *group, gid_t gid);
 
 GList     *oobs_group_get_users    (OobsGroup *group);
+void       oobs_group_clear_users  (OobsGroup *group);
 void       oobs_group_add_user     (OobsGroup *group, OobsUser *user);
 void       oobs_group_remove_user  (OobsGroup *group, OobsUser *user);
 

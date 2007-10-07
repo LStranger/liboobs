@@ -216,6 +216,8 @@ oobs_group_finalize (GObject *object)
   OobsGroup        *group;
   OobsGroupPrivate *priv;
 
+  g_print ("jijij\n");
+
   g_return_if_fail (OOBS_IS_GROUP (object));
 
   group = OOBS_GROUP (object);
@@ -226,11 +228,8 @@ oobs_group_finalize (GObject *object)
       g_free (priv->groupname);
       g_free (priv->password);
 
-      if (priv->users)
-	{
-	  g_list_foreach (priv->users, (GFunc) g_object_unref, NULL);
-	  g_list_free (priv->users);
-	}
+      g_list_foreach (priv->users, (GFunc) g_object_unref, NULL);
+      g_list_free (priv->users);
     }
 
   if (G_OBJECT_CLASS (oobs_group_parent_class)->finalize)
@@ -407,6 +406,20 @@ oobs_group_get_users (OobsGroup *group)
 
   priv = group->_priv;
   return g_list_copy (priv->users);
+}
+
+void
+oobs_group_clear_users (OobsGroup *group)
+{
+  OobsGroupPrivate *priv;
+
+  g_return_if_fail (OOBS_IS_GROUP (group));
+
+  priv = group->_priv;
+
+  g_list_foreach (priv->users, (GFunc) g_object_unref, NULL);
+  g_list_free (priv->users);
+  priv->users = NULL;
 }
 
 /**

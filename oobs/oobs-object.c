@@ -41,6 +41,7 @@ struct _OobsObjectPrivate
 
   GList       *pending_calls;
 
+  guint        update_requests;
   guint        updated : 1;
 };
 
@@ -327,12 +328,17 @@ update_object_from_message (OobsObject  *object,
       return OOBS_RESULT_MALFORMED_DATA;
     }
 
+  priv = object->_priv;
+  priv->updated = TRUE;
+
+  if (priv->update_requests == 0)
+    g_critical ("update requests count already reached 0");
+  else
+    priv->update_requests--;
+
   g_object_set_qdata (G_OBJECT (object), dbus_connection_quark, message);
   class->update (object);
   g_object_steal_qdata (G_OBJECT (object), dbus_connection_quark);
-
-  priv = object->_priv;
-  priv->updated = TRUE;
 
   g_signal_emit (object, object_signals [UPDATED], 0);
 
@@ -585,16 +591,19 @@ oobs_object_commit_async (OobsObject          *object,
 OobsResult
 oobs_object_update (OobsObject *object)
 {
+  OobsObjectPrivate *priv;
   DBusMessage *message, *reply;
   OobsResult result = OOBS_RESULT_MALFORMED_DATA;
 
   g_return_val_if_fail (OOBS_IS_OBJECT (object), OOBS_RESULT_MALFORMED_DATA);
 
+  priv = object->_priv;
   message = get_update_message (object);
 
   if (!message)
     return OOBS_RESULT_MALFORMED_DATA;
 
+  priv->update_requests++;
   reply = run_message (object, message, &result);
 
   if (reply)
@@ -628,13 +637,16 @@ oobs_object_update_async (OobsObject          *object,
 			  OobsObjectAsyncFunc  func,
 			  gpointer             data)
 {
+  OobsObjectPrivate *priv;
   DBusMessage *message;
 
+  priv = object->_priv;
   message = get_update_message (object);
 
   if (!message)
     return OOBS_RESULT_MALFORMED_DATA;
 
+  priv->update_requests++;
   run_message_async (object, message, TRUE, func, data);
   dbus_message_unref (message);
 
@@ -675,4 +687,35 @@ oobs_object_has_updated (OobsObject *object)
 
   priv = object->_priv;
   return priv->updated;
+}
+
+/**
+ * oobs_object_ensure_update:
+ * @object: An #OobsObject
+ *
+ * Ensures that the given object has been updated. If not
+ * it either blocks until any update request sent is
+ * dispatched or updates synchronously.
+ **/
+void
+oobs_object_ensure_update (OobsObject *object)
+{
+  OobsObjectPrivate *priv;
+
+  g_return_if_fail (OOBS_IS_OBJECT (object));
+
+  if (oobs_object_has_updated (object))
+    return;
+
+  priv = object->_priv;
+
+  if (priv->update_requests > 0)
+    {
+      /* it's in the middle of
+       * asynchronous update request(s)
+       */
+      oobs_object_process_requests (object);
+    }
+  else
+    oobs_object_update (object);
 }

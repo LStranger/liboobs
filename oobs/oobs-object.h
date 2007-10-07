@@ -80,6 +80,7 @@ OobsResult  oobs_object_update_async (OobsObject          *object,
 
 void        oobs_object_process_requests (OobsObject *object);
 gboolean    oobs_object_has_updated      (OobsObject *object);
+void        oobs_object_ensure_update    (OobsObject *object);
 
 G_END_DECLS
 

@@ -1,3 +1,14 @@
+2007-10-07  Carlos Garnacho  <carlosg@gnome.org>
+
+	* oobs-object.[ch] (oobs_object_ensure_update): Added, ensures that an
+	object has been updated.
+	* oobs-group.[ch] (oobs_group_clear_users): Added, removes all users
+	from a group.
+	* oobs-groupsconfig.c, oobs-usersconfig.c: Fix error where one of
+	these configs could not have references to the latest configuration
+	objects from the other, this bug became noticeable when the
+	OobsObjects started not updating synchronously at creation.
+
 2007-10-06  Carlos Garnacho  <carlosg@gnome.org>
 
 	* oobs/oobs-object.[ch]: Add ::updated and ::committed, emit

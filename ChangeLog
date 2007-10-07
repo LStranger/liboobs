@@ -1,5 +1,10 @@
 2007-10-06  Carlos Garnacho  <carlosg@gnome.org>
 
+	* oobs/oobs-object.[ch]: Add ::updated and ::committed, emit
+	conveniently after the object has been updated or committed.
+
+2007-10-06  Carlos Garnacho  <carlosg@gnome.org>
+
 	* oobs/oobs-object.[ch] (oobs_object_has_updated): Added, in previous
 	versions this was always true, since oobs_*_config_get() updated the
 	object, but it no longer does.

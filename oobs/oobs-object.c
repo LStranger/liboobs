@@ -73,6 +73,8 @@ static void connect_object_to_session (OobsObject *object);
 
 enum
 {
+  UPDATED,
+  COMMITTED,
   CHANGED,
   LAST_SIGNAL
 };
@@ -113,6 +115,20 @@ oobs_object_class_init (OobsObjectClass *class)
 							NULL,
 							G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
 
+  object_signals [UPDATED] = g_signal_new ("updated",
+					   G_OBJECT_CLASS_TYPE (object_class),
+					   G_SIGNAL_RUN_LAST,
+					   G_STRUCT_OFFSET (OobsObjectClass, updated),
+					   NULL, NULL,
+					   g_cclosure_marshal_VOID__VOID,
+					   G_TYPE_NONE, 0);
+  object_signals [COMMITTED] = g_signal_new ("committed",
+					     G_OBJECT_CLASS_TYPE (object_class),
+					     G_SIGNAL_RUN_LAST,
+					     G_STRUCT_OFFSET (OobsObjectClass, committed),
+					     NULL, NULL,
+					     g_cclosure_marshal_VOID__VOID,
+					     G_TYPE_NONE, 0);
   object_signals [CHANGED] = g_signal_new ("changed",
 					   G_OBJECT_CLASS_TYPE (object_class),
 					   G_SIGNAL_RUN_LAST,
@@ -305,7 +321,7 @@ update_object_from_message (OobsObject  *object,
 
   class = OOBS_OBJECT_GET_CLASS (object);
 
-  if (!class->update)
+  if (G_UNLIKELY (!class->update))
     {
       g_critical ("There is no update() implementation for this object");
       return OOBS_RESULT_MALFORMED_DATA;
@@ -317,6 +333,8 @@ update_object_from_message (OobsObject  *object,
 
   priv = object->_priv;
   priv->updated = TRUE;
+
+  g_signal_emit (object, object_signals [UPDATED], 0);
 
   return OOBS_RESULT_OK;
 }
@@ -386,7 +404,10 @@ async_message_cb (DBusPendingCall *pending_call, gpointer data)
       if (async_data->update)
 	result = update_object_from_message (OOBS_OBJECT (async_data->object), reply);
       else
-	result = OOBS_RESULT_OK;
+	{
+	  g_signal_emit (async_data->object, object_signals [COMMITTED], 0);
+	  result = OOBS_RESULT_OK;
+	}
     }
 
   priv = async_data->object->_priv;
@@ -514,6 +535,7 @@ oobs_object_commit (OobsObject *object)
 
   run_message (object, message, &result);
   dbus_message_unref (message);
+  g_signal_emit (object, object_signals [COMMITTED], 0);
 
   return result;
 }
@@ -578,6 +600,7 @@ oobs_object_update (OobsObject *object)
   if (reply)
     {
       result = update_object_from_message (object, reply);
+      g_signal_emit (object, object_signals [UPDATED], 0);
       dbus_message_unref (reply);
     }
 

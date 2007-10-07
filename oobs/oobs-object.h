@@ -54,7 +54,9 @@ struct _OobsObjectClass
   void (*update) (OobsObject *object);
 
   /* signals */
-  void (*changed)  (OobsObject *object);
+  void (*updated)   (OobsObject *object);
+  void (*committed) (OobsObject *object);
+  void (*changed)   (OobsObject *object);
 
   void (*_oobs_padding1) (void);
   void (*_oobs_padding2) (void);

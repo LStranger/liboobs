@@ -1,3 +1,10 @@
+2007-10-10  Carlos Garnacho  <carlosg@gnome.org>
+
+	* oobs-session.[ch] (oobs_session_get_authentication_action): Added.
+	Sucks, but I don't find a good way to hide the authentication method
+	detail and allow people to integrate with graphical authentication
+	helpers like PolicyKit-gnome.
+
 2007-10-07  Carlos Garnacho  <carlosg@gnome.org>
 
 	* oobs-object.[ch] (oobs_object_ensure_update): Added, ensures that an

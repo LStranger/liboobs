@@ -31,6 +31,7 @@
 #define OOBS_SESSION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_SESSION, OobsSessionPrivate))
 #define PLATFORMS_PATH OOBS_DBUS_PATH_PREFIX "/Platform"
 #define PLATFORMS_INTERFACE OOBS_DBUS_METHOD_PREFIX ".Platform"
+#define POLKIT_ACTION "org.freedesktop.systemtoolsbackends.set"
 
 typedef struct _OobsSessionPrivate OobsSessionPrivate;
 
@@ -499,6 +500,25 @@ oobs_session_process_requests (OobsSession *session)
 
   priv = session->_priv;
   g_list_foreach (priv->session_objects, (GFunc) oobs_object_process_requests, NULL);
+}
+
+/**
+ * oobs_session_get_authentication_action:
+ * @session: An #OobsSession
+ *
+ * Returns the PolicyKit action the user has to be authenticated to in order to
+ * commit changes to configuration objects in this session. If the user has not
+ * the required permissions, any attempt to commit will return #OOBS_RESULT_ACCESS_DENIED.
+ *
+ * Return Value: string defining the PolicyKit action
+ *               required to modify objects in the session.
+ **/
+G_CONST_RETURN gchar *
+oobs_session_get_authentication_action (OobsSession *session)
+{
+  g_return_val_if_fail (OOBS_IS_SESSION (session), NULL);
+
+  return POLKIT_ACTION;
 }
 
 /* protected methods */

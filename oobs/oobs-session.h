@@ -76,6 +76,8 @@ OobsResult   oobs_session_set_platform            (OobsSession  *session,
 
 void         oobs_session_process_requests  (OobsSession *session);
 
+G_CONST_RETURN gchar * oobs_session_get_authentication_action (OobsSession *session);
+
 G_END_DECLS
 
 #endif /* __OOBS_SESSION_H */

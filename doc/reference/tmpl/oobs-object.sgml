@@ -30,12 +30,21 @@ The changed signal is emitted when the underlying configuration changes. This is
 
 @oobsobject: the object which received the signal.
 
-<!-- ##### ARG OobsObject:remote-object ##### -->
+<!-- ##### SIGNAL OobsObject::committed ##### -->
 <para>
 
 </para>
 
-<!-- ##### ARG OobsObject:session ##### -->
+@oobsobject: the object which received the signal.
+
+<!-- ##### SIGNAL OobsObject::updated ##### -->
+<para>
+
+</para>
+
+@oobsobject: the object which received the signal.
+
+<!-- ##### ARG OobsObject:remote-object ##### -->
 <para>
 
 </para>

@@ -23,6 +23,11 @@ Object that represents an individual user.
 </para>
 
 
+<!-- ##### ARG OobsUser:active ##### -->
+<para>
+
+</para>
+
 <!-- ##### ARG OobsUser:crypted-password ##### -->
 <para>
 

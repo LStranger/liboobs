@@ -29,7 +29,6 @@ Object that represents hosts resolution configuration.
 
 </para>
 
-@session: 
 @Returns: 
 
 

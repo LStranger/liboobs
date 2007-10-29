@@ -28,7 +28,6 @@ Object that represents NTP configuration.
 
 </para>
 
-@session: 
 @Returns: 
 
 

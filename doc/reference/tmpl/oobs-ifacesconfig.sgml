@@ -47,7 +47,6 @@ Object that represents network interfaces configuration.
 
 </para>
 
-@session: 
 @Returns: 
 
 

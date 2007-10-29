@@ -48,7 +48,6 @@ Object that represents SMB configuration.
 
 </para>
 
-@session: 
 @Returns: 
 
 

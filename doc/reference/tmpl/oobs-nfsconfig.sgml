@@ -28,7 +28,6 @@ Object that represents NFS configuration.
 
 </para>
 
-@session: 
 @Returns: 
 
 

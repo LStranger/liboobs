@@ -23,6 +23,13 @@ Base object for network interfaces.
 </para>
 
 
+<!-- ##### SIGNAL OobsIface::state-changed ##### -->
+<para>
+
+</para>
+
+@oobsiface: the object which received the signal.
+
 <!-- ##### ARG OobsIface:active ##### -->
 <para>
 

@@ -46,7 +46,6 @@ Object that represents the configuration of services that start/stop during init
 
 </para>
 
-@session: 
 @Returns: 
 
 

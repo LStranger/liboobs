@@ -1,3 +1,27 @@
+Liboobs 2.21.1, 2007-10-29
+-----------------------------------------------
+
+Liboobs version 2.21.1 "Wordless questions" has been released.
+
+Liboobs is a lightweight library that provides a GObject based interface to system-tools-backends. It's completely abstracted of the communication and authentication details, making it easy for applications to integrate with the system details.
+
+Changes since last release
+==========================
+
+- Add API to know whether an user is currently active (garnacho)
+- Add network interfaces state monitoring, at the moment it only works in linux (garnacho)
+- Add optional HAL support, used for monitoring the addition/removal of network interfaces (garnacho)
+- Do not update synchronously on object creation, liboobs users can choose whether to do it synchronously or asynchronously later, this is an ABI change. (garnacho)
+- Added PolicyKit support (garnacho)
+
+Thanks to anyone involved!
+
+Downloading
+===========
+You can get it from :
+ftp://ftp.gnome.org/pub/GNOME/sources/liboobs/2.21/
+
+
 Liboobs 2.19.92, 2007-09-03
 -----------------------------------------------
 

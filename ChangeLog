@@ -1,5 +1,13 @@
 2007-11-06  Carlos Garnacho  <carlosg@gnome.org>
 
+	* oobs/oobs-object.[ch] (oobs_object_get_authentication_action):
+	Added, together with a vmethod overridable by derived objects. By
+	default it returns the org.freedesktop.systemtoolsbackends.set action.
+	(oobs_object_update): do not emit ::updated twice, it's already done
+	inside update_object_from_message().
+
+2007-11-06  Carlos Garnacho  <carlosg@gnome.org>
+
 	* oobs/iface-state-monitor-linux.c (read_message): do not emit the
 	signal when it couldn't retrieve the interface name.
 

@@ -52,6 +52,7 @@ struct _OobsObjectClass
   /* virtual methods */
   void (*commit) (OobsObject *object);
   void (*update) (OobsObject *object);
+  const gchar * (*get_authentication_action) (OobsObject *object);
 
   /* signals */
   void (*updated)   (OobsObject *object);
@@ -81,6 +82,9 @@ OobsResult  oobs_object_update_async (OobsObject          *object,
 void        oobs_object_process_requests (OobsObject *object);
 gboolean    oobs_object_has_updated      (OobsObject *object);
 void        oobs_object_ensure_update    (OobsObject *object);
+
+G_CONST_RETURN gchar * oobs_object_get_authentication_action (OobsObject *object);
+
 
 G_END_DECLS
 

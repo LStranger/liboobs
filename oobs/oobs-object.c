@@ -26,6 +26,7 @@
 #include "oobs-session-private.h"
 
 #define OOBS_OBJECT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_OBJECT, OobsObjectPrivate))
+#define POLKIT_ACTION "org.freedesktop.systemtoolsbackends.set"
 
 typedef struct _OobsObjectPrivate OobsObjectPrivate;
 typedef struct _OobsObjectAsyncCallbackData OobsObjectAsyncCallbackData;
@@ -70,6 +71,8 @@ static void oobs_object_get_property (GObject       *object,
 				      GValue        *value,
 				      GParamSpec    *pspec);
 
+static const gchar * oobs_object_real_get_authentication_action (OobsObject *object);
+
 static void connect_object_to_session (OobsObject *object);
 
 enum
@@ -102,9 +105,7 @@ oobs_object_class_init (OobsObjectClass *class)
   object_class->set_property = oobs_object_set_property;
   object_class->finalize     = oobs_object_finalize;
 
-  class->commit   = NULL;
-  class->update   = NULL;
-  class->changed  = NULL;
+  class->get_authentication_action = oobs_object_real_get_authentication_action;
 
   dbus_connection_quark = g_quark_from_static_string ("oobs-dbus-connection");
 
@@ -298,6 +299,12 @@ oobs_object_get_property (GObject      *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+}
+
+static const gchar *
+oobs_object_real_get_authentication_action (OobsObject *object)
+{
+  return POLKIT_ACTION;
 }
 
 DBusMessage*
@@ -609,7 +616,6 @@ oobs_object_update (OobsObject *object)
   if (reply)
     {
       result = update_object_from_message (object, reply);
-      g_signal_emit (object, object_signals [UPDATED], 0);
       dbus_message_unref (reply);
     }
 
@@ -718,4 +724,24 @@ oobs_object_ensure_update (OobsObject *object)
     }
   else
     oobs_object_update (object);
+}
+
+/**
+ * oobs_object_get_authentication_action:
+ * @object: An #OobsObject.
+ *
+ * Returns the PolicyKit action required to be able to modify this object configuration.
+ *
+ * Return Value: string defining the PolicyKit action
+ *               required to modify objects in the session.
+ **/
+G_CONST_RETURN gchar *
+oobs_object_get_authentication_action (OobsObject *object)
+{
+  OobsObjectClass *class;
+
+  g_return_val_if_fail (OOBS_IS_OBJECT (object), NULL);
+
+  class = OOBS_OBJECT_GET_CLASS (object);
+  return class->get_authentication_action (object);
 }

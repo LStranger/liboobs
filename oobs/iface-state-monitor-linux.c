@@ -73,7 +73,8 @@ read_message (MonitorData     *data,
   iface_name = get_message_attribute (data, msg_netlink, size, IFLA_IFNAME);
   iface_active = if_info->ifi_flags & IFF_UP;
 
-  (data->func) (data->config, iface_name, iface_active);
+  if (iface_name)
+    (data->func) (data->config, iface_name, iface_active);
 }
 
 static gboolean

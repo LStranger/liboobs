@@ -25,6 +25,7 @@
 #include <oobs/oobs-object.h>
 #include <oobs/oobs-session.h>
 #include <oobs/oobs-list.h>
+#include <oobs/oobs-selfconfig.h>
 #include <oobs/oobs-share.h>
 #include <oobs/oobs-share-smb.h>
 #include <oobs/oobs-smbconfig.h>

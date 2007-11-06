@@ -30,6 +30,7 @@ oobsinclude_HEADERS= 	\
 	oobs-ntpconfig.h	\
 	oobs-ntpserver.h	\
 	oobs-hostsconfig.h	\
+	oobs-selfconfig.h	\
 	oobs-statichost.h	\
 	oobs-ifacesconfig.h	\
 	oobs-iface.h		\
@@ -69,6 +70,7 @@ liboobs_1_la_SOURCES = \
 	oobs-smbconfig.c		\
 	oobs-share-smb.c		\
 	oobs-nfsconfig.c		\
+	oobs-selfconfig.c		\
 	oobs-share-nfs.c		\
 	oobs-statichost.c		\
 	oobs-hostsconfig.c		\

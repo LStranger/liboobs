@@ -1,5 +1,11 @@
 2007-11-06  Carlos Garnacho  <carlosg@gnome.org>
 
+	* oobs/oobs-usersconfig.c (oobs_users_config_get_users): Fix typo in
+	code, it's the groups configuration what we should make sure we have
+	here.
+
+2007-11-06  Carlos Garnacho  <carlosg@gnome.org>
+
 	* oobs/oobs-selfconfig.[ch]: Added, new objects to modify the
 	requester user configuration.
 	* oobs/oobs.h: include it here.

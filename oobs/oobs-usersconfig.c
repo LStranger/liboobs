@@ -623,7 +623,7 @@ oobs_users_config_get_users (OobsUsersConfig *config)
   g_return_val_if_fail (config != NULL, NULL);
   g_return_val_if_fail (OOBS_IS_USERS_CONFIG (config), NULL);
 
-  oobs_object_ensure_update (oobs_users_config_get ());
+  oobs_object_ensure_update (oobs_groups_config_get ());
   priv = config->_priv;
 
   return priv->users_list;

@@ -101,15 +101,6 @@ Object that represents an individual user.
 @Returns: 
 
 
-<!-- ##### FUNCTION oobs_user_set_login_name ##### -->
-<para>
-
-</para>
-
-@user: 
-@login: 
-
-
 <!-- ##### FUNCTION oobs_user_set_password ##### -->
 <para>
 

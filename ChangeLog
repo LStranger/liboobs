@@ -1,5 +1,9 @@
 2007-11-13  Carlos Garnacho  <carlosg@gnome.org>
 
+	* Release 2.21.2
+
+2007-11-13  Carlos Garnacho  <carlosg@gnome.org>
+
 	Adapt to message format change in UsersConfig/GroupsConfig, this means
 	we have to rely on s-t-b >= 2.5/2.6. This message format change fixes
 	bug #489187.

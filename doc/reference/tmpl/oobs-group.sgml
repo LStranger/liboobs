@@ -61,15 +61,6 @@ Object that represents an individual group.
 @Returns: 
 
 
-<!-- ##### FUNCTION oobs_group_set_name ##### -->
-<para>
-
-</para>
-
-@group: 
-@name: 
-
-
 <!-- ##### FUNCTION oobs_group_set_password ##### -->
 <para>
 

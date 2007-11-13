@@ -135,6 +135,14 @@ utils
 
 @Returns: 
 
+<!-- ##### FUNCTION oobs_group_set_name ##### -->
+<para>
+
+</para>
+
+@group: 
+@name: 
+
 <!-- ##### FUNCTION oobs_iface_ethernet_get_type ##### -->
 <para>
 
@@ -258,4 +266,12 @@ utils
 
 @config: 
 @Returns: 
+
+<!-- ##### FUNCTION oobs_user_set_login_name ##### -->
+<para>
+
+</para>
+
+@user: 
+@login: 
 

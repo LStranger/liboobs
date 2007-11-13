@@ -1,3 +1,25 @@
+Liboobs 2.21.2, 2007-11-13
+-----------------------------------------------
+
+Liboobs version 2.21.2 "Half way through" has been released.
+
+Liboobs is a lightweight library that provides a GObject based interface to system-tools-backends. It's completely abstracted of the communication and authentication details, making it easy for applications to integrate with the system details.
+
+Changes since last release
+==========================
+
+- Added the possibility to have per-object PolicyKit actions (garnacho)
+- Added OobsSelfConfig, to edit the user settings for the requester uid (garnacho)
+- Adapt to s-t-b >= 2.5.2 and disallow the possibility to change users/groups name (garnacho)
+
+Thanks to anyone involved!
+
+Downloading
+===========
+You can get it from :
+ftp://ftp.gnome.org/pub/GNOME/sources/liboobs/2.21/
+
+
 Liboobs 2.21.1, 2007-10-29
 -----------------------------------------------
 

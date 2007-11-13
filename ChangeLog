@@ -1,3 +1,18 @@
+2007-11-13  Carlos Garnacho  <carlosg@gnome.org>
+
+	Adapt to message format change in UsersConfig/GroupsConfig, this means
+	we have to rely on s-t-b >= 2.5/2.6. This message format change fixes
+	bug #489187.
+
+	* configure.in: bump s-t-b requirement
+	* oobs-usersconfig-private.c, oobs-groupsconfig-private.h: they're no
+	longer needed, the ID thingy is not passed around anymore, the backend
+	will instead rely on the login name to know any variations.
+	* Makefile.am: removed these files.
+	* oobs-group.[ch], oobs-user.[ch], oobs-groupsconfig.c,
+	oobs-usersconfig.c: Do not deal with the ID anymore.
+	(oobs_user_set_login_name) (oobs_group_set_name): removed.
+
 2007-11-06  Carlos Garnacho  <carlosg@gnome.org>
 
 	* oobs/oobs-usersconfig.c (oobs_users_config_get_users): Fix typo in

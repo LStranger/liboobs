@@ -27,7 +27,6 @@
 #include <utmp.h>
 
 #include "oobs-usersconfig.h"
-#include "oobs-usersconfig-private.h"
 #include "oobs-user.h"
 #include "oobs-group.h"
 #include "oobs-defines.h"
@@ -68,9 +67,6 @@ static void oobs_user_get_property (GObject      *object,
 				    guint         prop_id,
 				    GValue       *value,
 				    GParamSpec   *pspec);
-static GObject* oobs_user_constructor (GType                  type,
-				       guint                  n_construct_properties,
-				       GObjectConstructParam *construct_params);
 
 enum
 {
@@ -96,7 +92,6 @@ oobs_user_class_init (OobsUserClass *class)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (class);
 
-  object_class->constructor  = oobs_user_constructor;
   object_class->set_property = oobs_user_set_property;
   object_class->get_property = oobs_user_get_property;
   object_class->finalize     = oobs_user_finalize;
@@ -107,7 +102,7 @@ oobs_user_class_init (OobsUserClass *class)
 							"Username",
 							"Login name for the user",
 							NULL,
-							G_PARAM_READWRITE));
+							G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
 				   PROP_PASSWORD,
 				   g_param_spec_string ("password",
@@ -373,25 +368,6 @@ oobs_user_finalize (GObject *object)
     (* G_OBJECT_CLASS (oobs_user_parent_class)->finalize) (object);
 }
 
-static GObject*
-oobs_user_constructor (GType                  type,
-		       guint                  n_construct_properties,
-		       GObjectConstructParam *construct_params)
-{
-  GObject *object;
-  OobsUser *user;
-  OobsUserPrivate *priv;
-
-  object = (* G_OBJECT_CLASS (oobs_user_parent_class)->constructor) (type,
-								     n_construct_properties,
-								     construct_params);
-  user = OOBS_USER (object);
-  priv = user->_priv;
-  user->id = _oobs_users_config_get_id (OOBS_USERS_CONFIG (priv->config));
-
-  return object;
-}
-
 /**
  * oobs_user_new:
  * @name: login name for the new user.
@@ -428,24 +404,6 @@ oobs_user_get_login_name (OobsUser *user)
   priv = user->_priv;
 
   return priv->username;
-}
-
-/**
- * oobs_user_set_login_name:
- * @user: An #OobsUser.
- * @login: a new login name for the user.
- * 
- * Sets a new login name for the user, overwriting the previous one.
- **/
-void
-oobs_user_set_login_name (OobsUser *user, const gchar *login)
-{
-  g_return_if_fail (user != NULL);
-  g_return_if_fail (OOBS_IS_USER (user));
-
-  /* FIXME: should check name length */
-
-  g_object_set (G_OBJECT (user), "name", login, NULL);
 }
 
 /**

@@ -24,7 +24,6 @@
 #include "oobs-user.h"
 #include "oobs-session.h"
 #include "oobs-usersconfig.h"
-#include "oobs-groupsconfig-private.h"
 #include "oobs-defines.h"
 #include "utils.h"
 #include <crypt.h>
@@ -57,9 +56,6 @@ static void oobs_group_get_property (GObject      *object,
 				     guint         prop_id,
 				     GValue       *value,
 				     GParamSpec   *pspec);
-static GObject* oobs_group_constructor (GType                  type,
-					guint                  n_construct_properties,
-					GObjectConstructParam *construct_params);
 
 enum {
   PROP_0,
@@ -76,7 +72,6 @@ oobs_group_class_init (OobsGroupClass *class)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (class);
 
-  object_class->constructor  = oobs_group_constructor;
   object_class->set_property = oobs_group_set_property;
   object_class->get_property = oobs_group_get_property;
   object_class->finalize     = oobs_group_finalize;
@@ -87,7 +82,7 @@ oobs_group_class_init (OobsGroupClass *class)
 							"Groupname",
 							"Name for the group",
 							NULL,
-							G_PARAM_READWRITE));
+							G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
 				   PROP_PASSWORD,
 				   g_param_spec_string ("password",
@@ -236,26 +231,6 @@ oobs_group_finalize (GObject *object)
     (* G_OBJECT_CLASS (oobs_group_parent_class)->finalize) (object);
 }
 
-static GObject*
-oobs_group_constructor (GType                  type,
-			guint                  n_construct_properties,
-			GObjectConstructParam *construct_params)
-{
-  GObject *object;
-  OobsGroup *group;
-  OobsGroupPrivate *priv;
-
-  object = (* G_OBJECT_CLASS (oobs_group_parent_class)->constructor) (type,
-								      n_construct_properties,
-								      construct_params);
-  group = OOBS_GROUP (object);
-  priv = group->_priv;
-  group->id = _oobs_groups_config_get_id (OOBS_GROUPS_CONFIG (priv->config));
-
-  return object;
-
-}
-
 /**
  * oobs_group_new:
  * @name: group name.
@@ -294,26 +269,6 @@ oobs_group_get_name (OobsGroup *group)
   priv = group->_priv;
 
   return priv->groupname;
-}
-
-/**
- * oobs_group_set_name:
- * @group: An #OobsGroup.
- * @name: A new name for #group.
- * 
- * Sets the name of #group to be #name,
- * overwriting the previous one.
- **/
-void
-oobs_group_set_name (OobsGroup *group, const gchar *name)
-{
-  g_return_if_fail (group != NULL);
-  g_return_if_fail (OOBS_IS_GROUP (group));
-  g_return_if_fail (name != NULL);
-
-  /* FIXME: should check name length */
-
-  g_object_set (G_OBJECT (group), "name", name, NULL);
 }
 
 /**

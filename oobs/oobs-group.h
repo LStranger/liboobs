@@ -41,7 +41,6 @@ struct _OobsGroup {
   GObject parent;
 
   /*<private>*/
-  guint id;
   gpointer _priv;
 };
 
@@ -57,7 +56,6 @@ GType oobs_group_get_type (void);
 OobsGroup* oobs_group_new (const gchar *name);
 
 G_CONST_RETURN gchar* oobs_group_get_name (OobsGroup *group);
-void       oobs_group_set_name (OobsGroup *group, const gchar *name);
 
 void       oobs_group_set_password (OobsGroup *group, const gchar *password);
 void       oobs_group_set_crypted_password (OobsGroup *group, const gchar *crypted_password);

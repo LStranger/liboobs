@@ -42,7 +42,6 @@ struct _OobsUser {
   GObject parent;
 
   /*<private>*/
-  guint id;
   gpointer _priv;
 };
 
@@ -58,7 +57,6 @@ GType oobs_user_get_type (void);
 OobsUser* oobs_user_new (const gchar *name);
 
 G_CONST_RETURN gchar* oobs_user_get_login_name (OobsUser *user);
-void  oobs_user_set_login_name (OobsUser *user, const gchar *login);
 
 void  oobs_user_set_password (OobsUser *user, const gchar *password);
 void  oobs_user_set_crypted_password (OobsUser *user, const gchar *crypted_password);

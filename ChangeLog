@@ -1,5 +1,9 @@
 2007-11-14  Carlos Garnacho  <carlosg@gnome.org>
 
+	* Release 2.21.2.1
+
+2007-11-14  Carlos Garnacho  <carlosg@gnome.org>
+
 	* oobs/oobs-ifacesconfig.c: Use the right libhal.h include. Fixes
 	#496639.
 

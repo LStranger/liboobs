@@ -20,7 +20,7 @@
 
 #include <dbus/dbus.h>
 #include <glib-object.h>
-#include <hal/libhal.h>
+#include <libhal.h>
 #include "oobs-session-private.h"
 #include "oobs-list-private.h"
 #include "oobs-object-private.h"

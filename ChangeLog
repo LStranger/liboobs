@@ -1,3 +1,16 @@
+2007-12-12  Carlos Garnacho  <carlosg@gnome.org>
+
+	Add SMB password handling. Fixes #438052.
+
+	* oobs-smbconfig.[ch] (oobs_smb_config_user_has_password)
+	(oobs_smb_config_delete_user_password)
+	(oobs_smb_config_set_user_password): new API.
+	(update_smb_users) (append_smb_users): New functions, get/set
+	configuration for SMB users.
+	(oobs_smb_config_commit) (oobs_smb_config_update): Call these.
+	* configure.in: bumped required glib version to 2.14.0, we need
+	g_hash_table_get_keys(). Also bumped s-t-b version to 2.5.4.
+
 2007-11-14  Carlos Garnacho  <carlosg@gnome.org>
 
 	* Release 2.21.2.1

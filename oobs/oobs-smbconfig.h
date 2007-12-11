@@ -27,6 +27,7 @@ G_BEGIN_DECLS
 #include "oobs-object.h"
 #include "oobs-list.h"
 #include "oobs-share.h"
+#include "oobs-user.h"
 
 #define OOBS_TYPE_SMB_CONFIG         (oobs_smb_config_get_type ())
 #define OOBS_SMB_CONFIG(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_SMB_CONFIG, OobsSMBConfig))
@@ -77,6 +78,14 @@ void                  oobs_smb_config_set_is_wins_server (OobsSMBConfig *config,
 G_CONST_RETURN gchar* oobs_smb_config_get_wins_server    (OobsSMBConfig *config);
 void                  oobs_smb_config_set_wins_server    (OobsSMBConfig *config,
 							  const gchar   *wins_server);
+
+gboolean              oobs_smb_config_user_has_password    (OobsSMBConfig *config,
+							    OobsUser      *user);
+void                  oobs_smb_config_delete_user_password (OobsSMBConfig *config,
+							    OobsUser      *user);
+void                  oobs_smb_config_set_user_password    (OobsSMBConfig *config,
+							    OobsUser      *user,
+							    const gchar   *password);
 
 G_END_DECLS
 

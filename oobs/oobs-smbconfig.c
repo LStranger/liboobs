@@ -29,6 +29,7 @@
 #include "oobs-smbconfig.h"
 #include "oobs-share.h"
 #include "oobs-share-smb.h"
+#include "oobs-user.h"
 #include "utils.h"
 
 #define SMB_CONFIG_REMOTE_OBJECT "SMBConfig"
@@ -42,8 +43,11 @@ struct _OobsSMBConfigPrivate
 
   gchar *workgroup;
   gchar *desc;
-  gboolean is_wins_server;
   gchar *wins_server;
+
+  GHashTable *users;
+
+  guint is_wins_server : 1;
 };
 
 static void oobs_smb_config_class_init (OobsSMBConfigClass *class);
@@ -127,6 +131,9 @@ oobs_smb_config_init (OobsSMBConfig *config)
   priv = OOBS_SMB_CONFIG_GET_PRIVATE (config);
 
   priv->shares_list = _oobs_list_new (OOBS_TYPE_SHARE_SMB);
+  priv->users = g_hash_table_new_full (g_str_hash, g_str_equal,
+				       (GDestroyNotify) g_free,
+				       (GDestroyNotify) g_free);
   config->_priv = priv;
 }
 
@@ -244,6 +251,27 @@ create_share_from_dbus_reply (OobsObject      *object,
 }
 
 static void
+update_smb_users (OobsObject      *object,
+		  DBusMessageIter *iter)
+{
+  OobsSMBConfigPrivate *priv;
+  DBusMessageIter array_iter, struct_iter;
+  gchar *user;
+
+  priv = OOBS_SMB_CONFIG (object)->_priv;
+  dbus_message_iter_recurse (iter, &array_iter);
+
+  while (dbus_message_iter_get_arg_type (&array_iter) == DBUS_TYPE_STRUCT)
+    {
+      dbus_message_iter_recurse (&array_iter, &struct_iter);
+      user = utils_dup_string (&struct_iter);
+      g_hash_table_insert (priv->users, user, g_strdup (""));
+
+      dbus_message_iter_next (&array_iter);
+    }
+}
+
+static void
 oobs_smb_config_update (OobsObject *object)
 {
   OobsSMBConfigPrivate *priv;
@@ -255,8 +283,9 @@ oobs_smb_config_update (OobsObject *object)
   priv  = OOBS_SMB_CONFIG (object)->_priv;
   reply = _oobs_object_get_dbus_message (object);
 
-  /* First of all, free the previous shares list */
+  /* First of all, free the previous shares config */
   oobs_list_clear (priv->shares_list);
+  g_hash_table_remove_all (priv->users);
 
   /* start recursing through the response array */
   dbus_message_iter_init    (reply, &iter);
@@ -281,6 +310,8 @@ oobs_smb_config_update (OobsObject *object)
   priv->desc = g_strdup (utils_get_string (&iter));
   priv->is_wins_server = utils_get_int (&iter);
   priv->wins_server = g_strdup (utils_get_string (&iter));
+
+  update_smb_users (object, &iter);
 }
 
 static void
@@ -323,6 +354,40 @@ create_dbus_struct_from_share (GObject         *share,
   g_free (name);
   g_free (comment);
   g_free (path);
+}
+
+static void
+append_smb_users (OobsObject      *object,
+		  DBusMessageIter *iter)
+{
+  OobsSMBConfigPrivate *priv;
+  DBusMessageIter array_iter, struct_iter;
+  GList *keys, *k;
+
+  priv = OOBS_SMB_CONFIG (object)->_priv;
+  keys = g_hash_table_get_keys (priv->users);
+
+  dbus_message_iter_open_container (iter,
+				    DBUS_TYPE_ARRAY,
+				    DBUS_STRUCT_BEGIN_CHAR_AS_STRING
+				    DBUS_TYPE_STRING_AS_STRING
+				    DBUS_TYPE_STRING_AS_STRING
+				    DBUS_STRUCT_END_CHAR_AS_STRING,
+				    &array_iter);
+
+  for (k = keys; k; k = k->next)
+    {
+      dbus_message_iter_open_container (&array_iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
+
+      utils_append_string (&struct_iter, k->data);
+      utils_append_string (&struct_iter, g_hash_table_lookup (priv->users, k->data));
+
+      dbus_message_iter_close_container (&array_iter, &struct_iter);
+    }
+
+  dbus_message_iter_close_container (iter, &array_iter);
+
+  g_list_free (keys);
 }
 
 static void
@@ -369,6 +434,8 @@ oobs_smb_config_commit (OobsObject *object)
   utils_append_string (&iter, priv->desc);
   utils_append_int (&iter, priv->is_wins_server);
   utils_append_string (&iter, priv->wins_server);
+
+  append_smb_users (object, &iter);
 }
 
 /**
@@ -552,4 +619,74 @@ oobs_smb_config_set_wins_server (OobsSMBConfig *config,
   g_return_if_fail (OOBS_IS_SMB_CONFIG (config));
 
   g_object_set (config, "wins-server", wins_server, NULL);
+}
+
+/**
+ * oobs_smb_config_user_has_password:
+ * @config: An #OobsSMBConfig.
+ * @user: An #OobsUser
+ *
+ * Returns whether the user has a SMB password or not.
+ *
+ * Return Value: #TRUE if the user has a SMB password set.
+ **/
+gboolean
+oobs_smb_config_user_has_password (OobsSMBConfig *config,
+				   OobsUser      *user)
+{
+  OobsSMBConfigPrivate *priv;
+
+  g_return_val_if_fail (OOBS_IS_SMB_CONFIG (config), FALSE);
+  g_return_val_if_fail (OOBS_IS_USER (user), FALSE);
+
+  priv = OOBS_SMB_CONFIG_GET_PRIVATE (config);
+
+  return (g_hash_table_lookup (priv->users, oobs_user_get_login_name (user)) != NULL);
+}
+
+/**
+ * oobs_smb_config_delete_user_password:
+ * @config: An #OobsSMBConfig
+ * @user: An #OobsUser
+ *
+ * Deletes the user from the SMB password database.
+ **/
+void
+oobs_smb_config_delete_user_password (OobsSMBConfig *config,
+				      OobsUser      *user)
+{
+  OobsSMBConfigPrivate *priv;
+
+  g_return_if_fail (OOBS_IS_SMB_CONFIG (config));
+  g_return_if_fail (OOBS_IS_USER (user));
+
+  priv = OOBS_SMB_CONFIG_GET_PRIVATE (config);
+
+  g_hash_table_remove (priv->users, oobs_user_get_login_name (user));
+}
+
+/**
+ * oobs_smb_config_set_user_password:
+ * @config: An #OobsSMBConfig
+ * @user: An #OobsUser
+ * @password: new SMB password for the user.
+ *
+ * Sets a SMB password for the user.
+ **/
+void
+oobs_smb_config_set_user_password (OobsSMBConfig *config,
+				   OobsUser      *user,
+				   const gchar   *password)
+{
+  OobsSMBConfigPrivate *priv;
+
+  g_return_if_fail (OOBS_IS_SMB_CONFIG (config));
+  g_return_if_fail (OOBS_IS_USER (user));
+  g_return_if_fail (password != NULL);
+
+  priv = OOBS_SMB_CONFIG_GET_PRIVATE (config);
+
+  g_hash_table_insert (priv->users,
+		       g_strdup (oobs_user_get_login_name (user)),
+		       g_strdup (password));
 }

@@ -1,5 +1,9 @@
 2007-12-12  Carlos Garnacho  <carlosg@gnome.org>
 
+	* configure.in: pre-bump revision number.
+
+2007-12-12  Carlos Garnacho  <carlosg@gnome.org>
+
 	Add SMB password handling. Fixes #438052.
 
 	* oobs-smbconfig.[ch] (oobs_smb_config_user_has_password)

@@ -1,3 +1,8 @@
+2007-12-13  Kjartan Maraas  <kmaraas@gnome.org>
+
+	* configure.in: Revert the s-t-b dep to 2.5.2 since
+	2.5.4 is nowhere in sight.
+
 2007-12-12  Carlos Garnacho  <carlosg@gnome.org>
 
 	* configure.in: pre-bump revision number.

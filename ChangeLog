@@ -1,3 +1,17 @@
+2007-12-18  Carlos Garnacho  <carlosg@gnome.org>
+
+	Replace OobsIfaceModem and OobsIfaceISDN with a generic OobsIfacePPP
+	object. Which supports modem, isdn, pppoe and gprs.
+
+	* oobs/oobs-iface-ppp.[ch]: Added
+	* oobs/oobs-iface-modem.[ch]:
+	* oobs/oobs-iface-isdn.[ch]: Removed.
+	* oobs/Makefile.am: do autofoo stuff.
+	* oobs/oobs-ifacesconfig.c: use the new object.
+	* oobs/oobs.h: include the new object.
+
+	* oobs/oobs-group.c: add a missing include.
+
 2007-12-14  Carlos Garnacho  <carlosg@gnome.org>
 
 	* oobs/oobs-iface-ethernet.c: Do not report as configured static

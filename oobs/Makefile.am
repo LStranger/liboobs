@@ -38,8 +38,7 @@ oobsinclude_HEADERS= 	\
 	oobs-iface-wireless.h	\
 	oobs-iface-irlan.h	\
 	oobs-iface-plip.h	\
-	oobs-iface-isdn.h	\
-	oobs-iface-modem.h	\
+	oobs-iface-ppp.h	\
 	oobs-servicesconfig.h	\
 	oobs-service.h		\
 	oobs-result.h
@@ -77,8 +76,7 @@ liboobs_1_la_SOURCES = \
 	oobs-iface-wireless.c	\
 	oobs-iface-irlan.c		\
 	oobs-iface-plip.c		\
-	oobs-iface-isdn.c		\
-	oobs-iface-modem.c		\
+	oobs-iface-ppp.c		\
 	oobs-ifacesconfig.c		\
 	oobs-service.c			\
 	oobs-servicesconfig.c

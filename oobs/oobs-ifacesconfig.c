@@ -21,6 +21,7 @@
 #include <dbus/dbus.h>
 #include <glib-object.h>
 #include <libhal.h>
+#include <string.h>
 #include "oobs-session-private.h"
 #include "oobs-list-private.h"
 #include "oobs-object-private.h"
@@ -29,8 +30,7 @@
 #include "oobs-iface-wireless.h"
 #include "oobs-iface-irlan.h"
 #include "oobs-iface-plip.h"
-#include "oobs-iface-modem.h"
-#include "oobs-iface-isdn.h"
+#include "oobs-iface-ppp.h"
 #include "iface-state-monitor.h"
 #include "utils.h"
 #include "config.h"
@@ -46,11 +46,11 @@ struct _OobsIfacesConfigPrivate
   OobsList *wireless_ifaces;
   OobsList *irlan_ifaces;
   OobsList *plip_ifaces;
-  OobsList *modem_ifaces;
-  OobsList *isdn_ifaces;
+  OobsList *ppp_ifaces;
 
   GList *available_config_methods;
   GList *available_key_types;
+  GList *available_ppp_types;
 
   GHashTable *ifaces;
 
@@ -83,8 +83,7 @@ oobs_iface_type_get_type (void)
 	  { OOBS_IFACE_TYPE_WIRELESS, "OOBS_IFACE_TYPE_WIRELESS", "wireless" },
 	  { OOBS_IFACE_TYPE_IRLAN,    "OOBS_IFACE_TYPE_IRLAN",    "infrared" },
 	  { OOBS_IFACE_TYPE_PLIP,     "OOBS_IFACE_TYPE_PLIP",     "parallel" },
-	  { OOBS_IFACE_TYPE_MODEM,    "OOBS_IFACE_TYPE_MODEM",    "modem" },
-	  { OOBS_IFACE_TYPE_ISDN,     "OOBS_IFACE_TYPE_ISDN",     "isdn" },
+	  { OOBS_IFACE_TYPE_PPP,      "OOBS_IFACE_TYPE_PPP",      "ppp" },
  	  { 0, NULL, NULL }
 	};
 
@@ -243,8 +242,7 @@ oobs_ifaces_config_init (OobsIfacesConfig *config)
   priv->wireless_ifaces = _oobs_list_new (OOBS_TYPE_IFACE_WIRELESS);
   priv->irlan_ifaces = _oobs_list_new (OOBS_TYPE_IFACE_IRLAN);
   priv->plip_ifaces = _oobs_list_new (OOBS_TYPE_IFACE_PLIP);
-  priv->modem_ifaces = _oobs_list_new (OOBS_TYPE_IFACE_MODEM);
-  priv->isdn_ifaces = _oobs_list_new (OOBS_TYPE_IFACE_ISDN);
+  priv->ppp_ifaces = _oobs_list_new (OOBS_TYPE_IFACE_PPP);
   config->_priv = priv;
 
   iface_state_monitor_init (config, oobs_ifaces_config_iface_monitor);
@@ -261,14 +259,16 @@ free_configuration (OobsIfacesConfig *config)
   oobs_list_clear (priv->wireless_ifaces);
   oobs_list_clear (priv->irlan_ifaces);
   oobs_list_clear (priv->plip_ifaces);
-  oobs_list_clear (priv->modem_ifaces);
-  oobs_list_clear (priv->isdn_ifaces);
+  oobs_list_clear (priv->ppp_ifaces);
 
   g_list_foreach (priv->available_config_methods, (GFunc) g_free, NULL);
   g_list_free (priv->available_config_methods);
 
   g_list_foreach (priv->available_key_types, (GFunc) g_free, NULL);
   g_list_free (priv->available_key_types);
+
+  g_list_foreach (priv->available_ppp_types, (GFunc) g_free, NULL);
+  g_list_free (priv->available_ppp_types);
 
   if (priv->ifaces)
     {
@@ -291,8 +291,7 @@ oobs_ifaces_config_finalize (GObject *object)
       g_object_unref (priv->wireless_ifaces);
       g_object_unref (priv->irlan_ifaces);
       g_object_unref (priv->plip_ifaces);
-      g_object_unref (priv->modem_ifaces);
-      g_object_unref (priv->isdn_ifaces);
+      g_object_unref (priv->ppp_ifaces);
 
 #ifdef HAVE_HAL
       libhal_ctx_free (priv->hal_context);
@@ -306,7 +305,8 @@ oobs_ifaces_config_finalize (GObject *object)
 GObject*
 create_iface_from_message (DBusMessage     *message,
 			   DBusMessageIter *iter,
-			   gint             type)
+			   gint             type,
+			   GHashTable      *ifaces)
 {
   GObject *iface = NULL; /* shut up gcc */
   DBusMessageIter struct_iter;
@@ -333,11 +333,8 @@ create_iface_from_message (DBusMessage     *message,
     case OOBS_IFACE_TYPE_PLIP:
       iface = g_object_new (OOBS_TYPE_IFACE_PLIP, "device", dev, NULL);
       break;
-    case OOBS_IFACE_TYPE_MODEM:
-      iface = g_object_new (OOBS_TYPE_IFACE_MODEM, "device", dev, NULL);
-      break;
-    case OOBS_IFACE_TYPE_ISDN:
-      iface = g_object_new (OOBS_TYPE_IFACE_ISDN, "device", dev, NULL);
+    case OOBS_IFACE_TYPE_PPP:
+      iface = g_object_new (OOBS_TYPE_IFACE_PPP, "device", dev, NULL);
       break;
     }
 
@@ -401,29 +398,21 @@ create_iface_from_message (DBusMessage     *message,
 		    "remote-address", remote_address,
 		    NULL);
     }
-  else if (OOBS_IS_IFACE_ISDN (iface))
+  else if (OOBS_IS_IFACE_PPP (iface))
     {
       const gchar *phone_number, *phone_prefix, *login, *password;
+      const gchar *device, *connection_type, *apn;
       gboolean default_gw, peer_dns, persistent, noauth;
+      gint volume, dial_type;
+
+      connection_type = utils_get_string (&struct_iter);
 
       phone_number = utils_get_string (&struct_iter);
       phone_prefix = utils_get_string (&struct_iter);
 
-      if (OOBS_IS_IFACE_MODEM (iface))
-	{
-	  const gchar *serial_port;
-	  gint volume, dial_type;
-
-	  serial_port = utils_get_string (&struct_iter);
-	  volume = utils_get_int (&struct_iter);
-	  dial_type = utils_get_int (&struct_iter);
-
-	  g_object_set (iface,
-			"serial-port", serial_port,
-			"volume", volume,
-			"dial-type", dial_type,
-			NULL);
-	}
+      device = utils_get_string (&struct_iter);
+      volume = utils_get_int (&struct_iter);
+      dial_type = utils_get_int (&struct_iter);
 
       login = utils_get_string (&struct_iter);
       password = utils_get_string (&struct_iter);
@@ -433,17 +422,37 @@ create_iface_from_message (DBusMessage     *message,
       persistent = utils_get_int (&struct_iter);
       noauth = utils_get_int (&struct_iter);
 
+      apn = utils_get_string (&struct_iter);
+
+      if (connection_type &&
+	  strcmp (connection_type, "pppoe") == 0)
+	{
+	  OobsIface *ethernet;
+
+	  /* in pppoe configuration, the device
+	   * contains the ethernet interface name
+	   */
+	  ethernet = g_hash_table_lookup (ifaces, device);
+	  g_object_set (iface, "ethernet", ethernet, NULL);
+	}
+      else
+	g_object_set (iface, "serial-port", device, NULL);
+
       g_object_set (iface,
 		    "auto", is_auto,
 		    "active", active,
+		    "connection-type", connection_type,
 		    "login", login,
 		    "password", password,
 		    "phone-number", phone_number,
 		    "phone-prefix", phone_prefix,
-		    "default-gw", default_gw,
-		    "peer-dns", peer_dns,
+		    "default-gateway", default_gw,
+		    "use-peer-dns", peer_dns,
 		    "persistent", persistent,
 		    "peer-noauth", noauth,
+		    "volume", volume,
+		    "dial-type", dial_type,
+		    "apn", apn,
 		    NULL);
     }
 
@@ -467,7 +476,7 @@ create_ifaces_list (DBusMessage     *reply,
 
   while (dbus_message_iter_get_arg_type (&elem_iter) == DBUS_TYPE_STRUCT)
     {
-      iface = create_iface_from_message (reply, &elem_iter, type);
+      iface = create_iface_from_message (reply, &elem_iter, type, ifaces);
 
       oobs_list_append (list, &list_iter);
       oobs_list_set (list, &list_iter, iface);
@@ -503,11 +512,11 @@ oobs_ifaces_config_update (OobsObject *object)
   create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_WIRELESS, priv->wireless_ifaces, priv->ifaces);
   create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_IRLAN, priv->irlan_ifaces, priv->ifaces);
   create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_PLIP, priv->plip_ifaces, priv->ifaces);
-  create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_MODEM, priv->modem_ifaces, priv->ifaces);
-  create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_ISDN, priv->isdn_ifaces, priv->ifaces);
+  create_ifaces_list (reply, &iter, OOBS_IFACE_TYPE_PPP, priv->ppp_ifaces, priv->ifaces);
 
   priv->available_config_methods = utils_get_string_list_from_dbus_reply (reply, &iter);
   priv->available_key_types = utils_get_string_list_from_dbus_reply (reply, &iter);
+  priv->available_ppp_types = utils_get_string_list_from_dbus_reply (reply, &iter);
 }
 
 static void
@@ -598,42 +607,49 @@ create_dbus_struct_from_iface (DBusMessage     *message,
       g_free (address);
       g_free (remote_address);
     }
-  else if (OOBS_IS_IFACE_ISDN (iface))
+  else if (OOBS_IS_IFACE_PPP (iface))
     {
       gchar *phone_number, *prefix, *login, *password;
+      gchar *serial_port, *connection_type, *apn;
       gboolean default_gw, peer_dns, persistent, noauth;
+      gint volume, dial_type;
+      OobsIface *ethernet;
 
       g_object_get (G_OBJECT (iface),
+		    "connection-type", &connection_type,
 		    "login", &login,
 		    "password", &password,
 		    "phone-number", &phone_number,
 		    "phone-prefix", &prefix,
-		    "default-gw", &default_gw,
-		    "peer-dns", &peer_dns,
+		    "default-gateway", &default_gw,
+		    "use-peer-dns", &peer_dns,
 		    "persistent", &persistent,
 		    "peer-noauth", &noauth,
+		    "serial-port", &serial_port,
+		    "volume", &volume,
+		    "dial-type", &dial_type,
+		    "ethernet", &ethernet,
+		    "apn", &apn,
 		    NULL);
+
+      utils_append_string (&iter, (configured) ? connection_type : NULL);
 
       utils_append_string (&iter, (configured) ? phone_number : NULL);
       utils_append_string (&iter, (configured) ? prefix : NULL);
 
-      if (OOBS_IS_IFACE_MODEM (iface))
+      if (connection_type &&
+	  strcmp (connection_type, "pppoe") == 0)
 	{
-	  gchar *serial_port;
-	  gint volume, dial_type;
-
-	  g_object_get (G_OBJECT (iface),
-			"serial-port", &serial_port,
-			"volume", &volume,
-			"dial-type", &dial_type,
-			NULL);
-
-	  utils_append_string (&iter, (configured) ? serial_port : NULL);
-	  utils_append_int (&iter, volume);
-	  utils_append_int (&iter, dial_type);
-
-	  g_free (serial_port);
+	  if (ethernet)
+	    utils_append_string (&iter, oobs_iface_get_device_name (ethernet));
+	  else
+	    utils_append_string (&iter, NULL);
 	}
+      else
+	utils_append_string (&iter, (configured) ? serial_port : NULL);
+
+      utils_append_int (&iter, volume);
+      utils_append_int (&iter, dial_type);
 
       utils_append_string (&iter, (configured) ? login : NULL);
       utils_append_string (&iter, (configured) ? password : NULL);
@@ -641,11 +657,17 @@ create_dbus_struct_from_iface (DBusMessage     *message,
       utils_append_int (&iter, peer_dns);
       utils_append_int (&iter, persistent);
       utils_append_int (&iter, noauth);
+      utils_append_string (&iter, (configured) ? apn : NULL);
 
+      if (ethernet)
+	g_object_unref (ethernet);
+
+      g_free (connection_type);
       g_free (phone_number);
       g_free (prefix);
       g_free (login);
       g_free (password);
+      g_free (serial_port);
     }
 
   dbus_message_iter_close_container (array_iter, &iter);
@@ -663,7 +685,7 @@ create_dbus_struct_from_ifaces_list (OobsObject      *object,
   DBusMessageIter array_iter;
   GObject *iface;
   gboolean valid;
-  const gchar *signature;
+  const gchar *signature = NULL;
 
   switch (type)
     {
@@ -712,31 +734,13 @@ create_dbus_struct_from_ifaces_list (OobsObject      *object,
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_STRUCT_END_CHAR_AS_STRING;
       break;
-    case OOBS_IFACE_TYPE_MODEM:
+    case OOBS_IFACE_TYPE_PPP:
       signature =
 	DBUS_STRUCT_BEGIN_CHAR_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_TYPE_INT32_AS_STRING
 	DBUS_TYPE_INT32_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
-	DBUS_TYPE_STRING_AS_STRING
-	DBUS_TYPE_STRING_AS_STRING
-	DBUS_TYPE_INT32_AS_STRING
-	DBUS_TYPE_INT32_AS_STRING
-	DBUS_TYPE_STRING_AS_STRING
-	DBUS_TYPE_STRING_AS_STRING
-	DBUS_TYPE_INT32_AS_STRING
-	DBUS_TYPE_INT32_AS_STRING
-	DBUS_TYPE_INT32_AS_STRING
-	DBUS_TYPE_INT32_AS_STRING
-	DBUS_STRUCT_END_CHAR_AS_STRING;
-      break;
-    case OOBS_IFACE_TYPE_ISDN:
-      signature =
-	DBUS_STRUCT_BEGIN_CHAR_AS_STRING
-	DBUS_TYPE_STRING_AS_STRING
-	DBUS_TYPE_INT32_AS_STRING
-	DBUS_TYPE_INT32_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
 	DBUS_TYPE_STRING_AS_STRING
@@ -785,8 +789,7 @@ oobs_ifaces_config_commit (OobsObject *object)
   create_dbus_struct_from_ifaces_list (object, message, &iter, priv->wireless_ifaces, OOBS_IFACE_TYPE_WIRELESS);
   create_dbus_struct_from_ifaces_list (object, message, &iter, priv->irlan_ifaces, OOBS_IFACE_TYPE_IRLAN);
   create_dbus_struct_from_ifaces_list (object, message, &iter, priv->plip_ifaces, OOBS_IFACE_TYPE_PLIP);
-  create_dbus_struct_from_ifaces_list (object, message, &iter, priv->modem_ifaces, OOBS_IFACE_TYPE_MODEM);
-  create_dbus_struct_from_ifaces_list (object, message, &iter, priv->isdn_ifaces, OOBS_IFACE_TYPE_ISDN);
+  create_dbus_struct_from_ifaces_list (object, message, &iter, priv->ppp_ifaces, OOBS_IFACE_TYPE_PPP);
 }
 
 /**
@@ -835,10 +838,8 @@ oobs_ifaces_config_get_ifaces (OobsIfacesConfig *config,
       return priv->irlan_ifaces;
     case OOBS_IFACE_TYPE_PLIP:
       return priv->plip_ifaces;
-    case OOBS_IFACE_TYPE_MODEM:
-      return priv->modem_ifaces;
-    case OOBS_IFACE_TYPE_ISDN:
-      return priv->isdn_ifaces;
+    case OOBS_IFACE_TYPE_PPP:
+      return priv->ppp_ifaces;
     default:
       g_critical ("Unknown interface type");
       return NULL;
@@ -883,4 +884,23 @@ oobs_ifaces_config_get_available_key_types (OobsIfacesConfig *config)
 
   priv = config->_priv;
   return priv->available_key_types;
+}
+
+/**
+ * oobs_ifaces_config_get_available_ppp_types:
+ * @config: An #OobsIfaceConfig.
+ *
+ * Retrieves the list of available PPP interface types.
+ *
+ * Return Value: A #GList of strings. This must not be modified or freed.
+ **/
+GList*
+oobs_ifaces_config_get_available_ppp_types (OobsIfacesConfig *config)
+{
+  OobsIfacesConfigPrivate *priv;
+
+  g_return_val_if_fail (OOBS_IS_IFACES_CONFIG (config), NULL);
+
+  priv = config->_priv;
+  return priv->available_ppp_types;
 }

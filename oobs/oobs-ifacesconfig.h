@@ -32,8 +32,7 @@ typedef enum {
   OOBS_IFACE_TYPE_WIRELESS,
   OOBS_IFACE_TYPE_IRLAN,
   OOBS_IFACE_TYPE_PLIP,
-  OOBS_IFACE_TYPE_MODEM,
-  OOBS_IFACE_TYPE_ISDN
+  OOBS_IFACE_TYPE_PPP
 } OobsIfaceType;
 
 #define OOBS_TYPE_IFACE_TYPE (oobs_iface_type_get_type ())
@@ -75,6 +74,7 @@ OobsList*   oobs_ifaces_config_get_ifaces   (OobsIfacesConfig *config,
 
 GList*      oobs_ifaces_config_get_available_configuration_methods (OobsIfacesConfig *config);
 GList*      oobs_ifaces_config_get_available_key_types             (OobsIfacesConfig *config);
+GList*      oobs_ifaces_config_get_available_ppp_types             (OobsIfacesConfig *config);
 
 
 G_END_DECLS

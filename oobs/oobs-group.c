@@ -23,6 +23,7 @@
 #include "oobs-group.h"
 #include "oobs-user.h"
 #include "oobs-session.h"
+#include "oobs-groupsconfig.h"
 #include "oobs-usersconfig.h"
 #include "oobs-defines.h"
 #include "utils.h"

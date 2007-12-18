@@ -5,9 +5,8 @@ oobs_groups_config_get_type
 oobs_iface_get_type
 oobs_iface_ethernet_get_type
 oobs_iface_irlan_get_type
-oobs_iface_isdn_get_type
-oobs_iface_modem_get_type
 oobs_iface_plip_get_type
+oobs_iface_ppp_get_type
 oobs_ifaces_config_get_type
 oobs_iface_wireless_get_type
 oobs_list_get_type

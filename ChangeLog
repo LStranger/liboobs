@@ -1,5 +1,9 @@
 2007-12-18  Carlos Garnacho  <carlosg@gnome.org>
 
+	* Release 2.21.3
+
+2007-12-18  Carlos Garnacho  <carlosg@gnome.org>
+
 	Replace OobsIfaceModem and OobsIfaceISDN with a generic OobsIfacePPP
 	object. Which supports modem, isdn, pppoe and gprs.
 

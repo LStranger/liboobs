@@ -1,3 +1,24 @@
+Liboobs 2.21.3, 2007-12-18
+-----------------------------------------------
+
+Liboobs version 2.21.3 "Capuccino" has been released.
+
+Liboobs is a lightweight library that provides a GObject based interface to system-tools-backends. It's completely abstracted of the communication and authentication details, making it easy for applications to integrate with the system details.
+
+Changes since last release
+==========================
+
+- Add SMB password handling (garnacho)
+- Replace OobsIfaceModem and OobsIfaceIsdn with OobsIfacePPP, which does modem, isdn, pppoe and gprs (garnacho)
+
+Thanks to anyone involved!
+
+Downloading
+===========
+You can get it from :
+ftp://ftp.gnome.org/pub/GNOME/sources/liboobs/2.21/
+
+
 Liboobs 2.21.2.1, 2007-11-14
 -----------------------------------------------
 

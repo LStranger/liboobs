@@ -1,3 +1,8 @@
+2007-12-14  Carlos Garnacho  <carlosg@gnome.org>
+
+	* oobs/oobs-iface-ethernet.c: Do not report as configured static
+	interfaces with NULL address and netmask.
+
 2007-12-13  Kjartan Maraas  <kmaraas@gnome.org>
 
 	* configure.in: Revert the s-t-b dep to 2.5.2 since

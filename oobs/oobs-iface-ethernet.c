@@ -275,9 +275,13 @@ oobs_iface_ethernet_is_configured (OobsIface *iface)
   /* assume that all supported configuration methods
    * except "static" do not require aditional configuration
    */
-  return (priv->configuration_method &&
-	  ((strcmp (priv->configuration_method, "static") == 0 && priv->address && priv->netmask) ||
-	   g_list_find_custom (methods, priv->configuration_method, (GCompareFunc) strcmp)));
+  if (!priv->configuration_method)
+    return FALSE;
+
+  if (strcmp (priv->configuration_method, "static") == 0)
+    return (priv->address && priv->netmask);
+
+  return (g_list_find_custom (methods, priv->configuration_method, (GCompareFunc) strcmp) != NULL);
 }
 
 /**

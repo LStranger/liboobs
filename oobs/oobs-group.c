@@ -212,8 +212,6 @@ oobs_group_finalize (GObject *object)
   OobsGroup        *group;
   OobsGroupPrivate *priv;
 
-  g_print ("jijij\n");
-
   g_return_if_fail (OOBS_IS_GROUP (object));
 
   group = OOBS_GROUP (object);

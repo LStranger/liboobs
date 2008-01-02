@@ -97,6 +97,90 @@ utils
 @OOBS_METHOD_STATIC: 
 @OOBS_METHOD_DHCP: 
 
+<!-- ##### STRUCT OobsIfaceISDN ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG OobsIfaceISDN:default-gw ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG OobsIfaceISDN:iface-section ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG OobsIfaceISDN:login ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG OobsIfaceISDN:password ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG OobsIfaceISDN:peer-dns ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG OobsIfaceISDN:peer-noauth ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG OobsIfaceISDN:persistent ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG OobsIfaceISDN:phone-number ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG OobsIfaceISDN:phone-prefix ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT OobsIfaceModem ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG OobsIfaceModem:dial-type ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG OobsIfaceModem:serial-port ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG OobsIfaceModem:volume ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### ARG OobsNTPServer:hostname ##### -->
 <para>
 
@@ -158,12 +242,180 @@ utils
 @iface: 
 @Returns: 
 
+<!-- ##### FUNCTION oobs_iface_isdn_get_default_gateway ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+<!-- ##### FUNCTION oobs_iface_isdn_get_login ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+<!-- ##### FUNCTION oobs_iface_isdn_get_peer_noauth ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+<!-- ##### FUNCTION oobs_iface_isdn_get_persistent ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+<!-- ##### FUNCTION oobs_iface_isdn_get_phone_number ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+<!-- ##### FUNCTION oobs_iface_isdn_get_phone_prefix ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+<!-- ##### FUNCTION oobs_iface_isdn_get_use_peer_dns ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+<!-- ##### FUNCTION oobs_iface_isdn_set_default_gateway ##### -->
+<para>
+
+</para>
+
+@iface: 
+@default_gw: 
+
+<!-- ##### FUNCTION oobs_iface_isdn_set_login ##### -->
+<para>
+
+</para>
+
+@iface: 
+@login: 
+
+<!-- ##### FUNCTION oobs_iface_isdn_set_password ##### -->
+<para>
+
+</para>
+
+@iface: 
+@password: 
+
+<!-- ##### FUNCTION oobs_iface_isdn_set_peer_noauth ##### -->
+<para>
+
+</para>
+
+@iface: 
+@use_peer_dns: 
+
+<!-- ##### FUNCTION oobs_iface_isdn_set_persistent ##### -->
+<para>
+
+</para>
+
+@iface: 
+@persistent: 
+
+<!-- ##### FUNCTION oobs_iface_isdn_set_phone_number ##### -->
+<para>
+
+</para>
+
+@iface: 
+@phone_number: 
+
+<!-- ##### FUNCTION oobs_iface_isdn_set_phone_prefix ##### -->
+<para>
+
+</para>
+
+@iface: 
+@phone_prefix: 
+
+<!-- ##### FUNCTION oobs_iface_isdn_set_use_peer_dns ##### -->
+<para>
+
+</para>
+
+@iface: 
+@use_peer_dns: 
+
+<!-- ##### FUNCTION oobs_iface_modem_get_dial_type ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+<!-- ##### FUNCTION oobs_iface_modem_get_serial_port ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
 <!-- ##### FUNCTION oobs_iface_modem_get_type ##### -->
 <para>
 
 </para>
 
 @Returns: 
+
+<!-- ##### FUNCTION oobs_iface_modem_get_volume ##### -->
+<para>
+
+</para>
+
+@iface: 
+@Returns: 
+
+<!-- ##### FUNCTION oobs_iface_modem_set_dial_type ##### -->
+<para>
+
+</para>
+
+@iface: 
+@dial_type: 
+
+<!-- ##### FUNCTION oobs_iface_modem_set_serial_port ##### -->
+<para>
+
+</para>
+
+@iface: 
+@serial_port: 
+
+<!-- ##### FUNCTION oobs_iface_modem_set_volume ##### -->
+<para>
+
+</para>
+
+@iface: 
+@volume: 
 
 <!-- ##### FUNCTION oobs_iface_wireless_get_type ##### -->
 <para>

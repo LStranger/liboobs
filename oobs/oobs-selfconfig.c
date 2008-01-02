@@ -143,10 +143,6 @@ oobs_self_config_update (OobsObject *object)
   priv = OOBS_SELF_CONFIG (object)->_priv;
   message = _oobs_object_get_dbus_message (object);
 
-  /* First of all, free the previous user */
-  if (priv->user)
-    g_object_unref (priv->user);
-
   dbus_message_iter_init (message, &iter);
   priv->uid = utils_get_uint (&iter);
 

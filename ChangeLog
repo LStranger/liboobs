@@ -1,3 +1,12 @@
+2008-01-02  Carlos Garnacho  <carlosg@gnome.org>
+
+	* oobs/oobs-user.c (oobs_user_new): Do not allow creating users with 
+	empty name.
+	* oobs/oobs-selfconfig.c (oobs_self_config_update): Do not unref twice
+	the user, it's already done in oobs_self_config_users_updated()
+	* oobs/oobs-iface.c (struct OobsIfacePrivate): pack booleans.
+	* oobs/oobs-group.c: remove silly g_print().
+
 2007-12-18  Carlos Garnacho  <carlosg@gnome.org>
 
 	* Release 2.21.3

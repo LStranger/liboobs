@@ -26,8 +26,7 @@ Object that represents network interfaces configuration.
 @OOBS_IFACE_TYPE_WIRELESS: 
 @OOBS_IFACE_TYPE_IRLAN: 
 @OOBS_IFACE_TYPE_PLIP: 
-@OOBS_IFACE_TYPE_MODEM: 
-@OOBS_IFACE_TYPE_ISDN: 
+@OOBS_IFACE_TYPE_PPP: 
 
 <!-- ##### MACRO OOBS_TYPE_IFACE_TYPE ##### -->
 <para>

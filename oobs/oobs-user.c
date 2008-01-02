@@ -379,6 +379,8 @@ oobs_user_finalize (GObject *object)
 OobsUser*
 oobs_user_new (const gchar *name)
 {
+  g_return_val_if_fail (name && *name, NULL);
+
   return g_object_new (OOBS_TYPE_USER,
 		       "name", name,
 		       NULL);

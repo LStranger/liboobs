@@ -27,11 +27,12 @@ typedef struct _OobsIfacePrivate OobsIfacePrivate;
 
 struct _OobsIfacePrivate
 {
-  gboolean  is_auto;
-  gboolean  is_enabled;
-  gboolean  explicitly_not_configured;
   gchar    *dev;
   gchar    *file;
+
+  guint is_auto : 1;
+  guint is_enabled : 1;
+  guint explicitly_not_configured : 1;
 };
 
 static void oobs_iface_class_init (OobsIfaceClass *class);

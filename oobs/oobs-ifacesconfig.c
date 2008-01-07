@@ -752,6 +752,7 @@ create_dbus_struct_from_ifaces_list (OobsObject      *object,
 	DBUS_TYPE_INT32_AS_STRING
 	DBUS_TYPE_INT32_AS_STRING
 	DBUS_TYPE_INT32_AS_STRING
+	DBUS_TYPE_STRING_AS_STRING
 	DBUS_STRUCT_END_CHAR_AS_STRING;
       break;
     default:

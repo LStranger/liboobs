@@ -1,3 +1,8 @@
+2008-01-08  Carlos Garnacho  <carlosg@gnome.org>
+
+	* oobs/oobs-ifacesconfig.c (create_dbus_struct_from_ifaces_list): Use
+	the correct signature for PPP interfaces.
+
 2008-01-02  Carlos Garnacho  <carlosg@gnome.org>
 
 	* oobs/oobs-user.c (oobs_user_new): Do not allow creating users with 

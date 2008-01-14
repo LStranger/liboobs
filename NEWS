@@ -1,3 +1,25 @@
+Liboobs 2.21.5, 2008-01-14
+-----------------------------------------------
+
+Liboobs version 2.21.5 "Surpassing the law of gravity" has been released.
+
+Liboobs is a lightweight library that provides a GObject based interface to system-tools-backends. It's completely abstracted of the communication and authentication details, making it easy for applications to integrate with the system details.
+
+Changes since last release
+==========================
+
+- Fix a possible crasher when saving the network configuration (garnacho)
+- Do not allow creating users with NULL login (garnacho)
+- Fix a double unref in OobsSelfConfig (garnacho)
+
+Thanks to anyone involved!
+
+Downloading
+===========
+You can get it from :
+ftp://ftp.gnome.org/pub/GNOME/sources/liboobs/2.21/
+
+
 Liboobs 2.21.3, 2007-12-18
 -----------------------------------------------
 

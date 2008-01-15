@@ -1,3 +1,8 @@
+2008-01-15  Carlos Garnacho  <carlosg@gnome.org>
+
+	* configure.in: Dependence on s-t-b >= 2.5.4 was correct, change that
+	again.
+
 2008-01-14  Carlos Garnacho  <carlosg@gnome.org>
 
 	* Release 2.21.5

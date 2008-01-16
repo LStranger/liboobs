@@ -174,7 +174,7 @@ oobs_self_config_commit (OobsObject *object)
 
   utils_append_uint (&iter, oobs_user_get_uid (priv->user));
 
-  g_object_get (priv->user, "crypted-passwd", &passwd, NULL);
+  g_object_get (priv->user, "crypted-password", &passwd, NULL);
   utils_append_string (&iter, passwd);
   g_free (passwd);
 
@@ -184,11 +184,11 @@ oobs_self_config_commit (OobsObject *object)
 				    DBUS_TYPE_STRING_AS_STRING,
 				    &array_iter);
 
-  utils_append_string (&iter, oobs_user_get_full_name (priv->user));
-  utils_append_string (&iter, oobs_user_get_room_number (priv->user));
-  utils_append_string (&iter, oobs_user_get_work_phone_number (priv->user));
-  utils_append_string (&iter, oobs_user_get_home_phone_number (priv->user));
-  utils_append_string (&iter, oobs_user_get_other_data (priv->user));
+  utils_append_string (&array_iter, oobs_user_get_full_name (priv->user));
+  utils_append_string (&array_iter, oobs_user_get_room_number (priv->user));
+  utils_append_string (&array_iter, oobs_user_get_work_phone_number (priv->user));
+  utils_append_string (&array_iter, oobs_user_get_home_phone_number (priv->user));
+  utils_append_string (&array_iter, oobs_user_get_other_data (priv->user));
 
   dbus_message_iter_close_container (&iter, &array_iter);
 }

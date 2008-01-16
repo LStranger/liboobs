@@ -1,3 +1,9 @@
+2008-01-16  Carlos Garnacho  <carlosg@gnome.org>
+
+	* oobs/oobs-selfconfig.c (oobs_self_config_commit): Do not use the
+	wrong property to get the crypted password, append correctly gecos
+	data in the array when creating the message.
+
 2008-01-15  Carlos Garnacho  <carlosg@gnome.org>
 
 	* configure.in: Dependence on s-t-b >= 2.5.4 was correct, change that

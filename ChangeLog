@@ -1,3 +1,8 @@
+2008-01-27  Carlos Garnacho  <carlosg@gnome.org>
+
+	* oobs/oobs-iface-ppp.c (oobs_iface_ppp_set_ethernet): setting a NULL
+	ethernet interface for PPPoE is not an error.
+
 2008-01-16  Carlos Garnacho  <carlosg@gnome.org>
 
 	* oobs/oobs-selfconfig.c (oobs_self_config_commit): Do not use the

@@ -888,7 +888,7 @@ oobs_iface_ppp_set_ethernet (OobsIfacePPP      *iface,
   OobsIfacePPPPrivate *priv;
 
   g_return_if_fail (OOBS_IS_IFACE_PPP (iface));
-  g_return_if_fail (OOBS_IS_IFACE_ETHERNET (ethernet));
+  g_return_if_fail (!ethernet || OOBS_IS_IFACE_ETHERNET (ethernet));
 
   priv = iface->_priv;
 

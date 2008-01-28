@@ -1,3 +1,7 @@
+2008-01-28  Carlos Garnacho  <carlosg@gnome.org>
+
+	* Release 2.21.90
+
 2008-01-27  Carlos Garnacho  <carlosg@gnome.org>
 
 	* oobs/oobs-iface-ppp.c (oobs_iface_ppp_set_ethernet): setting a NULL

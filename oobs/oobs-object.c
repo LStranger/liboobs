@@ -210,6 +210,18 @@ oobs_object_constructor (GType                  type,
   return object;
 }
 
+static gboolean
+object_changed_idle (gpointer data)
+{
+  OobsObject *object;
+
+  object = OOBS_OBJECT (data);
+
+  g_signal_emit (object, object_signals [CHANGED], 0);
+
+  return FALSE;
+}
+
 static DBusHandlerResult
 changed_signal_filter (DBusConnection *connection,
 		       DBusMessage    *message,
@@ -223,7 +235,7 @@ changed_signal_filter (DBusConnection *connection,
 
   if (dbus_message_is_signal (message, priv->method, "changed") &&
       dbus_message_has_path (message, priv->path))
-    g_signal_emit (object, object_signals [CHANGED], 0);
+    g_idle_add (object_changed_idle, object);
 
   /* we want the rest of the objects of
    * the same type to get the signal too

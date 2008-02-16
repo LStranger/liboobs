@@ -1,3 +1,9 @@
+2008-02-16  Carlos Garnacho  <carlosg@gnome.org>
+
+	* oobs/oobs-object.c (object_changed_idle) (changed_signal_filter):
+	Emit the ::changed signal in an idle function, so the callback doesn't
+	block other incoming DBus signals.
+
 2008-02-12  Carlos Garnacho  <carlosg@gnome.org>
 
 	* Release 2.21.91

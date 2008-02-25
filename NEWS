@@ -1,3 +1,23 @@
+Liboobs 2.21.92, 2008-02-25
+-----------------------------------------------
+
+Liboobs version 2.21.92 "They're like children..." has been released.
+
+Liboobs is a lightweight library that provides a GObject based interface to system-tools-backends. It's completely abstracted of the communication and authentication details, making it easy for applications to integrate with the system details.
+
+Changes since last release
+==========================
+
+- Do not block subsequent OobsObject::changed signals from being emitted (garnacho)
+
+Thanks to anyone involved!
+
+Downloading
+===========
+You can get it from :
+ftp://ftp.gnome.org/pub/GNOME/sources/liboobs/2.21/
+
+
 Liboobs 2.21.91, 2008-02-11
 -----------------------------------------------
 

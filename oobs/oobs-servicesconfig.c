@@ -160,6 +160,9 @@ get_runlevel (OobsServicesConfig *config,
   OobsServicesRunlevel *rl;
   GList *list;
 
+  if (!runlevel)
+    return NULL;
+
   priv = config->_priv;
   list = priv->runlevels;
 

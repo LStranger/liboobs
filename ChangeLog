@@ -1,3 +1,8 @@
+2008-02-29  Carlos Garnacho  <carlosg@gnome.org>
+
+	* oobs/oobs-servicesconfig.c (get_runlevel): Do not crash if the
+	backend couldn't get the current runlevel.
+
 2008-02-25  Carlos Garnacho  <carlosg@gnome.org>
 
 	* Release 2.21.92

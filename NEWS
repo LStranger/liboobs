@@ -1,3 +1,23 @@
+Liboobs 2.22.0, 2008-03-09
+-----------------------------------------------
+
+Liboobs version 2.22.0 "Adopt me, please" has been released.
+
+Liboobs is a lightweight library that provides a GObject based interface to system-tools-backends. It's completely abstracted of the communication and authentication details, making it easy for applications to integrate with the system details.
+
+Changes since last release
+==========================
+
+- Do crash in OobsServicesConfig if the backends couldn't get the current runlevel (garnacho)
+
+Thanks to anyone involved!
+
+Downloading
+===========
+You can get it from :
+ftp://ftp.gnome.org/pub/GNOME/sources/liboobs/2.22/
+
+
 Liboobs 2.21.92, 2008-02-25
 -----------------------------------------------
 

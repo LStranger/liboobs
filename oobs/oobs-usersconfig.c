@@ -359,7 +359,7 @@ create_dbus_struct_from_user (OobsUser        *user,
 		"other-data", &other_data,
 		NULL);
 
-  g_return_val_if_fail ((login && password && homedir && shell), FALSE);
+  g_return_val_if_fail ((login && password), FALSE);
 
   group = oobs_user_get_main_group (user);
   gid = oobs_group_get_gid (group);

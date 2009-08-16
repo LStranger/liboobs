@@ -336,7 +336,7 @@ oobs_share_smb_new (const gchar       *path,
 		    const gchar       *comment,
 		    OobsShareSMBFlags  flags)
 {
-  g_return_val_if_fail (path[0] == '/', NULL);
+  g_return_val_if_fail (path != NULL && path[0] == '/', NULL);
 
   return g_object_new (OOBS_TYPE_SHARE_SMB,
 		       "name",    name,

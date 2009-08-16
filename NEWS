@@ -1,3 +1,24 @@
+Liboobs 2.22.1, 2009-08-16
+-----------------------------------------------
+
+Liboobs version 2.22.1 "Devil is in the Details" has been released.
+
+Liboobs is a lightweight library that provides a GObject based interface to system-tools-backends. It's completely abstracted of the communication and authentication details, making it easy for applications to integrate with the system details.
+
+Changes since last release
+==========================
+
+- Don't fail if homedir or shell are not set (Bug 521438).
+- Fix crash when path to share is empty (Bug 524792).
+
+Thanks to anyone involved!
+
+Downloading
+===========
+You can get it from :
+ftp://ftp.gnome.org/pub/GNOME/sources/liboobs/2.22/
+
+
 Liboobs 2.22.0, 2008-03-09
 -----------------------------------------------
 

@@ -308,6 +308,7 @@ oobs_session_get_platform (OobsSession  *session,
   if (dbus_error_is_set (&priv->dbus_error))
     {
       if (dbus_error_has_name (&priv->dbus_error, DBUS_ERROR_ACCESS_DENIED))
+        /* Warning: this can mean that D-Bus policy denied access, but also that PolicyKit refused it */
 	result = OOBS_RESULT_ACCESS_DENIED;
       else
 	result = OOBS_RESULT_ERROR;

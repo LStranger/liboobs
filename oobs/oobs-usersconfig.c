@@ -359,7 +359,9 @@ create_dbus_struct_from_user (OobsUser        *user,
 		"other-data", &other_data,
 		NULL);
 
-  g_return_val_if_fail ((login && password), FALSE);
+  /* Login is the only required field,
+   * since home dir, password and shell are allowed to be empty (see man 5 passwd) */
+  g_return_val_if_fail (login, FALSE);
 
   group = oobs_user_get_main_group (user);
   gid = oobs_group_get_gid (group);

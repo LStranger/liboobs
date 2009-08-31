@@ -104,7 +104,7 @@ oobs_session_init (OobsSession *session)
   priv->connection = dbus_bus_get (DBUS_BUS_SYSTEM, &priv->dbus_error);
 
   if (dbus_error_is_set (&priv->dbus_error))
-    g_warning (priv->dbus_error.message);
+    g_warning ("%s", priv->dbus_error.message);
   else
     dbus_connection_setup_with_g_main (priv->connection, NULL);
 
@@ -311,7 +311,10 @@ oobs_session_get_platform (OobsSession  *session,
         /* Warning: this can mean that D-Bus policy denied access, but also that PolicyKit refused it */
 	result = OOBS_RESULT_ACCESS_DENIED;
       else
+      {
 	result = OOBS_RESULT_ERROR;
+        g_warning ("There was an unknown error communicating with the backends: %s", priv->dbus_error.message);
+      }
 
       dbus_error_free (&priv->dbus_error);
 

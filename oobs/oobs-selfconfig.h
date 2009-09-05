@@ -34,10 +34,10 @@ G_BEGIN_DECLS
 #define OOBS_IS_SELF_CONFIG_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((o),    OOBS_TYPE_SELF_CONFIG))
 #define OOBS_SELF_CONFIG_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o),  OOBS_TYPE_SELF_CONFIG, OobsSelfConfigClass))
 
-typedef struct OobsSelfConfig      OobsSelfConfig;
-typedef struct OobsSelfConfigClass OobsSelfConfigClass;
+typedef struct _OobsSelfConfig      OobsSelfConfig;
+typedef struct _OobsSelfConfigClass OobsSelfConfigClass;
 
-struct OobsSelfConfig
+struct _OobsSelfConfig
 {
   OobsObject parent;
 
@@ -45,7 +45,7 @@ struct OobsSelfConfig
   gpointer _priv;
 };
 
-struct OobsSelfConfigClass
+struct _OobsSelfConfigClass
 {
   OobsObjectClass parent_class;
 

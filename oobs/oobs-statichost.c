@@ -21,6 +21,13 @@
 #include <glib-object.h>
 #include "oobs-statichost.h"
 
+/**
+ * SECTION:oobs-statichost
+ * @title: OobsStaticHost
+ * @short_description: Object that represents an individual static host settings
+ * @see_also: #OobsHostsConfig
+ **/
+
 #define OOBS_STATIC_HOST_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_STATIC_HOST, OobsStaticHostPrivate))
 
 typedef struct _OobsStaticHostPrivate OobsStaticHostPrivate;

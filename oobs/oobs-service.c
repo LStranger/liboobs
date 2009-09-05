@@ -21,6 +21,13 @@
 #include <glib-object.h>
 #include "oobs-service.h"
 
+/**
+ * SECTION:oobs-service
+ * @title: OobsService
+ * @short_description: Object that represents an individual init.d service
+ * @see_also: #OobsServicesConfig
+ **/
+
 #define OOBS_SERVICE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_SERVICE, OobsServicePrivate))
 
 typedef struct _OobsServicePrivate  OobsServicePrivate;

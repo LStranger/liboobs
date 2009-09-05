@@ -30,6 +30,13 @@
 #include "oobs-service.h"
 #include "utils.h"
 
+/**
+ * SECTION:oobs-servicesconfig
+ * @title: OobsServicesConfig
+ * @short_description: Object that represents the configuration of services that start/stop during init/shutdown
+ * @see_also: #OobsService
+ **/
+
 #define SERVICES_CONFIG_REMOTE_OBJECT "ServicesConfig"
 #define OOBS_SERVICES_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_SERVICES_CONFIG, OobsServicesConfigPrivate))
 

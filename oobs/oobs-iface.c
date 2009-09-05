@@ -21,6 +21,14 @@
 #include <glib-object.h>
 #include "oobs-iface.h"
 
+/**
+ * SECTION:oobs-iface
+ * @title: OobsIface
+ * @short_description: Base object for network interfaces
+ * @see_also: #OobsIfacesConfig, #OobsIfaceEthernet, #OobsIfaceIRLan,
+ *     #OobsIfacePlip, #OobsIfacePPP, #OobsIfaceWireless
+ **/
+
 #define OOBS_IFACE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_IFACE, OobsIfacePrivate))
 
 typedef struct _OobsIfacePrivate OobsIfacePrivate;

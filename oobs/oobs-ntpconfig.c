@@ -28,6 +28,13 @@
 #include "oobs-ntpserver.h"
 #include "utils.h"
 
+/**
+ * SECTION:oobs-ntpconfig
+ * @title: OobsNTPConfig
+ * @short_description: Object that represents NTP configuration
+ * @see_also: #OobsNTPServer, #OobsTimeConfig
+ **/
+
 #define NTP_CONFIG_REMOTE_OBJECT "NTPConfig"
 #define OOBS_NTP_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_NTP_CONFIG, OobsNTPConfigPrivate))
 

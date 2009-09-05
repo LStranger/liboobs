@@ -9,7 +9,7 @@ DOC_MODULE=liboobs
 DOC_MAIN_SGML_FILE=$(DOC_MODULE)-docs.sgml
 
 # Extra options to supply to gtkdoc-scan.
-SCAN_OPTIONS=--deprecated-guards="OOBS_DISABLE_DEPRECATED"
+SCAN_OPTIONS=--deprecated-guards="OOBS_DISABLE_DEPRECATED" --rebuild-sections --rebuild-types
 
 # The directory containing the source code. Relative to $(srcdir).
 # gtk-doc will search all .c & .h files beneath here for inline comments
@@ -46,7 +46,30 @@ content_files =	version.xml
 # Extra options to supply to gtkdoc-fixref.
 FIXXREF_OPTIONS=
 
+if ENABLE_GTK_DOC
 include $(top_srcdir)/gtk-doc.make
+else
+CLEANFILES =
+EXTRA_DIST =
+endif
 
 # Other files to distribute.
 EXTRA_DIST += version.xml.in
+
+CLEANFILES +=   *~				\
+		liboobs-scan.*		        \
+		liboobs.args		        \
+		liboobs.hierarchy		\
+		liboobs.interfaces		\
+		liboobs.prerequisites	        \
+		liboobs.signals		        \
+		*.bak				\
+		liboobs-decl-list.txt	        \
+		liboobs-decl.txt		\
+		liboobs-overrides.txt	        \
+		liboobs-undeclared.txt	        \
+		liboobs-undocumented.txt	\
+		*.stamp				\
+		version.xml			\
+		-rf html xml			\
+		$(NULL)

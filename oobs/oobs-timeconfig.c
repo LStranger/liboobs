@@ -29,6 +29,13 @@
 #include "oobs-timeconfig.h"
 #include "utils.h"
 
+/**
+ * SECTION:oobs-timeconfig
+ * @title: OobsTimeConfig
+ * @short_description: Object that represents time configuration
+ * @see_also: #OobsNTPConfig, #OobsNTPServer
+ **/
+
 #define TIME_CONFIG_REMOTE_OBJECT "TimeConfig"
 #define OOBS_TIME_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_TIME_CONFIG, OobsTimeConfigPrivate))
 

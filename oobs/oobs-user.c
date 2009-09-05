@@ -32,6 +32,13 @@
 #include "oobs-defines.h"
 #include "utils.h"
 
+/**
+ * SECTION:oobs-user
+ * @title: OobsUser
+ * @short_description: Object that represents an individual user
+ * @see_also: #OobsUsersConfig
+ **/
+
 #define OOBS_USER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_USER, OobsUserPrivate))
 
 typedef struct _OobsUserPrivate OobsUserPrivate;

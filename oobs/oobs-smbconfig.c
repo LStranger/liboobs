@@ -32,6 +32,13 @@
 #include "oobs-user.h"
 #include "utils.h"
 
+/**
+ * SECTION:oobs-smbconfig
+ * @title: OobsSMBConfig
+ * @short_description: Object that represents SMB configuration
+ * @see_also: #OobsShareSMB, #OobsNFSConfig
+ **/
+
 #define SMB_CONFIG_REMOTE_OBJECT "SMBConfig"
 #define OOBS_SMB_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_SMB_CONFIG, OobsSMBConfigPrivate))
 

@@ -35,6 +35,14 @@
 #include "utils.h"
 #include "config.h"
 
+/**
+ * SECTION:oobs-ifacesconfig
+ * @title: OobsIfacesConfig
+ * @short_description: Object that represents network interfaces configuration
+ * @see_also: #OobsIface, #OobsIfaceEthernet, #OobsIfaceIRLan,
+ *     #OobsIfacePlip, #OobsIfacePPP, #OobsIfaceWireless
+ **/
+
 #define IFACES_CONFIG_REMOTE_OBJECT "IfacesConfig"
 #define OOBS_IFACES_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_IFACES_CONFIG, OobsIfacesConfigPrivate))
 

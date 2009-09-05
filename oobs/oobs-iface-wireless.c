@@ -22,6 +22,14 @@
 #include "oobs-iface-wireless.h"
 #include "oobs-iface.h"
 
+/**
+ * SECTION:oobs-iface-wireless
+ * @title: OobsIfaceWireless
+ * @short_description: Object that represents an individual Wireless interface
+ * @see_also: #OobsIface, #OobsIfacesConfig, #OobsIfaceEthernet,
+ *     #OobsIfaceIRLan, #OobsIfacePlip, #OobsIfacePPP, #OobsIfaceWireless
+ **/
+
 #define OOBS_IFACE_WIRELESS_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_IFACE_WIRELESS, OobsIfaceWirelessPrivate))
 
 typedef struct _OobsIfaceWirelessPrivate OobsIfaceWirelessPrivate;

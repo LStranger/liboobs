@@ -29,6 +29,13 @@
 #include "utils.h"
 #include <crypt.h>
 
+/**
+ * SECTION:oobs-group
+ * @title: OobsGroup
+ * @short_description: Object that represents an individual group
+ * @see_also: #OobsGroupsConfig
+ **/
+
 #define OOBS_GROUP_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_GROUP, OobsGroupPrivate))
 
 typedef struct _OobsGroupPrivate OobsGroupPrivate;

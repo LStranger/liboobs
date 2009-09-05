@@ -24,6 +24,14 @@
 #include "oobs-iface-ethernet.h"
 #include "oobs-iface.h"
 
+/**
+ * SECTION:oobs-iface-ethernet
+ * @title: OobsIfaceEthernet
+ * @short_description: Object that represents an individual Ethernet interface
+ * @see_also: #OobsIface, #OobsIfacesConfig, #OobsIfaceIRLan,
+ *     #OobsIfacePlip, #OobsIfacePPP, #OobsIfaceWireless
+ **/
+
 #define OOBS_IFACE_ETHERNET_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_IFACE_ETHERNET, OobsIfaceEthernetPrivate))
 
 typedef struct _OobsIfaceEthernetPrivate OobsIfaceEthernetPrivate;

@@ -22,6 +22,14 @@
 #include "oobs-iface-irlan.h"
 #include "oobs-iface-ethernet.h"
 
+/**
+ * SECTION:oobs-iface-irlan
+ * @title: OobsIfaceIRLan
+ * @short_description: Object that represents an individual IRLan interface
+ * @see_also: #OobsIface, #OobsIfacesConfig, #OobsIfaceEthernet,
+ *     #OobsIfacePlip, #OobsIfacePPP, #OobsIfaceWireless
+ **/
+
 static void oobs_iface_irlan_class_init (OobsIfaceIRLanClass *class);
 static void oobs_iface_irlan_init (OobsIfaceIRLan *iface);
 

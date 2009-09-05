@@ -24,6 +24,13 @@
 #include "oobs-object.h"
 #include "oobs-list.h"
 
+/**
+ * SECTION:oobs-list
+ * @title: OobsList
+ * @short_description: Object to deal with several configuration elements
+ * @see_also: #OobsObject
+ **/
+
 #define OOBS_LIST_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_LIST, OobsListPrivate))
 
 typedef struct _OobsListPrivate OobsListPrivate;

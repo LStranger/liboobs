@@ -21,6 +21,13 @@
 #include <glib-object.h>
 #include "oobs-share.h"
 
+/**
+ * SECTION:oobs-share
+ * @title: OobsShare
+ * @short_description: Base object for shared folders
+ * @see_also: #OobsShareNFS, #OobsShareSMB
+ **/
+
 #define OOBS_SHARE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_SHARE, OobsSharePrivate))
 
 typedef struct _OobsSharePrivate OobsSharePrivate;

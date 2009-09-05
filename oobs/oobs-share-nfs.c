@@ -22,6 +22,13 @@
 #include "oobs-share.h"
 #include "oobs-share-nfs.h"
 
+/**
+ * SECTION:oobs-share-nfs
+ * @title: OobsShareNFS
+ * @short_description: Object that represents NFS configuration
+ * @see_also: #OobsShare, #OobsNFSConfig
+ **/
+
 #define OOBS_SHARE_NFS_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_SHARE_NFS, OobsShareNFSPrivate))
 
 typedef struct _OobsShareNFSPrivate OobsShareNFSPrivate;

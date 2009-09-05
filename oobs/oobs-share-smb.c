@@ -22,6 +22,13 @@
 #include "oobs-share.h"
 #include "oobs-share-smb.h"
 
+/**
+ * SECTION:oobs-share-smb
+ * @title: OobsShareSMB
+ * @short_description: Object that represents SMB configuration.
+ * @see_also: #OobsShare, #OobsSMBConfig
+ **/
+
 #define OOBS_SHARE_SMB_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_SHARE_SMB, OobsShareSMBPrivate))
 
 typedef struct _OobsShareSMBPrivate OobsShareSMBPrivate;

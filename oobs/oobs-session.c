@@ -28,6 +28,12 @@
 #include "oobs-object.h"
 #include "utils.h"
 
+/**
+ * SECTION:oobs-session
+ * @title: OobsSession
+ * @short_description: Manager of the connection to the backends
+ **/
+
 #define OOBS_SESSION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_SESSION, OobsSessionPrivate))
 #define PLATFORMS_PATH OOBS_DBUS_PATH_PREFIX "/Platform"
 #define PLATFORMS_INTERFACE OOBS_DBUS_METHOD_PREFIX ".Platform"

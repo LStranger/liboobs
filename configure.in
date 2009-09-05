@@ -39,7 +39,7 @@ AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[The name of the gettext domain])
 
 dnl Check for gtk-doc
-GTK_DOC_CHECK([1.0])
+GTK_DOC_CHECK([1.9])
 
 dnl =====================================================
 dnl required packages detection

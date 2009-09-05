@@ -32,6 +32,13 @@
 #include "oobs-defines.h"
 #include "utils.h"
 
+/**
+ * SECTION:oobs-groupsconfig
+ * @title: OobsGroupsConfig
+ * @short_description: Object that represents groups configuration
+ * @see_also: #OobsGroup
+ **/
+
 #define GROUPS_CONFIG_REMOTE_OBJECT "GroupsConfig"
 #define OOBS_GROUPS_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_GROUPS_CONFIG, OobsGroupsConfigPrivate))
 

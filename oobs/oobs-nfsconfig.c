@@ -31,6 +31,13 @@
 #include "oobs-share-nfs.h"
 #include "utils.h"
 
+/**
+ * SECTION:oobs-nfsconfig
+ * @title: OobsNFSConfig
+ * @short_description: Object that represents NFS configuration
+ * @see_also: #OobsShareNFS, #OobsSMBConfig
+ **/
+
 #define NFS_CONFIG_REMOTE_OBJECT "NFSConfig"
 #define OOBS_NFS_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_NFS_CONFIG, OobsNFSConfigPrivate))
 

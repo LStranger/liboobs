@@ -33,6 +33,13 @@
 #include "oobs-group.h"
 #include "utils.h"
 
+/**
+ * SECTION:oobs-usersconfig
+ * @title: OobsUsersConfig
+ * @short_description: Object that represents users configuration
+ * @see_also: #OobsUser
+ **/
+
 #define USERS_CONFIG_REMOTE_OBJECT "UsersConfig"
 #define OOBS_USERS_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_USERS_CONFIG, OobsUsersConfigPrivate))
 

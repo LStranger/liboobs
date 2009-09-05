@@ -28,6 +28,13 @@
 #include "oobs-statichost.h"
 #include "utils.h"
 
+/**
+ * SECTION:oobs-hostsconfig
+ * @title: OobsHostsConfig
+ * @short_description: Object that represents hosts resolution configuration
+ * @see_also: #OobsStaticHost
+ **/
+
 #define HOSTS_CONFIG_REMOTE_OBJECT "HostsConfig"
 #define OOBS_HOSTS_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_HOSTS_CONFIG, OobsHostsConfigPrivate))
 

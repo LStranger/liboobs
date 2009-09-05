@@ -29,6 +29,12 @@
 #include "oobs-user.h"
 #include "utils.h"
 
+/**
+ * SECTION:oobs-selfconfig
+ * @title: OobsSelfConfig
+ * @short_description: Object that represents the current user
+ **/
+
 #define SELF_CONFIG_REMOTE_OBJECT "SelfConfig"
 #define OOBS_SELF_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_SELF_CONFIG, OobsSelfConfigPrivate))
 #define POLICY_KIT_SELF_ACTION "org.freedesktop.systemtoolsbackends.self.set"

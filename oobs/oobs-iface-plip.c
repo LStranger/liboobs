@@ -22,6 +22,14 @@
 #include "oobs-iface-plip.h"
 #include "oobs-iface.h"
 
+/**
+ * SECTION:oobs-iface-plip
+ * @title: OobsIfacePlip
+ * @short_description: Object that represents an individual Plip interface
+ * @see_also: #OobsIface, #OobsIfacesConfig, #OobsIfaceEthernet,
+ *     #OobsIfaceIRLan, #OobsIfacePPP, #OobsIfaceWireless
+ **/
+
 #define OOBS_IFACE_PLIP_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_IFACE_PLIP, OobsIfacePlipPrivate))
 
 typedef struct _OobsIfacePlipPrivate OobsIfacePlipPrivate;

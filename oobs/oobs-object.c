@@ -25,6 +25,13 @@
 #include "oobs-session.h"
 #include "oobs-session-private.h"
 
+/**
+ * SECTION:oobs-object
+ * @title: OobsObject
+ * @short_description: Base object for all configuration objects
+ * @see_also: #OobsList
+ **/
+
 #define OOBS_OBJECT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_OBJECT, OobsObjectPrivate))
 #define POLKIT_ACTION "org.freedesktop.systemtoolsbackends.set"
 

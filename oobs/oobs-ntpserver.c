@@ -21,6 +21,13 @@
 #include <glib-object.h>
 #include "oobs-ntpserver.h"
 
+/**
+ * SECTION:oobs-ntpserver
+ * @title: OobsNTPServer
+ * @short_description: Object that represents an individual NTP server
+ * @see_also: #OobsNTPConfig
+ **/
+
 #define OOBS_NTP_SERVER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_NTP_SERVER, OobsNTPServerPrivate))
 
 typedef struct _OobsNTPServerPrivate OobsNTPServerPrivate;

@@ -24,6 +24,14 @@
 
 #include <string.h>
 
+/**
+ * SECTION:oobs-iface-ppp
+ * @title: OobsIfacePPP
+ * @short_description: Object that represents an individual PPP interface
+ * @see_also: #OobsIface, #OobsIfacesConfig, #OobsIfaceEthernet,
+ *     #OobsIfaceIRLan, #OobsIfacePlip, #OobsIfaceWireless
+ **/
+
 #define OOBS_IFACE_PPP_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_IFACE_PPP, OobsIfacePPPPrivate))
 
 typedef struct _OobsIfacePPPPrivate OobsIfacePPPPrivate;

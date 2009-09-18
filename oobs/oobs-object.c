@@ -428,6 +428,7 @@ async_message_cb (DBusPendingCall *pending_call, gpointer data)
 	  /* FIXME: process error */
 	  result = OOBS_RESULT_MALFORMED_DATA;
 	}
+      g_warning ("There was an unknown error communicating asynchronously with the backends: %s", error.message);
 
       dbus_error_free (&error);
     }

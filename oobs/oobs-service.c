@@ -196,22 +196,17 @@ oobs_service_set_runlevel_configuration (OobsService          *service,
 
   priv = service->_priv;
 
-  if (status == OOBS_SERVICE_IGNORE)
-    g_hash_table_remove (priv->runlevels_config, runlevel);
-  else
+  service_runlevel = g_hash_table_lookup (priv->runlevels_config, runlevel);
+
+  if (!service_runlevel)
     {
-      service_runlevel = g_hash_table_lookup (priv->runlevels_config, runlevel);
-
-      if (!service_runlevel)
-	{
-	  service_runlevel = g_new0 (OobsServiceRunlevel, 1);
-	  g_hash_table_insert (priv->runlevels_config,
-			       runlevel, service_runlevel);
-	}
-
-      service_runlevel->status = status;
-      service_runlevel->priority = priority;
+      service_runlevel = g_new0 (OobsServiceRunlevel, 1);
+      g_hash_table_insert (priv->runlevels_config,
+                           runlevel, service_runlevel);
     }
+
+  service_runlevel->status = status;
+  service_runlevel->priority = priority;
 }
 
 /**
@@ -240,7 +235,7 @@ oobs_service_get_runlevel_configuration (OobsService          *service,
   service_runlevel = g_hash_table_lookup (priv->runlevels_config, runlevel);
 
   if (status)
-    *status = (service_runlevel) ? service_runlevel->status : OOBS_SERVICE_IGNORE;
+    *status = (service_runlevel) ? service_runlevel->status : OOBS_SERVICE_STOP;
 
   if (priority)
     *priority = (service_runlevel) ? service_runlevel->priority : -1;

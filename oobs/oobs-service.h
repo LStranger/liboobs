@@ -40,6 +40,7 @@ typedef enum
 {
   OOBS_SERVICE_START,
   OOBS_SERVICE_STOP,
+  /* For services not listed in that runlevel */
   OOBS_SERVICE_IGNORE
 } OobsServiceStatus;
 

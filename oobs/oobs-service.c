@@ -178,6 +178,7 @@ oobs_service_get_name (OobsService *service)
  * @runlevel: A #OobsServicesRunlevel.
  * @status: status for the service in the given runlevel
  * @priority: priority for the service in the given runlevel.
+ * Use 0 to either keep the previous priority, or get the default value in case the script is new.
  *
  * Sets the configuration of a service for a given runlevel.
  **/
@@ -206,7 +207,11 @@ oobs_service_set_runlevel_configuration (OobsService          *service,
     }
 
   service_runlevel->status = status;
-  service_runlevel->priority = priority;
+
+  /* Keep previous priority. If the script was not used previously,
+   * the backends will use a default value. */
+  if (priority != 0)
+    service_runlevel->priority = priority;
 }
 
 /**
@@ -238,5 +243,5 @@ oobs_service_get_runlevel_configuration (OobsService          *service,
     *status = (service_runlevel) ? service_runlevel->status : OOBS_SERVICE_STOP;
 
   if (priority)
-    *priority = (service_runlevel) ? service_runlevel->priority : -1;
+    *priority = (service_runlevel) ? service_runlevel->priority : 0;
 }

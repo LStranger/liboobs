@@ -1,3 +1,13 @@
+Liboobs 2.29.1, 2009-11-30
+-----------------------------------------------
+
+Liboobs version 2.29.1 "Not Yet!" has been released.
+
+- Remember init scripts priority, allowing for GUIs not to care about them, simply passing 0 to mean "previous".
+- Don't allow clients to remove init scripts by setting their status to "ignore": scripts should always use "start" or "stop" statuses, so that their priority is not lost when disabling them.
+- Print a warning to the console when asynchronous commit fails. This ensures that errors will always be reported for debugging purposes.
+
+
 Liboobs 2.22.2, 2009-09-06
 -----------------------------------------------
 

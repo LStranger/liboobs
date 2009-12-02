@@ -184,11 +184,20 @@ hal_context_get_initial_devices (LibHalContext *context)
   GHashTable *devices;
   gint i, n_devices;
   gchar **udis;
+  DBusError error;
 
   devices = g_hash_table_new_full (g_str_hash, g_str_equal,
 				   (GDestroyNotify) g_free, NULL);
 
-  udis = libhal_find_device_by_capability (context, "net", &n_devices, NULL);
+  dbus_error_init(&error);
+  udis = libhal_find_device_by_capability (context, "net", &n_devices, &error);
+
+  /* In case an error occurred, udis would be NULL, possibly leading to crash */
+  if (dbus_error_is_set (&error)) {
+    g_warning ("Could not find any network device on the system: %s.",
+               error.message);
+    return devices;
+  }
 
   for (i = 0; i < n_devices; i++)
     g_hash_table_insert (devices, g_strdup (udis[i]), GINT_TO_POINTER (TRUE));

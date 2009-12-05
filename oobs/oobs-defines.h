@@ -15,8 +15,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  *
- * Authors: Carlos Garnacho Parro  <carlosg@gnome.org>
+ * Authors: Carlos Garnacho Parro  <carlosg@gnome.org>,
+ *          Milan Bouchet-Valat <nalimilan@club.fr>.
  */
 
-#define OOBS_MAX_UID 65534
-#define OOBS_MAX_GID 65534
+#include <math.h>
+
+/* The system-tools-backends protocol is using an int32
+ * to store [UG]IDs, thus we can't go beyond this,
+ * even if the system supports it.
+ *
+ * Computing the size of [ug]id_t is tricky, because
+ * no system constant exists for that.*/
+
+#define OOBS_MAX_UID MIN (G_MAXINT32, pow (2, 8 * sizeof (uid_t) - 1))
+#define OOBS_MAX_GID MIN (G_MAXINT32, pow (2, 8 * sizeof (gid_t) - 1))

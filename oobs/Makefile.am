@@ -17,6 +17,7 @@ oobsinclude_HEADERS= 	\
 	oobs-session.h		\
 	oobs-object.h		\
 	oobs-list.h		\
+	oobs-defines.h		\
 	oobs-share.h		\
 	oobs-smbconfig.h	\
 	oobs-share-smb.h	\

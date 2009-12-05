@@ -15,7 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  *
- * Authors: Carlos Garnacho Parro  <carlosg@gnome.org>
+ * Authors: Carlos Garnacho Parro  <carlosg@gnome.org>,
+ *          Milan Bouchet-Valat <nalimilan@club.fr>.
  */
 
 #include <dbus/dbus.h>
@@ -408,41 +409,15 @@ create_dbus_struct_from_user (OobsUser        *user,
   return TRUE;
 }
 
-static OobsGroup*
-get_group_with_gid (OobsGroupsConfig *config,
-		    gint              gid)
-{
-  OobsList *groups_list;
-  OobsListIter iter;
-  OobsGroup *group;
-  gboolean valid;
-
-  groups_list = oobs_groups_config_get_groups (config);
-  valid = oobs_list_get_iter_first (groups_list, &iter);
-
-  while (valid)
-    {
-      group = OOBS_GROUP (oobs_list_get (groups_list, &iter));
-
-      if (oobs_group_get_gid (group) == gid)
-	return group;
-
-      g_object_unref (group);
-      valid = oobs_list_iter_next (groups_list, &iter);
-    }
-
-  return NULL;
-}
-
 static void
 query_groups_foreach (OobsUser *user,
-		      gint      gid,
+		      uid_t     gid,
 		      gpointer  data)
 {
   OobsGroupsConfig *groups_config = OOBS_GROUPS_CONFIG (data);
   OobsGroup *group;
 
-  group = get_group_with_gid (groups_config, gid);
+  group = oobs_groups_config_get_from_gid (groups_config, gid);
   oobs_user_set_main_group (user, group);
 
   if (group)
@@ -462,7 +437,7 @@ oobs_users_config_groups_updated (OobsUsersConfig  *users,
   /* get the default group */
   if (priv->default_gid > 0)
     {
-      group = get_group_with_gid (groups, priv->default_gid);
+      group = oobs_groups_config_get_from_gid (groups, priv->default_gid);
       priv->default_group = group;
 
       if (group)
@@ -760,7 +735,7 @@ oobs_users_config_get_default_home_dir (OobsUsersConfig *config)
 
 /**
  * oobs_users_config_set_default_home_dir:
- * @config: An #OobsIfacesConfig.
+ * @config: An #OobsUsersConfig.
  * @home_dir: new default home directory prefix.
  * 
  * Sets a new home directory prefix used for newly created users, replacing the old one.
@@ -816,4 +791,215 @@ oobs_users_config_get_available_shells (OobsUsersConfig *config)
   priv = config->_priv;
 
   return priv->shells;
+}
+
+
+/*
+ * Convenience functions to make working with the users list easier.
+ */
+
+/**
+ * oobs_users_config_get_from_login:
+ * @config: An #OobsUsersConfig.
+ * @login: the login name of the wanted user.
+ *
+ * Gets the (first) user whose login is @login. This is a convenience function
+ * to avoid walking manually over the users list.
+ *
+ * Return value: an #OobsUser corresponding to the passed login,
+ * or %NULL if no such user exists. Don't forget to unref user when you're done.
+ **/
+OobsUser *
+oobs_users_config_get_from_login (OobsUsersConfig *config, const gchar *login)
+{
+  OobsUsersConfigPrivate *priv;
+  OobsUser *user;
+  OobsListIter iter;
+  gboolean valid;
+  const gchar *user_login;
+
+  g_return_val_if_fail (config != NULL, NULL);
+  g_return_val_if_fail (OOBS_IS_USERS_CONFIG (config), NULL);
+  g_return_val_if_fail (login != NULL, NULL);
+
+  priv = config->_priv;
+
+  valid = oobs_list_get_iter_first (priv->users_list, &iter);
+
+  while (valid) {
+    user = OOBS_USER (oobs_list_get (priv->users_list, &iter));
+    user_login = oobs_user_get_login_name (user);
+
+    if (user_login && strcmp (login, user_login) == 0)
+      return user;
+
+    /* only the returned user is not unreferenced here */
+    g_object_unref (user);
+
+    valid = oobs_list_iter_next (priv->users_list, &iter);
+  }
+
+  return NULL;
+}
+
+/**
+ * oobs_users_config_get_from_uid:
+ * @config: An #OobsUsersConfig.
+ * @uid: the UID of the wanted user.
+ *
+ * Gets the (first) user whose UID is @uid. This is a convenience function
+ * to avoid walking manually over the users list.
+ *
+ * Return value: an #OobsUser corresponding to the passed UID,
+ * or %NULL if no such user exists. Don't forget to unref user when you're done.
+ **/
+OobsUser *
+oobs_users_config_get_from_uid (OobsUsersConfig *config, uid_t uid)
+{
+  OobsUsersConfigPrivate *priv;
+  OobsUser *user;
+  OobsListIter iter;
+  gboolean valid;
+  uid_t user_uid;
+
+  g_return_val_if_fail (config != NULL, NULL);
+  g_return_val_if_fail (OOBS_IS_USERS_CONFIG (config), NULL);
+
+  priv = config->_priv;
+
+  valid = oobs_list_get_iter_first (priv->users_list, &iter);
+
+  while (valid) {
+    user = OOBS_USER (oobs_list_get (priv->users_list, &iter));
+    user_uid = oobs_user_get_uid (user);
+
+    if (user_uid == uid)
+      return user;
+
+    /* only the returned user is not unreferenced here */
+    g_object_unref (user);
+
+    valid = oobs_list_iter_next (priv->users_list, &iter);
+  }
+
+  return NULL;
+}
+
+/**
+ * oobs_users_config_is_login_used:
+ * @config: An #OobsUsersConfig.
+ * @login: the login name to check.
+ *
+ * Check whether @login is already used by an existing user or not. This is
+ * a convenience function to avoid walking manually over the users list.
+ *
+ * Return value: %TRUE if an user named @login already exists, %FALSE otherwise.
+ **/
+gboolean
+oobs_users_config_is_login_used (OobsUsersConfig *config, const gchar *login)
+{
+  OobsUser *user;
+  gboolean login_used;
+
+  user = oobs_users_config_get_from_login (config, login);
+  login_used = (user != NULL);
+
+  if (user)
+    g_object_unref (user);
+
+  return login_used;
+}
+
+/**
+ * oobs_users_config_is_uid_used:
+ * @config: An #OobsUsersConfig.
+ * @uid: the UID to check.
+ *
+ * Check whether @uid is already used by an existing user or not. This is
+ * a convenience function to avoid walking manually over the users list.
+ *
+ * Return value: %TRUE if an user with such an UID already exists, %FALSE otherwise.
+ **/
+gboolean
+oobs_users_config_is_uid_used (OobsUsersConfig *config, uid_t uid)
+{
+  OobsUser *user;
+  gboolean uid_used;
+
+  user = oobs_users_config_get_from_uid (config, uid);
+  uid_used = (user != NULL);
+
+  if (user)
+    g_object_unref (user);
+
+  return uid_used;
+}
+
+/**
+ * oobs_users_config_find_free_uid:
+ * @config: An #OobsUsersConfig.
+ * @uid_min: the minimum wanted UID.
+ * @uid_max: the maximum wanted UID.
+ *
+ * Finds an UID that is not used by any user in the list. The returned UID is
+ * the highest used UID in the range plus one if @uid_max is not used.
+ * Else, the first free UID in the range is returned.
+ *
+ * If both @uid_min and @uid_max are equal to 0, the default range is used.
+ *
+ * Return value: a free UID in the requested range,
+ * or @uid_max to indicate wrong use or failure to find a free UID.
+ **/
+uid_t
+oobs_users_config_find_free_uid (OobsUsersConfig *config, uid_t uid_min, uid_t uid_max)
+{
+  OobsUsersConfigPrivate *priv;
+  OobsList *list;
+  OobsListIter list_iter;
+  OobsUser *user;
+  gboolean valid;
+  uid_t new_uid, user_uid;
+
+  g_return_val_if_fail (config != NULL, uid_max);
+  g_return_val_if_fail (OOBS_IS_USERS_CONFIG (config), uid_max);
+  g_return_val_if_fail (uid_min <= uid_max, uid_max);
+
+  priv = config->_priv;
+
+  if (uid_min == 0 && uid_max == 0) {
+    uid_min = priv->minimum_uid;
+    uid_max = priv->maximum_uid;
+  }
+
+  new_uid = uid_min - 1;
+
+  list = oobs_users_config_get_users (config);
+  valid = oobs_list_get_iter_first (list, &list_iter);
+
+  /* Find the highest used UID in the range */
+  while (valid) {
+    user = OOBS_USER (oobs_list_get (list, &list_iter));
+    user_uid = oobs_user_get_uid (user);
+    g_object_unref (user);
+
+    if (user_uid < uid_max && user_uid >= uid_min && user_uid > new_uid)
+      new_uid = user_uid;
+
+    valid = oobs_list_iter_next (list, &list_iter);
+  }
+
+  new_uid++;
+
+  if (!oobs_users_config_is_uid_used (config, new_uid))
+    return new_uid;
+
+
+  /* If the fast method failed, iterate over the whole range */
+  new_uid = uid_min;
+  while (oobs_users_config_is_uid_used (config, new_uid) && new_uid < uid_max)
+    new_uid++;
+
+  /* In the extreme case where no UID is free in the range,
+   * we return the uid_max, which is the best we can do */
+  return new_uid;
 }

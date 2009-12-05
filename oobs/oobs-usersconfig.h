@@ -77,6 +77,20 @@ void                  oobs_users_config_set_default_home_dir (OobsUsersConfig *c
 OobsGroup*  oobs_users_config_get_default_group    (OobsUsersConfig *config);
 GList*      oobs_users_config_get_available_shells (OobsUsersConfig *config);
 
+OobsUser*   oobs_users_config_get_from_login       (OobsUsersConfig *config,
+                                                    const gchar     *login);
+OobsUser*   oobs_users_config_get_from_uid         (OobsUsersConfig *config,
+                                                    uid_t            uid);
+
+gboolean    oobs_users_config_is_login_used        (OobsUsersConfig *config,
+                                                    const gchar     *login);
+gboolean    oobs_users_config_is_uid_used          (OobsUsersConfig *config,
+                                                    uid_t            uid);
+
+uid_t       oobs_users_config_find_free_uid        (OobsUsersConfig *config,
+                                                    uid_t            uid_min,
+                                                    uid_t            uid_max);
+
 
 G_END_DECLS
 

@@ -830,3 +830,58 @@ oobs_user_get_active (OobsUser *user)
 
   return match;
 }
+
+/**
+ * oobs_user_is_root:
+ * @user: An #OobsUser.
+ *
+ * Checks whether a group is the superuser, according to its name.
+ *
+ * Return value: %TRUE if @user is the root user, %FALSE otherwise.
+ **/
+gboolean
+oobs_user_is_root (OobsUser *user)
+{
+  const gchar *login;
+
+  g_return_val_if_fail (OOBS_IS_USER (user), FALSE);
+
+  login = oobs_user_get_login_name (user);
+
+  if (!login)
+    return FALSE;
+
+  return (strcmp (login, "root") == 0);
+}
+
+/**
+ * oobs_user_is_in_group:
+ * @user: An #OobsUser.
+ * @group: An #OobsGroup.
+ *
+ * Checks whether a user member of @group.
+ *
+ * Return value: %TRUE if @user is in @group, %FALSE otherwise.
+ **/
+gboolean
+oobs_user_is_in_group (OobsUser *user, OobsGroup *group)
+{
+  OobsUser *tmp_user;
+  GList *users = NULL;
+  GList *l;
+
+  g_return_val_if_fail (OOBS_IS_USER (user), FALSE);
+  g_return_val_if_fail (OOBS_IS_GROUP (group), FALSE);
+
+  users = oobs_group_get_users (group);
+
+  for (l = users; l; l = l->next) {
+    tmp_user = l->data;
+    if (tmp_user == user)
+      break;
+  }
+
+  g_list_free (users);
+
+  return l != NULL;
+}

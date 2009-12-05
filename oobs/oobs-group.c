@@ -28,6 +28,7 @@
 #include "oobs-defines.h"
 #include "utils.h"
 #include <crypt.h>
+#include <string.h>
 
 /**
  * SECTION:oobs-group
@@ -428,4 +429,27 @@ oobs_group_remove_user (OobsGroup *group,
 
   /* there might be several instances */
   priv->users = g_list_remove_all (priv->users, user);
+}
+
+/**
+ * oobs_group_is_root:
+ * @group: An #OobsGroup.
+ *
+ * Checks whether a group is the root group, according to its name.
+ *
+ * Return value: %TRUE if @group is the root group, %FALSE otherwise.
+ **/
+gboolean
+oobs_group_is_root (OobsGroup *group)
+{
+  const gchar *name;
+
+  g_return_val_if_fail (OOBS_IS_GROUP (group), FALSE);
+
+  name = oobs_group_get_name (group);
+
+  if (!name)
+    return FALSE;
+
+  return (strcmp (name, "root") == 0);
 }

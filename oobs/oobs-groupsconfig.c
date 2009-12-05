@@ -15,7 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  *
- * Authors: Carlos Garnacho Parro  <carlosg@gnome.org>
+ * Authors: Carlos Garnacho Parro  <carlosg@gnome.org>,
+ *          Milan Bouchet-Valat <nalimilan@club.fr>.
  */
 
 #include <dbus/dbus.h>
@@ -304,43 +305,19 @@ create_dbus_struct_from_group (GObject         *group,
   g_free (passwd);
 }
 
-static OobsUser*
-find_user (OobsList *users_list, gchar *username)
-{
-  OobsListIter iter;
-  OobsUser *user;
-  gboolean valid;
-
-  valid = oobs_list_get_iter_first (users_list, &iter);
-
-  while (valid)
-    {
-      user = OOBS_USER (oobs_list_get (users_list, &iter));
-
-      if (strcmp (username, oobs_user_get_login_name (user)) == 0)
-	return user;
-
-      valid = oobs_list_iter_next (users_list, &iter);
-      g_object_unref (user);
-    }
-
-  return NULL;
-}
-
 static void
 query_users_foreach (OobsGroup *group,
 		     GList     *users,
 		     gpointer   data)
 {
   OobsUsersConfig *users_config = OOBS_USERS_CONFIG (data);
-  OobsList *users_list = oobs_users_config_get_users (users_config);
   OobsUser *user;
 
   oobs_group_clear_users (group);
 
   while (users)
     {
-      user = find_user (users_list, users->data);
+      user = oobs_users_config_get_from_login (users_config, users->data);
 
       if (user)
 	{
@@ -482,4 +459,207 @@ oobs_groups_config_get_groups (OobsGroupsConfig *config)
   priv = config->_priv;
 
   return priv->groups_list;
+}
+
+
+/**
+ * oobs_groups_config_get_from_name:
+ * @config: An #OobsGroupsConfig.
+ * @name: the name of the wanted group.
+ *
+ * Gets the (first) group called @name. This is a convenience function
+ * to avoid walking manually over the groups list.
+ *
+ * Return value: an #OobsGroup corresponding to the passed named,
+ * or %NULL if no such group exists. Don't forget to unref group when you're done.
+ **/
+OobsGroup *
+oobs_groups_config_get_from_name (OobsGroupsConfig *config, const gchar *name)
+{
+  OobsList *groups_list;
+  OobsListIter iter;
+  OobsGroup *group;
+  gboolean valid;
+  const gchar *group_name;
+
+  groups_list = oobs_groups_config_get_groups (config);
+  valid = oobs_list_get_iter_first (groups_list, &iter);
+
+  while (valid) {
+    group = OOBS_GROUP (oobs_list_get (groups_list, &iter));
+    group_name = oobs_group_get_name (group);
+
+    if (group_name && strcmp (name, group_name) == 0)
+      return group;
+
+    /* only the returned group is not unreferenced here */
+    g_object_unref (group);
+
+    valid = oobs_list_iter_next (groups_list, &iter);
+  }
+
+  return NULL;
+}
+
+/**
+ * oobs_groups_config_get_from_uid:
+ * @config: An #OobsGroupsConfig.
+ * @gid: the UID of the wanted group.
+ *
+ * Gets the (first) group whose GID is @gid. This is a convenience function
+ * to avoid walking manually over the groups list.
+ *
+ * Return value: an #OobsGroup corresponding to the passed GID,
+ * or %NULL if no such group exists. Don't forget to group user when you're done.
+ **/
+OobsGroup *
+oobs_groups_config_get_from_gid (OobsGroupsConfig *config, gid_t gid)
+{
+  OobsGroupsConfigPrivate *priv;
+  OobsGroup *group;
+  OobsListIter iter;
+  gboolean valid;
+  gid_t group_gid;
+
+  g_return_val_if_fail (config != NULL, NULL);
+  g_return_val_if_fail (OOBS_IS_GROUPS_CONFIG (config), NULL);
+
+  priv = config->_priv;
+
+  valid = oobs_list_get_iter_first (priv->groups_list, &iter);
+
+  while (valid) {
+    group = OOBS_GROUP (oobs_list_get (priv->groups_list, &iter));
+    group_gid = oobs_group_get_gid (group);
+
+    if (group_gid == gid)
+      return group;
+
+    /* only the returned group is not unreferenced here */
+    g_object_unref (group);
+
+    valid = oobs_list_iter_next (priv->groups_list, &iter);
+  }
+
+  return NULL;
+}
+
+/**
+ * oobs_groups_config_is_name_used:
+ * @config: An #OobsGroupsConfig.
+ * @name: the name to check.
+ *
+ * Check whether @name is already used by an existing group or not. This is
+ * a convenience function to avoid walking manually over the groups list.
+ *
+ * Return value: %TRUE if a group called @name already exists, %FALSE otherwise.
+ **/
+gboolean
+oobs_groups_config_is_name_used (OobsGroupsConfig *config, const gchar *name)
+{
+  OobsGroup *group;
+  gboolean name_used;
+
+  group = oobs_groups_config_get_from_name (config, name);
+  name_used = (group != NULL);
+
+  if (group)
+    g_object_unref (group);
+
+  return name_used;
+}
+
+/**
+ * oobs_groups_config_is_gid_used:
+ * @config: An #OobsGroupsConfig.
+ * @gid: the gid to check.
+ *
+ * Check whether @gid is already used by an existing group or not. This is
+ * a convenience function to avoid walking manually over the groups list.
+ *
+ * Return value: %TRUE if an group with such an gid already exists, %FALSE otherwise.
+ **/
+gboolean
+oobs_groups_config_is_gid_used (OobsGroupsConfig *config, gid_t gid)
+{
+  OobsGroup *group;
+  gboolean gid_used;
+
+  group = oobs_groups_config_get_from_gid (config, gid);
+  gid_used = (group != NULL);
+
+  if (group)
+    g_object_unref (group);
+
+  return gid_used;
+}
+
+
+/**
+ * oobs_groups_config_find_free_uid:
+ * @config: An #OobsGroupsConfig.
+ * @gid_min: the minimum wanted GID.
+ * @gid_max: the maximum wanted GID.
+ *
+ * Finds a GID that is not used by any user in the list. The returned GID is
+ * the highest used GID in the range plus one if @gid_max is not used.
+ * Else, the first free GID in the range is returned.
+ *
+ * If both @gid_min and @gid_max are equal to 0, the default range is used.
+ *
+ * Return value: a free GID in the requested range,
+ * or @gid_max to indicate wrong use or failure to find a free GID.
+ **/
+gid_t
+oobs_groups_config_find_free_gid (OobsGroupsConfig *config, gid_t gid_min, gid_t gid_max)
+{
+  OobsGroupsConfigPrivate *priv;
+  OobsList *list;
+  OobsListIter list_iter;
+  GObject *group;
+  gboolean valid;
+  gid_t new_gid, gid;
+
+  g_return_val_if_fail (config != NULL, gid_max);
+  g_return_val_if_fail (OOBS_IS_GROUPS_CONFIG (config), gid_max);
+  g_return_val_if_fail (gid_min <= gid_max, gid_max);
+
+  priv = config->_priv;
+
+  if (gid_min == 0 && gid_max == 0) {
+    gid_min = priv->minimum_gid;
+    gid_max = priv->maximum_gid;
+  }
+
+  new_gid = gid_min - 1;
+
+  list = oobs_groups_config_get_groups (config);
+  valid = oobs_list_get_iter_first (list, &list_iter);
+
+  /* Find the highest used GID in the range */
+  while (valid) {
+    group = oobs_list_get (list, &list_iter);
+    gid = oobs_group_get_gid (OOBS_GROUP (group));
+    g_object_unref (group);
+
+    if (gid < gid_max && gid >= gid_min && new_gid < gid)
+      new_gid = gid;
+
+    valid = oobs_list_iter_next (list, &list_iter);
+  }
+
+  new_gid++;
+
+  if (!oobs_groups_config_is_gid_used (config, new_gid))
+    return new_gid;
+
+
+  /* If the fast method failed, iterate over the whole range */
+  new_gid = gid_min;
+  while (oobs_groups_config_is_gid_used (config, new_gid) && new_gid < gid_max)
+    new_gid++;
+
+  /* In the extreme case where no GID is free in the range,
+   * we return the gid_max, which is the best we can do */
+  return new_gid;
 }

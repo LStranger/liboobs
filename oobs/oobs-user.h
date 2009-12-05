@@ -88,7 +88,9 @@ void oobs_user_set_home_phone_number (OobsUser *user, const gchar *phone_number)
 G_CONST_RETURN gchar* oobs_user_get_other_data (OobsUser *user);
 void oobs_user_set_other_data (OobsUser *user, const gchar *data);
 
-gboolean oobs_user_get_active (OobsUser *user);
+gboolean oobs_user_get_active  (OobsUser *user);
+gboolean oobs_user_is_root     (OobsUser *user);
+gboolean oobs_user_is_in_group (OobsUser *user, OobsGroup *group);
 
 G_END_DECLS
 

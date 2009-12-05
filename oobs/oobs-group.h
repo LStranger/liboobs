@@ -68,6 +68,8 @@ void       oobs_group_clear_users  (OobsGroup *group);
 void       oobs_group_add_user     (OobsGroup *group, OobsUser *user);
 void       oobs_group_remove_user  (OobsGroup *group, OobsUser *user);
 
+gboolean   oobs_group_is_root      (OobsGroup *group);
+
 
 G_END_DECLS
 

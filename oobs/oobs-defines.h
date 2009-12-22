@@ -19,14 +19,12 @@
  *          Milan Bouchet-Valat <nalimilan@club.fr>.
  */
 
-#include <math.h>
-
-/* The system-tools-backends protocol is using an int32
- * to store [UG]IDs, thus we can't go beyond this,
- * even if the system supports it.
+/* The system-tools-backends protocol is using an unsigned int32
+ * to store [UG]IDs. It is unlikely that any platform will go
+ * beyond this, but some are more restrictive.
  *
  * Computing the size of [ug]id_t is tricky, because
- * no system constant exists for that.*/
+ * no system constant exists for that. */
 
-#define OOBS_MAX_UID MIN (G_MAXINT32, pow (2, 8 * sizeof (uid_t) - 1))
-#define OOBS_MAX_GID MIN (G_MAXINT32, pow (2, 8 * sizeof (gid_t) - 1))
+#define OOBS_MAX_UID MIN (G_MAXUINT32, ((guint32) (1 << (8 * sizeof (uid_t) - 1)) - 1))
+#define OOBS_MAX_GID MIN (G_MAXUINT32, ((guint32) (1 << (8 * sizeof (gid_t) - 1)) - 1))

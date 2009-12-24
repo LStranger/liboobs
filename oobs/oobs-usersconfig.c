@@ -560,6 +560,12 @@ oobs_users_config_commit (OobsObject *object)
     }
 }
 
+static void
+oobs_users_config_add (OobsObject *object)
+{
+
+}
+
 /**
  * oobs_users_config_get:
  * 

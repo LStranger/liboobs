@@ -61,6 +61,14 @@ struct _OobsObjectAsyncCallbackData
   gpointer data;
 };
 
+enum _OobsObjectCommitMethod
+{
+  METHOD_COMMIT,
+  METHOD_ADD,
+  METHOD_DELETE
+};
+typedef enum _OobsObjectCommitMethod _OobsObjectCommitMethod;
+
 static void oobs_object_class_init (OobsObjectClass *class);
 static void oobs_object_init       (OobsObject      *object);
 static void oobs_object_finalize   (GObject         *object);
@@ -113,6 +121,9 @@ oobs_object_class_init (OobsObjectClass *class)
   object_class->finalize     = oobs_object_finalize;
 
   class->get_authentication_action = oobs_object_real_get_authentication_action;
+
+  /* some object types don't need to be singletons, they override this */
+  class->singleton = TRUE;
 
   dbus_connection_quark = g_quark_from_static_string ("oobs-dbus-connection");
 
@@ -194,10 +205,11 @@ oobs_object_constructor (GType                  type,
 			 guint                  n_construct_properties,
 			 GObjectConstructParam *construct_params)
 {
+  OobsObjectClass *class;
   static GHashTable *type_table;
   GObject *object;
 
-  /* objects that inherit from OobsObject have to be
+  /* some objects that inherit from OobsObject have to be
    * singletons, keep a hash table with references to them
    */
   if (!type_table)
@@ -205,14 +217,21 @@ oobs_object_constructor (GType                  type,
 
   object = g_hash_table_lookup (type_table, GINT_TO_POINTER (type));
 
-  if (!object)
+  if (object)
     {
-      object = (* G_OBJECT_CLASS (oobs_object_parent_class)->constructor) (type,
-									   n_construct_properties,
-									   construct_params);
-      g_hash_table_insert (type_table, GINT_TO_POINTER (type), object);
-      connect_object_to_session (OOBS_OBJECT (object));
+      class = OOBS_OBJECT_GET_CLASS (object);
+
+      /* if has to be singleton and exists, return it */
+      if (class->singleton)
+	return object;
     }
+
+  /* this class should not be limited to singletons, create (possibly new) object anyway */
+  object = (* G_OBJECT_CLASS (oobs_object_parent_class)->constructor) (type,
+                                                                       n_construct_properties,
+                                                                       construct_params);
+  g_hash_table_insert (type_table, GINT_TO_POINTER (type), object);
+  connect_object_to_session (OOBS_OBJECT (object));
 
   return object;
 }
@@ -488,11 +507,12 @@ run_message_async (OobsObject          *object,
 }
 
 static DBusMessage*
-get_commit_message (OobsObject *object)
+get_commit_message (_OobsObjectCommitMethod method, OobsObject *object)
 {
   OobsObjectClass   *class;
   OobsObjectPrivate *priv;
   DBusMessage       *message;
+  gchar *suffix;
 
   priv  = object->_priv;
   class = OOBS_OBJECT_GET_CLASS (object);
@@ -504,13 +524,30 @@ get_commit_message (OobsObject *object)
       return NULL;
     }
 
+
+  switch (method)
+    {
+      case METHOD_COMMIT:
+	suffix = "set";
+	break;
+      case METHOD_ADD:
+	suffix = "add";
+	break;
+      case METHOD_DELETE:
+	suffix = "del";
+	break;
+      default:
+	g_critical ("Unknown commit method");
+        return NULL;
+    }
+
   if (!class->commit)
     {
       g_critical ("There is no commit() implementation for this object");
       return NULL;
     }
 
-  message = dbus_message_new_method_call (OOBS_DBUS_DESTINATION, priv->path, priv->method, "set");
+  message = dbus_message_new_method_call (OOBS_DBUS_DESTINATION, priv->path, priv->method, suffix);
 
   /* Let the commit() implementation fill the message */
   _oobs_object_set_dbus_message (object, message);
@@ -544,24 +581,18 @@ get_update_message (OobsObject *object)
   return dbus_message_new_method_call (OOBS_DBUS_DESTINATION, priv->path, priv->method, "get");
 }
 
-/**
- * oobs_object_commit:
- * @object: an #OobsObject
- * 
- * Commits to the system all the changes done
- * to the configuration held by an #OobsObject.
- *
- * Return value: an #OobsResult enum with the error code.
- **/
-OobsResult
-oobs_object_commit (OobsObject *object)
+/*
+ * Do the real work for oobs_object_commit() oobs_object_add() and oobs_object_delete().
+ */
+static OobsResult
+do_commit (_OobsObjectCommitMethod method, OobsObject *object)
 {
   DBusMessage *message;
   OobsResult result;
 
   g_return_val_if_fail (OOBS_IS_OBJECT (object), OOBS_RESULT_MALFORMED_DATA);
 
-  message = get_commit_message (object);
+  message = get_commit_message (method, object);
 
   if (!message)
     return OOBS_RESULT_MALFORMED_DATA;
@@ -573,28 +604,21 @@ oobs_object_commit (OobsObject *object)
   return result;
 }
 
-/**
- * oobs_object_commit_async:
- * @object: An #OobsObject.
- * @func: An #OobsObjectAsyncFunc that will be called when the asynchronous operation has ended.
- * @data: Aditional data to pass to @func.
- * 
- * Commits to the system all the changes done to the configuration held by an #OobsObject.
- * This change will be asynchronous, being run the function @func when the change has been done.
- * 
- * Return value: an #OobsResult enum with the error code. Due to the asynchronous nature
- * of the function, only OOBS_RESULT_MALFORMED and OOBS_RESULT_OK can be returned.
- **/
-OobsResult
-oobs_object_commit_async (OobsObject          *object,
-			  OobsObjectAsyncFunc  func,
-			  gpointer             data)
+/*
+ * Do the real work for oobs_object_commit_async(),
+ * oobs_object_add_async() and oobs_object_delete_async().
+ */
+static OobsResult
+do_commit_async (_OobsObjectCommitMethod method,
+                 OobsObject             *object,
+                 OobsObjectAsyncFunc     func,
+                 gpointer                data)
 {
   DBusMessage *message;
 
   g_return_val_if_fail (OOBS_IS_OBJECT (object), OOBS_RESULT_MALFORMED_DATA);
 
-  message = get_commit_message (object);
+  message = get_commit_message (method, object);
 
   if (!message)
     return OOBS_RESULT_MALFORMED_DATA;
@@ -606,9 +630,116 @@ oobs_object_commit_async (OobsObject          *object,
 }
 
 /**
+ * oobs_object_commit:
+ * @object: an #OobsObject
+ *
+ * Commits to the system all the changes done
+ * to the configuration held by an #OobsObject.
+ *
+ * Return value: an #OobsResult enum with the error code.
+ **/
+OobsResult
+oobs_object_commit (OobsObject *object)
+{
+  return do_commit (METHOD_COMMIT, object);
+}
+
+/**
+ * oobs_object_commit_async:
+ * @object: An #OobsObject.
+ * @func: An #OobsObjectAsyncFunc that will be called when the asynchronous operation has ended.
+ * @data: Additional data to pass to @func.
+ *
+ * Commits to the system all the changes done to the configuration held by an #OobsObject.
+ * This change will be asynchronous, being run the function @func when the change has been done.
+ *
+ * Return value: an #OobsResult enum with the error code. Due to the asynchronous nature
+ * of the function, only OOBS_RESULT_MALFORMED and OOBS_RESULT_OK can be returned.
+ **/
+OobsResult
+oobs_object_commit_async (OobsObject          *object,
+			  OobsObjectAsyncFunc  func,
+			  gpointer             data)
+{
+  return do_commit_async (METHOD_COMMIT, object, func, data);
+}
+
+/**
+ * oobs_object_add:
+ * @object: an #OobsObject
+ *
+ * Add an #OobsObject to the system's configuration. This is only
+ * supported by certain individual objects, others are added by committing
+ * a modified objects list.
+ *
+ * Return value: an #OobsResult enum with the error code.
+ **/
+OobsResult
+oobs_object_add (OobsObject *object)
+{
+  return do_commit (METHOD_ADD, object);
+}
+
+/**
+ * oobs_object_add_async:
+ * @object: An #OobsObject.
+ * @func: An #OobsObjectAsyncFunc that will be called when the asynchronous operation has ended.
+ * @data: Additional data to pass to @func.
+ *
+ * Add an #OobsObject to the system's configuration.
+ * This change will be asynchronous, being run the function @func when the change has been done.
+ *
+ * Return value: an #OobsResult enum with the error code. Due to the asynchronous nature
+ * of the function, only OOBS_RESULT_MALFORMED and OOBS_RESULT_OK can be returned.
+ **/
+OobsResult
+oobs_object_add_async (OobsObject          *object,
+                       OobsObjectAsyncFunc  func,
+                       gpointer             data)
+{
+  return do_commit_async (METHOD_ADD, object, func, data);
+}
+
+/**
+ * oobs_object_delete:
+ * @object: an #OobsObject
+ *
+ * Delete an #OobsObject from the system's configuration. This is only
+ * supported by certain individual objects, others are added by committing
+ * a modified objects list.
+ *
+ * Return value: an #OobsResult enum with the error code.
+ **/
+OobsResult
+oobs_object_delete (OobsObject *object)
+{
+  return do_commit (METHOD_DELETE, object);
+}
+
+/**
+ * oobs_object_delete_async:
+ * @object: An #OobsObject.
+ * @func: An #OobsObjectAsyncFunc that will be called when the asynchronous operation has ended.
+ * @data: Additional data to pass to @func.
+ *
+ * Delete an #OobsObject from the system's configuration.
+ * This change will be asynchronous, being run the function @func when the change has been done.
+ *
+ * Return value: an #OobsResult enum with the error code. Due to the asynchronous nature
+ * of the function, only OOBS_RESULT_MALFORMED and OOBS_RESULT_OK can be returned.
+ **/
+OobsResult
+oobs_object_delete_async (OobsObject          *object,
+                          OobsObjectAsyncFunc  func,
+                          gpointer             data)
+{
+  return do_commit_async (METHOD_DELETE, object, func, data);
+}
+
+/**
  * oobs_object_update:
  * @object: an #OobsObject
- * 
+ *
  * Synchronizes the configuration held by the #OobsObject
  * with the actual system configuration. All the changes done
  * to the configuration held by the #OobsObject will be forgotten.

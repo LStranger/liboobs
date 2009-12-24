@@ -59,6 +59,9 @@ struct _OobsObjectClass
   void (*committed) (OobsObject *object);
   void (*changed)   (OobsObject *object);
 
+  /* variables */
+  gboolean singleton;
+
   void (*_oobs_padding1) (void);
   void (*_oobs_padding2) (void);
 };
@@ -71,6 +74,16 @@ GType oobs_object_get_type (void);
 
 OobsResult  oobs_object_commit       (OobsObject          *object);
 OobsResult  oobs_object_commit_async (OobsObject          *object,
+				      OobsObjectAsyncFunc  func,
+				      gpointer             data);
+
+OobsResult  oobs_object_add          (OobsObject          *object);
+OobsResult  oobs_object_add_async    (OobsObject          *object,
+				      OobsObjectAsyncFunc  func,
+				      gpointer             data);
+
+OobsResult  oobs_object_delete       (OobsObject          *object);
+OobsResult  oobs_object_delete_async (OobsObject          *object,
 				      OobsObjectAsyncFunc  func,
 				      gpointer             data);
 

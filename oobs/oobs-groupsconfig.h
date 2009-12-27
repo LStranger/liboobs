@@ -61,6 +61,11 @@ GType       oobs_groups_config_get_type      (void);
 OobsObject* oobs_groups_config_get           (void);
 OobsList*   oobs_groups_config_get_groups    (OobsGroupsConfig *config);
 
+OobsResult  oobs_groups_config_add_group     (OobsGroupsConfig *config,
+                                              OobsGroup        *group);
+OobsResult  oobs_groups_config_delete_group  (OobsGroupsConfig *config,
+                                              OobsGroup        *group);
+
 OobsGroup*  oobs_groups_config_get_from_name (OobsGroupsConfig *config,
                                               const gchar      *name);
 OobsGroup*  oobs_groups_config_get_from_gid  (OobsGroupsConfig *config,

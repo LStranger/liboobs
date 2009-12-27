@@ -30,6 +30,7 @@
 #include "oobs-groupsconfig.h"
 #include "oobs-usersconfig.h"
 #include "oobs-group.h"
+#include "oobs-group-private.h"
 #include "oobs-defines.h"
 #include "utils.h"
 
@@ -40,7 +41,7 @@
  * @see_also: #OobsGroup
  **/
 
-#define GROUPS_CONFIG_REMOTE_OBJECT "GroupsConfig"
+#define GROUPS_CONFIG_REMOTE_OBJECT "GroupsConfig2"
 #define OOBS_GROUPS_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_GROUPS_CONFIG, OobsGroupsConfigPrivate))
 
 typedef struct _OobsGroupsConfigPrivate OobsGroupsConfigPrivate;
@@ -221,7 +222,7 @@ create_group_from_dbus_reply (OobsObject      *object,
 {
   OobsGroupsConfigPrivate *priv;
   DBusMessageIter iter;
-  int      gid;
+  guint32 gid;
   const gchar *groupname, *passwd;
   GList   *users;
   OobsGroup *group;
@@ -231,15 +232,15 @@ create_group_from_dbus_reply (OobsObject      *object,
 
   groupname = utils_get_string (&iter);
   passwd = utils_get_string (&iter);
-  gid = utils_get_int (&iter);
+  gid = utils_get_uint (&iter);
 
   users = utils_get_string_list_from_dbus_reply (reply, &iter);
 
-  group = g_object_new (OOBS_TYPE_GROUP,
-			"name", groupname,
-			"crypted-password", passwd,
-			"gid", gid,
-			NULL);
+  group = oobs_group_new (groupname);
+  g_object_set (G_OBJECT (group),
+                "password", passwd,
+                "gid", gid,
+                NULL);
 
   /* put the users list in the hashtable, will be used each time
    * the users config has changed, in order to get references to
@@ -250,59 +251,6 @@ create_group_from_dbus_reply (OobsObject      *object,
 		       users);
 
   return OOBS_GROUP (group);
-}
-
-static GList*
-get_users_list (OobsGroup *group)
-{
-  GList *users, *elem, *usernames = NULL;
-  OobsUser *user;
-
-  users = elem = oobs_group_get_users (group);
-
-  while (elem)
-    {
-      user = elem->data;
-      usernames = g_list_prepend (usernames, (gpointer) oobs_user_get_login_name (user));
-
-      elem = elem->next;
-    }
-
-  g_list_free (users);
-  return usernames;
-}
-
-static void
-create_dbus_struct_from_group (GObject         *group,
-			       DBusMessage     *message,
-			       DBusMessageIter *array_iter)
-{
-  DBusMessageIter struct_iter;
-  int    gid;
-  gchar *groupname, *passwd;
-  GList *users;
-
-  g_object_get (group,
-		"name", &groupname,
-		"crypted-password", &passwd,
-		"gid",  &gid,
-		NULL);
-
-  users = get_users_list (OOBS_GROUP (group));
-
-  dbus_message_iter_open_container (array_iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
-
-  utils_append_string (&struct_iter, groupname);
-  utils_append_string (&struct_iter, passwd);
-  utils_append_int (&struct_iter, gid);
-
-  utils_create_dbus_array_from_string_list (users, message, &struct_iter);
-
-  dbus_message_iter_close_container (array_iter, &struct_iter);
-
-  g_list_free (users);
-  g_free (groupname);
-  g_free (passwd);
 }
 
 static void
@@ -372,8 +320,8 @@ oobs_groups_config_update (OobsObject *object)
 
   dbus_message_iter_next (&iter);
 
-  priv->minimum_gid = utils_get_int (&iter);
-  priv->maximum_gid = utils_get_int (&iter);
+  priv->minimum_gid = utils_get_uint (&iter);
+  priv->maximum_gid = utils_get_uint (&iter);
 
   users_config = oobs_users_config_get ();
 
@@ -400,22 +348,22 @@ oobs_groups_config_commit (OobsObject *object)
 
   dbus_message_iter_init_append (message, &iter);
   dbus_message_iter_open_container (&iter,
-				    DBUS_TYPE_ARRAY,
-				    DBUS_STRUCT_BEGIN_CHAR_AS_STRING
-				    DBUS_TYPE_STRING_AS_STRING
-				    DBUS_TYPE_STRING_AS_STRING
-				    DBUS_TYPE_INT32_AS_STRING
-				    DBUS_TYPE_ARRAY_AS_STRING
-				    DBUS_TYPE_STRING_AS_STRING
-				    DBUS_STRUCT_END_CHAR_AS_STRING,
-				    &array_iter);
+                                    DBUS_TYPE_ARRAY,
+                                    DBUS_STRUCT_BEGIN_CHAR_AS_STRING
+                                    DBUS_TYPE_STRING_AS_STRING
+                                    DBUS_TYPE_STRING_AS_STRING
+                                    DBUS_TYPE_UINT32_AS_STRING
+                                    DBUS_TYPE_ARRAY_AS_STRING
+                                    DBUS_TYPE_STRING_AS_STRING
+                                    DBUS_STRUCT_END_CHAR_AS_STRING,
+                                    &array_iter);
 
   valid  = oobs_list_get_iter_first (priv->groups_list, &list_iter);
 
   while (valid)
     {
       group = oobs_list_get (priv->groups_list, &list_iter);
-      create_dbus_struct_from_group (group, message, &array_iter);
+      _oobs_create_dbus_struct_from_group (OOBS_GROUP (group), message, &array_iter);
 
       g_object_unref (group);
       valid = oobs_list_iter_next (priv->groups_list, &list_iter);
@@ -461,6 +409,87 @@ oobs_groups_config_get_groups (OobsGroupsConfig *config)
   return priv->groups_list;
 }
 
+/**
+ * oobs_groups_config_add_group:
+ * @config: An #OobsGroupsConfig.
+ * @group: An #Oobsgroup.
+ *
+ * Add a group to the configuration, immediately committing changes to the system.
+ * On success, @group will be appended to the groups list.
+ *
+ * Return value: an #OobsResult enum with the error code.
+ **/
+OobsResult
+oobs_groups_config_add_group (OobsGroupsConfig *config, OobsGroup *group)
+{
+  OobsGroupsConfigPrivate *priv;
+  OobsListIter list_iter;
+  OobsResult result;
+
+  g_return_val_if_fail (config != NULL, OOBS_RESULT_MALFORMED_DATA);
+  g_return_val_if_fail (group != NULL, OOBS_RESULT_MALFORMED_DATA);
+  g_return_val_if_fail (OOBS_IS_GROUPS_CONFIG (config), OOBS_RESULT_MALFORMED_DATA);
+  g_return_val_if_fail (OOBS_IS_GROUP (group), OOBS_RESULT_MALFORMED_DATA);
+
+  result = oobs_object_add (OOBS_OBJECT (group));
+
+  if (result != OOBS_RESULT_OK)
+    return result;
+
+  priv = config->_priv;
+
+  oobs_list_append (priv->groups_list, &list_iter);
+  oobs_list_set (priv->groups_list, &list_iter, G_OBJECT (group));
+
+  return OOBS_RESULT_OK;
+}
+
+/**
+ * oobs_groups_config_delete_group:
+ * @config: An #OobsGroupsConfig.
+ * @group: An #OobsGroup.
+ *
+ * Delete an group from the configuration, immediately committing changes to the system.
+ * On success, @group will be removed from the groups list.
+ *
+ * Return value: an #OobsResult enum with the error code.
+ **/
+OobsResult
+oobs_groups_config_delete_group (OobsGroupsConfig *config, OobsGroup *group)
+{
+  OobsGroupsConfigPrivate *priv;
+  OobsGroup *list_group;
+  OobsListIter list_iter;
+  gboolean valid;
+  OobsResult result;
+
+  g_return_val_if_fail (config != NULL, OOBS_RESULT_MALFORMED_DATA);
+  g_return_val_if_fail (group != NULL, OOBS_RESULT_MALFORMED_DATA);
+  g_return_val_if_fail (OOBS_IS_GROUPS_CONFIG (config), OOBS_RESULT_MALFORMED_DATA);
+  g_return_val_if_fail (OOBS_IS_GROUP (group), OOBS_RESULT_MALFORMED_DATA);
+
+  result = oobs_object_delete (OOBS_OBJECT (group));
+
+  if (result != OOBS_RESULT_OK)
+    return result;
+
+  priv = config->_priv;
+
+  valid = oobs_list_get_iter_first (priv->groups_list, &list_iter);
+
+  while (valid) {
+    list_group = OOBS_GROUP (oobs_list_get (priv->groups_list, &list_iter));
+
+    if (list_group == group)
+      break;
+
+    valid = oobs_list_iter_next (priv->groups_list, &list_iter);
+  }
+
+  oobs_list_remove (priv->groups_list, &list_iter);
+
+  return OOBS_RESULT_OK;
+}
 
 /**
  * oobs_groups_config_get_from_name:

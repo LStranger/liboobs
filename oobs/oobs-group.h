@@ -38,14 +38,14 @@ typedef struct _OobsGroupClass   OobsGroupClass;
 #include "oobs-user.h"
 	
 struct _OobsGroup {
-  GObject parent;
+  OobsObject parent;
 
   /*<private>*/
   gpointer _priv;
 };
 
 struct _OobsGroupClass {
-  GObjectClass parent_class;
+  OobsObjectClass parent_class;
   
   void (*_oobs_padding1) (void);
   void (*_oobs_padding2) (void);
@@ -58,7 +58,6 @@ OobsGroup* oobs_group_new (const gchar *name);
 G_CONST_RETURN gchar* oobs_group_get_name (OobsGroup *group);
 
 void       oobs_group_set_password (OobsGroup *group, const gchar *password);
-void       oobs_group_set_crypted_password (OobsGroup *group, const gchar *crypted_password);
 
 gid_t      oobs_group_get_gid      (OobsGroup *group);
 void       oobs_group_set_gid      (OobsGroup *group, gid_t gid);

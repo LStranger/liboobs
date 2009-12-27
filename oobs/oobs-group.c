@@ -15,20 +15,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  *
- * Authors: Carlos Garnacho Parro  <carlosg@gnome.org>
+ * Authors: Carlos Garnacho Parro  <carlosg@gnome.org>,
+ *          Milan Bouchet-Valat <nalimilan@club.fr>.
  */
 
+#include <string.h>
 #include <glib-object.h>
+#include <dbus/dbus.h>
+
+#include "oobs-object-private.h"
 #include "oobs-session.h"
 #include "oobs-group.h"
+#include "oobs-group-private.h"
 #include "oobs-user.h"
 #include "oobs-session.h"
 #include "oobs-groupsconfig.h"
 #include "oobs-usersconfig.h"
 #include "oobs-defines.h"
 #include "utils.h"
-#include <crypt.h>
-#include <string.h>
 
 /**
  * SECTION:oobs-group
@@ -37,6 +41,7 @@
  * @see_also: #OobsGroupsConfig
  **/
 
+#define GROUP_REMOTE_OBJECT "GroupConfig2"
 #define OOBS_GROUP_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_GROUP, OobsGroupPrivate))
 
 typedef struct _OobsGroupPrivate OobsGroupPrivate;
@@ -49,8 +54,6 @@ struct _OobsGroupPrivate {
   gid_t  gid;
 
   GList *users;
-
-  gboolean use_md5;
 };
 
 static void oobs_group_class_init (OobsGroupClass *class);
@@ -66,24 +69,33 @@ static void oobs_group_get_property (GObject      *object,
 				     GValue       *value,
 				     GParamSpec   *pspec);
 
+static void oobs_group_commit (OobsObject *object);
+
+static GList* get_users_list (OobsGroup *group);
+
 enum {
   PROP_0,
   PROP_GROUPNAME,
   PROP_PASSWORD,
-  PROP_CRYPTED_PASSWORD,
   PROP_GID,
 };
 
-G_DEFINE_TYPE (OobsGroup, oobs_group, G_TYPE_OBJECT);
+G_DEFINE_TYPE (OobsGroup, oobs_group, OOBS_TYPE_OBJECT);
 
 static void
 oobs_group_class_init (OobsGroupClass *class)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (class);
+  OobsObjectClass *oobs_class = OOBS_OBJECT_CLASS (class);
 
   object_class->set_property = oobs_group_set_property;
   object_class->get_property = oobs_group_get_property;
   object_class->finalize     = oobs_group_finalize;
+
+  oobs_class->commit = oobs_group_commit;
+
+  /* override the singleton check */
+  oobs_class->singleton = FALSE;
 
   g_object_class_install_property (object_class,
 				   PROP_GROUPNAME,
@@ -98,21 +110,14 @@ oobs_group_class_init (OobsGroupClass *class)
 							"Password",
 							"Password for the group",
 							NULL,
-							G_PARAM_WRITABLE));
-  g_object_class_install_property (object_class,
-				   PROP_CRYPTED_PASSWORD,
-				   g_param_spec_string ("crypted-password",
-							"Crypted password",
-							"Crypted password for the group",
-							NULL,
 							G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
 				   PROP_GID,
-				   g_param_spec_int ("gid",
-						     "GID",
-						     "Main group GID for the group",
-						     0, OOBS_MAX_GID, OOBS_MAX_GID,
-						     G_PARAM_READWRITE));
+				   g_param_spec_uint ("gid",
+				                      "GID",
+				                      "Main group GID for the group",
+				                      0, OOBS_MAX_GID, OOBS_MAX_GID,
+				                      G_PARAM_READWRITE));
   g_type_class_add_private (object_class,
 			    sizeof (OobsGroupPrivate));
 }
@@ -121,7 +126,6 @@ static void
 oobs_group_init (OobsGroup *group)
 {
   OobsGroupPrivate *priv;
-  OobsObject *users_config;
 
   g_return_if_fail (OOBS_IS_GROUP (group));
 
@@ -131,8 +135,6 @@ oobs_group_init (OobsGroup *group)
   priv->password  = NULL;
   priv->users     = NULL;
 
-  users_config = oobs_users_config_get ();
-  g_object_get (users_config, "use-md5", &priv->use_md5, NULL);
   group->_priv = priv;
 }
 
@@ -144,7 +146,6 @@ oobs_group_set_property (GObject      *object,
 {
   OobsGroup *group;
   OobsGroupPrivate *priv;
-  gchar *salt, *str;
 
   g_return_if_fail (OOBS_IS_GROUP (object));
 
@@ -157,31 +158,13 @@ oobs_group_set_property (GObject      *object,
       g_free (priv->groupname);
       priv->groupname = g_value_dup_string (value);
       break;
-    case PROP_PASSWORD:
-      g_free (priv->password);
-
-      if (priv->use_md5)
-	{
-	  salt = utils_get_random_string (5);
-	  str = g_strdup_printf ("$1$%s", salt);
-	  priv->password = g_strdup (crypt (g_value_get_string (value), str));
-
-	  g_free (str);
-	}
-      else
-	{
-	  salt = utils_get_random_string (2);
-	  priv->password = g_strdup (crypt (g_value_get_string (value), salt));
-	}
-
-      g_free (salt);
       break;
-    case PROP_CRYPTED_PASSWORD:
+    case PROP_PASSWORD:
       g_free (priv->password);
       priv->password = g_value_dup_string (value);
       break;
     case PROP_GID:
-      priv->gid = g_value_get_int (value);
+      priv->gid = g_value_get_uint (value);
       break;
     }
 }
@@ -205,11 +188,11 @@ oobs_group_get_property (GObject      *object,
     case PROP_GROUPNAME:
       g_value_set_string (value, priv->groupname);
       break;
-    case PROP_CRYPTED_PASSWORD:
+    case PROP_PASSWORD:
       g_value_set_string (value, priv->password);
       break;
     case PROP_GID:
-      g_value_set_int (value, priv->gid);
+      g_value_set_uint (value, priv->gid);
       break;
     }
 }
@@ -238,6 +221,70 @@ oobs_group_finalize (GObject *object)
     (* G_OBJECT_CLASS (oobs_group_parent_class)->finalize) (object);
 }
 
+static GList*
+get_users_list (OobsGroup *group)
+{
+  GList *users, *elem, *usernames = NULL;
+  OobsUser *user;
+
+  users = elem = oobs_group_get_users (group);
+
+  while (elem)
+    {
+      user = elem->data;
+      usernames = g_list_prepend (usernames, (gpointer) oobs_user_get_login_name (user));
+
+      elem = elem->next;
+    }
+
+  g_list_free (users);
+  return usernames;
+}
+
+void
+_oobs_create_dbus_struct_from_group (OobsGroup       *group,
+                                     DBusMessage     *message,
+                                     DBusMessageIter *array_iter)
+{
+  DBusMessageIter struct_iter;
+  guint32 gid;
+  gchar *groupname, *passwd;
+  GList *users;
+
+  g_object_get (group,
+		"name", &groupname,
+		"password", &passwd,
+		"gid",  &gid,
+		NULL);
+
+  users = get_users_list (OOBS_GROUP (group));
+
+  dbus_message_iter_open_container (array_iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
+
+  utils_append_string (&struct_iter, groupname);
+  utils_append_string (&struct_iter, passwd);
+  utils_append_uint (&struct_iter, gid);
+
+  utils_create_dbus_array_from_string_list (users, message, &struct_iter);
+
+  dbus_message_iter_close_container (array_iter, &struct_iter);
+
+  g_list_free (users);
+  g_free (groupname);
+  g_free (passwd);
+}
+
+static void
+oobs_group_commit (OobsObject *object)
+{
+  DBusMessage *message;
+  DBusMessageIter iter;
+
+  message = _oobs_object_get_dbus_message (object);
+  dbus_message_iter_init_append (message, &iter);
+  _oobs_create_dbus_struct_from_group (OOBS_GROUP (object), message, &iter);
+}
+
 /**
  * oobs_group_new:
  * @name: group name.
@@ -253,6 +300,7 @@ oobs_group_new (const gchar *name)
 
   return g_object_new (OOBS_TYPE_GROUP,
 		       "name", name,
+                       "remote-object", GROUP_REMOTE_OBJECT,
 		       NULL);
 }
 
@@ -260,7 +308,7 @@ oobs_group_new (const gchar *name)
  * oobs_group_get_name:
  * @group: An #OobsGroup.
  * 
- * Returns the name of the group represented by #OobsGroup.
+ * Returns the name of the group represented by @group.
  * 
  * Return Value: A pointer to the group name as a string.
  *               This string must not be freed, modified or stored.
@@ -279,38 +327,21 @@ oobs_group_get_name (OobsGroup *group)
 }
 
 /**
- * oobs_group_set_password:
+ * oobs_group_set__password:
  * @group: An #OobsGroup.
- * @password: A new password for #group.
+ * @crypted_password: a new password for @group.
  * 
- * Sets the group password for the group defined
- * by #OobsGroup, overwriting the previous one.
+ * Sets clear text password for the group
+ * defined by #OobsGroup, overwriting the previous one.
  **/
 void
-oobs_group_set_password (OobsGroup *group, const gchar *password)
+oobs_group_set_password (OobsGroup   *group,
+			 const gchar *password)
 {
   g_return_if_fail (group != NULL);
   g_return_if_fail (OOBS_IS_GROUP (group));
 
   g_object_set (G_OBJECT (group), "password", password, NULL);
-}
-
-/**
- * oobs_group_set_crypted_password:
- * @group: An #OobsGroup.
- * @crypted_password: a new crypted password for #group.
- * 
- * Sets an already crypted password for the group
- * defined by #OobsGroup, overwriting the previous one.
- **/
-void
-oobs_group_set_crypted_password (OobsGroup   *group,
-				 const gchar *crypted_password)
-{
-  g_return_if_fail (group != NULL);
-  g_return_if_fail (OOBS_IS_GROUP (group));
-
-  g_object_set (G_OBJECT (group), "crypted-password", crypted_password, NULL);
 }
 
 /**

@@ -167,7 +167,10 @@ oobs_object_init (OobsObject *object)
   OobsObjectPrivate *priv;
 
   priv = OOBS_OBJECT_GET_PRIVATE (object);
+
+  /* We need session to stay alive until object is destroyed */
   priv->session = oobs_session_get ();
+  g_object_ref (priv->session);
   priv->remote_object = NULL;
   dbus_error_init (&priv->dbus_error);
 
@@ -191,6 +194,9 @@ oobs_object_finalize (GObject *object)
   g_list_free (priv->pending_calls);
 
   _oobs_session_unregister_object (priv->session, obj);
+
+  /* Only now, we don't care about session */
+  g_object_unref (priv->session);
 
   g_free (priv->remote_object);
   g_free (priv->path);

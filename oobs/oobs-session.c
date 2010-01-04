@@ -220,7 +220,12 @@ oobs_session_get_property (GObject      *object,
 OobsSession*
 oobs_session_get (void)
 {
-  return g_object_new (OOBS_TYPE_SESSION, NULL);
+  static OobsSession *session = NULL;
+
+  if (!session)
+    session = g_object_new (OOBS_TYPE_SESSION, NULL);
+
+  return session;
 }
 
 /**

@@ -35,8 +35,6 @@ typedef enum {
   OOBS_IFACE_TYPE_PPP
 } OobsIfaceType;
 
-#define OOBS_TYPE_IFACE_TYPE (oobs_iface_type_get_type ())
-
 #define OOBS_TYPE_IFACES_CONFIG         (oobs_ifaces_config_get_type ())
 #define OOBS_IFACES_CONFIG(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), OOBS_TYPE_IFACES_CONFIG, OobsIfacesConfig))
 #define OOBS_IFACES_CONFIG_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c),    OOBS_TYPE_IFACES_CONFIG, OobsIfacesConfigClass))

@@ -78,29 +78,6 @@ static void oobs_ifaces_config_commit     (OobsObject   *object);
 
 G_DEFINE_TYPE (OobsIfacesConfig, oobs_ifaces_config, OOBS_TYPE_OBJECT);
 
-GType
-oobs_iface_type_get_type (void)
-{
-  static GType etype = 0;
-
-  if (!etype)
-    {
-      static const GEnumValue values[] =
-	{
-	  { OOBS_IFACE_TYPE_ETHERNET, "OOBS_IFACE_TYPE_ETHERNET", "ethernet" },
-	  { OOBS_IFACE_TYPE_WIRELESS, "OOBS_IFACE_TYPE_WIRELESS", "wireless" },
-	  { OOBS_IFACE_TYPE_IRLAN,    "OOBS_IFACE_TYPE_IRLAN",    "infrared" },
-	  { OOBS_IFACE_TYPE_PLIP,     "OOBS_IFACE_TYPE_PLIP",     "parallel" },
-	  { OOBS_IFACE_TYPE_PPP,      "OOBS_IFACE_TYPE_PPP",      "ppp" },
- 	  { 0, NULL, NULL }
-	};
-
-      etype = g_enum_register_static ("OobsIfaceType", values);
-    }
-
-  return etype;
-}
-
 static void
 oobs_ifaces_config_class_init (OobsIfacesConfigClass *class)
 {

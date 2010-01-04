@@ -36,21 +36,30 @@ G_BEGIN_DECLS
 typedef struct _OobsUser        OobsUser;
 typedef struct _OobsUserClass   OobsUserClass;
 
+#include "oobs-object.h"
 #include "oobs-group.h"
+#include "oobs-enum-types.h"
 	
 struct _OobsUser {
-  GObject parent;
+  OobsObject parent;
 
   /*<private>*/
   gpointer _priv;
 };
 
 struct _OobsUserClass {
-  GObjectClass parent_class;
+  OobsObjectClass parent_class;
 
   void (*_oobs_padding1) (void);
   void (*_oobs_padding2) (void);
+  void (*_oobs_padding3) (void);
+  void (*_oobs_padding4) (void);
 };
+
+typedef enum {
+  OOBS_USER_REMOVE_HOME = 1,
+  OOBS_USER_CHOWN_HOME  = 1 << 1
+} OobsUserHomeFlags;
 
 GType oobs_user_get_type (void);
 
@@ -59,7 +68,6 @@ OobsUser* oobs_user_new (const gchar *name);
 G_CONST_RETURN gchar* oobs_user_get_login_name (OobsUser *user);
 
 void  oobs_user_set_password (OobsUser *user, const gchar *password);
-void  oobs_user_set_crypted_password (OobsUser *user, const gchar *crypted_password);
 
 uid_t oobs_user_get_uid (OobsUser *user);
 void  oobs_user_set_uid (OobsUser *user, uid_t uid);
@@ -87,6 +95,20 @@ void oobs_user_set_home_phone_number (OobsUser *user, const gchar *phone_number)
 
 G_CONST_RETURN gchar* oobs_user_get_other_data (OobsUser *user);
 void oobs_user_set_other_data (OobsUser *user, const gchar *data);
+
+gboolean oobs_user_get_password_empty (OobsUser *user);
+void     oobs_user_set_password_empty (OobsUser *user, gboolean empty);
+
+gboolean oobs_user_get_password_disabled (OobsUser *user);
+void     oobs_user_set_password_disabled (OobsUser *user, gboolean disabled);
+
+gboolean oobs_user_get_encrypted_home (OobsUser *user);
+void     oobs_user_set_encrypted_home (OobsUser *user, gboolean encrypted_home);
+
+void     oobs_user_set_home_flags (OobsUser *user, OobsUserHomeFlags home_flags);
+
+G_CONST_RETURN gchar* oobs_user_get_locale (OobsUser *user);
+void                  oobs_user_set_locale (OobsUser *user, const gchar *locale);
 
 gboolean oobs_user_get_active  (OobsUser *user);
 gboolean oobs_user_is_root     (OobsUser *user);

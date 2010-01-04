@@ -25,6 +25,7 @@ G_BEGIN_DECLS
 
 #include "oobs-iface.h"
 #include "oobs-iface-ethernet.h"
+#include "oobs-enum-types.h"
 
 typedef enum {
   OOBS_MODEM_VOLUME_SILENT,
@@ -37,9 +38,6 @@ typedef enum {
   OOBS_DIAL_TYPE_TONES,
   OOBS_DIAL_TYPE_PULSES
 } OobsDialType;
-
-#define OOBS_TYPE_MODEM_VOLUME          (oobs_modem_volume_get_type ())
-#define OOBS_TYPE_DIAL_TYPE             (oobs_dial_type_get_type ())
 
 #define OOBS_TYPE_IFACE_PPP           (oobs_iface_ppp_get_type ())
 #define OOBS_IFACE_PPP(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), OOBS_TYPE_IFACE_PPP, OobsIfacePPP))

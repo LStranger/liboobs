@@ -102,6 +102,12 @@ utils_append_uint (DBusMessageIter *iter, guint value)
   dbus_message_iter_append_basic (iter, DBUS_TYPE_UINT32, &value);
 }
 
+void
+utils_append_boolean (DBusMessageIter *iter, gboolean value)
+{
+  dbus_message_iter_append_basic (iter, DBUS_TYPE_BOOLEAN, &value);
+}
+
 static void
 utils_get_basic (DBusMessageIter *iter,
 		 gint             type,
@@ -152,5 +158,14 @@ utils_get_uint (DBusMessageIter *iter)
   guint value = 0;
 
   utils_get_basic (iter, DBUS_TYPE_UINT32, &value);
+  return value;
+}
+
+gboolean
+utils_get_boolean (DBusMessageIter *iter)
+{
+  gboolean value = FALSE;
+
+  utils_get_basic (iter, DBUS_TYPE_BOOLEAN, &value);
   return value;
 }

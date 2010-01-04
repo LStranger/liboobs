@@ -12,7 +12,7 @@ oobsincludedir=$(includedir)/liboobs-1.0/oobs/
 
 lib_LTLIBRARIES= liboobs-1.la
 
-oobsinclude_HEADERS= 	\
+oobs_public_headers = 	\
 	oobs.h			\
 	oobs-session.h		\
 	oobs-object.h		\
@@ -44,6 +44,9 @@ oobsinclude_HEADERS= 	\
 	oobs-service.h		\
 	oobs-result.h
 
+oobsinclude_HEADERS = $(oobs_public_headers) \
+	oobs-enum-types.h
+
 oobs_private_headers = 	\
 	iface-state-monitor.h		\
 	oobs-defines.h			\
@@ -51,6 +54,10 @@ oobs_private_headers = 	\
 	oobs-object-private.h	\
 	oobs-session-private.h	\
 	utils.h
+
+oobs_built_sources = \
+       oobs-enum-types.h \
+       oobs-enum-types.c
 
 liboobs_1_la_SOURCES = \
 	utils.c				\
@@ -80,7 +87,8 @@ liboobs_1_la_SOURCES = \
 	oobs-iface-ppp.c		\
 	oobs-ifacesconfig.c		\
 	oobs-service.c			\
-	oobs-servicesconfig.c
+	oobs-servicesconfig.c		\
+	$(oobs_built_sources)
 
 if HAVE_RTNETLINK
 liboobs_1_la_SOURCES += iface-state-monitor-linux.c
@@ -93,3 +101,26 @@ liboobs_1_la_LDFLAGS= $(libtool_opts)
 
 EXTRA_DIST= $(oobs_private_headers)
 
+BUILT_SOURCES = $(oobs_built_sources)
+OOBS_STAMP_FILES = stamp-oobs-enum-types.h
+CLEANFILES = $(OOBS_STAMP_FILES)
+
+
+oobs-enum-types.h: stamp-oobs-enum-types.h Makefile
+	@true
+stamp-oobs-enum-types.h: $(oobs_public_headers) oobs-enum-types.h.in
+	$(AM_V_GEN) ( cd $(srcdir) && \
+	  $(GLIB_MKENUMS) \
+	    --template $(srcdir)/oobs-enum-types.h.in \
+	  $(oobs_public_headers) ) >> xgen-teth && \
+	(cmp -s xgen-teth oobs-enum-types.h || cp xgen-teth oobs-enum-types.h) && \
+	rm -f xgen-teth && \
+	echo timestamp > $(@F)
+
+oobs-enum-types.c: stamp-oobs-enum-types.h oobs-enum-types.c.in
+	  $(AM_V_GEN) ( cd $(srcdir) && \
+	  $(GLIB_MKENUMS) \
+	    --template $(srcdir)/oobs-enum-types.c.in \
+	  $(oobs_public_headers) ) >> xgen-tetc && \
+	cp xgen-tetc oobs-enum-types.c && \
+	rm -f xgen-tetc

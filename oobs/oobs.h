@@ -23,6 +23,7 @@
 
 #include <glib-object.h>
 #include <oobs/oobs-object.h>
+#include <oobs/oobs-enum-types.h>
 #include <oobs/oobs-session.h>
 #include <oobs/oobs-list.h>
 #include <oobs/oobs-defines.h>

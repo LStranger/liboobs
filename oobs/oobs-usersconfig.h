@@ -62,6 +62,9 @@ GType       oobs_users_config_get_type     (void);
 OobsObject* oobs_users_config_get          (void);
 OobsList*   oobs_users_config_get_users    (OobsUsersConfig *config);
 
+OobsResult  oobs_users_config_add_user    (OobsUsersConfig *config, OobsUser *user);
+OobsResult  oobs_users_config_delete_user (OobsUsersConfig *config, OobsUser *user);
+
 uid_t       oobs_users_config_get_minimum_users_uid (OobsUsersConfig *config);
 void        oobs_users_config_set_minimum_users_uid (OobsUsersConfig *config, uid_t uid);
 
@@ -74,8 +77,11 @@ void                  oobs_users_config_set_default_shell (OobsUsersConfig *conf
 G_CONST_RETURN gchar* oobs_users_config_get_default_home_dir (OobsUsersConfig *config);
 void                  oobs_users_config_set_default_home_dir (OobsUsersConfig *config, const gchar *home_dir);
 
-OobsGroup*  oobs_users_config_get_default_group    (OobsUsersConfig *config);
-GList*      oobs_users_config_get_available_shells (OobsUsersConfig *config);
+OobsGroup*  oobs_users_config_get_default_group          (OobsUsersConfig *config);
+GList*      oobs_users_config_get_available_shells       (OobsUsersConfig *config);
+
+gboolean    oobs_users_config_get_encrypted_home_support (OobsUsersConfig *config);
+GList*      oobs_users_config_get_available_locales      (OobsUsersConfig *config);
 
 OobsUser*   oobs_users_config_get_from_login       (OobsUsersConfig *config,
                                                     const gchar     *login);

@@ -23,6 +23,8 @@
 
 G_BEGIN_DECLS
 
+#include <dbus/dbus.h>
+
 #include "oobs-object.h"
 
 DBusMessage *_oobs_object_get_dbus_message (OobsObject *object);

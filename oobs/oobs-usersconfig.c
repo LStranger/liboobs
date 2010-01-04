@@ -41,7 +41,7 @@
  * @see_also: #OobsUser
  **/
 
-#define USERS_CONFIG_REMOTE_OBJECT "UsersConfig"
+#define USERS_CONFIG_REMOTE_OBJECT "UsersConfig2"
 #define OOBS_USERS_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_USERS_CONFIG, OobsUsersConfigPrivate))
 
 typedef struct _OobsUsersConfigPrivate OobsUsersConfigPrivate;
@@ -52,14 +52,15 @@ struct _OobsUsersConfigPrivate
 
   GList    *shells;
 
-  gboolean  use_md5;
   uid_t     minimum_uid;
   uid_t     maximum_uid;
   gchar    *default_shell;
   gchar    *default_home;
 
   GHashTable *groups;
-  gint        default_gid;
+  gid_t       default_gid;
+
+  gboolean  encrypted_home;
 
   OobsGroup *default_group;
 };
@@ -87,12 +88,12 @@ static void oobs_users_config_commit     (OobsObject   *object);
 enum
 {
   PROP_0,
-  PROP_USE_MD5,
   PROP_MINIMUM_UID,
   PROP_MAXIMUM_UID,
   PROP_DEFAULT_SHELL,
   PROP_DEFAULT_HOME,
-  PROP_DEFAULT_GROUP
+  PROP_DEFAULT_GROUP,
+  PROP_ENCRYPTED_HOME,
 };
 
 G_DEFINE_TYPE (OobsUsersConfig, oobs_users_config, OOBS_TYPE_OBJECT);
@@ -113,26 +114,19 @@ oobs_users_config_class_init (OobsUsersConfigClass *class)
   oobs_object_class->update  = oobs_users_config_update;
 
   g_object_class_install_property (object_class,
-				   PROP_USE_MD5,
-				   g_param_spec_boolean ("use-md5",
-							 "Use MD5",
-							 "Whether users' passwords are stored in MD5",
-							 FALSE,
-							 G_PARAM_READABLE));
-  g_object_class_install_property (object_class,
 				   PROP_MINIMUM_UID,
-				   g_param_spec_int ("minimum-uid",
-						     "Minimum UID",
-						     "Minimum UID for non-system users",
-						     0, OOBS_MAX_UID, OOBS_MAX_UID,
-						     G_PARAM_READWRITE));
+				   g_param_spec_uint ("minimum-uid",
+						      "Minimum UID",
+				                      "Minimum UID for non-system users",
+						      0, OOBS_MAX_UID, OOBS_MAX_UID,
+						      G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
 				   PROP_MAXIMUM_UID,
-				   g_param_spec_int ("maximum-uid",
-						     "Maximum UID",
-						     "Maximum UID for non-system users",
-						     0, OOBS_MAX_UID, OOBS_MAX_UID,
-						     G_PARAM_READWRITE));
+				   g_param_spec_uint ("maximum-uid",
+				                      "Maximum UID",
+				                      "Maximum UID for non-system users",
+				                      0, OOBS_MAX_UID, OOBS_MAX_UID,
+				                      G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
 				   PROP_DEFAULT_SHELL,
 				   g_param_spec_string ("default-shell",
@@ -154,6 +148,14 @@ oobs_users_config_class_init (OobsUsersConfigClass *class)
 							"Default group for new users",
 							OOBS_TYPE_GROUP,
 							G_PARAM_READABLE));
+  g_object_class_install_property (object_class,
+				   PROP_ENCRYPTED_HOME,
+				   g_param_spec_boolean ("encrypted-home",
+				                         "Encrypted home support",
+				                         "Whether encrypted home dirs are supported",
+				                         FALSE,
+				                         G_PARAM_READABLE));
+
   g_type_class_add_private (object_class,
 			    sizeof (OobsUsersConfigPrivate));
 }
@@ -238,10 +240,10 @@ oobs_users_config_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_MINIMUM_UID:
-      priv->minimum_uid = g_value_get_int (value);
+      priv->minimum_uid = g_value_get_uint (value);
       break;
     case PROP_MAXIMUM_UID:
-      priv->maximum_uid = g_value_get_int (value);
+      priv->maximum_uid = g_value_get_uint (value);
       break;
     case PROP_DEFAULT_SHELL:
       g_free (priv->default_shell);
@@ -268,14 +270,11 @@ oobs_users_config_get_property (GObject      *object,
 
   switch (prop_id)
     {
-    case PROP_USE_MD5:
-      g_value_set_boolean (value, priv->use_md5);
-      break;
     case PROP_MINIMUM_UID:
-      g_value_set_int (value, priv->minimum_uid);
+      g_value_set_uint (value, priv->minimum_uid);
       break;
     case PROP_MAXIMUM_UID:
-      g_value_set_int (value, priv->maximum_uid);
+      g_value_set_uint (value, priv->maximum_uid);
       break;
     case PROP_DEFAULT_SHELL:
       g_value_set_string (value, priv->default_shell);
@@ -283,6 +282,8 @@ oobs_users_config_get_property (GObject      *object,
     case PROP_DEFAULT_HOME:
       g_value_set_string (value, priv->default_home);
       break;
+    case PROP_ENCRYPTED_HOME:
+      g_value_set_boolean (value, priv->encrypted_home);
     }
 }
 
@@ -294,17 +295,20 @@ create_user_from_dbus_reply (OobsObject      *object,
   OobsUsersConfigPrivate *priv;
   OobsUser *user;
   DBusMessageIter iter, gecos_iter;
-  int    uid, gid;
+  guint32 uid, gid;
   const gchar *login, *passwd, *home, *shell;
   const gchar *name, *room_number, *work_phone, *home_phone, *other_data;
+  const gchar *locale;
+  gint passwd_flags, home_flags;
+  gboolean enc_home, passwd_empty, passwd_disabled;
 
   priv = OOBS_USERS_CONFIG (object)->_priv;
   dbus_message_iter_recurse (&struct_iter, &iter);
 
   login = utils_get_string (&iter);
   passwd = utils_get_string (&iter);
-  uid = utils_get_int (&iter);
-  gid = utils_get_int (&iter);
+  uid = utils_get_uint (&iter);
+  gid = utils_get_uint (&iter);
 
   /* GECOS fields */
   dbus_message_iter_recurse (&iter, &gecos_iter);
@@ -321,20 +325,32 @@ create_user_from_dbus_reply (OobsObject      *object,
   home = utils_get_string (&iter);
   shell = utils_get_string (&iter);
 
-  user = g_object_new (OOBS_TYPE_USER,
-		       "name", login,
-		       "crypted-password", passwd,
-		       "uid", uid,
-		       "home-directory", home,
-		       "shell", shell,
-		       "full-name", name,
-		       "room-number", room_number,
-		       "work-phone", work_phone,
-		       "home-phone", home_phone,
-		       "other-data", other_data,
-		       NULL);
+  passwd_flags = utils_get_int (&iter);
+  passwd_empty = passwd_flags & 1;
+  passwd_disabled = passwd_flags & (1 << 1);
 
-  /* keep the GID in a hashtable, this will be needed
+  enc_home = utils_get_boolean (&iter);
+  home_flags = utils_get_int (&iter);
+  locale = utils_get_string (&iter);
+
+  user = oobs_user_new (login);
+  g_object_set (user,
+                "uid", uid,
+                "home-directory", home,
+                "shell", shell,
+                "full-name", name,
+                "room-number", room_number,
+                "work-phone", work_phone,
+                "home-phone", home_phone,
+                "other-data", other_data,
+                "encrypted-home", enc_home,
+                "home-flags", home_flags,
+                "password-empty", passwd_empty,
+                "password-disabled", passwd_disabled,
+                "locale", locale,
+                NULL);
+
+  /* keep the group name in a hashtable, this will be needed
    * each time the groups configuration changes
    */
   g_hash_table_insert (priv->groups,
@@ -343,75 +359,9 @@ create_user_from_dbus_reply (OobsObject      *object,
   return user;
 }
 
-static gboolean
-create_dbus_struct_from_user (OobsUser        *user,
-			      DBusMessage     *message,
-			      DBusMessageIter *array_iter)
-{
-  OobsGroup *group;
-  gint uid, gid;
-  gchar *login, *password, *shell, *homedir;
-  gchar *name, *room_number, *work_phone, *home_phone, *other_data;
-  DBusMessageIter struct_iter, data_iter;
-
-  g_object_get (user,
-		"name", &login,
-		"crypted-password", &password,
-		"uid", &uid,
-		"home-directory", &homedir,
-		"shell", &shell,
-		"full-name", &name,
-		"room-number", &room_number,
-		"work-phone", &work_phone,
-		"home-phone", &home_phone,
-		"other-data", &other_data,
-		NULL);
-
-  /* Login is the only required field,
-   * since home dir, password and shell are allowed to be empty (see man 5 passwd) */
-  g_return_val_if_fail (login, FALSE);
-
-  group = oobs_user_get_main_group (user);
-  gid = oobs_group_get_gid (group);
-
-  dbus_message_iter_open_container (array_iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
-
-  utils_append_string (&struct_iter, login);
-  utils_append_string (&struct_iter, password);
-  utils_append_int (&struct_iter, uid);
-  utils_append_int (&struct_iter, gid);
-
-  dbus_message_iter_open_container (&struct_iter, DBUS_TYPE_ARRAY, DBUS_TYPE_STRING_AS_STRING, &data_iter);
-
-  /* GECOS fields */
-  utils_append_string (&data_iter, name);
-  utils_append_string (&data_iter, room_number);
-  utils_append_string (&data_iter, work_phone);
-  utils_append_string (&data_iter, home_phone);
-  utils_append_string (&data_iter, other_data);
-
-  dbus_message_iter_close_container (&struct_iter, &data_iter);
-
-  utils_append_string (&struct_iter, homedir);
-  utils_append_string (&struct_iter, shell);
-  dbus_message_iter_close_container (array_iter, &struct_iter);
-
-  g_free (login);
-  g_free (password);
-  g_free (shell);
-  g_free (homedir);
-  g_free (name);
-  g_free (room_number);
-  g_free (work_phone);
-  g_free (home_phone);
-  g_free (other_data);
-
-  return TRUE;
-}
-
 static void
 query_groups_foreach (OobsUser *user,
-		      uid_t     gid,
+		      gid_t     gid,
 		      gpointer  data)
 {
   OobsGroupsConfig *groups_config = OOBS_GROUPS_CONFIG (data);
@@ -478,13 +428,13 @@ oobs_users_config_update (OobsObject *object)
   dbus_message_iter_next (&iter);
   priv->shells = utils_get_string_list_from_dbus_reply (reply, &iter);
 
-  priv->use_md5 = utils_get_int (&iter);
-  priv->minimum_uid = utils_get_int (&iter);
-  priv->maximum_uid = utils_get_int (&iter);
+  priv->minimum_uid = utils_get_uint (&iter);
+  priv->maximum_uid = utils_get_uint (&iter);
 
   priv->default_home = g_strdup (utils_get_string (&iter));
   priv->default_shell = g_strdup (utils_get_string (&iter));
-  priv->default_gid = utils_get_int (&iter);
+  priv->default_gid = utils_get_uint (&iter);
+  priv->encrypted_home = utils_get_boolean (&iter);
 
   groups_config = oobs_groups_config_get ();
 
@@ -501,69 +451,24 @@ oobs_users_config_commit (OobsObject *object)
 {
   OobsUsersConfigPrivate *priv;
   DBusMessage *message;
-  DBusMessageIter iter, array_iter;
-  OobsListIter list_iter;
-  GObject *user;
-  gboolean valid, correct;
-  gint default_gid;
+  DBusMessageIter iter;
+  guint32 default_gid;
 
   priv = OOBS_USERS_CONFIG (object)->_priv;
   message = _oobs_object_get_dbus_message (object);
 
   dbus_message_iter_init_append (message, &iter);
-  dbus_message_iter_open_container (&iter,
-				    DBUS_TYPE_ARRAY,
-				    DBUS_STRUCT_BEGIN_CHAR_AS_STRING
-				    DBUS_TYPE_STRING_AS_STRING
-				    DBUS_TYPE_STRING_AS_STRING
-				    DBUS_TYPE_INT32_AS_STRING
-				    DBUS_TYPE_INT32_AS_STRING
-				    DBUS_TYPE_ARRAY_AS_STRING
-				    DBUS_TYPE_STRING_AS_STRING
-				    DBUS_TYPE_STRING_AS_STRING
-				    DBUS_TYPE_STRING_AS_STRING
-				    DBUS_STRUCT_END_CHAR_AS_STRING
-				    DBUS_TYPE_INT32_AS_STRING
-				    DBUS_TYPE_INT32_AS_STRING
-				    DBUS_TYPE_INT32_AS_STRING
-				    DBUS_TYPE_STRING_AS_STRING
-				    DBUS_TYPE_STRING_AS_STRING,
-				    &array_iter);
-  valid = oobs_list_get_iter_first (priv->users_list, &list_iter);
-  correct = TRUE;
-
-  while (valid && correct)
-    {
-      user = oobs_list_get (priv->users_list, &list_iter);
-      correct = create_dbus_struct_from_user (OOBS_USER (user), message, &array_iter);
-
-      g_object_unref (user);
-      valid = oobs_list_iter_next (priv->users_list, &list_iter);
-    }
-
-  dbus_message_iter_close_container (&iter, &array_iter);
 
   utils_create_dbus_array_from_string_list (priv->shells, message, &iter);
-  utils_append_int (&iter, priv->use_md5);
-  utils_append_int (&iter, priv->minimum_uid);
-  utils_append_int (&iter, priv->maximum_uid);
+  utils_append_uint (&iter, priv->minimum_uid);
+  utils_append_uint (&iter, priv->maximum_uid);
   utils_append_string (&iter, priv->default_home);
   utils_append_string (&iter, priv->default_shell);
 
-  default_gid = (priv->default_group) ? oobs_group_get_gid (priv->default_group) : -1;
-  utils_append_int (&iter, default_gid);
+  default_gid = (priv->default_group) ? oobs_group_get_gid (priv->default_group) : G_MAXUINT32;
+  utils_append_uint (&iter, default_gid);
 
-  if (!correct)
-    {
-      /* malformed data, unset the message */
-      _oobs_object_set_dbus_message (object, NULL);
-    }
-}
-
-static void
-oobs_users_config_add (OobsObject *object)
-{
-
+  utils_append_boolean (&iter, priv->encrypted_home);
 }
 
 /**
@@ -602,6 +507,88 @@ oobs_users_config_get_users (OobsUsersConfig *config)
   priv = config->_priv;
 
   return priv->users_list;
+}
+
+/**
+ * oobs_users_config_add_user:
+ * @config: An #OobsUsersConfig.
+ * @user: An #OobsUser.
+ *
+ * Add an user to the configuration, immediately committing changes to the system.
+ * On success, @user will be appended to the users list.
+ *
+ * Return value: an #OobsResult enum with the error code.
+ **/
+OobsResult
+oobs_users_config_add_user (OobsUsersConfig *config, OobsUser *user)
+{
+  OobsUsersConfigPrivate *priv;
+  OobsListIter list_iter;
+  OobsResult result;
+
+  g_return_val_if_fail (config != NULL, OOBS_RESULT_MALFORMED_DATA);
+  g_return_val_if_fail (user != NULL, OOBS_RESULT_MALFORMED_DATA);
+  g_return_val_if_fail (OOBS_IS_USERS_CONFIG (config), OOBS_RESULT_MALFORMED_DATA);
+  g_return_val_if_fail (OOBS_IS_USER (user), OOBS_RESULT_MALFORMED_DATA);
+
+  result = oobs_object_add (OOBS_OBJECT (user));
+
+  if (result != OOBS_RESULT_OK)
+    return result;
+
+  priv = config->_priv;
+
+  oobs_list_append (priv->users_list, &list_iter);
+  oobs_list_set (priv->users_list, &list_iter, G_OBJECT (user));
+
+  return OOBS_RESULT_OK;
+}
+
+/**
+ * oobs_users_config_delete_user:
+ * @config: An #OobsUsersConfig.
+ * @user: An #OobsUser.
+ *
+ * Delete an user from the configuration, immediately committing changes to the system.
+ * On success, @user will be removed from the users list.
+ *
+ * Return value: an #OobsResult enum with the error code.
+ **/
+OobsResult
+oobs_users_config_delete_user (OobsUsersConfig *config, OobsUser *user)
+{
+  OobsUsersConfigPrivate *priv;
+  OobsUser *list_user;
+  OobsListIter list_iter;
+  gboolean valid;
+  OobsResult result;
+
+  g_return_val_if_fail (config != NULL, OOBS_RESULT_MALFORMED_DATA);
+  g_return_val_if_fail (user != NULL, OOBS_RESULT_MALFORMED_DATA);
+  g_return_val_if_fail (OOBS_IS_USERS_CONFIG (config), OOBS_RESULT_MALFORMED_DATA);
+  g_return_val_if_fail (OOBS_IS_USER (user), OOBS_RESULT_MALFORMED_DATA);
+
+  result = oobs_object_delete (OOBS_OBJECT (user));
+
+  if (result != OOBS_RESULT_OK)
+    return result;
+
+  priv = config->_priv;
+
+  valid = oobs_list_get_iter_first (priv->users_list, &list_iter);
+
+  while (valid) {
+    list_user = OOBS_USER (oobs_list_get (priv->users_list, &list_iter));
+
+    if (list_user == user)
+      break;
+
+    valid = oobs_list_iter_next (priv->users_list, &list_iter);
+  }
+
+  oobs_list_remove (priv->users_list, &list_iter);
+
+  return OOBS_RESULT_OK;
 }
 
 /**
@@ -799,6 +786,27 @@ oobs_users_config_get_available_shells (OobsUsersConfig *config)
   return priv->shells;
 }
 
+/**
+ * oobs_users_config_get_encrypted_home_support:
+ * @config: An #OobsUsersConfig
+ *
+ * Returns whether encrypted home directories are supported by the platform
+ * (e.g. using eCryptfs).
+ *
+ * Return Value: %TRUE if encrypted home dirs are supported, %FALSE otherwise.
+ **/
+gboolean
+oobs_users_config_get_encrypted_home_support (OobsUsersConfig *config)
+{
+  OobsUsersConfigPrivate *priv;
+
+  g_return_val_if_fail (config != NULL, FALSE);
+  g_return_val_if_fail (OOBS_IS_USERS_CONFIG (config), FALSE);
+
+  priv = config->_priv;
+
+  return priv->encrypted_home;
+}
 
 /*
  * Convenience functions to make working with the users list easier.

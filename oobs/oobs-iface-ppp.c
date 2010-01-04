@@ -94,48 +94,6 @@ enum {
 
 G_DEFINE_TYPE (OobsIfacePPP, oobs_iface_ppp, OOBS_TYPE_IFACE);
 
-GType
-oobs_modem_volume_get_type (void)
-{
-  static GType etype = 0;
-
-  if (!etype)
-    {
-      static const GEnumValue values[] =
-        {
-          { OOBS_MODEM_VOLUME_SILENT, "OOBS_MODEM_VOLUME_SILENT", "silent" },
-          { OOBS_MODEM_VOLUME_LOW,    "OOBS_MODEM_VOLUME_LOW",    "low" },
-          { OOBS_MODEM_VOLUME_MEDIUM, "OOBS_MODEM_VOLUME_MEDIUM", "medium" },
-          { OOBS_MODEM_VOLUME_LOUD,   "OOBS_MODEM_VOLUME_LOUD",   "loud" },
-          { 0, NULL, NULL }
-        };
-
-      etype = g_enum_register_static ("OobsModemVolume", values);
-    }
-
-  return etype;
-}
-
-GType
-oobs_dial_type_get_type (void)
-{
-  static GType etype = 0;
-
-  if (!etype)
-    {
-      static const GEnumValue values[] =
-        {
-	  { OOBS_DIAL_TYPE_TONES,  "OOBS_DIAL_TYPE_TONES",  "tones" },
-	  { OOBS_DIAL_TYPE_PULSES, "OOBS_DIAL_TYPE_PULSES", "pulses" },
- 	  { 0, NULL, NULL }
-        };
-
-      etype = g_enum_register_static ("OobsDialType", values);
-    }
-
-  return etype;
-}
-
 static void
 oobs_iface_ppp_class_init (OobsIfacePPPClass *class)
 {

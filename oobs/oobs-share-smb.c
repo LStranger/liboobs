@@ -62,28 +62,6 @@ enum {
 
 G_DEFINE_TYPE (OobsShareSMB, oobs_share_smb, OOBS_TYPE_SHARE);
 
-GType
-oobs_share_smb_flags_get_type (void)
-{
-  static GType type = 0;
-
-  if (!type)
-    {
-      static const GFlagsValue values[] =
-	{
-	  { OOBS_SHARE_SMB_ENABLED,   "OOBS_SHARE_SMB_ENABLED",   "smb-enabled" },
-	  { OOBS_SHARE_SMB_BROWSABLE, "OOBS_SHARE_SMB_BROWSABLE", "smb-browsable" },
-	  { OOBS_SHARE_SMB_PUBLIC,    "OOBS_SHARE_SMB_PUBLIC",    "smb-public" },
-	  { OOBS_SHARE_SMB_WRITABLE,  "OOBS_SHARE_SMB_WRITABLE",  "smb-writable" },
-	  { 0, NULL, NULL }
-	};
-
-      type = g_flags_register_static ("OobsShareSMBFlags", values);
-    }
-
-  return type;
-}
-
 static void
 oobs_share_smb_class_init (OobsShareSMBClass *class)
 {

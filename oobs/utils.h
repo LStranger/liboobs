@@ -33,11 +33,13 @@ gchar *utils_get_random_string                  (gint len);
 void   utils_append_string                      (DBusMessageIter *iter, const gchar *str);
 void   utils_append_int                         (DBusMessageIter *iter, gint value);
 void   utils_append_uint                        (DBusMessageIter *iter, guint value);
+void   utils_append_boolean                     (DBusMessageIter *iter, gboolean value);
 
 G_CONST_RETURN gchar* utils_get_string          (DBusMessageIter *iter);
 gchar *               utils_dup_string          (DBusMessageIter *iter);
-gint  utils_get_int                             (DBusMessageIter *iter);
-guint utils_get_uint                            (DBusMessageIter *iter);
+gint     utils_get_int                          (DBusMessageIter *iter);
+guint    utils_get_uint                         (DBusMessageIter *iter);
+gboolean utils_get_boolean                      (DBusMessageIter *iter);
 
 G_END_DECLS
 

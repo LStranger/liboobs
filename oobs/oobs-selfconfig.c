@@ -35,7 +35,7 @@
  * @short_description: Object that represents the current user
  **/
 
-#define SELF_CONFIG_REMOTE_OBJECT "SelfConfig"
+#define SELF_CONFIG_REMOTE_OBJECT "SelfConfig2"
 #define OOBS_SELF_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_SELF_CONFIG, OobsSelfConfigPrivate))
 #define POLICY_KIT_SELF_ACTION "org.freedesktop.systemtoolsbackends.self.set"
 
@@ -168,7 +168,6 @@ oobs_self_config_commit (OobsObject *object)
   OobsSelfConfigPrivate *priv;
   DBusMessageIter iter, array_iter;
   DBusMessage *message;
-  gchar *passwd;
 
   priv = OOBS_SELF_CONFIG (object)->_priv;
 
@@ -179,10 +178,6 @@ oobs_self_config_commit (OobsObject *object)
   dbus_message_iter_init_append (message, &iter);
 
   utils_append_uint (&iter, oobs_user_get_uid (priv->user));
-
-  g_object_get (priv->user, "crypted-password", &passwd, NULL);
-  utils_append_string (&iter, passwd);
-  g_free (passwd);
 
   /* GECOS fields */
   dbus_message_iter_open_container (&iter,
@@ -197,6 +192,10 @@ oobs_self_config_commit (OobsObject *object)
   utils_append_string (&array_iter, oobs_user_get_other_data (priv->user));
 
   dbus_message_iter_close_container (&iter, &array_iter);
+
+  utils_append_string (&iter, oobs_user_get_locale (priv->user));
+  /* TODO: use location when the backends support it */
+  utils_append_string (&iter, "");
 }
 
 static const gchar *

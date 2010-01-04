@@ -15,7 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  *
- * Authors: Carlos Garnacho Parro  <carlosg@gnome.org>
+ * Authors: Carlos Garnacho Parro  <carlosg@gnome.org>,
+ *          Milan Bouchet-Valat <nalimilan@club.fr>.
  */
 
 #include <glib-object.h>
@@ -26,6 +27,7 @@
 #include <crypt.h>
 #include <utmp.h>
 
+#include "oobs-object-private.h"
 #include "oobs-usersconfig.h"
 #include "oobs-user.h"
 #include "oobs-group.h"
@@ -39,6 +41,7 @@
  * @see_also: #OobsUsersConfig
  **/
 
+#define USER_REMOTE_OBJECT "UserConfig2"
 #define OOBS_USER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_USER, OobsUserPrivate))
 
 typedef struct _OobsUserPrivate OobsUserPrivate;
@@ -60,6 +63,14 @@ struct _OobsUserPrivate {
   gchar *work_phone_no;
   gchar *home_phone_no;
   gchar *other_data;
+
+  /* filled from the password flags */
+  gboolean passwd_empty;
+  gboolean passwd_disabled;
+
+  gboolean           encrypted_home;
+  gchar             *locale;
+  OobsUserHomeFlags  home_flags;
 };
 
 static void oobs_user_class_init (OobsUserClass *class);
@@ -75,12 +86,13 @@ static void oobs_user_get_property (GObject      *object,
 				    GValue       *value,
 				    GParamSpec   *pspec);
 
+static void oobs_user_commit (OobsObject *object);
+
 enum
 {
   PROP_0,
   PROP_USERNAME,
   PROP_PASSWORD,
-  PROP_CRYPTED_PASSWORD,
   PROP_UID,
   PROP_HOMEDIR,
   PROP_SHELL,
@@ -89,19 +101,30 @@ enum
   PROP_WORK_PHONE_NO,
   PROP_HOME_PHONE_NO,
   PROP_OTHER_DATA,
+  PROP_PASSWD_EMPTY,
+  PROP_PASSWD_DISABLED,
+  PROP_ENCRYPTED_HOME,
+  PROP_LOCALE,
+  PROP_HOME_FLAGS,
   PROP_ACTIVE
 };
 
-G_DEFINE_TYPE (OobsUser, oobs_user, G_TYPE_OBJECT);
+G_DEFINE_TYPE (OobsUser, oobs_user, OOBS_TYPE_OBJECT);
 
 static void
 oobs_user_class_init (OobsUserClass *class)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (class);
+  OobsObjectClass *oobs_class = OOBS_OBJECT_CLASS (class);
 
   object_class->set_property = oobs_user_set_property;
   object_class->get_property = oobs_user_get_property;
   object_class->finalize     = oobs_user_finalize;
+
+  oobs_class->commit = oobs_user_commit;
+
+  /* override the singleton check */
+  oobs_class->singleton = FALSE;
 
   g_object_class_install_property (object_class,
 				   PROP_USERNAME,
@@ -116,21 +139,14 @@ oobs_user_class_init (OobsUserClass *class)
 							"Password",
 							"Password for the user",
 							NULL,
-							G_PARAM_WRITABLE));
-  g_object_class_install_property (object_class,
-				   PROP_CRYPTED_PASSWORD,
-				   g_param_spec_string ("crypted-password",
-							"Crypted password",
-							"Crypted password for the user",
-							NULL,
 							G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
 				   PROP_UID,
-				   g_param_spec_int ("uid",
-						     "UID",
-						     "UID for the user",
-						     0, OOBS_MAX_UID, OOBS_MAX_UID,
-						     G_PARAM_READWRITE));
+				   g_param_spec_uint ("uid",
+				                      "UID",
+				                      "UID for the user",
+				                      0, OOBS_MAX_UID, OOBS_MAX_UID,
+				                      G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
 				   PROP_HOMEDIR,
 				   g_param_spec_string ("home-directory",
@@ -181,6 +197,42 @@ oobs_user_class_init (OobsUserClass *class)
 							NULL,
 							G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
+				   PROP_PASSWD_EMPTY,
+				   g_param_spec_boolean ("password-empty",
+							 "Empty password",
+							 "Whether user password is empty",
+							 FALSE,
+							 G_PARAM_READWRITE));
+  g_object_class_install_property (object_class,
+				   PROP_PASSWD_DISABLED,
+				   g_param_spec_boolean ("password-disabled",
+							 "Disabled account",
+							 "Whether user is allowed to log in",
+							 TRUE,
+							 G_PARAM_READWRITE));
+  g_object_class_install_property (object_class,
+                                   PROP_ENCRYPTED_HOME,
+                                   g_param_spec_boolean ("encrypted-home",
+                                                         "Encrypted home",
+                                                         "Whether user's home is encrypted",
+                                                         FALSE,
+                                                         G_PARAM_READWRITE));
+  g_object_class_install_property (object_class,
+				   PROP_HOME_FLAGS,
+				   g_param_spec_flags ("home-flags",
+				                       "Home flags",
+				                       "Flags affecting home directory treatment",
+				                       OOBS_TYPE_USER_HOME_FLAGS,
+				                       0,
+				                       G_PARAM_READWRITE));
+  g_object_class_install_property (object_class,
+                                   PROP_LOCALE,
+                                   g_param_spec_string ("locale",
+                                                        "Locale",
+                                                        "Preferred locale for the user",
+                                                        NULL,
+                                                        G_PARAM_READWRITE));
+  g_object_class_install_property (object_class,
 				   PROP_OTHER_DATA,
 				   g_param_spec_boolean ("active",
 							 "Active",
@@ -209,6 +261,17 @@ oobs_user_init (OobsUser *user)
   priv->work_phone_no = NULL;
   priv->home_phone_no = NULL;
   priv->other_data    = NULL;
+  priv->locale        = NULL;
+
+  /* This value ensures the backends will use the system default
+   * if UID were not changed manually. */
+  priv->uid = G_MAXUINT32;
+
+  priv->passwd_empty    = FALSE;
+  priv->passwd_disabled = FALSE;
+  priv->encrypted_home  = FALSE;
+  priv->home_flags      = 0;
+
   user->_priv         = priv;
 }
 
@@ -220,8 +283,6 @@ oobs_user_set_property (GObject      *object,
 {
   OobsUser *user;
   OobsUserPrivate *priv;
-  gboolean use_md5;
-  gchar *salt, *str;
 
   g_return_if_fail (OOBS_IS_USER (object));
 
@@ -236,30 +297,10 @@ oobs_user_set_property (GObject      *object,
       break;
     case PROP_PASSWORD:
       g_free (priv->password);
-      g_object_get (priv->config, "use-md5", &use_md5, NULL);
-
-      if (use_md5)
-	{
-	  salt = utils_get_random_string (5);
-	  str = g_strdup_printf ("$1$%s", salt);
-	  priv->password = g_strdup ((gchar *) crypt (g_value_get_string (value), str));
-
-	  g_free (str);
-	}
-      else
-	{
-	  salt = utils_get_random_string (2);
-	  priv->password = g_strdup ((gchar *) crypt (g_value_get_string (value), salt));
-	}
-
-      g_free (salt);
-      break;
-    case PROP_CRYPTED_PASSWORD:
-      g_free (priv->password);
       priv->password = g_value_dup_string (value);
       break;
     case PROP_UID:
-      priv->uid = g_value_get_int (value);
+      priv->uid = g_value_get_uint (value);
       break;
     case PROP_HOMEDIR:
       g_free (priv->homedir);
@@ -289,6 +330,22 @@ oobs_user_set_property (GObject      *object,
       g_free (priv->other_data);
       priv->other_data = g_value_dup_string (value);
       break;
+    case PROP_PASSWD_EMPTY:
+      priv->passwd_empty = g_value_get_boolean (value);
+      break;
+    case PROP_PASSWD_DISABLED:
+      priv->passwd_disabled = g_value_get_boolean (value);
+      break;
+    case PROP_ENCRYPTED_HOME:
+      priv->encrypted_home = g_value_get_boolean (value);
+      break;
+    case PROP_HOME_FLAGS:
+      priv->home_flags = g_value_get_flags (value);
+      break;
+    case PROP_LOCALE:
+      g_free (priv->locale);
+      priv->locale = g_value_dup_string (value);
+      break;
     }
 }
 
@@ -311,11 +368,11 @@ oobs_user_get_property (GObject      *object,
     case PROP_USERNAME:
       g_value_set_string (value, priv->username);
       break;
-    case PROP_CRYPTED_PASSWORD:
+    case PROP_PASSWORD:
       g_value_set_string (value, priv->password);
       break;
     case PROP_UID:
-      g_value_set_int (value, priv->uid);
+      g_value_set_uint (value, priv->uid);
       break;
     case PROP_HOMEDIR:
       g_value_set_string (value, priv->homedir);
@@ -337,6 +394,21 @@ oobs_user_get_property (GObject      *object,
       break;
     case PROP_OTHER_DATA:
       g_value_set_string (value, priv->other_data);
+      break;
+    case PROP_PASSWD_EMPTY:
+      g_value_set_boolean (value, priv->passwd_empty);
+      break;
+    case PROP_PASSWD_DISABLED:
+      g_value_set_boolean (value, priv->passwd_disabled);
+      break;
+    case PROP_ENCRYPTED_HOME:
+	g_value_set_boolean (value, priv->encrypted_home);
+      break;
+    case PROP_HOME_FLAGS:
+      g_value_set_flags (value, priv->home_flags);
+      break;
+    case PROP_LOCALE:
+      g_value_set_string (value, priv->locale);
       break;
     case PROP_ACTIVE:
       g_value_set_boolean (value, oobs_user_get_active (user));
@@ -366,6 +438,7 @@ oobs_user_finalize (GObject *object)
       g_free (priv->work_phone_no);
       g_free (priv->home_phone_no);
       g_free (priv->other_data);
+      g_free (priv->locale);
 
       if (priv->main_group)
 	g_object_unref (priv->main_group);
@@ -373,6 +446,106 @@ oobs_user_finalize (GObject *object)
 
   if (G_OBJECT_CLASS (oobs_user_parent_class)->finalize)
     (* G_OBJECT_CLASS (oobs_user_parent_class)->finalize) (object);
+}
+
+static gboolean
+create_dbus_struct_from_user (OobsUser        *user,
+			      DBusMessage     *message,
+			      DBusMessageIter *iter)
+{
+  OobsGroup *group;
+  guint32 uid, gid;
+  gchar *login, *password, *shell, *homedir;
+  gchar *name, *room_number, *work_phone, *home_phone, *other_data;
+  gchar *locale;
+  gboolean enc_home;
+  gboolean passwd_empty, passwd_disabled;
+  gint passwd_flags, home_flags;
+  DBusMessageIter data_iter;
+
+  g_object_get (user,
+		"name", &login,
+		"password", &password,
+		"uid", &uid,
+		"home-directory", &homedir,
+		"shell", &shell,
+		"full-name", &name,
+		"room-number", &room_number,
+		"work-phone", &work_phone,
+		"home-phone", &home_phone,
+		"other-data", &other_data,
+                "encrypted-home", &enc_home,
+                "home-flags", &home_flags,
+                "locale", &locale,
+                "password-empty", &passwd_empty,
+                "password-disabled", &passwd_disabled,
+		NULL);
+
+  /* Login is the only required field,
+   * since home dir, password and shell are allowed to be empty (see man 5 passwd) */
+  g_return_val_if_fail (login, FALSE);
+
+  group = oobs_user_get_main_group (user);
+
+  /* G_MAXUINT32 is used to mean no main group */
+  if (group)
+    gid = oobs_group_get_gid (group);
+  else
+    gid = G_MAXUINT32;
+
+  passwd_flags = passwd_empty | (passwd_disabled << 1);
+
+  utils_append_string (iter, login);
+  utils_append_string (iter, password);
+  utils_append_uint (iter, uid);
+  utils_append_uint (iter, gid);
+
+  dbus_message_iter_open_container (iter, DBUS_TYPE_ARRAY, DBUS_TYPE_STRING_AS_STRING, &data_iter);
+
+  /* GECOS fields */
+  utils_append_string (&data_iter, name);
+  utils_append_string (&data_iter, room_number);
+  utils_append_string (&data_iter, work_phone);
+  utils_append_string (&data_iter, home_phone);
+  utils_append_string (&data_iter, other_data);
+
+  dbus_message_iter_close_container (iter, &data_iter);
+
+  utils_append_string (iter, homedir);
+  utils_append_string (iter, shell);
+  utils_append_int (iter, passwd_flags);
+  utils_append_boolean (iter, enc_home);
+  utils_append_boolean (iter, home_flags);
+  utils_append_string (iter, locale);
+  /* TODO: use location when the backends support it */
+  utils_append_string (iter, "");
+
+  g_free (login);
+  g_free (password);
+  g_free (shell);
+  g_free (homedir);
+  g_free (name);
+  g_free (room_number);
+  g_free (work_phone);
+  g_free (home_phone);
+  g_free (other_data);
+  g_free (locale);
+
+  return TRUE;
+}
+
+static void
+oobs_user_commit (OobsObject *object)
+{
+  DBusMessage *message;
+  DBusMessageIter iter, struct_iter;
+
+  message = _oobs_object_get_dbus_message (object);
+
+  dbus_message_iter_init_append (message, &iter);
+  dbus_message_iter_open_container (&iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
+  create_dbus_struct_from_user (OOBS_USER (object), message, &struct_iter);
+  dbus_message_iter_close_container (&iter, &struct_iter);
 }
 
 /**
@@ -390,6 +563,7 @@ oobs_user_new (const gchar *name)
 
   return g_object_new (OOBS_TYPE_USER,
 		       "name", name,
+		       "remote-object", USER_REMOTE_OBJECT,
 		       NULL);
 }
 
@@ -421,8 +595,8 @@ oobs_user_get_login_name (OobsUser *user)
  * @password: a new password for the user.
  * 
  * Sets a new password for the user. This password will be
- * interpreted as clean text and encrypted internally, be careful
- * deleting the passed string after using this function.
+ * interpreted as clean text and encrypted by the backends using PAM.
+ * Be careful deleting the passed string after using this function.
  **/
 void
 oobs_user_set_password (OobsUser *user, const gchar *password)
@@ -431,23 +605,6 @@ oobs_user_set_password (OobsUser *user, const gchar *password)
   g_return_if_fail (OOBS_IS_USER (user));
 
   g_object_set (G_OBJECT (user), "password", password, NULL);
-}
-
-/**
- * oobs_user_set_crypted_password:
- * @user: An #OobsUser.
- * @crypted_password: a new crypted password.
- * 
- * Sets a new password for the user. This password will be
- * considered to be already crypted.
- **/
-void
-oobs_user_set_crypted_password (OobsUser *user, const gchar *crypted_password)
-{
-  g_return_if_fail (user != NULL);
-  g_return_if_fail (OOBS_IS_USER (user));
-
-  g_object_set (G_OBJECT (user), "crypted-password", crypted_password, NULL);
 }
 
 /**
@@ -798,6 +955,186 @@ oobs_user_set_other_data (OobsUser *user, const gchar *data)
   g_return_if_fail (OOBS_IS_USER (user));
 
   g_object_set (G_OBJECT (user), "other-data", data, NULL);
+}
+
+/**
+ * oobs_user_get_password_empty:
+ * @user: An #OobsUser.
+ *
+ * Returns whether the current password for @user is empty.
+ *
+ * Return Value: %TRUE if @user is using an empty password, %FALSE otherwise.
+ **/
+gboolean
+oobs_user_get_password_empty (OobsUser *user)
+{
+  OobsUserPrivate *priv;
+
+  g_return_val_if_fail (user != NULL, FALSE);
+  g_return_val_if_fail (OOBS_IS_USER (user), FALSE);
+
+  priv = user->_priv;
+
+  return priv->passwd_empty;
+}
+
+/**
+ * oobs_user_set_password_empty:
+ * @user: An #OobsUser.
+ * @empty: whether password for @user should be set to empty.
+ *
+ * Forces an empty password for @user. (Setting the 'password' property
+ * to the empty string is used to keep the current password.)
+ **/
+void
+oobs_user_set_password_empty (OobsUser *user, gboolean empty)
+{
+  OobsUserPrivate *priv;
+
+  g_return_if_fail (user != NULL);
+  g_return_if_fail (OOBS_IS_USER (user));
+
+  priv = user->_priv;
+
+  priv->passwd_empty = empty;
+}
+
+/**
+ * oobs_user_get_password_disabled:
+ * @user: An #OobsUser.
+ *
+ * Returns whether account for @user is currently disabled,
+ * i.e. user is not allowed to log in.
+ *
+ * Return Value: %TRUE if account is disabled, %FALSE otherwise.
+ **/
+gboolean
+oobs_user_get_password_disabled (OobsUser *user)
+{
+  OobsUserPrivate *priv;
+
+  g_return_val_if_fail (user != NULL, FALSE);
+  g_return_val_if_fail (OOBS_IS_USER (user), FALSE);
+
+  priv = user->_priv;
+
+  return priv->passwd_disabled;
+}
+
+/**
+ * oobs_user_set_password_disabled:
+ * @user: An #OobsUser.
+ * @disabled: whether account for @user should be disabled.
+ *
+ * Disable or enable account, allowing or preventing @user from logging in.
+ **/
+void
+oobs_user_set_password_disabled (OobsUser *user, gboolean disabled)
+{
+  OobsUserPrivate *priv;
+
+  g_return_if_fail (user != NULL);
+  g_return_if_fail (OOBS_IS_USER (user));
+
+  priv = user->_priv;
+
+  priv->passwd_disabled = disabled;
+}
+
+/**
+ * oobs_user_get_encrypted_home:
+ * @user: An #OobsUser.
+ *
+ * Returns whether home directory for @user is encrypted (e.g. using eCryptfs).
+ *
+ * Return Value: %TRUE if home is encrypted, %FALSE otherwise.
+ **/
+gboolean
+oobs_user_get_encrypted_home (OobsUser *user)
+{
+  OobsUserPrivate *priv;
+
+  g_return_val_if_fail (user != NULL, FALSE);
+  g_return_val_if_fail (OOBS_IS_USER (user), FALSE);
+
+  priv = user->_priv;
+
+  return priv->encrypted_home;
+}
+
+/**
+ * oobs_user_set_encrypted_home:
+ * @user: An #OobsUser.
+ * @encrypted_home: whether home directory for @user should be encrypted.
+ *
+ * Set whether home directory for @user should be encrypted.
+ * This function should only be used on new users before committing them,
+ * and when the system supports it for the change to take effect.
+ **/
+void
+oobs_user_set_encrypted_home (OobsUser *user, gboolean encrypted_home)
+{
+  OobsUserPrivate *priv;
+
+  g_return_if_fail (user != NULL);
+  g_return_if_fail (OOBS_IS_USER (user));
+
+  priv = user->_priv;
+
+  priv->encrypted_home = encrypted_home;
+}
+
+/**
+ * oobs_user_set_home_flags:
+ * @user: An #OobsUser.
+ * @home_flags: how home directory for @user should be treated.
+ *
+ * Set the flags affecting treatment of the user's home directory (remove home
+ * when deleting user, chown directory to user...).
+ **/
+void
+oobs_user_set_home_flags (OobsUser *user, OobsUserHomeFlags home_flags)
+{
+  g_return_if_fail (user != NULL);
+  g_return_if_fail (OOBS_IS_USER (user));
+
+  g_object_set (G_OBJECT (user), "home-flags", home_flags, NULL);
+}
+
+/**
+ * oobs_user_set_locale:
+ * @user: An #OobsUser.
+ * @locale: Preferred locale for @user.
+ *
+ * Get the ISO 639 code representing the current locale for @user.
+ **/
+G_CONST_RETURN gchar*
+oobs_user_get_locale (OobsUser *user)
+{
+  OobsUserPrivate *priv;
+
+  g_return_val_if_fail (user != NULL, NULL);
+  g_return_val_if_fail (OOBS_IS_USER (user), NULL);
+
+  priv = user->_priv;
+
+  return priv->locale;
+}
+
+/**
+ * oobs_user_set_locale:
+ * @user: An #OobsUser.
+ * @locale: Preferred locale for @user.
+ *
+ * Sets the ISO 639 code representing the current locale for @user.
+ **/
+void
+oobs_user_set_locale (OobsUser *user, const gchar *locale)
+{
+  g_return_if_fail (user != NULL);
+  g_return_if_fail (OOBS_IS_USER (user));
+
+  g_object_set (G_OBJECT (user), "locale", locale, NULL);
 }
 
 /**

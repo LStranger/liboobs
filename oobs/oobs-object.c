@@ -593,7 +593,10 @@ get_update_message (OobsObject *object)
 static OobsResult
 do_commit (_OobsObjectCommitMethod method, OobsObject *object)
 {
+  OobsObjectPrivate *priv;
   DBusMessage *message;
+  DBusMessage *reply;
+  DBusMessageIter iter;
   OobsResult result;
 
   g_return_val_if_fail (OOBS_IS_OBJECT (object), OOBS_RESULT_MALFORMED_DATA);
@@ -603,8 +606,23 @@ do_commit (_OobsObjectCommitMethod method, OobsObject *object)
   if (!message)
     return OOBS_RESULT_MALFORMED_DATA;
 
-  run_message (object, message, &result);
+  reply = run_message (object, message, &result);
   dbus_message_unref (message);
+
+  /* Objects can use this to update themselves when the backend provides it */
+  if (reply)
+    {
+      dbus_message_iter_init (reply, &iter);
+      if (dbus_message_iter_get_arg_type (&iter) == DBUS_TYPE_STRUCT)
+	{
+	  priv = object->_priv;
+
+	  priv->update_requests++;
+	  result = update_object_from_message (object, reply);
+	  dbus_message_unref (reply);
+	}
+    }
+
   g_signal_emit (object, object_signals [COMMITTED], 0);
 
   return result;

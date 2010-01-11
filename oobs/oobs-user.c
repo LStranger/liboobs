@@ -30,6 +30,7 @@
 #include "oobs-object-private.h"
 #include "oobs-usersconfig.h"
 #include "oobs-user.h"
+#include "oobs-user-private.h"
 #include "oobs-group.h"
 #include "oobs-defines.h"
 #include "utils.h"
@@ -86,7 +87,8 @@ static void oobs_user_get_property (GObject      *object,
 				    GValue       *value,
 				    GParamSpec   *pspec);
 
-static void oobs_user_commit (OobsObject *object);
+static void oobs_user_commit    (OobsObject *object);
+static void oobs_user_update    (OobsObject *object);
 
 enum
 {
@@ -122,6 +124,7 @@ oobs_user_class_init (OobsUserClass *class)
   object_class->finalize     = oobs_user_finalize;
 
   oobs_class->commit = oobs_user_commit;
+  oobs_class->update = oobs_user_update;
 
   /* override the singleton check */
   oobs_class->singleton = FALSE;
@@ -448,6 +451,75 @@ oobs_user_finalize (GObject *object)
     (* G_OBJECT_CLASS (oobs_user_parent_class)->finalize) (object);
 }
 
+OobsUser*
+_oobs_user_create_from_dbus_reply (OobsUser        *user,
+                                   gid_t           *gid_ptr,
+                                   DBusMessage     *reply,
+                                   DBusMessageIter  struct_iter)
+{
+  DBusMessageIter iter, gecos_iter;
+  guint32 uid, gid;
+  const gchar *login, *passwd, *home, *shell;
+  const gchar *name, *room_number, *work_phone, *home_phone, *other_data;
+  const gchar *locale;
+  gint passwd_flags, home_flags;
+  gboolean enc_home, passwd_empty, passwd_disabled;
+
+  dbus_message_iter_recurse (&struct_iter, &iter);
+
+  login = utils_get_string (&iter);
+  passwd = utils_get_string (&iter);
+  uid = utils_get_uint (&iter);
+
+  gid = utils_get_uint (&iter);
+  if (gid_ptr)
+    *gid_ptr = gid;
+
+  /* GECOS fields */
+  dbus_message_iter_recurse (&iter, &gecos_iter);
+
+  name = utils_get_string (&gecos_iter);
+  room_number = utils_get_string (&gecos_iter);
+  work_phone = utils_get_string (&gecos_iter);
+  home_phone = utils_get_string (&gecos_iter);
+  other_data = utils_get_string (&gecos_iter);
+  /* end of GECOS fields */
+
+  dbus_message_iter_next (&iter);
+
+  home = utils_get_string (&iter);
+  shell = utils_get_string (&iter);
+
+  passwd_flags = utils_get_int (&iter);
+  passwd_empty = passwd_flags & 1;
+  passwd_disabled = passwd_flags & (1 << 1);
+
+  enc_home = utils_get_boolean (&iter);
+  home_flags = utils_get_int (&iter);
+  locale = utils_get_string (&iter);
+
+  if (!user)
+    user = oobs_user_new (login);
+
+  g_object_set (user,
+                "uid", uid,
+                "home-directory", home,
+                "shell", shell,
+                "full-name", name,
+                "room-number", room_number,
+                "work-phone", work_phone,
+                "home-phone", home_phone,
+                "other-data", other_data,
+                "encrypted-home", enc_home,
+                "home-flags", home_flags,
+                "password-empty", passwd_empty,
+                "password-disabled", passwd_disabled,
+                "locale", locale,
+                NULL);
+
+  return user;
+}
+
 static gboolean
 create_dbus_struct_from_user (OobsUser        *user,
 			      DBusMessage     *message,
@@ -546,6 +618,18 @@ oobs_user_commit (OobsObject *object)
   dbus_message_iter_open_container (&iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
   create_dbus_struct_from_user (OOBS_USER (object), message, &struct_iter);
   dbus_message_iter_close_container (&iter, &struct_iter);
+}
+
+static void
+oobs_user_update (OobsObject *object)
+{
+  DBusMessage *reply;
+  DBusMessageIter iter;
+
+  reply = _oobs_object_get_dbus_message (object);
+
+  dbus_message_iter_init (reply, &iter);
+  _oobs_user_create_from_dbus_reply (OOBS_USER (object), NULL, reply, iter);
 }
 
 /**

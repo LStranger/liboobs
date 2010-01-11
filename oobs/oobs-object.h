@@ -24,6 +24,7 @@
 G_BEGIN_DECLS
 
 #include <glib-object.h>
+#include <dbus/dbus.h>
 #include "oobs-result.h"
 
 #define OOBS_TYPE_OBJECT         (oobs_object_get_type ())

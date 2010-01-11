@@ -29,6 +29,7 @@
 #include "oobs-list-private.h"
 #include "oobs-usersconfig.h"
 #include "oobs-user.h"
+#include "oobs-user-private.h"
 #include "oobs-defines.h"
 #include "oobs-groupsconfig.h"
 #include "oobs-group.h"
@@ -287,78 +288,6 @@ oobs_users_config_get_property (GObject      *object,
     }
 }
 
-static OobsUser*
-create_user_from_dbus_reply (OobsObject      *object,
-			     DBusMessage     *reply,
-			     DBusMessageIter  struct_iter)
-{
-  OobsUsersConfigPrivate *priv;
-  OobsUser *user;
-  DBusMessageIter iter, gecos_iter;
-  guint32 uid, gid;
-  const gchar *login, *passwd, *home, *shell;
-  const gchar *name, *room_number, *work_phone, *home_phone, *other_data;
-  const gchar *locale;
-  gint passwd_flags, home_flags;
-  gboolean enc_home, passwd_empty, passwd_disabled;
-
-  priv = OOBS_USERS_CONFIG (object)->_priv;
-  dbus_message_iter_recurse (&struct_iter, &iter);
-
-  login = utils_get_string (&iter);
-  passwd = utils_get_string (&iter);
-  uid = utils_get_uint (&iter);
-  gid = utils_get_uint (&iter);
-
-  /* GECOS fields */
-  dbus_message_iter_recurse (&iter, &gecos_iter);
-
-  name = utils_get_string (&gecos_iter);
-  room_number = utils_get_string (&gecos_iter);
-  work_phone = utils_get_string (&gecos_iter);
-  home_phone = utils_get_string (&gecos_iter);
-  other_data = utils_get_string (&gecos_iter);
-  /* end of GECOS fields */
-
-  dbus_message_iter_next (&iter);
-
-  home = utils_get_string (&iter);
-  shell = utils_get_string (&iter);
-
-  passwd_flags = utils_get_int (&iter);
-  passwd_empty = passwd_flags & 1;
-  passwd_disabled = passwd_flags & (1 << 1);
-
-  enc_home = utils_get_boolean (&iter);
-  home_flags = utils_get_int (&iter);
-  locale = utils_get_string (&iter);
-
-  user = oobs_user_new (login);
-  g_object_set (user,
-                "uid", uid,
-                "home-directory", home,
-                "shell", shell,
-                "full-name", name,
-                "room-number", room_number,
-                "work-phone", work_phone,
-                "home-phone", home_phone,
-                "other-data", other_data,
-                "encrypted-home", enc_home,
-                "home-flags", home_flags,
-                "password-empty", passwd_empty,
-                "password-disabled", passwd_disabled,
-                "locale", locale,
-                NULL);
-
-  /* keep the group name in a hashtable, this will be needed
-   * each time the groups configuration changes
-   */
-  g_hash_table_insert (priv->groups,
-		       g_object_ref (user),
-		       (gpointer) gid);
-  return user;
-}
-
 static void
 query_groups_foreach (OobsUser *user,
 		      gid_t     gid,
@@ -404,6 +333,7 @@ oobs_users_config_update (OobsObject *object)
   DBusMessageIter  iter, elem_iter;
   OobsListIter     list_iter;
   GObject         *user;
+  gid_t            gid;
 
   priv  = OOBS_USERS_CONFIG (object)->_priv;
   reply = _oobs_object_get_dbus_message (object);
@@ -416,11 +346,19 @@ oobs_users_config_update (OobsObject *object)
 
   while (dbus_message_iter_get_arg_type (&elem_iter) == DBUS_TYPE_STRUCT)
     {
-      user = G_OBJECT (create_user_from_dbus_reply (object, reply, elem_iter));
+      user = G_OBJECT (_oobs_user_create_from_dbus_reply (NULL, &gid, reply, elem_iter));
 
       oobs_list_append (priv->users_list, &list_iter);
       oobs_list_set    (priv->users_list, &list_iter, G_OBJECT (user));
-      g_object_unref   (user);
+
+      /* keep the group name in a hashtable, this will be needed
+       * each time the groups configuration changes
+       */
+      g_hash_table_insert (priv->groups,
+                           g_object_ref (user),
+                           (gpointer) gid);
+
+      g_object_unref (user);
 
       dbus_message_iter_next (&elem_iter);
     }

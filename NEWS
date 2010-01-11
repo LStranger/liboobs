@@ -1,3 +1,15 @@
+Liboobs 2.29.2, 2010-01-11
+-----------------------------------------------
+
+Liboobs version 2.29.2 "Follow Suit" has been released. This release depends on the System Tools Backends 2.9.0.
+
+- Move to the new System Tools Backends users and groups protocol. This mainly implies that OobsUser and OobsGroup are now OobsObjects, and can be committed individually, with new add() and delete() methods.
+- Add new fields from this protocol: passwords are now in clear text, UIDs and GIDs can be guint32, new password and home flags, encrypted home boolean, locale and location.
+- When committed, OobsUser is immediately updated with the D-Bus reply, to fill fields that were left empty and chosen by the platform tools.
+- Add a lot of convenience functions to manage users and groups lists, taken from the GNOME System Tools.
+- Raise OOBS_MAX_[UG]ID to G_MAXUINT32 on platforms where it is possible, now that the protocol supports it. Use << instead of pow().
+- Fix OobsSession not being a singleton.
+
 Liboobs 2.29.1, 2009-11-30
 -----------------------------------------------
 

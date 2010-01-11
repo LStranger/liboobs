@@ -27,6 +27,8 @@ IGNORE_HFILES=	\
 	oobs-list-private.h	\
 	oobs-object-private.h	\
 	oobs-session-private.h	\
+	oobs-user-private.h	\
+	oobs-group-private.h	\
 	utils.h
 
 # CFLAGS and LDFLAGS for compiling scan program. Only needed if your app/lib

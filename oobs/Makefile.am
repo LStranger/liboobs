@@ -44,8 +44,7 @@ oobs_public_headers = 	\
 	oobs-service.h		\
 	oobs-result.h
 
-oobsinclude_HEADERS = $(oobs_public_headers) \
-	oobs-enum-types.h
+oobsinclude_HEADERS = $(oobs_public_headers)
 
 oobs_private_headers = 	\
 	iface-state-monitor.h		\
@@ -53,6 +52,8 @@ oobs_private_headers = 	\
 	oobs-list-private.h		\
 	oobs-object-private.h	\
 	oobs-session-private.h	\
+	oobs-user-private.h	\
+	oobs-group-private.h	\
 	utils.h
 
 oobs_built_sources = \
@@ -99,11 +100,15 @@ endif
 liboobs_1_la_LIBADD= $(OOBS_LIBS) $(HAL_LIBS)
 liboobs_1_la_LDFLAGS= $(libtool_opts)
 
-EXTRA_DIST= $(oobs_private_headers)
+EXTRA_DIST= $(oobs_private_headers) \
+	oobs-enum-types.c.in	\
+	oobs-enum-types.h.in
 
 BUILT_SOURCES = $(oobs_built_sources)
 OOBS_STAMP_FILES = stamp-oobs-enum-types.h
-CLEANFILES = $(OOBS_STAMP_FILES)
+CLEANFILES = $(OOBS_STAMP_FILES)	\
+	oobs-enum-types.c		\
+	oobs-enum-types.h
 
 
 oobs-enum-types.h: stamp-oobs-enum-types.h Makefile

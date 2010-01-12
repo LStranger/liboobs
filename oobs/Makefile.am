@@ -18,6 +18,7 @@ oobs_public_headers = 	\
 	oobs-object.h		\
 	oobs-list.h		\
 	oobs-defines.h		\
+	oobs-enum-types.h	\
 	oobs-share.h		\
 	oobs-smbconfig.h	\
 	oobs-share-smb.h	\

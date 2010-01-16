@@ -59,6 +59,8 @@ GType       oobs_self_config_get_type     (void);
 
 OobsObject* oobs_self_config_get          (void);
 OobsUser*   oobs_self_config_get_user     (OobsSelfConfig *config);
+gboolean    oobs_self_config_is_user_self (OobsSelfConfig *config,
+                                           OobsUser       *user);
 
 
 G_END_DECLS

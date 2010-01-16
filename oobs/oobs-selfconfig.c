@@ -21,6 +21,7 @@
 #include <dbus/dbus.h>
 #include <glib-object.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "oobs-object.h"
 #include "oobs-object-private.h"
@@ -77,7 +78,13 @@ oobs_self_config_class_init (OobsSelfConfigClass *class)
 static void
 oobs_self_config_init (OobsSelfConfig *config)
 {
-  config->_priv = OOBS_SELF_CONFIG_GET_PRIVATE (config);
+  OobsSelfConfigPrivate *priv;
+
+  priv = OOBS_SELF_CONFIG_GET_PRIVATE (config);
+
+  priv->uid = getuid ();
+
+  config->_priv = priv;
 }
 
 static void
@@ -173,7 +180,7 @@ oobs_self_config_commit (OobsObject *object)
   message = _oobs_object_get_dbus_message (object);
   dbus_message_iter_init_append (message, &iter);
 
-  utils_append_uint (&iter, oobs_user_get_uid (priv->user));
+  utils_append_uint (&iter, priv->uid);
 
   /* GECOS fields */
   dbus_message_iter_open_container (&iter,
@@ -225,8 +232,35 @@ oobs_self_config_get_user (OobsSelfConfig *config)
 
   g_return_val_if_fail (OOBS_IS_SELF_CONFIG (config), NULL);
 
-  oobs_object_ensure_update (oobs_users_config_get ());
+  oobs_object_ensure_update (OOBS_OBJECT (config));
   priv = config->_priv;
 
   return priv->user;
 }
+
+
+/**
+ * oobs_self_config_is_user_self:
+ * @config: An #OobsSelfConfig.
+ * @user: An #OobsUser.
+ *
+ * Check whether @user is the user represented by #OobsSelfConfig.
+ *
+ * Return Value: %TRUE if @user is self, %FALSE otherwise.
+ **/
+gboolean
+oobs_self_config_is_user_self (OobsSelfConfig *config,
+                               OobsUser       *user)
+{
+  OobsSelfConfigPrivate *priv;
+
+  g_return_val_if_fail (OOBS_IS_SELF_CONFIG (config), FALSE);
+  g_return_val_if_fail (OOBS_IS_USER (user), FALSE);
+
+  oobs_object_ensure_update (OOBS_OBJECT (config));
+  priv = config->_priv;
+
+  return (priv->user == user);
+}
+
+

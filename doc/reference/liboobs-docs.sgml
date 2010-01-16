@@ -10,14 +10,11 @@
   </bookinfo>
 
   <chapter>
-    <title>Session management</title>
+    <title>Common API</title>
     <xi:include href="xml/oobs-session.xml"/>
-  </chapter>
-
-  <chapter>
-    <title>Liboobs data management</title>
     <xi:include href="xml/oobs-object.xml"/>
     <xi:include href="xml/oobs-list.xml"/>
+    <xi:include href="xml/oobs-error.xml"/>
   </chapter>
 
   <chapter>

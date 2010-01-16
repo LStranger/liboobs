@@ -24,6 +24,8 @@
 #include "oobs-object-private.h"
 #include "oobs-session.h"
 #include "oobs-session-private.h"
+#include "oobs-error.h"
+#include "utils.h"
 
 /**
  * SECTION:oobs-object
@@ -33,7 +35,6 @@
  **/
 
 #define OOBS_OBJECT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_OBJECT, OobsObjectPrivate))
-#define POLKIT_ACTION "org.freedesktop.systemtoolsbackends.set"
 
 typedef struct _OobsObjectPrivate OobsObjectPrivate;
 typedef struct _OobsObjectAsyncCallbackData OobsObjectAsyncCallbackData;
@@ -86,8 +87,6 @@ static void oobs_object_get_property (GObject       *object,
 				      GValue        *value,
 				      GParamSpec    *pspec);
 
-static const gchar * oobs_object_real_get_authentication_action (OobsObject *object);
-
 static void connect_object_to_session (OobsObject *object);
 
 enum
@@ -119,8 +118,6 @@ oobs_object_class_init (OobsObjectClass *class)
   object_class->get_property = oobs_object_get_property;
   object_class->set_property = oobs_object_set_property;
   object_class->finalize     = oobs_object_finalize;
-
-  class->get_authentication_action = oobs_object_real_get_authentication_action;
 
   /* some object types don't need to be singletons, they override this */
   class->singleton = TRUE;
@@ -345,12 +342,6 @@ oobs_object_get_property (GObject      *object,
     }
 }
 
-static const gchar *
-oobs_object_real_get_authentication_action (OobsObject *object)
-{
-  return POLKIT_ACTION;
-}
-
 DBusMessage*
 _oobs_object_get_dbus_message (OobsObject *object)
 {
@@ -409,7 +400,7 @@ run_message (OobsObject  *object,
 
   if (!oobs_session_get_connected (priv->session))
     {
-      g_warning ("could send message, OobsSession hasn't connected to the bus");
+      g_warning ("Could not send message, OobsSession hasn't connected to the bus");
       return NULL;
     }
 
@@ -902,21 +893,66 @@ oobs_object_ensure_update (OobsObject *object)
 }
 
 /**
- * oobs_object_get_authentication_action:
+ * oobs_object_authenticate:
  * @object: An #OobsObject.
+ * @error: Return location for error or NULL.
  *
- * Returns the PolicyKit action required to be able to modify this object configuration.
+ * Performs a PolicyKit authentication via the backends for the action
+ * required by the given object. User interaction will occur synchronously
+ * if needed.
  *
- * Return Value: string defining the PolicyKit action
- *               required to modify objects in the session.
+ * You may want to check the returned error for %OOBS_ERROR_AUTHENTICATION_CANCELLED,
+ * in which case you should avoid showing an error dialog to the user.
+ *
+ * Return Value: %TRUE if allowed to commit @object, %FALSE otherwise.
  **/
-G_CONST_RETURN gchar *
-oobs_object_get_authentication_action (OobsObject *object)
+gboolean
+oobs_object_authenticate (OobsObject *object,
+                          GError    **error)
 {
-  OobsObjectClass *class;
+  OobsObjectPrivate *priv;
+  DBusConnection    *connection;
+  DBusMessage       *message;
+  DBusMessage       *reply;
+  DBusMessageIter   iter;
+  gboolean result;
 
-  g_return_val_if_fail (OOBS_IS_OBJECT (object), NULL);
+  g_return_val_if_fail (OOBS_IS_OBJECT (object), FALSE);
 
-  class = OOBS_OBJECT_GET_CLASS (object);
-  return class->get_authentication_action (object);
+  priv = OOBS_OBJECT_GET_PRIVATE (object);
+
+  message = dbus_message_new_method_call (OOBS_DBUS_DESTINATION, priv->path,
+                                          "org.freedesktop.SystemToolsBackends.Authentication",
+                                          "authenticate");
+
+  if (!oobs_session_get_connected (priv->session))
+    {
+      g_warning ("Could not send message, OobsSession hasn't connected to the bus");
+      return FALSE;
+    }
+
+  connection = _oobs_session_get_connection_bus (priv->session);
+  reply = dbus_connection_send_with_reply_and_block (connection, message, -1, &priv->dbus_error);
+
+  if (dbus_error_is_set (&priv->dbus_error))
+    {
+      if (dbus_error_has_name (&priv->dbus_error,
+                               "org.freedesktop.SystemToolsBackends.AuthenticationCancelled"))
+	g_set_error_literal (error, OOBS_ERROR,
+	                     OOBS_ERROR_AUTHENTICATION_CANCELLED,
+	                     priv->dbus_error.message);
+      else
+	g_set_error_literal (error, OOBS_ERROR,
+	                     OOBS_ERROR_AUTHENTICATION_FAILED,
+	                     priv->dbus_error.message);
+
+      dbus_error_free (&priv->dbus_error);
+      return FALSE;
+    }
+
+  dbus_message_iter_init (reply, &iter);
+  result = utils_get_boolean (&iter);
+
+  return result;
+
 }

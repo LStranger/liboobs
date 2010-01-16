@@ -34,7 +34,6 @@ G_BEGIN_DECLS
 #define OOBS_IS_OBJECT_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((o),    OOBS_TYPE_OBJECT))
 #define OOBS_OBJECT_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o),  OOBS_TYPE_OBJECT, OobsObjectClass))
 
-
 typedef struct _OobsObject      OobsObject;
 typedef struct _OobsObjectClass OobsObjectClass;
 
@@ -53,7 +52,6 @@ struct _OobsObjectClass
   /* virtual methods */
   void (*commit) (OobsObject *object);
   void (*update) (OobsObject *object);
-  const gchar * (*get_authentication_action) (OobsObject *object);
 
   /* signals */
   void (*updated)   (OobsObject *object);
@@ -97,7 +95,8 @@ void        oobs_object_process_requests (OobsObject *object);
 gboolean    oobs_object_has_updated      (OobsObject *object);
 void        oobs_object_ensure_update    (OobsObject *object);
 
-G_CONST_RETURN gchar * oobs_object_get_authentication_action (OobsObject *object);
+gboolean    oobs_object_authenticate (OobsObject *object,
+                                      GError    **error);
 
 
 G_END_DECLS

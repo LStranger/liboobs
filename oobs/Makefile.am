@@ -17,6 +17,7 @@ oobs_public_headers = 	\
 	oobs-session.h		\
 	oobs-object.h		\
 	oobs-list.h		\
+	oobs-error.h		\
 	oobs-defines.h		\
 	oobs-enum-types.h	\
 	oobs-share.h		\
@@ -63,6 +64,7 @@ oobs_built_sources = \
 
 liboobs_1_la_SOURCES = \
 	utils.c				\
+	oobs-error.c			\
 	oobs-session.c			\
 	oobs-object.c			\
 	oobs-list.c			\

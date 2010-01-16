@@ -37,7 +37,6 @@
 
 #define SELF_CONFIG_REMOTE_OBJECT "SelfConfig2"
 #define OOBS_SELF_CONFIG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), OOBS_TYPE_SELF_CONFIG, OobsSelfConfigPrivate))
-#define POLICY_KIT_SELF_ACTION "org.freedesktop.systemtoolsbackends.self.set"
 
 typedef struct _OobsSelfConfigPrivate OobsSelfConfigPrivate;
 
@@ -55,8 +54,6 @@ static void oobs_self_config_finalize    (GObject             *object);
 static void oobs_self_config_update     (OobsObject   *object);
 static void oobs_self_config_commit     (OobsObject   *object);
 
-static const gchar * oobs_self_config_get_authentication_action (OobsObject *object);
-
 
 G_DEFINE_TYPE (OobsSelfConfig, oobs_self_config, OOBS_TYPE_OBJECT);
 
@@ -72,7 +69,6 @@ oobs_self_config_class_init (OobsSelfConfigClass *class)
 
   oobs_object_class->commit  = oobs_self_config_commit;
   oobs_object_class->update  = oobs_self_config_update;
-  oobs_object_class->get_authentication_action = oobs_self_config_get_authentication_action;
 
   g_type_class_add_private (object_class,
 			    sizeof (OobsSelfConfigPrivate));
@@ -196,12 +192,6 @@ oobs_self_config_commit (OobsObject *object)
   utils_append_string (&iter, oobs_user_get_locale (priv->user));
   /* TODO: use location when the backends support it */
   utils_append_string (&iter, "");
-}
-
-static const gchar *
-oobs_self_config_get_authentication_action (OobsObject *object)
-{
-  return POLICY_KIT_SELF_ACTION;
 }
 
 /**

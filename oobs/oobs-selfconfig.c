@@ -52,8 +52,9 @@ static void oobs_self_config_init        (OobsSelfConfig      *config);
 static void oobs_self_config_constructed (GObject             *object);
 static void oobs_self_config_finalize    (GObject             *object);
 
-static void oobs_self_config_update     (OobsObject   *object);
-static void oobs_self_config_commit     (OobsObject   *object);
+static void oobs_self_config_update             (OobsObject   *object);
+static void oobs_self_config_commit             (OobsObject   *object);
+static void oobs_self_config_get_update_message (OobsObject   *object);
 
 
 G_DEFINE_TYPE (OobsSelfConfig, oobs_self_config, OOBS_TYPE_OBJECT);
@@ -70,6 +71,7 @@ oobs_self_config_class_init (OobsSelfConfigClass *class)
 
   oobs_object_class->commit  = oobs_self_config_commit;
   oobs_object_class->update  = oobs_self_config_update;
+  oobs_object_class->get_update_message = oobs_self_config_get_update_message;
 
   g_type_class_add_private (object_class,
 			    sizeof (OobsSelfConfigPrivate));
@@ -144,16 +146,9 @@ oobs_self_config_finalize (GObject *object)
 static void
 oobs_self_config_update (OobsObject *object)
 {
-  OobsSelfConfigPrivate *priv;
   OobsObject *users_config;
-  DBusMessage *message;
-  DBusMessageIter iter;
 
-  priv = OOBS_SELF_CONFIG (object)->_priv;
-  message = _oobs_object_get_dbus_message (object);
-
-  dbus_message_iter_init (message, &iter);
-  priv->uid = utils_get_uint (&iter);
+  /* We don't actually need to update, since we joint point to an OobsUser */
 
   users_config = oobs_users_config_get ();
 
@@ -199,6 +194,24 @@ oobs_self_config_commit (OobsObject *object)
   utils_append_string (&iter, oobs_user_get_locale (priv->user));
   /* TODO: use location when the backends support it */
   utils_append_string (&iter, "");
+}
+
+/*
+ * We need a custom update message containing the user's UID.
+ */
+static void
+oobs_self_config_get_update_message (OobsObject *object)
+{
+  OobsSelfConfigPrivate *priv;
+  DBusMessageIter iter;
+  DBusMessage *message;
+
+  priv = OOBS_SELF_CONFIG (object)->_priv;
+
+  message = _oobs_object_get_dbus_message (object);
+  dbus_message_iter_init_append (message, &iter);
+
+  utils_append_uint (&iter, priv->uid);
 }
 
 /**

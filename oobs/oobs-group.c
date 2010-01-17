@@ -69,7 +69,9 @@ static void oobs_group_get_property (GObject      *object,
 				     GValue       *value,
 				     GParamSpec   *pspec);
 
-static void oobs_group_commit (OobsObject *object);
+static void oobs_group_commit             (OobsObject *object);
+static void oobs_group_update             (OobsObject *object);
+static void oobs_group_get_update_message (OobsObject *object);
 
 static GList* get_users_list (OobsGroup *group);
 
@@ -93,6 +95,8 @@ oobs_group_class_init (OobsGroupClass *class)
   object_class->finalize     = oobs_group_finalize;
 
   oobs_class->commit = oobs_group_commit;
+  oobs_class->update = oobs_group_update;
+  oobs_class->get_update_message = oobs_group_get_update_message;
 
   /* override the singleton check */
   oobs_class->singleton = FALSE;
@@ -241,6 +245,38 @@ get_users_list (OobsGroup *group)
   return usernames;
 }
 
+OobsGroup*
+_oobs_group_create_from_dbus_reply (OobsObject      *object,
+                                    GList          **users_ptr,
+                                    DBusMessage     *reply,
+                                    DBusMessageIter  struct_iter)
+{
+  DBusMessageIter iter;
+  guint32 gid;
+  const gchar *groupname, *passwd;
+  GList   *users;
+  OobsGroup *group;
+
+  dbus_message_iter_recurse (&struct_iter, &iter);
+
+  groupname = utils_get_string (&iter);
+  passwd = utils_get_string (&iter);
+  gid = utils_get_uint (&iter);
+
+  users = utils_get_string_list_from_dbus_reply (reply, &iter);
+
+  if (users_ptr)
+    *users_ptr = users;
+
+  group = oobs_group_new (groupname);
+  g_object_set (G_OBJECT (group),
+                "password", passwd,
+                "gid", gid,
+                NULL);
+
+  return OOBS_GROUP (group);
+}
+
 void
 _oobs_create_dbus_struct_from_group (OobsGroup       *group,
                                      DBusMessage     *message,
@@ -283,6 +319,36 @@ oobs_group_commit (OobsObject *object)
   message = _oobs_object_get_dbus_message (object);
   dbus_message_iter_init_append (message, &iter);
   _oobs_create_dbus_struct_from_group (OOBS_GROUP (object), message, &iter);
+}
+
+/*
+ * We need a custom update message containing the group name.
+ */
+static void
+oobs_group_get_update_message (OobsObject *object)
+{
+  OobsGroupPrivate *priv;
+  DBusMessageIter iter;
+  DBusMessage *message;
+
+  priv = OOBS_GROUP (object)->_priv;
+
+  message = _oobs_object_get_dbus_message (object);
+  dbus_message_iter_init_append (message, &iter);
+
+  utils_append_string (&iter, priv->groupname);
+}
+
+static void
+oobs_group_update (OobsObject *object)
+{
+  DBusMessage *reply;
+  DBusMessageIter iter;
+
+  reply = _oobs_object_get_dbus_message (object);
+
+  dbus_message_iter_init (reply, &iter);
+  _oobs_group_create_from_dbus_reply (object, NULL, reply, iter);
 }
 
 /**

@@ -215,44 +215,6 @@ oobs_groups_config_get_property (GObject      *object,
     }
 }
 
-static OobsGroup*
-create_group_from_dbus_reply (OobsObject      *object,
-			      DBusMessage     *reply,
-			      DBusMessageIter  struct_iter)
-{
-  OobsGroupsConfigPrivate *priv;
-  DBusMessageIter iter;
-  guint32 gid;
-  const gchar *groupname, *passwd;
-  GList   *users;
-  OobsGroup *group;
-
-  priv = OOBS_GROUPS_CONFIG (object)->_priv;
-  dbus_message_iter_recurse (&struct_iter, &iter);
-
-  groupname = utils_get_string (&iter);
-  passwd = utils_get_string (&iter);
-  gid = utils_get_uint (&iter);
-
-  users = utils_get_string_list_from_dbus_reply (reply, &iter);
-
-  group = oobs_group_new (groupname);
-  g_object_set (G_OBJECT (group),
-                "password", passwd,
-                "gid", gid,
-                NULL);
-
-  /* put the users list in the hashtable, will be used each time
-   * the users config has changed, in order to get references to
-   * the new user objects
-   */
-  g_hash_table_insert (priv->users,
-		       g_object_ref (group),
-		       users);
-
-  return OOBS_GROUP (group);
-}
-
 static void
 query_users_foreach (OobsGroup *group,
 		     GList     *users,
@@ -296,6 +258,7 @@ oobs_groups_config_update (OobsObject *object)
   DBusMessageIter  iter, elem_iter;
   OobsListIter     list_iter;
   GObject         *group;
+  GList           *users;
 
   priv  = OOBS_GROUPS_CONFIG (object)->_priv;
   reply = _oobs_object_get_dbus_message (object);
@@ -309,11 +272,21 @@ oobs_groups_config_update (OobsObject *object)
 
   while (dbus_message_iter_get_arg_type (&elem_iter) == DBUS_TYPE_STRUCT)
     {
-      group = G_OBJECT (create_group_from_dbus_reply (object, reply, elem_iter));
+      group = G_OBJECT (_oobs_group_create_from_dbus_reply (object, &users, reply, elem_iter));
 
       oobs_list_append (priv->groups_list, &list_iter);
       oobs_list_set    (priv->groups_list, &list_iter, G_OBJECT (group));
+
+      /* put the users list in the hashtable, will be used each time
+       * the users config has changed, in order to get references to
+       * the new user objects
+       */
+      g_hash_table_insert (priv->users,
+                           g_object_ref (group),
+                           users);
+
       g_object_unref   (group);
+
 
       dbus_message_iter_next (&elem_iter);
     }

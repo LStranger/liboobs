@@ -565,8 +565,11 @@ static DBusMessage*
 get_update_message (OobsObject *object)
 {
   OobsObjectPrivate *priv;
+  OobsObjectClass *class;
+  DBusMessage *message;
 
   priv = object->_priv;
+  class = OOBS_OBJECT_GET_CLASS (object);
 
   if (!priv->session)
     {
@@ -575,7 +578,17 @@ get_update_message (OobsObject *object)
       return NULL;
     }
 
-  return dbus_message_new_method_call (OOBS_DBUS_DESTINATION, priv->path, priv->method, "get");
+  message = dbus_message_new_method_call (OOBS_DBUS_DESTINATION, priv->path, priv->method, "get");
+
+  /* Some objects use custom messages where they need to append arguments */
+  if (class->get_update_message)
+    {
+      _oobs_object_set_dbus_message (object, message);
+      class->get_update_message (object);
+      return g_object_steal_qdata (G_OBJECT (object), dbus_connection_quark);
+    }
+  else
+    return message;
 }
 
 /*

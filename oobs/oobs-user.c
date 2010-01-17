@@ -87,8 +87,9 @@ static void oobs_user_get_property (GObject      *object,
 				    GValue       *value,
 				    GParamSpec   *pspec);
 
-static void oobs_user_commit    (OobsObject *object);
-static void oobs_user_update    (OobsObject *object);
+static void oobs_user_commit             (OobsObject *object);
+static void oobs_user_update             (OobsObject *object);
+static void oobs_user_get_update_message (OobsObject *object);
 
 enum
 {
@@ -125,6 +126,7 @@ oobs_user_class_init (OobsUserClass *class)
 
   oobs_class->commit = oobs_user_commit;
   oobs_class->update = oobs_user_update;
+  oobs_class->get_update_message = oobs_user_get_update_message;
 
   /* override the singleton check */
   oobs_class->singleton = FALSE;
@@ -618,6 +620,24 @@ oobs_user_commit (OobsObject *object)
   dbus_message_iter_open_container (&iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
   create_dbus_struct_from_user (OOBS_USER (object), message, &struct_iter);
   dbus_message_iter_close_container (&iter, &struct_iter);
+}
+
+/*
+ * We need a custom update message containing the user's UID.
+ */
+static void
+oobs_user_get_update_message (OobsObject *object)
+{
+  OobsUserPrivate *priv;
+  DBusMessageIter iter;
+  DBusMessage *message;
+
+  priv = OOBS_USER (object)->_priv;
+
+  message = _oobs_object_get_dbus_message (object);
+  dbus_message_iter_init_append (message, &iter);
+
+  utils_append_string (&iter, priv->username);
 }
 
 static void

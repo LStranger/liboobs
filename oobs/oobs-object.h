@@ -50,8 +50,9 @@ struct _OobsObjectClass
   GObjectClass parent_class;
 
   /* virtual methods */
-  void (*commit) (OobsObject *object);
-  void (*update) (OobsObject *object);
+  void (*commit)             (OobsObject *object);
+  void (*get_update_message) (OobsObject *object);
+  void (*update)             (OobsObject *object);
 
   /* signals */
   void (*updated)   (OobsObject *object);

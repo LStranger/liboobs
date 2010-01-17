@@ -27,6 +27,13 @@ G_BEGIN_DECLS
 
 #include "oobs-group.h"
 
+
+OobsGroup*
+_oobs_group_create_from_dbus_reply  (OobsObject      *object,
+                                     GList          **users_ptr,
+                                     DBusMessage     *reply,
+                                     DBusMessageIter  struct_iter);
+
 void
 _oobs_create_dbus_struct_from_group (OobsGroup       *group,
                                      DBusMessage     *message,

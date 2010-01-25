@@ -1,3 +1,13 @@
+Liboobs 2.29.3, 2010-01-25
+-----------------------------------------------
+Liboobs version 2.29.3 "Tune Up" has been released.
+
+- New function oobs_object_authenticate() allowing clients to request PolicyKit authentication to be more user-friendly
+- Basic GError reporting support, used in the above function for now
+- Fix OobsSelfConfig getting the UID of current user, and add oobs_self_config_is_user_self()
+- Move from utmp to utmpx (thanks to Ed Schouten)
+
+
 Liboobs 2.29.2.1, 2010-01-12
 -----------------------------------------------
 Liboobs version 2.29.2.1 "I Got It Bad And That Ain't Good" has been released.

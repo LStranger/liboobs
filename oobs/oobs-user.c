@@ -25,7 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <crypt.h>
-#include <utmp.h>
+#include <utmpx.h>
 
 #include "oobs-object-private.h"
 #include "oobs-usersconfig.h"
@@ -1252,7 +1252,7 @@ oobs_user_set_locale (OobsUser *user, const gchar *locale)
 gboolean
 oobs_user_get_active (OobsUser *user)
 {
-  struct utmp *entry;
+  struct utmpx *entry;
   const gchar *login;
   gboolean match = FALSE;
 
@@ -1260,14 +1260,16 @@ oobs_user_get_active (OobsUser *user)
 
   login = oobs_user_get_login_name (user);
 
-  while (!match && (entry = getutent ()) != NULL)
-    {
-      match = (entry->ut_type == USER_PROCESS &&
-	       strcmp (entry->ut_user, login) == 0);
-    }
+  setutxent ();
+
+  while (!match && (entry = getutxent ()) != NULL)
+     {
+       match = (entry->ut_type == USER_PROCESS &&
+               strcmp (entry->ut_user, login) == 0);
+     }
 
   /* close utmp */
-  endutent ();
+  endutxent ();
 
   return match;
 }

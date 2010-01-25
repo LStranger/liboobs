@@ -75,6 +75,8 @@ AC_SUBST(HAL_CFLAGS)
 AC_CHECK_LIB(crypt, crypt, , [AC_MSG_ERROR(crypt library is required.)])
 AC_CHECK_HEADER(crypt.h, AC_DEFINE(HAVE_CRYPT_H, "", [whether it has crypt function]))
 
+AC_CHECK_HEADER(utmpx.h,,AC_MSG_ERROR([utmpx.h not found]))
+
 AC_MSG_CHECKING(whether rtnetlink exists)
 AC_TRY_CPP([
 #include <sys/types.h>

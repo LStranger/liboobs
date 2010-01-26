@@ -225,9 +225,14 @@ oobs_self_config_get_update_message (OobsObject *object)
 OobsObject*
 oobs_self_config_get (void)
 {
-  return g_object_new (OOBS_TYPE_SELF_CONFIG,
-		       "remote-object", SELF_CONFIG_REMOTE_OBJECT,
-		       NULL);
+  static OobsObject *the_object = NULL;
+
+  if (!the_object)
+    the_object = g_object_new (OOBS_TYPE_SELF_CONFIG,
+                               "remote-object", SELF_CONFIG_REMOTE_OBJECT,
+                               NULL);
+
+  return the_object;
 }
 
 /**

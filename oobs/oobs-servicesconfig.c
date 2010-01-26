@@ -418,9 +418,14 @@ oobs_services_config_commit (OobsObject *object)
 OobsObject*
 oobs_services_config_get (void)
 {
-  return g_object_new (OOBS_TYPE_SERVICES_CONFIG,
-		       "remote-object", SERVICES_CONFIG_REMOTE_OBJECT,
-		       NULL);
+  static OobsObject *the_object = NULL;
+
+  if (!the_object)
+    the_object = g_object_new (OOBS_TYPE_SERVICES_CONFIG,
+                               "remote-object", SERVICES_CONFIG_REMOTE_OBJECT,
+                               NULL);
+
+  return the_object;
 }
 
 /**

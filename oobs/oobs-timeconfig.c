@@ -274,9 +274,14 @@ oobs_time_config_commit (OobsObject *object)
 OobsObject*
 oobs_time_config_get (void)
 {
-  return g_object_new (OOBS_TYPE_TIME_CONFIG,
-		       "remote-object", TIME_CONFIG_REMOTE_OBJECT,
-		       NULL);
+  static OobsObject *the_object = NULL;
+
+  if (!the_object)
+    the_object = g_object_new (OOBS_TYPE_TIME_CONFIG,
+                               "remote-object", TIME_CONFIG_REMOTE_OBJECT,
+                               NULL);
+
+  return the_object;
 }
 
 static gboolean 

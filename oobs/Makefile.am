@@ -56,6 +56,8 @@ oobs_private_headers = 	\
 	oobs-session-private.h	\
 	oobs-user-private.h	\
 	oobs-group-private.h	\
+	oobs-service-private.h	\
+	oobs-servicesconfig-private.h	\
 	utils.h
 
 oobs_built_sources = \

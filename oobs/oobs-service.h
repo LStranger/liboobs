@@ -45,14 +45,14 @@ typedef enum
 } OobsServiceStatus;
 
 struct _OobsService {
-  GObject parent;
+  OobsObject parent;
 
   /*<private>*/
   gpointer _priv;
 };
 
 struct _OobsServiceClass {
-  GObjectClass parent_class;
+  OobsObjectClass parent_class;
 
   void (*_oobs_padding1) (void);
   void (*_oobs_padding2) (void);

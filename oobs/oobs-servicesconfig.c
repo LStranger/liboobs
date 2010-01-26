@@ -27,7 +27,9 @@
 #include "oobs-list.h"
 #include "oobs-list-private.h"
 #include "oobs-servicesconfig.h"
+#include "oobs-servicesconfig-private.h"
 #include "oobs-service.h"
+#include "oobs-service-private.h"
 #include "utils.h"
 
 /**
@@ -159,9 +161,9 @@ create_runlevels_list_from_dbus_reply (OobsObject      *object,
   priv->runlevels = g_list_reverse (priv->runlevels);
 }
 
-static OobsServicesRunlevel*
-get_runlevel (OobsServicesConfig *config,
-	      const gchar        *runlevel)
+OobsServicesRunlevel*
+_oobs_services_config_get_runlevel (OobsServicesConfig *config,
+                                    const gchar        *runlevel)
 {
   OobsServicesConfigPrivate *priv;
   OobsServicesRunlevel *rl;
@@ -184,59 +186,6 @@ get_runlevel (OobsServicesConfig *config,
     }
 
   return NULL;
-}
-
-static void
-create_service_runlevels_from_dbus_reply (OobsServicesConfig *config,
-					  OobsService        *service,
-					  DBusMessage        *reply,
-					  DBusMessageIter     struct_iter)
-{
-  DBusMessageIter runlevel_iter;
-  OobsServicesRunlevel *rl;
-  OobsServiceStatus status;
-  const gchar *runlevel;
-  gint priority;
-
-  while (dbus_message_iter_get_arg_type (&struct_iter) == DBUS_TYPE_STRUCT)
-    {
-      dbus_message_iter_recurse (&struct_iter, &runlevel_iter);
-
-      runlevel = utils_get_string (&runlevel_iter);
-      status = utils_get_int (&runlevel_iter);
-      priority = utils_get_int (&runlevel_iter);
-
-      rl = get_runlevel (config, runlevel);
-
-      if (rl)
-	oobs_service_set_runlevel_configuration (service, rl, status, priority);
-
-      dbus_message_iter_next (&struct_iter);
-    }
-}
-
-static OobsService*
-create_service_from_dbus_reply (OobsServicesConfig *config,
-				DBusMessage        *reply,
-				DBusMessageIter     struct_iter)
-{
-  GObject *service;
-  DBusMessageIter iter, runlevels_iter;
-  const gchar *name;
-
-  dbus_message_iter_recurse (&struct_iter, &iter);
-
-  name = utils_get_string (&iter);
-
-  service = g_object_new (OOBS_TYPE_SERVICE,
-			  "name", name,
-			  NULL);
-
-  dbus_message_iter_recurse (&iter, &runlevels_iter);
-  create_service_runlevels_from_dbus_reply (config,
-					    OOBS_SERVICE (service),
-					    reply, runlevels_iter);
-  return OOBS_SERVICE (service);
 }
 
 static void
@@ -264,14 +213,14 @@ oobs_services_config_update (OobsObject *object)
   dbus_message_iter_next (&iter);
 
   default_runlevel = utils_get_string (&iter);
-  priv->default_runlevel = get_runlevel (OOBS_SERVICES_CONFIG (object), default_runlevel);
+  priv->default_runlevel = _oobs_services_config_get_runlevel (OOBS_SERVICES_CONFIG (object),
+                                                               default_runlevel);
 
   dbus_message_iter_recurse (&iter, &elem_iter);
 
   while (dbus_message_iter_get_arg_type (&elem_iter) == DBUS_TYPE_STRUCT)
     {
-      service = create_service_from_dbus_reply (OOBS_SERVICES_CONFIG (object),
-						reply, elem_iter);
+      service = _oobs_service_create_from_dbus_reply (NULL, reply, elem_iter);
 
       oobs_list_append (priv->services_list, &list_iter);
       oobs_list_set    (priv->services_list, &list_iter, G_OBJECT (service));
@@ -281,75 +230,6 @@ oobs_services_config_update (OobsObject *object)
     }
 
   _oobs_list_set_locked (priv->services_list, TRUE);
-}
-
-static void
-create_dbus_struct_from_service_runlevels (OobsService     *service,
-					   GList           *runlevels,
-					   DBusMessage     *message,
-					   DBusMessageIter *iter)
-{
-  DBusMessageIter runlevels_iter, struct_iter;
-  OobsServicesRunlevel *runlevel;
-  OobsServiceStatus status;
-  gint priority;
-
-  dbus_message_iter_open_container (iter,
-				    DBUS_TYPE_ARRAY,
-				    DBUS_STRUCT_BEGIN_CHAR_AS_STRING
-				    DBUS_TYPE_STRING_AS_STRING
-				    DBUS_TYPE_INT32_AS_STRING
-				    DBUS_TYPE_INT32_AS_STRING
-				    DBUS_STRUCT_END_CHAR_AS_STRING,
-				    &runlevels_iter);
-
-  while (runlevels)
-    {
-      runlevel = runlevels->data;
-      runlevels = runlevels->next;
-
-      oobs_service_get_runlevel_configuration (service, runlevel, &status, &priority);
-
-      if (status == OOBS_SERVICE_IGNORE)
-	continue;
-
-      dbus_message_iter_open_container (&runlevels_iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
-
-      utils_append_string (&struct_iter, runlevel->name);
-      utils_append_int (&struct_iter, status);
-      utils_append_int (&struct_iter, priority);
-
-      dbus_message_iter_close_container (&runlevels_iter, &struct_iter);
-    }
-
-  dbus_message_iter_close_container (iter, &runlevels_iter);
-}
-
-static gboolean
-create_dbus_struct_from_service (OobsService     *service,
-				 GList           *runlevels,
-				 DBusMessage     *message,
-				 DBusMessageIter *array_iter)
-{
-  DBusMessageIter struct_iter;
-  gchar *name;
-
-  g_object_get (G_OBJECT (service),
-		"name", &name,
-		NULL);
-
-  g_return_val_if_fail (name, FALSE);
-
-  dbus_message_iter_open_container (array_iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
-
-  utils_append_string (&struct_iter, name);
-  create_dbus_struct_from_service_runlevels (service, runlevels, message, &struct_iter);
-
-  dbus_message_iter_close_container (array_iter, &struct_iter);
-
-  g_free (name);
-
-  return TRUE;
 }
 
 static void
@@ -391,9 +271,9 @@ oobs_services_config_commit (OobsObject *object)
   while (correct && valid)
     {
       service = oobs_list_get (priv->services_list, &list_iter);
-      correct = create_dbus_struct_from_service (OOBS_SERVICE (service),
-						 priv->runlevels,
-						 message, &array_iter);
+      correct = _oobs_create_dbus_struct_from_service (OOBS_SERVICE (service),
+                                                       priv->runlevels,
+                                                       message, &array_iter);
       g_object_unref (service);
       valid = oobs_list_iter_next (priv->services_list, &list_iter);
     }

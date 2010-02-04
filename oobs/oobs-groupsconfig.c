@@ -50,8 +50,6 @@ struct _OobsGroupsConfigPrivate
 {
   OobsList *groups_list;
 
-  GHashTable *users;
-
   gid_t     minimum_gid;
   gid_t     maximum_gid;
 };
@@ -69,9 +67,6 @@ static void oobs_groups_config_get_property (GObject      *object,
 					     guint         prop_id,
 					     GValue       *value,
 					     GParamSpec   *pspec);
-
-static void oobs_groups_config_users_updated (OobsGroupsConfig *groups,
-					      OobsUsersConfig  *users);
 
 static void oobs_groups_config_update     (OobsObject   *object);
 static void oobs_groups_config_commit     (OobsObject   *object);
@@ -94,7 +89,6 @@ oobs_groups_config_class_init (OobsGroupsConfigClass *class)
 
   object_class->set_property = oobs_groups_config_set_property;
   object_class->get_property = oobs_groups_config_get_property;
-  object_class->constructed = oobs_groups_config_constructed;
   object_class->finalize    = oobs_groups_config_finalize;
 
   oobs_object_class->commit = oobs_groups_config_commit;
@@ -119,13 +113,6 @@ oobs_groups_config_class_init (OobsGroupsConfigClass *class)
 }
 
 static void
-free_users (GList *users)
-{
-  g_list_foreach (users, (GFunc) g_free, NULL);
-  g_list_free (users);
-}
-
-static void
 oobs_groups_config_init (OobsGroupsConfig *config)
 {
   OobsGroupsConfigPrivate *priv;
@@ -136,18 +123,6 @@ oobs_groups_config_init (OobsGroupsConfig *config)
 
   config->_priv = priv;
   priv->groups_list = _oobs_list_new (OOBS_TYPE_GROUP);
-
-  priv->users = g_hash_table_new_full (NULL, NULL,
-				       (GDestroyNotify) g_object_unref,
-				       (GDestroyNotify) free_users);
-}
-
-static void
-oobs_groups_config_constructed (GObject *object)
-{
-  /* stay tuned of changes in users config */
-  g_signal_connect_swapped (oobs_users_config_get (), "updated",
-			    G_CALLBACK (oobs_groups_config_users_updated), object);
 }
 
 static void
@@ -160,10 +135,7 @@ oobs_groups_config_finalize (GObject *object)
   priv = OOBS_GROUPS_CONFIG (object)->_priv;
 
   if (priv)
-    {
       g_object_unref (priv->groups_list);
-      g_hash_table_unref (priv->users);
-    }
 
   if (G_OBJECT_CLASS (oobs_groups_config_parent_class)->finalize)
     (* G_OBJECT_CLASS (oobs_groups_config_parent_class)->finalize) (object);
@@ -216,77 +188,31 @@ oobs_groups_config_get_property (GObject      *object,
 }
 
 static void
-query_users_foreach (OobsGroup *group,
-		     GList     *users,
-		     gpointer   data)
-{
-  OobsUsersConfig *users_config = OOBS_USERS_CONFIG (data);
-  OobsUser *user;
-
-  oobs_group_clear_users (group);
-
-  while (users)
-    {
-      user = oobs_users_config_get_from_login (users_config, users->data);
-
-      if (user)
-	{
-	  oobs_group_add_user (group, user);
-	  g_object_unref (user);
-	}
-
-      users = users->next;
-    }
-}
-
-static void
-oobs_groups_config_users_updated (OobsGroupsConfig *groups,
-				  OobsUsersConfig  *users)
-{
-  OobsGroupsConfigPrivate *priv;
-
-  priv = groups->_priv;
-  g_hash_table_foreach (priv->users, (GHFunc) query_users_foreach, users);
-}
-
-static void
 oobs_groups_config_update (OobsObject *object)
 {
   OobsGroupsConfigPrivate *priv;
-  OobsObject      *users_config;
   DBusMessage     *reply;
   DBusMessageIter  iter, elem_iter;
   OobsListIter     list_iter;
   GObject         *group;
-  GList           *users;
 
   priv  = OOBS_GROUPS_CONFIG (object)->_priv;
   reply = _oobs_object_get_dbus_message (object);
 
   /* First of all, free the previous configuration */
   oobs_list_clear (priv->groups_list);
-  g_hash_table_remove_all (priv->users);
 
   dbus_message_iter_init (reply, &iter);
   dbus_message_iter_recurse (&iter, &elem_iter);
 
   while (dbus_message_iter_get_arg_type (&elem_iter) == DBUS_TYPE_STRUCT)
     {
-      group = G_OBJECT (_oobs_group_create_from_dbus_reply (object, &users, reply, elem_iter));
+      group = G_OBJECT (_oobs_group_create_from_dbus_reply (object, reply, elem_iter));
 
       oobs_list_append (priv->groups_list, &list_iter);
       oobs_list_set    (priv->groups_list, &list_iter, G_OBJECT (group));
 
-      /* put the users list in the hashtable, will be used each time
-       * the users config has changed, in order to get references to
-       * the new user objects
-       */
-      g_hash_table_insert (priv->users,
-                           g_object_ref (group),
-                           users);
-
       g_object_unref   (group);
-
 
       dbus_message_iter_next (&elem_iter);
     }
@@ -295,15 +221,6 @@ oobs_groups_config_update (OobsObject *object)
 
   priv->minimum_gid = utils_get_uint (&iter);
   priv->maximum_gid = utils_get_uint (&iter);
-
-  users_config = oobs_users_config_get ();
-
-  /* just update users if the object was already
-   * updated, update will be forced later if required
-   */
-  if (oobs_object_has_updated (users_config))
-    oobs_groups_config_users_updated (OOBS_GROUPS_CONFIG (object),
-				      OOBS_USERS_CONFIG (users_config));
 }
 
 static void

@@ -505,19 +505,39 @@ oobs_users_config_delete_user (OobsUsersConfig *config, OobsUser *user)
   OobsListIter list_iter;
   gboolean valid;
   OobsResult result;
+  OobsList *groups_list;
+  OobsGroup *group;
 
   g_return_val_if_fail (config != NULL, OOBS_RESULT_MALFORMED_DATA);
   g_return_val_if_fail (user != NULL, OOBS_RESULT_MALFORMED_DATA);
   g_return_val_if_fail (OOBS_IS_USERS_CONFIG (config), OOBS_RESULT_MALFORMED_DATA);
   g_return_val_if_fail (OOBS_IS_USER (user), OOBS_RESULT_MALFORMED_DATA);
 
+  /* Try to commit changes */
   result = oobs_object_delete (OOBS_OBJECT (user));
 
   if (result != OOBS_RESULT_OK)
     return result;
 
+
   priv = config->_priv;
 
+  /* Remove user from all groups, to avoid committing to /etc/group
+   * the name of a non-existent user */
+  groups_list = oobs_groups_config_get_groups (OOBS_GROUPS_CONFIG (oobs_groups_config_get ()));
+
+  valid = oobs_list_get_iter_first (groups_list, &list_iter);
+
+  while (valid) {
+    group = OOBS_GROUP (oobs_list_get (groups_list, &list_iter));
+
+    oobs_group_remove_user (group, user);
+
+    valid = oobs_list_iter_next (priv->users_list, &list_iter);
+  }
+
+
+  /* Then remove user from the list */
   valid = oobs_list_get_iter_first (priv->users_list, &list_iter);
 
   while (valid) {

@@ -53,12 +53,17 @@ struct _OobsGroupPrivate {
   gchar *password;
   gid_t  gid;
 
+  /* List of names received from the backends, possibly with unknown users */
+  GList *usernames;
+  /* List of OobsUsers updated from the above, only containing known users,
+   * and working has a cache to access the above from public API. */
   GList *users;
 };
 
-static void oobs_group_class_init (OobsGroupClass *class);
-static void oobs_group_init       (OobsGroup      *group);
-static void oobs_group_finalize   (GObject       *object);
+static void oobs_group_class_init  (OobsGroupClass *class);
+static void oobs_group_init        (OobsGroup      *group);
+static void oobs_group_constructed (GObject        *object);
+static void oobs_group_finalize    (GObject        *object);
 
 static void oobs_group_set_property (GObject      *object,
 				     guint         prop_id,
@@ -72,8 +77,6 @@ static void oobs_group_get_property (GObject      *object,
 static void oobs_group_commit             (OobsObject *object);
 static void oobs_group_update             (OobsObject *object);
 static void oobs_group_get_update_message (OobsObject *object);
-
-static GList* get_users_list (OobsGroup *group);
 
 enum {
   PROP_0,
@@ -92,6 +95,7 @@ oobs_group_class_init (OobsGroupClass *class)
 
   object_class->set_property = oobs_group_set_property;
   object_class->get_property = oobs_group_get_property;
+  object_class->constructed  = oobs_group_constructed;
   object_class->finalize     = oobs_group_finalize;
 
   oobs_class->commit = oobs_group_commit;
@@ -137,9 +141,46 @@ oobs_group_init (OobsGroup *group)
   priv->config    = oobs_groups_config_get ();
   priv->groupname = NULL;
   priv->password  = NULL;
+  priv->usernames = NULL;
   priv->users     = NULL;
 
   group->_priv = priv;
+}
+
+/*
+ * Clear OobsUsers list and fill it with updated references.
+ */
+static void
+oobs_group_users_updated (OobsGroup        *group,
+                          OobsUsersConfig  *users_config)
+{
+  OobsGroupPrivate *priv;
+  OobsUser *user;
+  GList *l;
+
+  priv = OOBS_GROUP_GET_PRIVATE (group);
+
+  g_list_foreach (priv->users, (GFunc) g_object_unref, NULL);
+  g_list_free (priv->users);
+  priv->users = NULL;
+
+  for (l = priv->usernames; l; l = l->next)
+    {
+      user = oobs_users_config_get_from_login (users_config, l->data);
+
+      /* A reference has already been added by the above call,
+        * keep it until user is removed from list or the group is destroyed. */
+      if (user)
+	  priv->users = g_list_prepend (priv->users, user);
+    }
+}
+
+static void
+oobs_group_constructed (GObject *object)
+{
+  /* stay tuned of changes in users config */
+  g_signal_connect_swapped (oobs_users_config_get (), "updated",
+                            G_CALLBACK (oobs_group_users_updated), object);
 }
 
 static void
@@ -217,6 +258,9 @@ oobs_group_finalize (GObject *object)
       g_free (priv->groupname);
       g_free (priv->password);
 
+      g_list_foreach (priv->usernames, (GFunc) g_free, NULL);
+      g_list_free (priv->usernames);
+
       g_list_foreach (priv->users, (GFunc) g_object_unref, NULL);
       g_list_free (priv->users);
     }
@@ -225,37 +269,17 @@ oobs_group_finalize (GObject *object)
     (* G_OBJECT_CLASS (oobs_group_parent_class)->finalize) (object);
 }
 
-static GList*
-get_users_list (OobsGroup *group)
-{
-  GList *users, *elem, *usernames = NULL;
-  OobsUser *user;
-
-  users = elem = oobs_group_get_users (group);
-
-  while (elem)
-    {
-      user = elem->data;
-      usernames = g_list_prepend (usernames, (gpointer) oobs_user_get_login_name (user));
-
-      elem = elem->next;
-    }
-
-  g_list_free (users);
-  return usernames;
-}
-
 OobsGroup*
 _oobs_group_create_from_dbus_reply (OobsObject      *object,
-                                    GList          **users_ptr,
                                     DBusMessage     *reply,
                                     DBusMessageIter  struct_iter)
 {
   DBusMessageIter iter;
   guint32 gid;
   const gchar *groupname, *passwd;
-  GList   *users;
   OobsGroup *group;
+  OobsGroupPrivate *priv;
+  OobsObject *users_config;
 
   dbus_message_iter_recurse (&struct_iter, &iter);
 
@@ -263,16 +287,25 @@ _oobs_group_create_from_dbus_reply (OobsObject      *object,
   passwd = utils_get_string (&iter);
   gid = utils_get_uint (&iter);
 
-  users = utils_get_string_list_from_dbus_reply (reply, &iter);
-
-  if (users_ptr)
-    *users_ptr = users;
-
   group = oobs_group_new (groupname);
   g_object_set (G_OBJECT (group),
                 "password", passwd,
                 "gid", gid,
                 NULL);
+
+  /* This list is kept in this form rather than as OobsUsers* because
+   * we don't want to remove unknown users from groups (users not in
+   * /etc/passwd such as that from LDAP). */
+  priv = OOBS_GROUP_GET_PRIVATE (group);
+  priv->usernames = utils_get_string_list_from_dbus_reply (reply, &iter);
+
+  /* just update users if the object was already
+   * updated, update will be forced later if required
+   */
+  users_config = oobs_users_config_get ();
+  if (oobs_object_has_updated (users_config))
+    oobs_group_users_updated (group,
+                              OOBS_USERS_CONFIG (users_config));
 
   return OOBS_GROUP (group);
 }
@@ -282,10 +315,12 @@ _oobs_create_dbus_struct_from_group (OobsGroup       *group,
                                      DBusMessage     *message,
                                      DBusMessageIter *array_iter)
 {
+  OobsGroupPrivate *priv;
   DBusMessageIter struct_iter;
   guint32 gid;
   gchar *groupname, *passwd;
-  GList *users;
+
+  priv = OOBS_GROUP_GET_PRIVATE (group);
 
   g_object_get (group,
 		"name", &groupname,
@@ -293,19 +328,16 @@ _oobs_create_dbus_struct_from_group (OobsGroup       *group,
 		"gid",  &gid,
 		NULL);
 
-  users = get_users_list (OOBS_GROUP (group));
-
   dbus_message_iter_open_container (array_iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
 
   utils_append_string (&struct_iter, groupname);
   utils_append_string (&struct_iter, passwd);
   utils_append_uint (&struct_iter, gid);
 
-  utils_create_dbus_array_from_string_list (users, message, &struct_iter);
+  utils_create_dbus_array_from_string_list (priv->usernames, message, &struct_iter);
 
   dbus_message_iter_close_container (array_iter, &struct_iter);
 
-  g_list_free (users);
   g_free (groupname);
   g_free (passwd);
 }
@@ -348,7 +380,7 @@ oobs_group_update (OobsObject *object)
   reply = _oobs_object_get_dbus_message (object);
 
   dbus_message_iter_init (reply, &iter);
-  _oobs_group_create_from_dbus_reply (object, NULL, reply, iter);
+  _oobs_group_create_from_dbus_reply (object, reply, iter);
 }
 
 /**
@@ -463,22 +495,9 @@ oobs_group_get_users (OobsGroup *group)
 
   g_return_val_if_fail (OOBS_IS_GROUP (group), NULL);
 
-  priv = group->_priv;
+  priv = OOBS_GROUP_GET_PRIVATE (group);
+
   return g_list_copy (priv->users);
-}
-
-void
-oobs_group_clear_users (OobsGroup *group)
-{
-  OobsGroupPrivate *priv;
-
-  g_return_if_fail (OOBS_IS_GROUP (group));
-
-  priv = group->_priv;
-
-  g_list_foreach (priv->users, (GFunc) g_object_unref, NULL);
-  g_list_free (priv->users);
-  priv->users = NULL;
 }
 
 /**
@@ -494,13 +513,22 @@ oobs_group_add_user (OobsGroup *group,
 		     OobsUser  *user)
 {
   OobsGroupPrivate *priv;
+  const char *login;
 
   g_return_if_fail (OOBS_IS_GROUP (group));
   g_return_if_fail (OOBS_IS_USER (user));
   
-  priv = group->_priv;
+  priv = OOBS_GROUP_GET_PRIVATE (group);
 
-  /* try to avoid several instances */
+  login = oobs_user_get_login_name (user);
+
+  /* Update usernames list and OobsUsers list. First is used to commit,
+   * second is used for public API. */
+
+  /* Try to avoid several occurrences */
+  if (!g_list_find_custom (priv->usernames, login, (GCompareFunc) strcmp))
+    priv->usernames = g_list_prepend (priv->usernames, g_strdup (login));
+
   if (!g_list_find (priv->users, user))
     priv->users = g_list_prepend (priv->users, g_object_ref (user));
 }
@@ -518,14 +546,31 @@ oobs_group_remove_user (OobsGroup *group,
 			OobsUser  *user)
 {
   OobsGroupPrivate *priv;
+  GList *l;
+  const char *login;
 
   g_return_if_fail (OOBS_IS_GROUP (group));
   g_return_if_fail (OOBS_IS_USER (user));
   
-  priv = group->_priv;
+  priv = OOBS_GROUP_GET_PRIVATE (group);
 
-  /* there might be several instances */
-  priv->users = g_list_remove_all (priv->users, user);
+  login = oobs_user_get_login_name (user);
+
+  /* Update usernames list and OobsUsers list. First is used to commit,
+   * second is used for public API. */
+
+  /* There might be several instances */
+  while ((l = g_list_find_custom (priv->usernames, login, (GCompareFunc) strcmp)))
+    {
+      g_free (l->data);
+      priv->usernames = g_list_delete_link (priv->usernames, l);
+    }
+
+  while ((l = g_list_find (priv->users, user)))
+    {
+      g_object_unref (user);
+      priv->users = g_list_delete_link (priv->users, l);
+    }
 }
 
 /**

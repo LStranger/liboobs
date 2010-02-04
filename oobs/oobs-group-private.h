@@ -30,7 +30,6 @@ G_BEGIN_DECLS
 
 OobsGroup*
 _oobs_group_create_from_dbus_reply  (OobsObject      *object,
-                                     GList          **users_ptr,
                                      DBusMessage     *reply,
                                      DBusMessageIter  struct_iter);
 

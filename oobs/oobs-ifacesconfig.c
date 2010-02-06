@@ -20,8 +20,12 @@
 
 #include <dbus/dbus.h>
 #include <glib-object.h>
-#include <libhal.h>
 #include <string.h>
+
+#ifdef HAVE_HAL
+#include <libhal.h>
+#endif
+
 #include "oobs-session-private.h"
 #include "oobs-list-private.h"
 #include "oobs-object-private.h"

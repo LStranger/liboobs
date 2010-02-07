@@ -256,13 +256,16 @@ oobs_group_finalize (GObject *object)
   if (priv)
     {
       g_free (priv->groupname);
-      g_free (priv->password);
 
       g_list_foreach (priv->usernames, (GFunc) g_free, NULL);
       g_list_free (priv->usernames);
 
       g_list_foreach (priv->users, (GFunc) g_object_unref, NULL);
       g_list_free (priv->users);
+
+      /* Erase password field in case it's not done */
+      memset (priv->password, 0, strlen (priv->password));
+      g_free (priv->password);
     }
 
   if (G_OBJECT_CLASS (oobs_group_parent_class)->finalize)
@@ -345,12 +348,18 @@ _oobs_create_dbus_struct_from_group (OobsGroup       *group,
 static void
 oobs_group_commit (OobsObject *object)
 {
+  OobsGroupPrivate *priv;
   DBusMessage *message;
   DBusMessageIter iter;
 
   message = _oobs_object_get_dbus_message (object);
   dbus_message_iter_init_append (message, &iter);
   _oobs_create_dbus_struct_from_group (OOBS_GROUP (object), message, &iter);
+
+  /* Erase password field as soon as possible */
+  priv = OOBS_GROUP_GET_PRIVATE (OOBS_GROUP (object));
+  memset (priv->password, 0, strlen (priv->password));
+  g_free (priv->password);
 }
 
 /*

@@ -435,7 +435,6 @@ oobs_user_finalize (GObject *object)
   if (priv)
     {
       g_free (priv->username);
-      g_free (priv->password);
       g_free (priv->homedir);
       g_free (priv->shell);
       g_free (priv->full_name);
@@ -447,6 +446,10 @@ oobs_user_finalize (GObject *object)
 
       if (priv->main_group)
 	g_object_unref (priv->main_group);
+
+      /* Erase password field in case it's not done */
+      memset (priv->password, 0, strlen (priv->password));
+      g_free (priv->password);
     }
 
   if (G_OBJECT_CLASS (oobs_user_parent_class)->finalize)
@@ -611,6 +614,7 @@ create_dbus_struct_from_user (OobsUser        *user,
 static void
 oobs_user_commit (OobsObject *object)
 {
+  OobsUserPrivate *priv;
   DBusMessage *message;
   DBusMessageIter iter, struct_iter;
 
@@ -620,6 +624,11 @@ oobs_user_commit (OobsObject *object)
   dbus_message_iter_open_container (&iter, DBUS_TYPE_STRUCT, NULL, &struct_iter);
   create_dbus_struct_from_user (OOBS_USER (object), message, &struct_iter);
   dbus_message_iter_close_container (&iter, &struct_iter);
+
+  /* Erase password field as soon as possible */
+  priv = OOBS_USER_GET_PRIVATE (OOBS_USER (object));
+  memset (priv->password, 0, strlen (priv->password));
+  g_free (priv->password);
 }
 
 /*

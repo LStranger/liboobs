@@ -18,6 +18,7 @@
  * Authors: Carlos Garnacho Parro  <carlosg@gnome.org>
  */
 
+#include "config.h"
 #include <dbus/dbus.h>
 #include <glib-object.h>
 #include <string.h>
@@ -37,7 +38,6 @@
 #include "oobs-iface-ppp.h"
 #include "iface-state-monitor.h"
 #include "utils.h"
-#include "config.h"
 
 /**
  * SECTION:oobs-ifacesconfig

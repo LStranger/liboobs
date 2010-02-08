@@ -65,8 +65,22 @@ dnl HAL detection
 dnl =====================================================
 PKG_CHECK_MODULES(HAL, hal >= $HAL_REQUIRED, have_hal=yes, have_hal=no)
 
-if test "$have_hal" = "yes"; then
-  AC_DEFINE(HAVE_HAL, [1], [whether HAL was found])
+AC_ARG_WITH([hal],
+        [AS_HELP_STRING([--with-hal],
+        [Enable HAL support.])],
+        [with_hal="$withval"],[with_hal="no"])
+
+if test x"$have_hal" = x"yes" && test x"$with_hal" = x"yes"; then
+        AC_DEFINE(WITH_HAL,,"Using HAL")
+else
+        if test x"$with_hal" = x"yes"; then
+                AC_MSG_ERROR([HAL Library requirements ($HAL_REQUIRED)
+not met; consider using --with-hal=no option, or adjusting the PKG_CONFIG_PATH
+environment variable if your libraries are in a nonstandard prefix so pkg-config
+can find them.])
+        else
+                AC_MSG_WARN([HAL Library requirements ($HAL_REQUIRED) not met; disabling HAL support.])
+        fi
 fi
 
 AC_SUBST(HAL_LIBS)

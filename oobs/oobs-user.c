@@ -447,9 +447,11 @@ oobs_user_finalize (GObject *object)
       if (priv->main_group)
 	g_object_unref (priv->main_group);
 
-      /* Erase password field in case it's not done */
-      memset (priv->password, 0, strlen (priv->password));
-      g_free (priv->password);
+      /* Erase password field in case it's not done yet */
+      if (priv->password) {
+	memset (priv->password, 0, strlen (priv->password));
+	g_free (priv->password);
+      }
     }
 
   if (G_OBJECT_CLASS (oobs_user_parent_class)->finalize)
@@ -628,7 +630,6 @@ oobs_user_commit (OobsObject *object)
   /* Erase password field as soon as possible */
   priv = OOBS_USER_GET_PRIVATE (OOBS_USER (object));
   memset (priv->password, 0, strlen (priv->password));
-  g_free (priv->password);
 }
 
 /*

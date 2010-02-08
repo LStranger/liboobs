@@ -172,10 +172,10 @@ oobs_users_config_init (OobsUsersConfig *config)
   priv->users_list = _oobs_list_new (OOBS_TYPE_USER);
   config->_priv = priv;
 
-  priv->groups = g_hash_table_new_full (NULL, NULL, g_object_unref, NULL);
+  priv->groups = g_hash_table_new (NULL, NULL);
 }
 
-static void
+void
 free_configuration (OobsUsersConfig *config)
 {
   OobsUsersConfigPrivate *priv;
@@ -351,14 +351,14 @@ oobs_users_config_update (OobsObject *object)
       oobs_list_append (priv->users_list, &list_iter);
       oobs_list_set    (priv->users_list, &list_iter, G_OBJECT (user));
 
+      g_object_unref (user);
+
       /* keep the group name in a hashtable, this will be needed
        * each time the groups configuration changes
        */
       g_hash_table_insert (priv->groups,
-                           g_object_ref (user),
+                           user,
                            (gpointer) gid);
-
-      g_object_unref (user);
 
       dbus_message_iter_next (&elem_iter);
     }
@@ -533,6 +533,8 @@ oobs_users_config_delete_user (OobsUsersConfig *config, OobsUser *user)
 
     oobs_group_remove_user (group, user);
 
+    g_object_unref (group);
+
     valid = oobs_list_iter_next (priv->users_list, &list_iter);
   }
 
@@ -543,8 +545,12 @@ oobs_users_config_delete_user (OobsUsersConfig *config, OobsUser *user)
   while (valid) {
     list_user = OOBS_USER (oobs_list_get (priv->users_list, &list_iter));
 
-    if (list_user == user)
+    if (list_user == user) {
+      g_object_unref (list_user);
       break;
+    }
+
+    g_object_unref (list_user);
 
     valid = oobs_list_iter_next (priv->users_list, &list_iter);
   }

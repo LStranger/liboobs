@@ -55,7 +55,6 @@ struct _OobsSessionPrivate
 
 static void oobs_session_class_init (OobsSessionClass *class);
 static void oobs_session_init       (OobsSession      *session);
-static void oobs_session_finalize   (GObject         *object);
 
 static GObject * oobs_session_constructor (GType                  type,
 					   guint                  n_construct_properties,
@@ -69,6 +68,7 @@ static void oobs_session_get_property (GObject      *object,
 				       guint         prop_id,
 				       GValue       *value,
 				       GParamSpec   *pspec);
+
 enum
 {
   PROP_0,
@@ -85,7 +85,6 @@ oobs_session_class_init (OobsSessionClass *class)
   object_class->constructor  = oobs_session_constructor;
   object_class->set_property = oobs_session_set_property;
   object_class->get_property = oobs_session_get_property;
-  object_class->finalize     = oobs_session_finalize;
 
   g_object_class_install_property (object_class,
 				   PROP_PLATFORM,
@@ -117,40 +116,6 @@ oobs_session_init (OobsSession *session)
   priv->session_objects  = NULL;
   priv->is_authenticated = FALSE;
   session->_priv = priv;
-}
-
-static void
-unregister_object_node (OobsSessionPrivate *priv, GList *node)
-{
-  priv->session_objects = g_list_remove_link (priv->session_objects, node);
-
-  g_object_unref (G_OBJECT (node->data));
-  g_list_free_1 (node);
-}
-
-static void
-unregister_objects_list (OobsSessionPrivate *priv)
-{
-  while (priv->session_objects)
-    unregister_object_node (priv, priv->session_objects);
-}
-
-static void
-oobs_session_finalize (GObject *object)
-{
-  OobsSession *session;
-  OobsSessionPrivate *priv;
-
-  g_return_if_fail (OOBS_IS_SESSION (object));
-
-  session = OOBS_SESSION (object);
-  priv    = session->_priv;
-
-  if (priv)
-    unregister_objects_list (priv);
-
-  if (G_OBJECT_CLASS (oobs_session_parent_class)->finalize)
-    (* G_OBJECT_CLASS (oobs_session_parent_class)->finalize) (object);
 }
 
 static GObject *
@@ -547,43 +512,4 @@ _oobs_session_get_connection_bus (OobsSession *session)
 
   priv = session->_priv;
   return priv->connection;
-}
-
-void
-_oobs_session_register_object (OobsSession *session, OobsObject *object)
-{
-  OobsSessionPrivate *priv;
-
-  if (!session || !object)
-    return;
-
-  priv = session->_priv;
-  priv->session_objects = g_list_prepend (priv->session_objects,
-					  g_object_ref (object));
-}
-
-void
-_oobs_session_unregister_object (OobsSession *session, OobsObject *object)
-{
-  OobsSessionPrivate *priv;
-  GList              *node;
-  gboolean            found;
-
-  if (!session || !object)
-    return;
-
-  priv  = session->_priv;
-  node  = priv->session_objects;
-  found = FALSE;
-
-  while (node && !found)
-    {
-      if (node->data == object)
-        {
-	  found = TRUE;
-	  unregister_object_node (priv, node);
-	}
-      else
-	node = node->next;
-    }
 }

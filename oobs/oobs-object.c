@@ -190,11 +190,7 @@ oobs_object_finalize (GObject *object)
   g_list_foreach (priv->pending_calls, (GFunc) dbus_pending_call_unref, NULL);
   g_list_free (priv->pending_calls);
 
-  _oobs_session_unregister_object (priv->session, obj);
-
-  /* Only now, we don't care about session */
   g_object_unref (priv->session);
-
   g_free (priv->remote_object);
   g_free (priv->path);
   g_free (priv->method);
@@ -288,7 +284,6 @@ connect_object_to_session (OobsObject *object)
       return;
     }
 
-  _oobs_session_register_object (priv->session, object);
   dbus_connection_add_filter (connection, changed_signal_filter, object, NULL);
 
   rule = g_strdup_printf ("type='signal',interface='%s',path='%s'",

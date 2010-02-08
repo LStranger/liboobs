@@ -32,11 +32,6 @@ G_BEGIN_DECLS
 
 DBusConnection* _oobs_session_get_connection_bus (OobsSession *session);
 
-void            _oobs_session_register_object    (OobsSession *session,
-						  OobsObject  *object);
-void            _oobs_session_unregister_object  (OobsSession *session,
-						  OobsObject  *object);
-
 G_END_DECLS
 
 #endif /* __OOBS_SESSION_PRIVATE_H */

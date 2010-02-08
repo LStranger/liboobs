@@ -596,7 +596,8 @@ create_dbus_struct_from_user (OobsUser        *user,
   utils_append_boolean (iter, enc_home);
   utils_append_boolean (iter, home_flags);
   utils_append_string (iter, locale);
-  /* TODO: use location when the backends support it */
+  /* TODO: use location and face when the backends support it */
+  utils_append_string (iter, "");
   utils_append_string (iter, "");
 
   g_free (login);

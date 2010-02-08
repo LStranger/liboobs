@@ -1,3 +1,15 @@
+Liboobs 2.29.90, 2010-02-08
+-----------------------------------------------
+Liboobs version 2.29.90 "Frosty" has been released.
+
+- OobsService is now an OobsObject, which should normally be committed separately
+- Don't remove unknown users from /etc/group (LDAP compliance)
+- Disable HAL support by default (Javier Jardón)
+- Make all OobsObjects real singletons
+- Ensure passwords are erased from memory
+- Fix reference counting with OobsUsers and OobsGroups
+
+
 Liboobs 2.29.3, 2010-01-25
 -----------------------------------------------
 Liboobs version 2.29.3 "Tune Up" has been released.

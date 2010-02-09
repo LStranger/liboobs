@@ -630,7 +630,8 @@ oobs_user_commit (OobsObject *object)
 
   /* Erase password field as soon as possible */
   priv = OOBS_USER_GET_PRIVATE (OOBS_USER (object));
-  memset (priv->password, 0, strlen (priv->password));
+  if (priv->password)
+    memset (priv->password, 0, strlen (priv->password));
 }
 
 /*

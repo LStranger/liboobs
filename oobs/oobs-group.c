@@ -360,7 +360,8 @@ oobs_group_commit (OobsObject *object)
 
   /* Erase password field as soon as possible */
   priv = OOBS_GROUP_GET_PRIVATE (OOBS_GROUP (object));
-  memset (priv->password, 0, strlen (priv->password));
+  if (priv->password)
+    memset (priv->password, 0, strlen (priv->password));
 }
 
 /*

@@ -175,7 +175,7 @@ oobs_users_config_init (OobsUsersConfig *config)
   priv->groups = g_hash_table_new (NULL, NULL);
 }
 
-void
+static void
 free_configuration (OobsUsersConfig *config)
 {
   OobsUsersConfigPrivate *priv;

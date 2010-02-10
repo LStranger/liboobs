@@ -21,8 +21,10 @@
 #include <dbus/dbus.h>
 #include <glib-object.h>
 #include <string.h>
+
 #include "oobs-object.h"
 #include "oobs-list.h"
+#include "oobs-list-private.h"
 
 /**
  * SECTION:oobs-list
@@ -169,7 +171,7 @@ check_iter (OobsListPrivate *priv, OobsListIter *iter)
   return TRUE;
 }
 
-GObject*
+OobsList*
 _oobs_list_new (const GType contained_type)
 {
   return g_object_new (OOBS_TYPE_LIST,

@@ -300,7 +300,7 @@ oobs_ifaces_config_finalize (GObject *object)
     (* G_OBJECT_CLASS (oobs_ifaces_config_parent_class)->finalize) (object);
 }
 
-GObject*
+static GObject*
 create_iface_from_message (DBusMessage     *message,
 			   DBusMessageIter *iter,
 			   gint             type,

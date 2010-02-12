@@ -87,6 +87,10 @@ static void oobs_object_get_property (GObject       *object,
 				      GValue        *value,
 				      GParamSpec    *pspec);
 
+static DBusHandlerResult changed_signal_filter (DBusConnection *connection,
+                                                DBusMessage    *message,
+                                                void           *user_data);
+
 static void connect_object_to_session (OobsObject *object);
 
 enum
@@ -179,6 +183,7 @@ oobs_object_finalize (GObject *object)
 {
   OobsObject *obj;
   OobsObjectPrivate *priv;
+  DBusConnection *connection;
 
   g_return_if_fail (OOBS_IS_OBJECT (object));
 
@@ -189,6 +194,9 @@ oobs_object_finalize (GObject *object)
   g_list_foreach (priv->pending_calls, (GFunc) dbus_pending_call_cancel, NULL);
   g_list_foreach (priv->pending_calls, (GFunc) dbus_pending_call_unref, NULL);
   g_list_free (priv->pending_calls);
+
+  connection = _oobs_session_get_connection_bus (priv->session);
+  dbus_connection_remove_filter (connection, changed_signal_filter, object);
 
   g_object_unref (priv->session);
   g_free (priv->remote_object);

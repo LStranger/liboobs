@@ -104,9 +104,6 @@ oobs_group_class_init (OobsGroupClass *class)
   oobs_class->update = oobs_group_update;
   oobs_class->get_update_message = oobs_group_get_update_message;
 
-  /* override the singleton check */
-  oobs_class->singleton = FALSE;
-
   g_object_class_install_property (object_class,
 				   PROP_GROUPNAME,
 				   g_param_spec_string ("name",

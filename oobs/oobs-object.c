@@ -123,9 +123,6 @@ oobs_object_class_init (OobsObjectClass *class)
   object_class->set_property = oobs_object_set_property;
   object_class->finalize     = oobs_object_finalize;
 
-  /* some object types don't need to be singletons, they override this */
-  class->singleton = TRUE;
-
   dbus_connection_quark = g_quark_from_static_string ("oobs-dbus-connection");
 
   g_object_class_install_property (object_class,
@@ -212,32 +209,12 @@ oobs_object_constructor (GType                  type,
 			 guint                  n_construct_properties,
 			 GObjectConstructParam *construct_params)
 {
-  OobsObjectClass *class;
-  static GHashTable *type_table;
   GObject *object;
 
-  /* some objects that inherit from OobsObject have to be
-   * singletons, keep a hash table with references to them
-   */
-  if (!type_table)
-    type_table = g_hash_table_new (g_direct_hash, g_direct_equal);
-
-  object = g_hash_table_lookup (type_table, GINT_TO_POINTER (type));
-
-  if (object)
-    {
-      class = OOBS_OBJECT_GET_CLASS (object);
-
-      /* if has to be singleton and exists, return it */
-      if (class->singleton)
-	return object;
-    }
-
-  /* this class should not be limited to singletons, create (possibly new) object anyway */
   object = (* G_OBJECT_CLASS (oobs_object_parent_class)->constructor) (type,
                                                                        n_construct_properties,
                                                                        construct_params);
-  g_hash_table_insert (type_table, GINT_TO_POINTER (type), object);
+
   connect_object_to_session (OOBS_OBJECT (object));
 
   return object;

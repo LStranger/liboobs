@@ -89,9 +89,6 @@ oobs_service_class_init (OobsServiceClass *class)
   oobs_object_class->update              = oobs_service_update;
   oobs_object_class->get_update_message  = oobs_service_get_update_message;
 
-  /* override the singleton check */
-  oobs_object_class->singleton = FALSE;
-
   g_object_class_install_property (object_class,
 				   PROP_NAME,
 				   g_param_spec_string ("name",

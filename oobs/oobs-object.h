@@ -59,9 +59,6 @@ struct _OobsObjectClass
   void (*committed) (OobsObject *object);
   void (*changed)   (OobsObject *object);
 
-  /* variables */
-  gboolean singleton;
-
   void (*_oobs_padding1) (void);
   void (*_oobs_padding2) (void);
 };

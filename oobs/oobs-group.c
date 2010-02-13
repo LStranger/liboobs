@@ -48,10 +48,12 @@ typedef struct _OobsGroupPrivate OobsGroupPrivate;
 
 struct _OobsGroupPrivate {
   OobsObject *config;
+  OobsObject *users_config;
   gint   key;
   gchar *groupname;
   gchar *password;
   gid_t  gid;
+  gulong updated_id;
 
   /* List of names received from the backends, possibly with unknown users */
   GList *usernames;
@@ -141,6 +143,7 @@ oobs_group_init (OobsGroup *group)
   priv->config    = oobs_groups_config_get ();
   priv->groupname = NULL;
   priv->password  = NULL;
+  priv->updated_id = 0;
   priv->usernames = NULL;
   priv->users     = NULL;
 
@@ -178,9 +181,17 @@ oobs_group_users_updated (OobsGroup        *group,
 static void
 oobs_group_constructed (GObject *object)
 {
-  /* stay tuned of changes in users config */
-  g_signal_connect_swapped (oobs_users_config_get (), "updated",
-                            G_CALLBACK (oobs_group_users_updated), object);
+  OobsGroupPrivate *priv;
+
+  priv = OOBS_GROUP_GET_PRIVATE (OOBS_GROUP (object));
+
+  /* Be notified when users config is destroyed, to avoid disconnecting signal in finalize() */
+  priv->users_config = oobs_users_config_get ();
+  g_object_add_weak_pointer (G_OBJECT (priv->users_config), (gpointer) &priv->users_config);
+
+  /* Stay tuned of changes in users config */
+  priv->updated_id = g_signal_connect_swapped (priv->users_config, "updated",
+                                               G_CALLBACK (oobs_group_users_updated), object);
 }
 
 static void
@@ -255,6 +266,9 @@ oobs_group_finalize (GObject *object)
 
   if (priv)
     {
+      if (priv->users_config)
+	g_signal_handler_disconnect (priv->users_config, priv->updated_id);
+
       g_free (priv->groupname);
 
       g_list_foreach (priv->usernames, (GFunc) g_free, NULL);

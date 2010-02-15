@@ -591,7 +591,7 @@ create_dbus_struct_from_user (OobsUser        *user,
   utils_append_string (iter, shell);
   utils_append_int (iter, passwd_flags);
   utils_append_boolean (iter, enc_home);
-  utils_append_boolean (iter, home_flags);
+  utils_append_int (iter, home_flags);
   utils_append_string (iter, locale);
   /* TODO: use location and face when the backends support it */
   utils_append_string (iter, "");

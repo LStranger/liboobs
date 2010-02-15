@@ -48,12 +48,7 @@ content_files =	version.xml
 # Extra options to supply to gtkdoc-fixref.
 FIXXREF_OPTIONS=
 
-if ENABLE_GTK_DOC
 include $(top_srcdir)/gtk-doc.make
-else
-CLEANFILES =
-EXTRA_DIST =
-endif
 
 # Other files to distribute.
 EXTRA_DIST += version.xml.in

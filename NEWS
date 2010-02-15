@@ -1,3 +1,12 @@
+Liboobs 2.29.91, 2010-02-15
+-----------------------------------------------
+Liboobs version 2.29.91 "Noon" has been released.
+
+- Various crash fixes
+- Improve references handling around OobsObjects
+- Fix appending user home flags to DBusMessage
+
+
 Liboobs 2.29.90, 2010-02-08
 -----------------------------------------------
 Liboobs version 2.29.90 "Frosty" has been released.

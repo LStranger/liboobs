@@ -1,5 +1,5 @@
 AC_PREREQ(2.52)
-AC_INIT(liboobs, 2.29.90, http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-system-tools)
+AC_INIT(liboobs, 2.29.91, http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-system-tools)
 AC_CONFIG_SRCDIR(oobs/oobs-session.c)
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])

@@ -496,7 +496,7 @@ _oobs_user_create_from_dbus_reply (OobsUser        *user,
 
   passwd_flags = utils_get_int (&iter);
   passwd_empty = passwd_flags & 1;
-  passwd_disabled = passwd_flags & (1 << 1);
+  passwd_disabled = ((passwd_flags & (1 << 1)) != 0);
 
   enc_home = utils_get_boolean (&iter);
   home_flags = utils_get_int (&iter);

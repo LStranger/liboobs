@@ -1,3 +1,10 @@
+Liboobs 2.29.92, 2010-03-08
+-----------------------------------------------
+Liboobs version 2.29.92 "Midnight" has been released.
+
+   - Fix 'password-disabled' property (account lock support)
+
+
 Liboobs 2.29.91, 2010-02-15
 -----------------------------------------------
 Liboobs version 2.29.91 "Noon" has been released.

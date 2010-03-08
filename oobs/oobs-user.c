@@ -209,8 +209,8 @@ oobs_user_class_init (OobsUserClass *class)
 				   PROP_PASSWD_DISABLED,
 				   g_param_spec_boolean ("password-disabled",
 							 "Disabled account",
-							 "Whether user is allowed to log in",
-							 TRUE,
+							 "Whether user is forbidden logging in",
+							 FALSE,
 							 G_PARAM_READWRITE));
   g_object_class_install_property (object_class,
                                    PROP_ENCRYPTED_HOME,

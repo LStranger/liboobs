@@ -166,16 +166,18 @@ oobs_self_config_commit (OobsObject *object)
   OobsSelfConfigPrivate *priv;
   DBusMessageIter iter, array_iter;
   DBusMessage *message;
+  guint32 uid;
 
   priv = OOBS_SELF_CONFIG (object)->_priv;
 
   if (!priv->user)
     return;
 
+  uid = priv->uid;
   message = _oobs_object_get_dbus_message (object);
   dbus_message_iter_init_append (message, &iter);
 
-  utils_append_uint (&iter, priv->uid);
+  utils_append_uint (&iter, uid);
 
   /* GECOS fields */
   dbus_message_iter_open_container (&iter,
@@ -205,13 +207,15 @@ oobs_self_config_get_update_message (OobsObject *object)
   OobsSelfConfigPrivate *priv;
   DBusMessageIter iter;
   DBusMessage *message;
+  guint32 uid;
 
   priv = OOBS_SELF_CONFIG (object)->_priv;
 
   message = _oobs_object_get_dbus_message (object);
   dbus_message_iter_init_append (message, &iter);
 
-  utils_append_uint (&iter, priv->uid);
+  uid = priv->uid;
+  utils_append_uint (&iter, uid);
 }
 
 /**

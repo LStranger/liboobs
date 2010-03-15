@@ -390,7 +390,7 @@ oobs_users_config_commit (OobsObject *object)
   OobsUsersConfigPrivate *priv;
   DBusMessage *message;
   DBusMessageIter iter;
-  guint32 default_gid;
+  guint32 default_gid, minimum_uid, maximum_uid;
 
   priv = OOBS_USERS_CONFIG (object)->_priv;
   message = _oobs_object_get_dbus_message (object);
@@ -398,8 +398,12 @@ oobs_users_config_commit (OobsObject *object)
   dbus_message_iter_init_append (message, &iter);
 
   utils_create_dbus_array_from_string_list (priv->shells, message, &iter);
-  utils_append_uint (&iter, priv->minimum_uid);
-  utils_append_uint (&iter, priv->maximum_uid);
+
+  minimum_uid = priv->minimum_uid;
+  maximum_uid = priv->maximum_uid;
+  utils_append_uint (&iter, minimum_uid);
+  utils_append_uint (&iter, maximum_uid);
+
   utils_append_string (&iter, priv->default_home);
   utils_append_string (&iter, priv->default_shell);
 

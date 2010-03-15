@@ -231,6 +231,7 @@ oobs_groups_config_commit (OobsObject *object)
   OobsListIter list_iter;
   GObject *group;
   gboolean valid;
+  guint32 minimum_gid, maximum_gid;
 
   priv = OOBS_GROUPS_CONFIG (object)->_priv;
   message = _oobs_object_get_dbus_message (object);
@@ -259,6 +260,11 @@ oobs_groups_config_commit (OobsObject *object)
     }
 
   dbus_message_iter_close_container (&iter, &array_iter);
+
+  minimum_gid = priv->minimum_gid;
+  maximum_gid = priv->maximum_gid;
+  utils_append_uint (&iter, minimum_gid);
+  utils_append_uint (&iter, maximum_gid);
 }
 
 /**

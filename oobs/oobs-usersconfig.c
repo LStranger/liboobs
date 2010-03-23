@@ -539,7 +539,7 @@ oobs_users_config_delete_user (OobsUsersConfig *config, OobsUser *user)
 
     g_object_unref (group);
 
-    valid = oobs_list_iter_next (priv->users_list, &list_iter);
+    valid = oobs_list_iter_next (groups_list, &list_iter);
   }
 
 

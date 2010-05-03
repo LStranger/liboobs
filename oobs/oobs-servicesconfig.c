@@ -147,6 +147,13 @@ create_runlevels_list_from_dbus_reply (OobsObject      *object,
 
   priv = OOBS_SERVICES_CONFIG (object)->_priv;
 
+  if (priv->runlevels)
+  {
+    g_list_foreach (priv->runlevels, (GFunc) free_runlevel, NULL);
+    g_list_free (priv->runlevels);
+    priv->runlevels = NULL;
+  }
+
   while (dbus_message_iter_get_arg_type (&iter) == DBUS_TYPE_STRING)
     {
       name = utils_get_string (&iter);

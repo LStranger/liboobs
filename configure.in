@@ -49,7 +49,7 @@ dnl =====================================================
 dnl required packages detection
 dnl =====================================================
 PKG_CHECK_MODULES(OOBS, [
-		  dbus-1 >= $DBUS_REQUIRED
+		  dbus-glib-1 >= $DBUS_REQUIRED
 		  glib-2.0    >= $GLIB_REQUIRED
 		  gobject-2.0 >= $GLIB_REQUIRED
 		  system-tools-backends-2.0 >= $STB_REQUIRED

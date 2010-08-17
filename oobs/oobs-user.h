@@ -56,9 +56,25 @@ struct _OobsUserClass {
   void (*_oobs_padding4) (void);
 };
 
+/**
+ * OobsUserHomeFlags:
+ * @OOBS_USER_REMOVE_HOME: When removing an #OobsUser, also remove home dir; when
+ *     committing, if home dir changes, remove old home dir.
+ * @OOBS_USER_CHOWN_HOME: When creating or committing an #OobsUser, recursively
+ *     change the owner of home dir to user and main group.
+ * @OOBS_USER_COPY_HOME: When committing an #OobsUser and if home dir changes,
+ *     copy old home to new path, overwriting files if needed (!).
+ * @OOBS_USER_ERASE_HOME: When committing an #OobsUser and if home dir changes,
+ *     delete already present directory.
+ *
+ * Determine special behaviors regarding the home directory. Flags only apply to
+ * some operations (commit, add or delete user), and have no effect in other cases.
+ */
 typedef enum {
-  OOBS_USER_REMOVE_HOME = 1,
-  OOBS_USER_CHOWN_HOME  = 1 << 1
+  OOBS_USER_REMOVE_HOME  = 1,
+  OOBS_USER_CHOWN_HOME   = 1 << 1,
+  OOBS_USER_COPY_HOME    = 1 << 2,
+  OOBS_USER_ERASE_HOME   = 1 << 3
 } OobsUserHomeFlags;
 
 GType oobs_user_get_type (void);

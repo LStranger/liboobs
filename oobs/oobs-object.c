@@ -471,7 +471,9 @@ run_message_async (OobsObject          *object,
     }
 
   connection = _oobs_session_get_connection_bus (priv->session);
-  dbus_connection_send_with_reply (connection, message, &call, -1);
+  /* Ideally, backends should reply quickly, possibly saying operation is still pending.
+   * Since they currently block without replying, set the timeout to something long. */
+  dbus_connection_send_with_reply (connection, message, &call, INT_MAX);
 
   async_data = g_new0 (OobsObjectAsyncCallbackData, 1);
   async_data->object = g_object_ref (object);

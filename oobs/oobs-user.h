@@ -64,8 +64,8 @@ struct _OobsUserClass {
  *     change the owner of home dir to user and main group.
  * @OOBS_USER_COPY_HOME: When committing an #OobsUser and if home dir changes,
  *     copy old home to new path, overwriting files if needed (!).
- * @OOBS_USER_ERASE_HOME: When committing an #OobsUser and if home dir changes,
- *     delete already present directory.
+ * @OOBS_USER_ERASE_HOME: When creating an #OobsUser and a path for home dir is given,
+ *     or when committing a user and home dir changes, delete already present directory.
  *
  * Determine special behaviors regarding the home directory. Flags only apply to
  * some operations (commit, add or delete user), and have no effect in other cases.

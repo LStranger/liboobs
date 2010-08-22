@@ -98,6 +98,7 @@ G_CONST_RETURN gchar* oobs_user_get_shell (OobsUser *user);
 void oobs_user_set_shell (OobsUser *user, const gchar *shell);
 
 G_CONST_RETURN gchar* oobs_user_get_full_name (OobsUser *user);
+G_CONST_RETURN gchar* oobs_user_get_full_name_fallback (OobsUser *user);
 void oobs_user_set_full_name (OobsUser *user, const gchar *full_name);
 
 G_CONST_RETURN gchar* oobs_user_get_room_number (OobsUser *user);

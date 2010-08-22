@@ -903,6 +903,32 @@ oobs_user_get_full_name (OobsUser *user)
 }
 
 /**
+ * oobs_user_get_full_name_fallback:
+ * @user: An #OobsUser.
+ * 
+ * Returns the first GECOS field, usually the full name of the user,
+ * or the login name if the field is empty.
+ * 
+ * Return Value: A pointer to the full name or login name as a string.
+ *               This string must not be freed, modified or stored.
+ **/
+G_CONST_RETURN gchar*
+oobs_user_get_full_name_fallback (OobsUser *user)
+{
+  OobsUserPrivate *priv;
+
+  g_return_val_if_fail (user != NULL, NULL);
+  g_return_val_if_fail (OOBS_IS_USER (user), NULL);
+
+  priv = user->_priv;
+
+  if (priv->full_name && *priv->full_name != '\0')
+    return priv->full_name;
+  else
+    return priv->username;
+}
+
+/**
  * oobs_user_set_full_name:
  * @user: An #OobsUser.
  * @full_name: new full name for the user.

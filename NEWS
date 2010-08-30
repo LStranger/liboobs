@@ -1,3 +1,14 @@
+Liboobs 2.31.91, 2010-08-30
+-----------------------------------------------
+Liboobs version 2.31.91 "Better Break Late Than Never" has been released.
+
+  - Add new values to OobsUserHomeFlags to allow more operations
+    on home directory
+  - Update documentation for OOBS_USER_ERASE_HOME, whose signification was extended
+  - Add oobs_user_get_full_name_fallback(), providing always meaningful names
+  - Set D-Bus timeout to max for async replies
+  - Bump soname to 5.0.0 to reflect ABI break of last cycle (too late)
+
 Liboobs 2.31.1, 2010-05-27
 -----------------------------------------------
 Liboobs version 2.31.1 "Private" has been released.

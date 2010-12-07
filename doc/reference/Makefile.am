@@ -34,7 +34,7 @@ IGNORE_HFILES=	\
 # CFLAGS and LDFLAGS for compiling scan program. Only needed if your app/lib
 # contains GtkObjects/GObjects and you want to document signals and properties.
 INCLUDES = -I$(top_builddir) -I$(top_srcdir) $(OOBS_CFLAGS)
-GTKDOC_LIBS = $(top_builddir)/oobs/liboobs-1.la
+GTKDOC_LIBS = $(top_builddir)/oobs/liboobs-1.la $(OOBS_LIBS)
 
 # Extra options to supply to gtkdoc-mkdb.
 MKDB_OPTIONS=--output-format=xml

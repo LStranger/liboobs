@@ -29,7 +29,6 @@ G_BEGIN_DECLS
 
 OobsUser *
 _oobs_user_create_from_dbus_reply (OobsUser        *user,
-                                   gid_t           *gid_ptr,
                                    DBusMessage     *reply,
                                    DBusMessageIter  iter);
 

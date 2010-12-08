@@ -32,6 +32,7 @@
 #include "oobs-user.h"
 #include "oobs-user-private.h"
 #include "oobs-group.h"
+#include "oobs-groupsconfig.h"
 #include "oobs-defines.h"
 #include "utils.h"
 
@@ -50,10 +51,10 @@ typedef struct _OobsUserPrivate OobsUserPrivate;
 struct _OobsUserPrivate {
   OobsObject *config;
 
-  OobsGroup *main_group;
   gchar *username;
   gchar *password;
   uid_t  uid;
+  gid_t  gid;
   
   gchar *homedir;
   gchar *shell;
@@ -266,8 +267,9 @@ oobs_user_init (OobsUser *user)
   priv->locale        = NULL;
 
   /* This value ensures the backends will use the system default
-   * if UID were not changed manually. */
+   * if UID/GID were not changed manually. */
   priv->uid = G_MAXUINT32;
+  priv->gid = G_MAXUINT32;
 
   priv->passwd_empty    = FALSE;
   priv->passwd_disabled = FALSE;
@@ -441,9 +443,6 @@ oobs_user_finalize (GObject *object)
       g_free (priv->other_data);
       g_free (priv->locale);
 
-      if (priv->main_group)
-	g_object_unref (priv->main_group);
-
       /* Erase password field in case it's not done yet */
       if (priv->password) {
 	memset (priv->password, 0, strlen (priv->password));
@@ -457,10 +456,10 @@ oobs_user_finalize (GObject *object)
 
 OobsUser*
 _oobs_user_create_from_dbus_reply (OobsUser        *user,
-                                   gid_t           *gid_ptr,
                                    DBusMessage     *reply,
                                    DBusMessageIter  struct_iter)
 {
+  OobsUserPrivate *priv;
   DBusMessageIter iter, gecos_iter;
   guint32 uid, gid;
   const gchar *login, *passwd, *home, *shell;
@@ -474,10 +473,7 @@ _oobs_user_create_from_dbus_reply (OobsUser        *user,
   login = utils_get_string (&iter);
   passwd = utils_get_string (&iter);
   uid = utils_get_uint (&iter);
-
   gid = utils_get_uint (&iter);
-  if (gid_ptr)
-    *gid_ptr = gid;
 
   /* GECOS fields */
   dbus_message_iter_recurse (&iter, &gecos_iter);
@@ -521,6 +517,10 @@ _oobs_user_create_from_dbus_reply (OobsUser        *user,
                 "locale", locale,
                 NULL);
 
+  /* GID is only kept internally */
+  priv = user->_priv;
+  priv->gid = gid;
+
   return user;
 }
 
@@ -529,8 +529,8 @@ create_dbus_struct_from_user (OobsUser        *user,
 			      DBusMessage     *message,
 			      DBusMessageIter *iter)
 {
-  OobsGroup *group;
-  guint32 uid, gid;
+  OobsUserPrivate *priv;
+  guint32 uid;
   gchar *login, *password, *shell, *homedir;
   gchar *name, *room_number, *work_phone, *home_phone, *other_data;
   gchar *locale;
@@ -538,6 +538,8 @@ create_dbus_struct_from_user (OobsUser        *user,
   gboolean passwd_empty, passwd_disabled;
   gint passwd_flags, home_flags;
   DBusMessageIter data_iter;
+
+  priv = user->_priv;
 
   g_object_get (user,
 		"name", &login,
@@ -561,20 +563,12 @@ create_dbus_struct_from_user (OobsUser        *user,
    * since home dir, password and shell are allowed to be empty (see man 5 passwd) */
   g_return_val_if_fail (login, FALSE);
 
-  group = oobs_user_get_main_group (user);
-
-  /* G_MAXUINT32 is used to mean no main group */
-  if (group)
-    gid = oobs_group_get_gid (group);
-  else
-    gid = G_MAXUINT32;
-
   passwd_flags = passwd_empty | (passwd_disabled << 1);
 
   utils_append_string (iter, login);
   utils_append_string (iter, password);
   utils_append_uint (iter, uid);
-  utils_append_uint (iter, gid);
+  utils_append_uint (iter, priv->gid);
 
   dbus_message_iter_open_container (iter, DBUS_TYPE_ARRAY, DBUS_TYPE_STRING_AS_STRING, &data_iter);
 
@@ -658,7 +652,8 @@ oobs_user_update (OobsObject *object)
   reply = _oobs_object_get_dbus_message (object);
 
   dbus_message_iter_init (reply, &iter);
-  _oobs_user_create_from_dbus_reply (OOBS_USER (object), NULL, reply, iter);
+
+  _oobs_user_create_from_dbus_reply (OOBS_USER (object), reply, iter);
 }
 
 /**
@@ -764,19 +759,21 @@ oobs_user_set_uid (OobsUser *user, uid_t uid)
  * 
  * Returns the main group of this user.
  * 
- * Return Value: main group for the user. this value is owned
- *               by the #OobsUser object, you do not have to
- *               unref it.
+ * Return Value: main group for the user. Release reference when no longer needed.
  **/
 OobsGroup*
 oobs_user_get_main_group (OobsUser *user)
 {
   OobsUserPrivate *priv;
+  OobsObject *groups_config;
 
   g_return_val_if_fail (OOBS_IS_USER (user), NULL);
 
   priv = user->_priv;
-  return priv->main_group;
+  groups_config = oobs_groups_config_get ();
+
+  return oobs_groups_config_get_from_gid (OOBS_GROUPS_CONFIG (groups_config),
+                                          priv->gid);
 }
 
 /**
@@ -784,8 +781,7 @@ oobs_user_get_main_group (OobsUser *user)
  * @user: An #OobsUser.
  * @main_group: an #OobsGroup, new main group for the user.
  * 
- * Sets the main group for the user, adds a reference to
- * the new main group.
+ * Sets the main group for the user.
  **/
 void
 oobs_user_set_main_group (OobsUser  *user,
@@ -797,10 +793,7 @@ oobs_user_set_main_group (OobsUser  *user,
 
   priv = user->_priv;
 
-  if (priv->main_group)
-    g_object_unref (priv->main_group);
-
-  priv->main_group = (main_group) ? g_object_ref (main_group) : NULL;
+  priv->gid = (main_group) ? oobs_group_get_gid (main_group) : G_MAXUINT32;
 }
 
 /**

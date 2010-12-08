@@ -431,9 +431,9 @@ oobs_groups_config_get_from_name (OobsGroupsConfig *config, const gchar *name)
 }
 
 /**
- * oobs_groups_config_get_from_uid:
+ * oobs_groups_config_get_from_gid:
  * @config: An #OobsGroupsConfig.
- * @gid: the UID of the wanted group.
+ * @gid: the GID of the wanted group.
  *
  * Gets the (first) group whose GID is @gid. This is a convenience function
  * to avoid walking manually over the groups list.

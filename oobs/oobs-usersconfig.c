@@ -289,21 +289,6 @@ oobs_users_config_get_property (GObject      *object,
 }
 
 static void
-query_groups_foreach (OobsUser *user,
-		      gid_t     gid,
-		      gpointer  data)
-{
-  OobsGroupsConfig *groups_config = OOBS_GROUPS_CONFIG (data);
-  OobsGroup *group;
-
-  group = oobs_groups_config_get_from_gid (groups_config, gid);
-  oobs_user_set_main_group (user, group);
-
-  if (group)
-    g_object_unref (group);
-}
-
-static void
 oobs_users_config_groups_updated (OobsUsersConfig  *users,
 				  OobsGroupsConfig *groups)
 {
@@ -311,8 +296,6 @@ oobs_users_config_groups_updated (OobsUsersConfig  *users,
   OobsGroup *group;
 
   priv = users->_priv;
-  g_hash_table_foreach (priv->groups, (GHFunc) query_groups_foreach, groups);
-
   /* get the default group */
   if (priv->default_gid > 0)
     {
@@ -333,7 +316,6 @@ oobs_users_config_update (OobsObject *object)
   DBusMessageIter  iter, elem_iter;
   OobsListIter     list_iter;
   GObject         *user;
-  gid_t            gid;
 
   priv  = OOBS_USERS_CONFIG (object)->_priv;
   reply = _oobs_object_get_dbus_message (object);
@@ -346,19 +328,12 @@ oobs_users_config_update (OobsObject *object)
 
   while (dbus_message_iter_get_arg_type (&elem_iter) == DBUS_TYPE_STRUCT)
     {
-      user = G_OBJECT (_oobs_user_create_from_dbus_reply (NULL, &gid, reply, elem_iter));
+      user = G_OBJECT (_oobs_user_create_from_dbus_reply (NULL, reply, elem_iter));
 
       oobs_list_append (priv->users_list, &list_iter);
       oobs_list_set    (priv->users_list, &list_iter, G_OBJECT (user));
 
       g_object_unref (user);
-
-      /* keep the group name in a hashtable, this will be needed
-       * each time the groups configuration changes
-       */
-      g_hash_table_insert (priv->groups,
-                           user,
-                           (gpointer) gid);
 
       dbus_message_iter_next (&elem_iter);
     }
@@ -487,6 +462,10 @@ oobs_users_config_add_user (OobsUsersConfig *config, OobsUser *user)
 
   oobs_list_append (priv->users_list, &list_iter);
   oobs_list_set (priv->users_list, &list_iter, G_OBJECT (user));
+
+  /* Adding a user can trigger the creation of its new main group,
+   * which we need to take into account. */
+  oobs_object_update (oobs_groups_config_get ());
 
   return OOBS_RESULT_OK;
 }

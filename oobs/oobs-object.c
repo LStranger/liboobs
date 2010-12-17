@@ -195,6 +195,9 @@ oobs_object_finalize (GObject *object)
   connection = _oobs_session_get_connection_bus (priv->session);
   dbus_connection_remove_filter (connection, changed_signal_filter, object);
 
+  /* changed_signal_filter() might have added an idle task on the object */
+  g_idle_remove_by_data (object);
+
   g_object_unref (priv->session);
   g_free (priv->remote_object);
   g_free (priv->path);
@@ -245,7 +248,12 @@ changed_signal_filter (DBusConnection *connection,
 
   if (dbus_message_is_signal (message, priv->method, "changed") &&
       dbus_message_has_path (message, priv->path))
-    g_idle_add (object_changed_idle, object);
+    {
+        /* Avoid adding several updates which wouldn't be removed
+         * correctly on finalize() */
+	g_idle_remove_by_data (object);
+	g_idle_add (object_changed_idle, object);
+    }
 
   /* we want the rest of the objects of
    * the same type to get the signal too

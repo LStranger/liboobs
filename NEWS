@@ -1,3 +1,11 @@
+Liboobs 2.91.1, 2010-12-19
+-----------------------------------------------
+Liboobs version 2.91.1 "Strict Groups" has been released.
+
+  - Fix updating main groups for new users
+  - Remove idle tasks when destroying objects
+  - Link gtk-doc scanner against OOBS_LIBS so strict linking works
+
 Liboobs 2.32.0, 2010-09-27
 -----------------------------------------------
 Liboobs version 2.32.0 "If It Ain't Broke, Don't Fix It" has been released.

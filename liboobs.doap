@@ -6,6 +6,10 @@
 
   <name xml:lang="en">liboobs</name>
   <shortdesc xml:lang="en">GObject wrapper around the system-tools-backends</shortdesc>
+  <description>Liboobs is a wrapping library to the System Tools Backends, it will
+provide easy to access GObjects to system configuration details, like users,
+groups and network interfaces, it will handle sessions with the backend and
+data consistency too. It's mainly used by the GNOME System Tools.</description>
   <homepage rdf:resource="http://projects.gnome.org/gst/" />
   <mailing-list rdf:resource="http://mail.gnome.org/mailman/listinfo/system-tools-list" />
   <download-page rdf:resource="http://download.gnome.org/sources/liboobs/" />
